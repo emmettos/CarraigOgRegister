@@ -1,0 +1,5 @@
+/node_modules
+/db_scripts
+/public/libs
+npm-debug.log
+/*.env

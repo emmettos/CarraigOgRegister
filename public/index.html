@@ -1,0 +1,29 @@
+<!doctype html>
+<html ng-app="carraigOgRegister">
+<head>
+  <meta charset="UTF-8">
+
+  <title>Starter MEAN Single Page App</title>
+
+  <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="jumbotron text-center">
+    <h1>Carraig Og Register</h1>
+  </div>
+  <div ng-controller="ErrorController">
+    <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{ alert.message }}</div>
+  </div>
+
+  <div ng-view></div>
+</body>
+  <script src="libs/angular/angular.js"></script>
+  <script src="libs/angular-route/angular-route.js"></script>
+  <script src="libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
+
+  <script src="javascript/controllers/homeController.js"></script>
+  <script src="javascript/controllers/groupController.js"></script>
+  <script src="javascript/services/homeService.js"></script>
+  <script src="javascript/appRoutes.js"></script>
+  <script src="javascript/app.js"></script>
+</html>

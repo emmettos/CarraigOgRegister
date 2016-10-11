@@ -1,0 +1,18 @@
+<div>
+  </div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-6 col-md-4" ng-repeat="group in groups">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title"><a href="#/group/{{ group.yearOfBirth }}">{{ group.name }}</a></h3>
+            </div>
+            <div class="panel-body">
+              <h5>Year of Birth: {{ group.yearOfBirth }}</h5>
+              <h6>Manager: {{ group.manager }}</h6>
+              No. players currently registered: {{ group.numberOfPlayers }}
+            </div>
+          </div>
+        </div>
+    </div>
+  <div>
+</div>

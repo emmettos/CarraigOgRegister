@@ -1,0 +1,11 @@
+{
+  "name": "carraig-og-register",
+  "version": "0.0.1",
+  "dependencies": {
+    "angular": "~1.5.8",
+    "angular-route": "~1.5.8",
+    "bootstrap": "~3.3.6",
+    "angular-bootstrap": "~2.0.1",
+    "font-awesome": "~4.6.3"
+  }
+}
