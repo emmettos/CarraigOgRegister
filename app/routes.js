@@ -5,7 +5,7 @@ exports = module.exports = function (app) {
   	returnMessage.error = null;
   	returnMessage.body = {};
 
-  	returnMessage.test.groups = [{
+  	returnMessage.body.groups = [{
 	  name: "Under 5",
 	  yearOfBirth: 2011,
 	  footballManager: "Pat",
