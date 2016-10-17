@@ -46,7 +46,7 @@ exports = module.exports = function (app) {
     response.status(200).json(returnMessage);
   });
 
-  app.get("*", function (request, response) {
+  app.get("/", function (request, response) {
     response.sendfile("./public/index.html");
   });
 };

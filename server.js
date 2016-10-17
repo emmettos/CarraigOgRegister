@@ -19,7 +19,16 @@ app.use(express.static(__dirname + "/public"));
 
 var loggerOptions = {
   name:   "carraigOgRegister",
-  level:  "trace"
+  level:  "trace",
+  serializers: {
+    request: function (request) {
+      return {
+        method: request.method,
+        url: request.originalUrl || request.url,
+        headers: request.headers
+      }
+    }
+  }
 };
 
 require("./app/logger")(app, bunyan.createLogger(loggerOptions));
