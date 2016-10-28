@@ -1,15 +1,17 @@
 var express			    = require("express");
+var mongoose        = require("mongoose")
 var bodyParser		  = require("body-parser");
 var methodOverride	= require("method-override");
 var bunyan          = require("bunyan");
 
 var app = express();
 
-//var db 	= require("./config/db");
+var database = require("./config/database");
+
+mongoose.Promise = global.Promise;
+mongoose.connect(database.url);
 
 var port = process.env.PORT || 8081;
-
-// mongoose.connect(db.url);
 
 app.use(bodyParser.json());
 app.use(bodyParser.json( {type: "application/vnd.api+json"} ));
