@@ -1,0 +1,17 @@
+<div>
+  <div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-sm-4 col-md-3" ng-repeat="player in players">
+          <div ng-class="{ 'panel panel-info': player.lastRegisteredYear === 2016, 'panel panel-warning': player.lastRegisteredYear === 2015 }">
+            <div class="panel-heading">
+              <h3 class="panel-title">{{ player.firstName + " " + player.surname }}</h3>
+            </div>
+            <div class="panel-body">
+              <h5>Date Registered: <small>{{ player.lastRegisteredDate | date }}</small></h5>
+              <h5>Address: <small>{{ player.addressLine2 }}</small></h5>
+            </div>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>

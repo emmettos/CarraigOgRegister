@@ -3,8 +3,9 @@ var carraigOgRegisterApp = angular.module("carraigOgRegister",
 		"appRoutes", 
 		"ui.bootstrap", 
 		"homeController", 
-		"groupController", 
-		"homeService"])
+		"playersSummaryController", 
+		"homeService",
+		"playersService"])
 	.config(["$httpProvider", function ($httpProvider) {
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 	}])

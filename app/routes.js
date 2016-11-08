@@ -7,11 +7,15 @@ var Player 	= require("./models/player");
 exports = module.exports = function (app) {
   app.get('/api/groups', function (request, response, next) {
   	var readGroups = new Promise(function (resolve, reject) {
-	  	Group.find({}).lean().exec(function (error, groups) {
+			var fieldFilter = "-_id -__v";
+
+	  	Group.find({}, fieldFilter).exec(function (error, groups) {
 	  		try {
 	  			if (error) {
 	  				reject(error);
 	  			}
+
+	  			request.logger.trace(groups);
 
 	  			resolve(groups);
   			}
@@ -48,9 +52,9 @@ exports = module.exports = function (app) {
 				}
 			]).sort({ _id: "ascending"}).exec(function (error, playerGroupCounts) {
 				try {
-	  			if (error) {
-	  				reject(error);
-	  			}
+					if (error) {
+						reject(error);
+					}
 
 					resolve(playerGroupCounts);
 				}
@@ -133,9 +137,30 @@ exports = module.exports = function (app) {
   	});
   });
 
-  app.get('/api/groups/:id', function (request, response, next) {
+  app.get('/api/playerSummaries/:yearOfBirth', function (request, response, next) {
+  	var fieldFilter = "-_id firstName surname addressLine2 lastRegisteredDate lastRegisteredYear";
 
+  	Player.find({ "yearOfBirth": request.params.yearOfBirth }, fieldFilter).exec(function (error, players) {
+  		try {
+  			if (error) {
+  				return next(error);
+  			}
+
+		  	var returnMessage = {};
+
+		  	returnMessage.error = null;
+		  	returnMessage.body = {};
+
+		  	returnMessage.body.players = players;
+
+		    response.status(200).json(returnMessage);
+  		}
+  		catch (error) {
+  			return next(error);
+  		}
+		});
   });
+
   // app.get("/", function (request, response) {
   //   response.sendfile("./public/index.html");
   // });

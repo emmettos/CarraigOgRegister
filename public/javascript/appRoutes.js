@@ -5,9 +5,9 @@ angular.module("appRoutes", [])
         templateUrl: "views/home.html",
         controller: "HomeController"
       })
-      .when("/group/:yearOfBirth", {
-        templateUrl: "views/group.html",
-        controller: "GroupController"
+      .when("/playersSummary/:yearOfBirth", {
+        templateUrl: "views/players-summary.html",
+        controller: "PlayersSummaryController"
       })
       .otherwise({ redirectTo: "/"});
   }])
