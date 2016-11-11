@@ -8,9 +8,13 @@
   <link rel="stylesheet" href="libs/bootstrap/dist/css/bootstrap.min.css">
 </head>
 <body>
-  <div class="jumbotron text-center">
-    <h1>Carraig Og Register</h1>
-  </div>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#/">Carraig Og Register</a>
+      </div>
+    </div>
+  </nav>
   <div ng-controller="ErrorController">
     <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{ alert.message }}</div>
   </div>

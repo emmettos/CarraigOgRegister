@@ -5,7 +5,7 @@ angular.module("appRoutes", [])
         templateUrl: "views/home.html",
         controller: "HomeController"
       })
-      .when("/playersSummary/:yearOfBirth", {
+      .when("/playersSummary/:groupName/:yearOfBirth", {
         templateUrl: "views/players-summary.html",
         controller: "PlayersSummaryController"
       })

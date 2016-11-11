@@ -1,17 +1,43 @@
 <div>
   <div class="container">
+    <h2>{{ groupName }} Players</h2>
     <div class="row">
-        <div class="col-xs-12 col-sm-4 col-md-3" ng-repeat="player in players">
-          <div ng-class="{ 'panel panel-info': player.lastRegisteredYear === 2016, 'panel panel-warning': player.lastRegisteredYear === 2015 }">
-            <div class="panel-heading">
-              <h3 class="panel-title">{{ player.firstName + " " + player.surname }}</h3>
-            </div>
-            <div class="panel-body">
-              <h5>Date Registered: <small>{{ player.lastRegisteredDate | date }}</small></h5>
-              <h5>Address: <small>{{ player.addressLine2 }}</small></h5>
-            </div>
+      <div class="col-sm-2 col-md-1">
+        <h4><span class="label label-info">Total {{ registeredCount }}</span></h4>
+      </div>
+      <div class="col-sm-2 col-md-1">
+        <h4><span class="label label-success">New {{ newCount }}</span></h4>
+      </div>
+      <div class="col-sm-2 col-md-1">
+        <h4><span class="label label-warning">Missing {{ missingCount }}</span></h4>
+      </div>
+      <div class="col-sm-6 col-md-9">
+      </div>
+    </div>
+    <br />
+    <form class="form-inline">
+      <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" id="name" ng-model="nameFilter" placeholder="Filter on Player Name">
+      </div>
+      <div class="checkbox">
+        <label><input type="checkbox" ng-model="currentlyRegisteredOnly"> Currently Registered Only</label>
+      </div>
+      <span class="pull-right">Displaying {{ filteredPlayers.length }} Players</span>
+    </form>
+    <br />
+    <div class="row">
+      <div class="col-sm-4 col-md-4 col-lg-3" ng-repeat="player in players | filter:searchPlayer | orderBy:'surname' as filteredPlayers">
+        <div ng-class="{ 'panel panel-primary': player.playerState === $parent.playerStateEnum.EXISTING, 'panel panel-warning': player.playerState === $parent.playerStateEnum.MISSING, 'panel panel-success': player.playerState === $parent.playerStateEnum.NEW }">
+          <div class="panel-heading">
+            <h3 class="panel-title">{{ player.firstName + " " + player.surname }}</h3>
+          </div>
+          <div class="panel-body">
+            <h5>Date Registered: <small>{{ player.lastRegisteredDate | date }}</small></h5>
+            <h5>Address: <small>{{ player.addressLine2 }}</small></h5>
           </div>
         </div>
+      </div>
     </div>
   </div>
 </div>

@@ -9,13 +9,11 @@ exports = module.exports = function (app) {
   	var readGroups = new Promise(function (resolve, reject) {
 			var fieldFilter = "-_id -__v";
 
-	  	Group.find({}, fieldFilter).exec(function (error, groups) {
+	  	Group.find({}, fieldFilter).lean().exec(function (error, groups) {
 	  		try {
 	  			if (error) {
 	  				reject(error);
 	  			}
-
-	  			request.logger.trace(groups);
 
 	  			resolve(groups);
   			}
@@ -69,7 +67,8 @@ exports = module.exports = function (app) {
 					managers = results[1],
 					playerGroupCounts = results[2],
 					groupIndex = 0,
-  				currentGroup = null;
+  				currentGroup = null,
+			  	returnMessage = {};
 
   		var readManagerFullName = function (managerEmailAddress) {
 	  		var lowIndex = 0,
@@ -124,8 +123,6 @@ exports = module.exports = function (app) {
 				currentGroup.numberOfPlayers = readPlayerGroupCount(currentGroup.yearOfBirth);
 			}
 		  	
-	  	var returnMessage = {};
-
 	  	returnMessage.error = null;
 	  	returnMessage.body = {};
 
@@ -138,15 +135,16 @@ exports = module.exports = function (app) {
   });
 
   app.get('/api/playerSummaries/:yearOfBirth', function (request, response, next) {
-  	var fieldFilter = "-_id firstName surname addressLine2 lastRegisteredDate lastRegisteredYear";
+  	var fieldFilter = "-_id firstName surname addressLine2 lastRegisteredDate lastRegisteredYear registeredYears";
 
-  	Player.find({ "yearOfBirth": request.params.yearOfBirth }, fieldFilter).exec(function (error, players) {
+  	Player.find({ "yearOfBirth": request.params.yearOfBirth }, fieldFilter).lean().exec(function (error, players) {
   		try {
+	  		var playerIndex = 0,
+  					returnMessage = {};
+
   			if (error) {
   				return next(error);
   			}
-
-		  	var returnMessage = {};
 
 		  	returnMessage.error = null;
 		  	returnMessage.body = {};

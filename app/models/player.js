@@ -18,7 +18,8 @@ var playerSchema = new Schema({
 	contactEmailAddress: { type: String},
 	school: { type: String },
 	lastRegisteredDate: { type: Date, required: true },
-	lastRegisteredYear: { type: Number, required: true }
+	lastRegisteredYear: { type: Number, required: true },
+	registeredYears: [ { type: Number }]
 });
 
 module.exports = mongoose.model("player", playerSchema);

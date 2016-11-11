@@ -10,5 +10,7 @@ var carraigOgRegisterApp = angular.module("carraigOgRegister",
     $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 	}])
   .run(function ($rootScope) {
+  	$rootScope.currentYear = 2016;
+  	
     $rootScope.alerts = [];
 });
