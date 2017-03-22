@@ -247,7 +247,7 @@ exports = module.exports = function (app, router) {
         }
     });
 
-    router.post("/register", function (request, response, next) {
+    router.post("/register", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
         var newUser = null;
 
         if (!(request.body.emailAddress && request.body.password)) {
