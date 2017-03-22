@@ -1,3 +1,5 @@
+"use strict";
+
 var mongoose = require("mongoose");
 
 var Schema = mongoose.Schema;
@@ -19,7 +21,24 @@ var playerSchema = new Schema({
 	school: { type: String },
 	lastRegisteredDate: { type: Date, required: true },
 	lastRegisteredYear: { type: Number, required: true },
-	registeredYears: [ { type: Number }]
+	registeredYears: [ { type: Number }],
+    createdBy: { type: String, required: true },
+    createdDate: { type: Date, required: true },
+    updatedBy: { type: String, required: true },
+    updatedDate: { type: Date, required: true }
+});
+
+playerSchema.virtual("modifiedBy").set(function (userId) {
+    var player = this,
+        currentDate = new Date();
+
+    if (player.isNew) {
+        player.createdBy = userId;
+        player.createdDate = player.updatedDate = currentDate;
+    }
+
+    player.updatedBy = userId;
+    player.updatedDate = currentDate;
 });
 
 module.exports = mongoose.model("player", playerSchema);

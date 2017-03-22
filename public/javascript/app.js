@@ -1,16 +1,46 @@
 var carraigOgRegisterApp = angular.module("carraigOgRegister", 
-		["ngRoute", 
+        ["ngRoute", 
+        "ngMessages",
 		"appRoutes", 
 		"ui.bootstrap", 
-		"homeController", 
-		"playersSummaryController", 
+		"homeController",
+		"loginController", 
+        "playersController",
+        "managePlayersController",
+		"authenticationService",
 		"homeService",
+		"loginService",
 		"playersService"])
+    .factory("httpRequestInterceptor", ["$rootScope", "AuthenticationService",
+        function ($rootScope, AuthenticationService) {
+            return {
+                request: function (config) {
+                    var token = AuthenticationService.getToken();
+
+                    if (token) {
+                        config.headers.Authorization = "Bearer " + token;
+                    }
+                    return config;
+                },
+
+                response: function (response) {
+                    if (response.headers && response.headers("Authorization")) {
+                        AuthenticationService.saveToken(response.headers("Authorization").replace("Bearer ", ""));
+                    }
+
+                    $rootScope.payload = AuthenticationService.readPayload();
+
+                    return response;			
+                }
+            }
+        }
+    ])
 	.config(["$httpProvider", function ($httpProvider) {
-    $httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+		$httpProvider.interceptors.push("httpRequestInterceptor");
+		$httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 	}])
-  .run(function ($rootScope) {
-  	$rootScope.currentYear = 2016;
-  	
-    $rootScope.alerts = [];
-});
+  	.run(["$rootScope", "AuthenticationService", function ($rootScope, AuthenticationService) {
+        $rootScope.payload = null;
+                 
+    	$rootScope.alerts = [];
+	}]);
