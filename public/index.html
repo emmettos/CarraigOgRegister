@@ -97,11 +97,13 @@
             </div>
         </nav>
 
-        <div ng-controller="ErrorController">
-            <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{ alert.message }}</div>
-        </div>
+        <div class="container">
+            <div ng-controller="ErrorController">
+                <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{ alert.message }}</div>
+            </div>
 
-        <div ng-view></div>
+            <div ng-view></div>
+        </div>
     </body>
 
     <script src="libs/angular/angular.js"></script>

@@ -1,48 +1,46 @@
 <div>
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="row">
-                    <div class="col-sm-4 col-sm-offset-4">
-                        <form ng-submit="login()" name="loginForm" novalidate>
-                            <div class="panel panel-default">
-                                <div class="panel-heading">
-                                    <div class="row">
-                                        <div class="col-md-12 form-group" ng-class="{ 'has-error': loginForm.emailAddress.$touched && loginForm.emailAddress.$invalid }">
-                                            <input  type="email" 
-                                                    ng-model="userCredentials.emailAddress"
-                                                    name="emailAddress"
-                                                    class="form-control" 
-                                                    placeholder="Email Address" 
-                                                    required 
-                                                    autofocus>
-                                            <div class="help-block" ng-messages="loginForm.emailAddress.$error" ng-if="loginForm.emailAddress.$touched && loginForm.emailAddress.$invalid">
-                                                <p ng-messages-include="validation-messages.html"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-md-12 form-group" ng-class="{ 'has-error': loginForm.password.$touched && loginForm.password.$invalid }">
-                                            <input  type="password" 
-                                                    ng-model="userCredentials.password" 
-                                                    name="password"
-                                                    class="form-control" 
-                                                    placeholder="Password"
-                                                    required>
-                                            <div class="help-block" ng-messages="loginForm.password.$error" ng-if="loginForm.password.$touched && loginForm.emailAddress.$invalid">
-                                                <p ng-messages-include="validation-messages.html"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row text-center">
-                                        <div class="col-md-12 form-group">
-                                            <button type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid">Sign In</button>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-sm-4 col-sm-offset-4">
+                    <form ng-submit="login()" name="loginForm" novalidate>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <div class="row">
+                                    <div class="col-md-12 form-group" ng-class="{ 'has-error': loginForm.emailAddress.$touched && loginForm.emailAddress.$invalid }">
+                                        <input  type="email" 
+                                                ng-model="userCredentials.emailAddress"
+                                                name="emailAddress"
+                                                class="form-control" 
+                                                placeholder="Email Address" 
+                                                required 
+                                                autofocus>
+                                        <div class="help-block" ng-messages="loginForm.emailAddress.$error" ng-if="loginForm.emailAddress.$touched && loginForm.emailAddress.$invalid">
+                                            <p ng-messages-include="validation-messages.html"></p>
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-12 form-group" ng-class="{ 'has-error': loginForm.password.$touched && loginForm.password.$invalid }">
+                                        <input  type="password" 
+                                                ng-model="userCredentials.password" 
+                                                name="password"
+                                                class="form-control" 
+                                                placeholder="Password"
+                                                required>
+                                        <div class="help-block" ng-messages="loginForm.password.$error" ng-if="loginForm.password.$touched && loginForm.emailAddress.$invalid">
+                                            <p ng-messages-include="validation-messages.html"></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row text-center">
+                                    <div class="col-md-12 form-group">
+                                        <button type="submit" class="btn btn-primary" ng-disabled="loginForm.$invalid">Sign In</button>
+                                    </div>
+                                </div>
                             </div>
-                        </form>
-                    </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
