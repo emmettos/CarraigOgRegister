@@ -37,6 +37,21 @@ app.use(express.static(__dirname + "/public"));
 
 require("./app/logger")(app, bunyan.createLogger(loggerOptions));
 
+app.use(function (request, response, next) {
+    if (mongoose.connection.readyState !== 1) {
+        mongoose.connect(config.database)
+            .then(function () {
+                next();
+            })
+            .catch(function (error) {
+                next(error);
+            });
+    }
+    else {
+        next();
+    }
+});
+
 app.use(authenticator.authenticate);
 
 mongoose.connect(config.database)
