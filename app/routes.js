@@ -31,79 +31,33 @@ exports = module.exports = function (app, router) {
 
     router.get("/groups", function (request, response, next) {
         var readGroups = function () {
-            var promise = new Promise(function (resolve, reject) {
-                var fieldFilter = "-_id -__v";
-
-                group.find({ "year": currentSettings.year }, fieldFilter).lean().exec(function (error, groups) {
-                    try {
-                        if (error) {
-		  				    reject(error);
-		  			    }
-
-		  			    resolve(groups);
-	  			    }
-	  			    catch (error) {
-	  				    reject(error);
-	  			    }
-	  		    });
-	  	    });
-
-	  	    return promise;
-  	    };
+            return group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec();
+        };  
   	    var readUsers = function () {
-	  	    var promise = new Promise(function (resolve, reject) {
-		  	    user.find({}).sort({ emailAddress: "ascending" }).lean().exec(function (error, users) {
-		  		    try {
-		  			    if (error) {
-		  				    reject(error);
-		  			    }
-
-		  			    resolve(users);
-		  		    }
-		  		    catch (error) {
-		  			    reject(error);
-		  		    }
-	  		    });
-	  	    });
-
-	  	    return promise;
+	        return user.find({}).sort({ emailAddress: "ascending" }).lean().exec();
   	    };
         var readPlayerGroupCounts = function () {
-            var promise = new Promise(function (resolve, reject) {
-			    player.aggregate([
-				    {
-					    $match: { 
-                            $and: [ 
-                                { yearOfBirth: { $gte: currentSettings.year - 10 } }, 
-                                { lastRegisteredYear: currentSettings.year } 
-                            ] 
-                        }
-				    },
-				    {
-					    $project: { year: { $year: "$dateOfBirth" } }	
-				    },
-				    { 
-					    $group: 
-					    {
-						    _id: "$year",
-						    total: { $sum: 1 }
-					    }
-				    }
-			    ]).sort({ _id: "ascending"}).exec(function (error, playerGroupCounts) {
-				    try {
-					    if (error) {
-						    reject(error);
-					    }
-
-					    resolve(playerGroupCounts);
-				    }
-				    catch (error) {
-					    reject(error);
-				    }
-			    });
-	  	    });
-
-	  	    return promise;
+            return player.aggregate([
+                {
+                    $match: { 
+                        $and: [ 
+                            { yearOfBirth: { $gte: currentSettings.year - 10 } }, 
+                            { lastRegisteredYear: currentSettings.year } 
+                        ] 
+                    }
+                },
+                {
+                    $project: { year: { $year: "$dateOfBirth" } }	
+                },
+                { 
+                    $group: 
+                    {
+                        _id: "$year",
+                        total: { $sum: 1 }
+                    }
+                },
+                { $sort: { "_id": 1 } }
+            ]);
 		};
 
         Promise.all([readGroups(), readUsers(), readPlayerGroupCounts()])
@@ -185,13 +139,9 @@ exports = module.exports = function (app, router) {
 
             player.find({ 
                     "yearOfBirth": request.params.yearOfBirth,
-                    "lastRegisteredYear": { $gte: currentSettings.year - 1 } }, fieldFilter).lean().exec(function (error, players) {
-                try {
+                    "lastRegisteredYear": { $gte: currentSettings.year - 1 } }, fieldFilter).lean().exec()
+                .then(function (players) {
                     var returnMessage = {};
-
-                    if (error) {
-                        throw error;
-                    }
 
                     returnMessage.error = null;
                     returnMessage.body = {};
@@ -199,11 +149,10 @@ exports = module.exports = function (app, router) {
                     returnMessage.body.players = players;
 
                     response.status(200).json(returnMessage);
-                }
-                catch (error) {
+                })
+                .catch(function (error) {
                     next(error);
-                }
-            });
+                });            
         }
         catch (error) {
             next (error);
@@ -222,13 +171,9 @@ exports = module.exports = function (app, router) {
                            "lastRegisteredYear": { $gte: currentSettings.year - 1 } }
             }
 
-            player.find(filter).lean().exec(function (error, players) {
-                try {
+            player.find(filter).lean().exec()
+                .then(function (players) {
                     var returnMessage = {};
-
-                    if (error) {
-                        next(error);
-                    }
 
                     returnMessage.error = null;
                     returnMessage.body = {};
@@ -236,11 +181,10 @@ exports = module.exports = function (app, router) {
                     returnMessage.body.players = players;
 
                     response.status(200).json(returnMessage);
-                }
-                catch (error) {
+                })
+                .catch(function (error) {
                     next(error);
-                }
-            });
+                });            
         }
         catch (error) {
             next(error);
@@ -343,67 +287,32 @@ exports = module.exports = function (app, router) {
     });
 
     router.post("/authenticate", function (request, response, next) {
-        var readUser = function () {
-		    var promise = new Promise(function (resolve, reject) {
-			    var customError = null;
+        user.findOne({ emailAddress: request.body.emailAddress })
+            .then(function (foundUser) {
+                var customError = null;
 
-		  	    user.findOne({ emailAddress: request.body.emailAddress }, function (error, currentUser) {
-				    try {
-					    if (error) {
-						    reject(error);
-					    }
+                if (!foundUser) {
+                    customError = new Error("User not found");
 
-					    if (!currentUser) {
-						    customError = new Error("User not found");
+                    customError.code = 401;
+                
+                    throw customError;
+                }
 
-						    customError.code = 401;
-						
-						    throw customError;
-					    }
+                return foundUser.comparePassword(request.body.password);
+            })
+            .then(function (foundUser) {
+                var customError = null;
+                
+                if (!foundUser) {
+                    customError = new Error("Incorrect username and password");
 
-					    resolve(currentUser);
-				    }
-				    catch (error) {
-					    reject(error);
-				    }
-			    });
-		    });
+                    customError.code = 401;
+                
+                    throw customError;
+                }
 
-            return promise;
-	    };
-        var comparePassword = function (currentUser) {
-		    var promise = new Promise(function (resolve, reject) {
-		  	    currentUser.comparePassword(request.body.password, function (error, isMatch) {
-				    try {
-                        var customError = null;
-
-					    if (error) {
-						    reject(error);
-					    }
-
-                        if (!isMatch) {
-                            customError = new Error("Incorrect username and password");
-
-                            customError.code = 401;
-                        
-                            throw customError;
-                        }
-
-					    resolve(currentUser);
-				    }
-				    catch (error) {
-					    reject(error);
-				    }
-			    });
-		    });
-
-		    return promise;
-        };
-
-        readUser()
-            .then(comparePassword)
-            .then(function (currentUser) {
-                return authenticator.createToken(request, currentUser)
+                return authenticator.createToken(request, foundUser)
             })
             .then(function (token) {
                 var returnMessage = {};

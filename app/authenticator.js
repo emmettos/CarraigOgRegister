@@ -85,14 +85,10 @@ exports.createToken = function (request, currentUser) {
         payload.groups = [];
 
         if (!currentUser.isAdministrator) {
-            group.find({}).lean().exec(function (error, groups) {
-                try {
+            group.find({}).lean().exec()
+                .then(function (groups) {
                     var currentGroup = null,
                         groupIndex = 0;
-
-                    if (error) {
-                        reject(error);
-                    }
 
                     for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
                         currentGroup = groups[groupIndex];
@@ -107,16 +103,15 @@ exports.createToken = function (request, currentUser) {
                     request.logger.trace(payload);    
 
                     resolve(JSONWebToken.sign(payload, config.secret, { expiresIn: "1h" }));
-                }
-                catch (error) {
-                    reject(error);
-                }
-            });
+                })
+                .catch(function (error) {
+                    next(error);
+                });            
         }
         else {
             request.logger.trace(payload);
             
-            resolve(JSONWebToken.sign(payload, config.secret, { expiresIn: "5m" }));
+            resolve(JSONWebToken.sign(payload, config.secret, { expiresIn: "1h" }));
         }
     });
 
