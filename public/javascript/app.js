@@ -36,6 +36,12 @@ var carraigOgRegisterApp = angular.module("carraigOgRegister",
         }
     ])
 	.config(["$httpProvider", function ($httpProvider) {
+        $httpProvider.defaults.cache = false;
+        if (!$httpProvider.defaults.headers.get) {
+            $httpProvider.defaults.headers.get = {};
+        }
+        $httpProvider.defaults.headers.get["If-Modified-Since"] = "0";
+        
 		$httpProvider.interceptors.push("httpRequestInterceptor");
 		$httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 	}])
