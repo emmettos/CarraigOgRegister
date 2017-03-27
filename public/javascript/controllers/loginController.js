@@ -1,12 +1,10 @@
-angular.module("loginController", []).controller("LoginController", ["$scope", "$rootScope", "$location", "LoginService", "AuthenticationService",
-    function ($scope, $rootScope, $location, LoginService, AuthenticationService) {
+angular.module("loginController", []).controller("LoginController", ["$scope", "$rootScope", "$location", "LoginService", 
+    function ($scope, $rootScope, $location, LoginService) {
         if (!$rootScope.currentSettings) {
             $location.path("/");
 
             return;
         }
-
-        $rootScope.isAuthenicated = false;
 
         $scope.login = function () {
             LoginService.login($scope.userCredentials)

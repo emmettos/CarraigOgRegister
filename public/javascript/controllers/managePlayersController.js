@@ -2,6 +2,12 @@ angular.module("managePlayersController", []).controller("ManagePlayersControlle
     function ($scope, $rootScope, $location, $anchorScroll, $window, PlayersService) {
         var me = this;
 
+        if (!$rootScope.currentSettings) {
+            $location.path("/");
+
+            return;
+        }
+
         $scope.dateOptions = {
             formatYear: 'yy',
             maxDate: new Date(),

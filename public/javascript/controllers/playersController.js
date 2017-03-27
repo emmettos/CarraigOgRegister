@@ -1,5 +1,5 @@
-angular.module("playersController", []).controller("PlayersController", ["$scope", "$route", "$routeParams", "$rootScope", "PlayersService", 
-    function ($scope, $route, $routeParams, $rootScope, PlayersService) {
+angular.module("playersController", []).controller("PlayersController", ["$scope", "$route", "$routeParams", "$rootScope", "$location", "PlayersService", 
+    function ($scope, $route, $routeParams, $rootScope, $location, PlayersService) {
         var readPlayers = PlayersService.readPlayersSummary,
             playerStateEnum = {
                 EXISTING: 0,
