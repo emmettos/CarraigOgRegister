@@ -1,5 +1,11 @@
 angular.module("homeController", []).controller("HomeController", ["$scope", "$rootScope", "HomeService", 
     function ($scope, $rootScope, HomeService) {
+        if (!$rootScope.payload) {
+            $location.path("/");
+
+            return;
+        }
+
         HomeService.readCurrentSettings()
             .then(function (response) {
                 $rootScope.currentSettings = response.data.body.currentSettings;

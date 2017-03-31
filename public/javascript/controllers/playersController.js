@@ -7,7 +7,7 @@ angular.module("playersController", []).controller("PlayersController", ["$scope
                 MISSING: 2 
             };
 
-        if (!$rootScope.currentSettings) {
+        if (!$rootScope.payload) {
             $location.path("/");
 
             return;

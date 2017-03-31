@@ -22,33 +22,6 @@
                 border-color: #f98e02;
             }
 
-/*            
-            .navbar-default .navbar-brand {
-                color: #faf001;
-                pointer-events: none;
-            }
-
-            .navbar-default .navbar-nav > li > a {
-                color: #fac406;
-            }
-
-            .navbar-default .navbar-nav > li > a:hover,
-            .navbar-default .navbar-nav > li > a:focus {
-                background-color: #4286f4;
-            }
-
-            .navbar-default .navbar-nav > .active > a,
-            .navbar-default .navbar-nav > .active > a:hover,
-            .navbar-default .navbar-nav > .active > a:focus {
-                color: #ffffff;
-            }
-
-            .navbar-default .navbar-nav > .open > a,
-            .navbar-default .navbar-nav > .open > a:hover,
-            .navbar-default .navbar-nav > .open > a:focus {
-                color: #ffffff;
-            }
-*/
             th {
                 white-space: nowrap;
             }
@@ -56,6 +29,7 @@
             table.player-detail tbody tr.missing {
                 color: #f0ad4e;
             }
+
             /*th>span[class^="fa-sort"] {
                 display: block;
                 float: right
@@ -82,21 +56,24 @@
                         <span class="icon-bar"></span>
                     </button>
 
-                    <a href="#/" class="navbar-brand">Carraig Og Register</a>
+                    <a class="navbar-brand" ng-href="{{ homeURL }}">Carraig Og Register</a>
                 </div>
 
                 <div uib-collapse="isCollapsed" class="navbar-collapse bs-js-navbar-collapse">
                     <ul class="nav navbar-nav">
-                        <li ng-if="payload.isAdministrator"><a href="#managePlayers" ng-click="isCollapsed = true">Manage Players</a></li>
+                        <li ng-if="payload && payload.isAdministrator"><a ng-href="#managePlayers" ng-click="isCollapsed = true">Manage Players</a></li>
                     </ul>
-                    <span ng-switch="payload">
+                    <!--<span ng-switch="payload">
                         <ul class="nav navbar-nav navbar-right" ng-switch-when="null">
                             <li><a href="#login" ng-click="isCollapsed = true">Sign In</a></li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right" ng-switch-default>
                             <li><a href ng-click="logout()">Sign Out</a></li>
                         </ul>
-                    </span>
+                    </span>-->
+                    <ul class="nav navbar-nav navbar-right">
+                        <li ng-if="payload"><a ng-href="#/" ng-click="logout()">Sign Out</a></li>
+                    </ul>
                 </div>
             </div>
         </nav>

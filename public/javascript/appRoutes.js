@@ -3,12 +3,12 @@ angular.module("appRoutes", [])
         function ($routeProvider) {
             $routeProvider
                 .when("/", {
-                    templateUrl: "views/home.html",
-                    controller: "HomeController"
-                })
-                .when("/login", {
                     templateUrl: "views/login.html",
                     controller: "LoginController"
+                })
+                .when("/home", {
+                    templateUrl: "views/home.html",
+                    controller: "HomeController"
                 })
                 .when("/playersSummary/:groupName/:yearOfBirth", {
                     templateUrl: "views/players-summary.html",
@@ -33,6 +33,7 @@ angular.module("appRoutes", [])
             $scope.logout = function () {
                 AuthenticationService.deleteToken();
 
+                $rootScope.homeURL = "#/";
                 $rootScope.payload = null;
 
                 $window.location = "/";

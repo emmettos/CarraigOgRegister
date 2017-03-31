@@ -46,6 +46,7 @@ var carraigOgRegisterApp = angular.module("carraigOgRegister",
 		$httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 	}])
   	.run(["$rootScope", "AuthenticationService", function ($rootScope, AuthenticationService) {
+        $rootScope.homeURL = "#/";
         $rootScope.payload = null;
                  
     	$rootScope.alerts = [];

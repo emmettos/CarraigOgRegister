@@ -2,7 +2,7 @@ angular.module("managePlayersController", []).controller("ManagePlayersControlle
     function ($scope, $rootScope, $location, $anchorScroll, $window, PlayersService) {
         var me = this;
 
-        if (!$rootScope.currentSettings) {
+        if (!$rootScope.payload) {
             $location.path("/");
 
             return;

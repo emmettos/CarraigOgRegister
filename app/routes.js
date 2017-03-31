@@ -13,7 +13,7 @@ var user 	= require("./models/user");
 exports = module.exports = function (app, router) {
     var currentSettings = app.currentSettings;
 
-    router.get("/currentSettings", function (request, response, next) {
+    router.get("/currentSettings", authorizer.authorize(), function (request, response, next) {
         try {
             var returnMessage = {};
 
@@ -29,7 +29,7 @@ exports = module.exports = function (app, router) {
         }
     });
 
-    router.get("/groups", function (request, response, next) {
+    router.get("/groups", authorizer.authorize(), function (request, response, next) {
         var readGroups = function () {
             return group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec();
         };  
@@ -133,7 +133,7 @@ exports = module.exports = function (app, router) {
 	  	    });
     });
 
-    router.get("/playersSummary/:yearOfBirth", function (request, response, next) {
+    router.get("/playersSummary/:yearOfBirth", authorizer.authorize(), function (request, response, next) {
         try {
             var fieldFilter = "-_id firstName surname addressLine2 lastRegisteredDate lastRegisteredYear registeredYears";
 
