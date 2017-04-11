@@ -37,6 +37,16 @@ app.use(express.static(__dirname + "/public"));
 
 require("./app/logger")(app, bunyan.createLogger(loggerOptions));
 
+if (process.env.NODE_ENV === "production") {
+    app.use(function (request, response, next) {
+        if (request.header["x-forwarded-proto"] !== "https") {
+            return response.redirect(["https://", request.get("Host"), request.url].join(""));
+        }
+
+        return next();
+    });    
+}
+
 app.use(function (request, response, next) {
     if (mongoose.connection.readyState !== 1) {
         mongoose.connect(config.database)

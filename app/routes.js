@@ -271,8 +271,6 @@ exports = module.exports = function (app, router) {
         user.findOne({ emailAddress: request.body.emailAddress })
             .then(function (foundUser) {
                 var customError = null;
-
-                customError.Temp = "";
                 
                 if (!foundUser) {
                     customError = new Error("User not found");
