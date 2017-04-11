@@ -58,7 +58,7 @@ angular.module("playersController", []).controller("PlayersController", ["$scope
             .catch(function (response) {
                 $rootScope.alerts.push({
                     type: "danger",
-                    message: response 
+                    response: response 
                 });
             });
 

@@ -272,6 +272,8 @@ exports = module.exports = function (app, router) {
             .then(function (foundUser) {
                 var customError = null;
 
+                customError.Temp = "";
+                
                 if (!foundUser) {
                     customError = new Error("User not found");
 

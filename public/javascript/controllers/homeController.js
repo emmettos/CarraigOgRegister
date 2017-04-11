@@ -44,7 +44,7 @@ angular.module("homeController", []).controller("HomeController", ["$scope", "$r
             .catch(function (response) {
                 $rootScope.alerts.push({
                     type: "danger",
-                    message: response 
+                    response: response 
                 });
             });
     }

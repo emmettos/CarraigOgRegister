@@ -42,7 +42,7 @@ angular.module("loginController", []).controller("LoginController", ["$scope", "
                     else {
                         $rootScope.alerts.push({
                             type: "danger",
-                            message: response 
+                            response: response 
                         });
                     }
                 });
@@ -66,7 +66,7 @@ angular.module("loginController", []).controller("LoginController", ["$scope", "
                     else {
                         $rootScope.alerts.push({
                             type: "danger",
-                            message: response 
+                            response: response 
                         });
                     }
                 });

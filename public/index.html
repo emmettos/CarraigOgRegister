@@ -30,11 +30,6 @@
                 color: #f0ad4e;
             }
 
-            /*th>span[class^="fa-sort"] {
-                display: block;
-                float: right
-            }*/
-
             .player-detail-label {
                 display: inline-block;
                 height: 2em;
@@ -72,7 +67,7 @@
 
         <div class="container">
             <div ng-controller="ErrorController">
-                <div uib-alert ng-repeat="alert in alerts" ng-class="'alert-' + (alert.type || 'warning')" close="closeAlert($index)">{{ alert.message }}</div>
+                <div uib-alert ng-repeat="currentAlert in alerts" ng-class="'alert-' + (currentAlert.type || 'warning')" ng-bind-template="{{ currentAlert.response }}" close="closeAlert($index)"></div>
             </div>
 
             <div ng-view></div>

@@ -126,7 +126,7 @@ angular.module("managePlayersController", []).controller("ManagePlayersControlle
                     .catch(function (response) {
                         $rootScope.alerts.push({
                             type: "danger",
-                            message: response 
+                            response: response 
                         });
 
                         $window.scrollTo(0, 0);
@@ -150,7 +150,7 @@ angular.module("managePlayersController", []).controller("ManagePlayersControlle
                     .catch(function (response) {
                         $rootScope.alerts.push({
                             type: "danger",
-                            message: response 
+                            response: response 
                         });
 
                         $window.scrollTo(0, 0);
