@@ -31,7 +31,7 @@ mongoose.Promise = global.Promise;
 
 if (process.env.NODE_ENV === "production") {
     app.use(function (request, response, next) {
-        request.logger.trace({ XforwardedProto: request.header["x-forwarded-proto"] });
+        request.logger.trace(request.header["x-forwarded-proto"]);
 
         if (request.header["x-forwarded-proto"] !== "https") {
             return response.redirect(["https://", request.hostname, request.url].join(""));
