@@ -29,15 +29,17 @@ var loggerOptions = {
 
 mongoose.Promise = global.Promise;
 
-// if (process.env.NODE_ENV === "production") {
-//     app.use(function (request, response, next) {
-//         if (request.header["x-forwarded-proto"] !== "https") {
-//             return response.redirect(["https://", request.get("Host"), request.url].join(""));
-//         }
+if (process.env.NODE_ENV === "production") {
+    app.use(function (request, response, next) {
+        request.logger.trace({ XforwardedProto: request.header["x-forwarded-proto"] });
 
-//         return next();
-//     });    
-// }
+        if (request.header["x-forwarded-proto"] !== "https") {
+            return response.redirect(["https://", request.hostname, request.url].join(""));
+        }
+
+        return next();
+    });    
+}
 
 app.use(bodyParser.json());
 app.use(bodyParser.json( {type: "application/vnd.api+json"} ));
