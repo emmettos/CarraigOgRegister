@@ -29,14 +29,6 @@ var loggerOptions = {
 
 mongoose.Promise = global.Promise;
 
-app.use(bodyParser.json());
-app.use(bodyParser.json( {type: "application/vnd.api+json"} ));
-app.use(bodyParser.urlencoded( { extended: true } ));
-app.use(methodOverride("X-HTTP-Method-Override"));
-app.use(express.static(__dirname + "/public"));
-
-require("./app/logger")(app, bunyan.createLogger(loggerOptions));
-
 if (process.env.NODE_ENV === "production") {
     app.use(function (request, response, next) {
         if (request.header["x-forwarded-proto"] !== "https") {
@@ -46,6 +38,14 @@ if (process.env.NODE_ENV === "production") {
         return next();
     });    
 }
+
+app.use(bodyParser.json());
+app.use(bodyParser.json( {type: "application/vnd.api+json"} ));
+app.use(bodyParser.urlencoded( { extended: true } ));
+app.use(methodOverride("X-HTTP-Method-Override"));
+app.use(express.static(__dirname + "/public"));
+
+require("./app/logger")(app, bunyan.createLogger(loggerOptions));
 
 app.use(function (request, response, next) {
     if (mongoose.connection.readyState !== 1) {
