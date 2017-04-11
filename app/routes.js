@@ -228,51 +228,32 @@ exports = module.exports = function (app, router) {
     });
 
     router.post("/resetPassword", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-  	    var readUser = function () {
-	  	    var promise = new Promise(function (resolve, reject) {
-		  	    user.findOne({ emailAddress: request.body.emailAddress }, function (error, currentUser) {
-		  		    try {
-		  			    if (error) {
-		  				    reject(error);
-		  			    }
-
-		  			    resolve(currentUser);
-	  			    }
-	  			    catch (error) {
-	  				    reject(error);
-	  			    }
-	  		    });
-	  	    });
-
-	  	    return promise;
-        };
-        var updatePassword = function (currentUser) {
-	  	    var promise = new Promise(function (resolve, reject) {
-  			    currentUser.password = request.body.password;
-
-				currentUser.save(function (error) {
-		  		    try {
-		  			    if (error) {
-		  				    reject(error);
-		  			    }
-
-		  			    resolve();
-		  		    }
-		  		    catch (error) {
-		  			    reject(error);
-		  		    }
-	  		    });
-	  	    });
-
-	  	    return promise;
-        };
+        var customError = null;
 
         if (!(request.body.emailAddress && request.body.password)) {
-            throw new Error("Please provide name and password.");
+            customError = new Error("Username and password are required");
+
+            customError.code = 400;
+        
+            throw customError;
         } 
 
-        readUser()
-            .then(updatePassword)
+        user.findOne({ emailAddress: request.body.emailAddress })
+            .then(function (foundUser) {
+                var customError = null;
+
+                if (!foundUser) {
+                    customError = new Error("User not found");
+
+                    customError.code = 401;
+                
+                    throw customError;
+                }
+
+  			    foundUser.password = request.body.password;
+
+				return foundUser.save();
+            })
             .then(function () {
                 var returnMessage = {};
 
@@ -323,6 +304,49 @@ exports = module.exports = function (app, router) {
                 request.logger.trace(token);
 
                 response.set("Authorization", "Bearer " + token);
+
+                response.status(200).json(returnMessage);
+		    })
+		    .catch(function (error) {
+			    next(error);
+		    });
+    });
+
+    router.post("/changePassword", function (request, response, next) {
+        user.findOne({ emailAddress: request.body.emailAddress })
+            .then(function (foundUser) {
+                var customError = null;
+
+                if (!foundUser) {
+                    customError = new Error("User not found");
+
+                    customError.code = 401;
+                
+                    throw customError;
+                }
+
+                return foundUser.comparePassword(request.body.password);
+            })
+            .then(function (foundUser) {
+                var customError = null;
+                
+                if (!foundUser) {
+                    customError = new Error("Incorrect username and password");
+
+                    customError.code = 401;
+                
+                    throw customError;
+                }
+
+  			    foundUser.password = request.body.newPassword;
+
+				return foundUser.save();
+            })
+            .then(function (token) {
+                var returnMessage = {};
+
+                returnMessage.error = null;
+                returnMessage.body = {};
 
                 response.status(200).json(returnMessage);
 		    })

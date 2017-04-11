@@ -63,14 +63,6 @@
                     <ul class="nav navbar-nav">
                         <li ng-if="payload && payload.isAdministrator"><a ng-href="#managePlayers" ng-click="isCollapsed = true">Manage Players</a></li>
                     </ul>
-                    <!--<span ng-switch="payload">
-                        <ul class="nav navbar-nav navbar-right" ng-switch-when="null">
-                            <li><a href="#login" ng-click="isCollapsed = true">Sign In</a></li>
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right" ng-switch-default>
-                            <li><a href ng-click="logout()">Sign Out</a></li>
-                        </ul>
-                    </span>-->
                     <ul class="nav navbar-nav navbar-right">
                         <li ng-if="payload"><a href="" ng-click="logout()">Sign Out</a></li>
                     </ul>
@@ -93,6 +85,7 @@
     <script src="libs/angular-bootstrap/ui-bootstrap-tpls.js"></script>
     <script src="libs/moment/moment.js"></script>
 
+    <script src="javascript/directives/passwordConfirm.js"></script>
     <script src="javascript/controllers/homeController.js"></script>
     <script src="javascript/controllers/loginController.js"></script>
     <script src="javascript/controllers/playersController.js"></script>
