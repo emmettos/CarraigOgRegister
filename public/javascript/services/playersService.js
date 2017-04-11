@@ -17,8 +17,16 @@ angular.module("playersService", []).factory("PlayersService", ["$http",
                 return $http.post("/api/createPlayer", playerDetails);
             },
 
-            updatePlayer : function (playerDetails) {
-                return $http.post("/api/updatePlayer", playerDetails);
+            updatePlayer : function (playerDetails, year, yearOfBirth) {
+                var postData = {};
+
+                postData.groupDetails = {};
+                postData.groupDetails.year = year;
+                postData.groupDetails.yearOfBirth = yearOfBirth;
+                
+                postData.playerDetails = playerDetails;
+
+                return $http.post("/api/updatePlayer", postData);
             }
         };
     }

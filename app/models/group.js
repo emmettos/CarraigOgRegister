@@ -9,6 +9,7 @@ var groupSchema = new Schema({
 	yearOfBirth: { type: Number, required: true, unique: true },
 	footballManager: String,
 	hurlingManager: String,
+    lastUpdatedDate: { type: Date, required: true },
     createdBy: { type: String, required: true },
     createdDate: { type: Date, required: true },
     updatedBy: { type: String, required: true },

@@ -18,6 +18,8 @@
                     <strong>Hurling Manager:</strong> {{ group.hurlingManager }}
                     <br><br>
                     No. players currently registered: {{ group.numberOfPlayers }}
+                    <br><br>
+                    Last Updated: {{ group.lastUpdatedDate | date : "dd/MM/yy h:mm a" }}
                 </div>
             </div>
         </div>

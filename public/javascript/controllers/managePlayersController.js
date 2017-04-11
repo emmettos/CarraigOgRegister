@@ -96,7 +96,7 @@ angular.module("managePlayersController", []).controller("ManagePlayersControlle
 
         $scope.savePlayer = function () {
             if ($scope.playerDetails._id) {
-                PlayersService.updatePlayer($scope.playerDetails)
+                PlayersService.updatePlayer($scope.playerDetails, $rootScope.currentSettings.year, $scope.selectedYear)
                     .then(function (response) {
                         var savedPlayer = null,
                             returnedPlayer = response.data.body.player;

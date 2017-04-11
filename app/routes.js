@@ -399,7 +399,12 @@ exports = module.exports = function (app, router) {
     });
 
     router.post("/updatePlayer", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-        player.findOne({ _id: mongoose.Types.ObjectId(request.body._id), __v: request.body.__v })
+        var me = this,
+            groupDetails = request.body.groupDetails,
+            playerDetails = request.body.playerDetails,
+            savedPlayer = null;
+
+        player.findOne({ "_id": mongoose.Types.ObjectId(playerDetails._id), "__v": playerDetails.__v })
             .then(function (foundPlayer) {
                 var lastRegisteredDate = null,
                     lastRegisteredYear = null,
@@ -413,18 +418,18 @@ exports = module.exports = function (app, router) {
                     throw customError;
                 }
 
-                foundPlayer.addressLine1 = request.body.addressLine1;
-                foundPlayer.addressLine2 = request.body.addressLine2;
-                foundPlayer.addressLine3 = request.body.addressLine3;
-                foundPlayer.addressLine4 = request.body.addressLine4;
-                foundPlayer.medicalConditions = request.body.medicalConditions;
-                foundPlayer.contactName = request.body.contactName;
-                foundPlayer.contactHomeNumber = request.body.contactHomeNumber;
-                foundPlayer.contactMobileNumber = request.body.contactMobileNumber;
-                foundPlayer.contactEmailAddress = request.body.contactEmailAddress;
-                foundPlayer.school = request.body.school;
+                foundPlayer.addressLine1 = playerDetails.addressLine1;
+                foundPlayer.addressLine2 = playerDetails.addressLine2;
+                foundPlayer.addressLine3 = playerDetails.addressLine3;
+                foundPlayer.addressLine4 = playerDetails.addressLine4;
+                foundPlayer.medicalConditions = playerDetails.medicalConditions;
+                foundPlayer.contactName = playerDetails.contactName;
+                foundPlayer.contactHomeNumber = playerDetails.contactHomeNumber;
+                foundPlayer.contactMobileNumber = playerDetails.contactMobileNumber;
+                foundPlayer.contactEmailAddress = playerDetails.contactEmailAddress;
+                foundPlayer.school = playerDetails.school;
 
-                lastRegisteredDate = new Date(request.body.lastRegisteredDate)
+                lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
                 foundPlayer.lastRegisteredDate = lastRegisteredDate;
                 foundPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
                 
@@ -441,12 +446,20 @@ exports = module.exports = function (app, router) {
                 return foundPlayer.save();
             })
             .then(function (savedPlayer) {
+                var query = { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth },
+                    update = { "lastUpdatedDate": new Date() };
+
+                me.savedPlayer = savedPlayer;
+
+                return group.findOneAndUpdate(query, update);
+            })
+            .then(function () {
                 var returnMessage = {};
 
                 returnMessage.error = null;
                 returnMessage.body = {};
 
-                returnMessage.body.player = savedPlayer.toObject();
+                returnMessage.body.player = me.savedPlayer.toObject();
 
                 response.status(200).json(returnMessage);
             })
