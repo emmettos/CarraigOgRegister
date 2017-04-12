@@ -28,6 +28,9 @@ var playerSchema = new Schema({
     updatedDate: { type: Date, required: true }
 });
 
+playerSchema.index({ yearOfBirth: 1});
+playerSchema.index({ dateOfBirth: 1, firstName: 1, surname: 1}, { unique: true });
+
 playerSchema.virtual("modifiedBy").set(function (userId) {
     var player = this,
         currentDate = new Date();
