@@ -74,6 +74,10 @@ exports = module.exports = function (app, router) {
 		  			    highIndex = users.length,
 		  			    middleIndex = 0;
 
+                    if (users.length === 0) {
+                        return managerEmailAddress;
+                    }
+
 		  		    while (lowIndex <= highIndex) {
 		  			    middleIndex = Math.floor(lowIndex + (highIndex - lowIndex) / 2);
 
@@ -94,6 +98,10 @@ exports = module.exports = function (app, router) {
 		  		    var lowIndex = 0,
 		  			    highIndex = playerGroupCounts.length,
 		  			    middleIndex = 0;
+
+                    if (playerGroupCounts.length === 0) {
+                        return 0;
+                    }
 
 		  		    while (lowIndex <= highIndex) {
 		  			    middleIndex = Math.floor(lowIndex + (highIndex - lowIndex) / 2);
