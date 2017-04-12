@@ -69,6 +69,8 @@ exports = module.exports = function (app, router) {
 	  			    currentGroup = null,
 				    returnMessage = {};
 
+                request.logger.trace({ playerGroupCounts: playerGroupCounts });
+                
 	  		    var readManagerFullName = function (managerEmailAddress) {
 		  		    var lowIndex = 0,
 		  			    highIndex = users.length,
