@@ -70,21 +70,19 @@ exports = module.exports = function (app, router) {
 				    returnMessage = {};
 
                 request.logger.trace({ playerGroupCounts: playerGroupCounts });
-                
+
 	  		    var readManagerFullName = function (managerEmailAddress) {
 		  		    var lowIndex = 0,
-		  			    highIndex = users.length,
-		  			    middleIndex = 0;
-
-                    if (users.length === 0) {
-                        return managerEmailAddress;
-                    }
+		  			    highIndex = users.length - 1,
+		  			    middleIndex = 0,
+                        managerFullName = managerEmailAddress;
 
 		  		    while (lowIndex <= highIndex) {
-		  			    middleIndex = Math.floor(lowIndex + (highIndex - lowIndex) / 2);
+		  			    middleIndex = (lowIndex + highIndex) / 2 | 0;
 
 		  			    if (users[middleIndex].emailAddress === managerEmailAddress) {
-		  				    return users[middleIndex].firstName + " " + users[middleIndex].surname;
+		  				    managerFullName = users[middleIndex].firstName + " " + users[middleIndex].surname;
+                            lowIndex = highIndex + 1;
 		  			    }
 		  			    else if (users[middleIndex].emailAddress < managerEmailAddress) {
 		  				    lowIndex = middleIndex + 1;
@@ -94,23 +92,21 @@ exports = module.exports = function (app, router) {
 		  			    }
 		  		    }
 
-		  		    return managerEmailAddress;
+		  		    return managerFullName;
 	  		    };
 	  		    var readPlayerGroupCount = function (yearOfBirth) {
 		  		    var lowIndex = 0,
-		  			    highIndex = playerGroupCounts.length,
-		  			    middleIndex = 0;
-
-                    if (playerGroupCounts.length === 0) {
-                        return 0;
-                    }
+		  			    highIndex = playerGroupCounts.length - 1,
+		  			    middleIndex = 0,
+                        playerGroupCount = 0;
 
 		  		    while (lowIndex <= highIndex) {
-		  			    middleIndex = Math.floor(lowIndex + (highIndex - lowIndex) / 2);
+		  			    middleIndex = (lowIndex + highIndex) / 2 | 0;
 
 		  			    if (playerGroupCounts[middleIndex]._id === yearOfBirth) {
-		  				    return playerGroupCounts[middleIndex].total;
-		  			    }
+                            playerGroupCount = playerGroupCounts[middleIndex].total;
+                            lowIndex = highIndex + 1;
+                        }
 		  			    else if (playerGroupCounts[middleIndex]._id < yearOfBirth) {
 		  				    lowIndex = middleIndex + 1;
 		  			    }
@@ -119,7 +115,7 @@ exports = module.exports = function (app, router) {
 		  			    }
 		  		    }
 
-		  		    return 0;
+                    return playerGroupCount;
 	  		    };
 
 		  	    for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
