@@ -362,26 +362,29 @@ exports = module.exports = function (app, router) {
     });
 
     router.post("/createPlayer", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-        var newPlayer = new player(),
+        var me = this,
+            groupDetails = request.body.groupDetails,
+            playerDetails = request.body.playerDetails,
+            newPlayer = new player(),
             lastRegisteredDate = null;
 
-        newPlayer.dateOfBirth = new Date(request.body.dateOfBirth);
+        newPlayer.dateOfBirth = new Date(playerDetails.dateOfBirth);
         newPlayer.yearOfBirth = newPlayer.dateOfBirth.getFullYear();
 
-        newPlayer.firstName = request.body.firstName;
-        newPlayer.surname = request.body.surname;
-        newPlayer.addressLine1 = request.body.addressLine1;
-        newPlayer.addressLine2 = request.body.addressLine2;
-        newPlayer.addressLine3 = request.body.addressLine3;
-        newPlayer.addressLine4 = request.body.addressLine4;
-        newPlayer.medicalConditions = request.body.medicalConditions;
-        newPlayer.contactName = request.body.contactName;
-        newPlayer.contactHomeNumber = request.body.contactHomeNumber;
-        newPlayer.contactMobileNumber = request.body.contactMobileNumber;
-        newPlayer.contactEmailAddress = request.body.contactEmailAddress;
-        newPlayer.school = request.body.school;
+        newPlayer.firstName = playerDetails.firstName;
+        newPlayer.surname = playerDetails.surname;
+        newPlayer.addressLine1 = playerDetails.addressLine1;
+        newPlayer.addressLine2 = playerDetails.addressLine2;
+        newPlayer.addressLine3 = playerDetails.addressLine3;
+        newPlayer.addressLine4 = playerDetails.addressLine4;
+        newPlayer.medicalConditions = playerDetails.medicalConditions;
+        newPlayer.contactName = playerDetails.contactName;
+        newPlayer.contactHomeNumber = playerDetails.contactHomeNumber;
+        newPlayer.contactMobileNumber = playerDetails.contactMobileNumber;
+        newPlayer.contactEmailAddress = playerDetails.contactEmailAddress;
+        newPlayer.school = playerDetails.school;
 
-        lastRegisteredDate = new Date(request.body.lastRegisteredDate)
+        lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
         newPlayer.lastRegisteredDate = lastRegisteredDate;
         newPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
         newPlayer.registeredYears.push(newPlayer.lastRegisteredYear);
@@ -390,12 +393,20 @@ exports = module.exports = function (app, router) {
 
         newPlayer.save()
             .then(function (savedPlayer) {
+                var query = { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth },
+                    update = { "lastUpdatedDate": new Date() };
+
+                me.savedPlayer = savedPlayer;
+
+                return group.findOneAndUpdate(query, update);
+            })
+            .then(function () {
                 var returnMessage = {};
 
                 returnMessage.error = null;
                 returnMessage.body = {};
 
-                returnMessage.body.player = savedPlayer.toObject();
+                returnMessage.body.player = me.savedPlayer.toObject();
 
                 response.status(200).json(returnMessage);
             })

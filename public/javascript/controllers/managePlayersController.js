@@ -135,7 +135,7 @@ angular.module("managePlayersController", []).controller("ManagePlayersControlle
             else {
                 $scope.playerDetails.dateOfBirth = $scope.dateOfBirth.toISOString();
 
-                PlayersService.createPlayer($scope.playerDetails)
+                PlayersService.createPlayer($scope.playerDetails, $rootScope.currentSettings.year, $scope.selectedYear)
                     .then(function (response) {
                         var returnedPlayer = response.data.body.player;
 
