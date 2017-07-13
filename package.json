@@ -4,7 +4,7 @@
   "description": "CarraigOg Registration Application",
   "main": "server.js",
   "engines": {
-    "node": "4.4.0"
+    "node": "4.8.4"
   },
   "dependencies": {
     "bcrypt": "~0.8.7",
