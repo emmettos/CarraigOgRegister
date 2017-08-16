@@ -1,6 +1,6 @@
-angular.module("playersController", []).controller("PlayersController", ["$scope", "$route", "$routeParams", "$rootScope", "$location", "PlayersService", 
-    function ($scope, $route, $routeParams, $rootScope, $location, PlayersService) {
-        var readPlayers = PlayersService.readPlayersSummary,
+angular.module("app.controller.playersController", []).controller("playersController", ["$scope", "$route", "$routeParams", "$rootScope", "$location", "playersService", 
+    function ($scope, $route, $routeParams, $rootScope, $location, playersService) {
+        var readPlayers = playersService.readPlayersSummary,
             playerStateEnum = {
                 EXISTING: 0,
                 NEW: 1,
@@ -19,7 +19,7 @@ angular.module("playersController", []).controller("PlayersController", ["$scope
         $scope.reverse = false;
 
         if ($route.current.readPlayersDetail) {
-            readPlayers = PlayersService.readPlayersDetail;
+            readPlayers = playersService.readPlayersDetail;
         }
 
         readPlayers($routeParams.yearOfBirth)

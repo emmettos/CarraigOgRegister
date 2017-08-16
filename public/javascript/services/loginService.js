@@ -1,4 +1,4 @@
-angular.module("loginService", []).factory("LoginService", ["$http", 
+angular.module("app.service.loginService", []).factory("loginService", ["$http", 
     function ($http) {
         return {
             login : function (userCredentials) {

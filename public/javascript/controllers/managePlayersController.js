@@ -1,5 +1,5 @@
-angular.module("managePlayersController", []).controller("ManagePlayersController", ["$scope", "$rootScope","$location", "$anchorScroll", "$window", "PlayersService", 
-    function ($scope, $rootScope, $location, $anchorScroll, $window, PlayersService) {
+angular.module("app.controller.managePlayersController", []).controller("managePlayersController", ["$scope", "$rootScope","$location", "$anchorScroll", "$window", "playersService", 
+    function ($scope, $rootScope, $location, $anchorScroll, $window, playersService) {
         var me = this;
 
         if (!$rootScope.payload) {
@@ -47,7 +47,7 @@ angular.module("managePlayersController", []).controller("ManagePlayersControlle
         });
 
         $scope.readPlayersForYear = function () {
-            PlayersService.readAllPlayersDetail($scope.selectedYear)
+            playersService.readAllPlayersDetail($scope.selectedYear)
                 .then(function (response) {
                     $scope.playersForYear = response.data.body.players;
 
@@ -96,7 +96,7 @@ angular.module("managePlayersController", []).controller("ManagePlayersControlle
 
         $scope.savePlayer = function () {
             if ($scope.playerDetails._id) {
-                PlayersService.updatePlayer($scope.playerDetails, $rootScope.currentSettings.year, $scope.selectedYear)
+                playersService.updatePlayer($scope.playerDetails, $rootScope.currentSettings.year, $scope.selectedYear)
                     .then(function (response) {
                         var savedPlayer = null,
                             returnedPlayer = response.data.body.player;
@@ -135,7 +135,7 @@ angular.module("managePlayersController", []).controller("ManagePlayersControlle
             else {
                 $scope.playerDetails.dateOfBirth = $scope.dateOfBirth.toISOString();
 
-                PlayersService.createPlayer($scope.playerDetails, $rootScope.currentSettings.year, $scope.selectedYear)
+                playersService.createPlayer($scope.playerDetails, $rootScope.currentSettings.year, $scope.selectedYear)
                     .then(function (response) {
                         var returnedPlayer = response.data.body.player;
 

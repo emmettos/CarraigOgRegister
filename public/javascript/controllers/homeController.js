@@ -1,16 +1,16 @@
-angular.module("homeController", []).controller("HomeController", ["$scope", "$rootScope", "HomeService", 
-    function ($scope, $rootScope, HomeService) {
+angular.module("app.controller.homeController", []).controller("homeController", ["$scope", "$rootScope", "homeService", 
+    function ($scope, $rootScope, homeService) {
         if (!$rootScope.payload) {
             $location.path("/");
 
             return;
         }
 
-        HomeService.readCurrentSettings()
+        homeService.readCurrentSettings()
             .then(function (response) {
                 $rootScope.currentSettings = response.data.body.currentSettings;
 
-                return HomeService.readGroups();
+                return homeService.readGroups();
             })
             .then(function (response) {
                 var groupIndex = 0,

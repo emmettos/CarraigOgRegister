@@ -1,5 +1,5 @@
-angular.module("loginController", []).controller("LoginController", ["$scope", "$rootScope", "$location", "LoginService", 
-    function ($scope, $rootScope, $location, LoginService) {
+angular.module("app.controller.loginController", []).controller("loginController", ["$scope", "$rootScope", "$location", "loginService", 
+    function ($scope, $rootScope, $location, loginService) {
         var me  = this;
 
         $scope.changePasswordMode = false;
@@ -28,7 +28,7 @@ angular.module("loginController", []).controller("LoginController", ["$scope", "
         me.login = function () {
             $scope.loginFailed = false;
 
-            LoginService.login($scope.userCredentials)
+            loginService.login($scope.userCredentials)
                 .then(function (response) {
                     $rootScope.homeURL = "#/home";
 
@@ -49,7 +49,7 @@ angular.module("loginController", []).controller("LoginController", ["$scope", "
         };
     
         me.changePassword = function () {
-            LoginService.changePassword($scope.userCredentials)
+            loginService.changePassword($scope.userCredentials)
                 .then(function (response) {
                     $scope.passwordChanged = true;
                     $scope.changePasswordMode = false;

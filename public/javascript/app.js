@@ -4,19 +4,19 @@ var carraigOgRegisterApp = angular.module("carraigOgRegister",
 		"appRoutes", 
 		"ui.bootstrap",
         "app.directive.passwordConfirm", 
-		"homeController",
-		"loginController", 
-        "playersController",
-        "managePlayersController",
-		"authenticationService",
-		"homeService",
-		"loginService",
-		"playersService"])
-    .factory("httpRequestInterceptor", ["$rootScope", "AuthenticationService",
-        function ($rootScope, AuthenticationService) {
+		"app.controller.homeController",
+		"app.controller.loginController", 
+        "app.controller.playersController",
+        "app.controller.managePlayersController",
+		"app.service.authenticationService",
+		"app.service.homeService",
+		"app.service.loginService",
+		"app.service.playersService"])
+    .factory("httpRequestInterceptor", ["$rootScope", "authenticationService",
+        function ($rootScope, authenticationService) {
             return {
                 request: function (config) {
-                    var token = AuthenticationService.getToken();
+                    var token = authenticationService.getToken();
 
                     if (token) {
                         config.headers.Authorization = "Bearer " + token;
@@ -26,12 +26,12 @@ var carraigOgRegisterApp = angular.module("carraigOgRegister",
 
                 response: function (response) {
                     if (response.headers && response.headers("Authorization")) {
-                        AuthenticationService.saveToken(response.headers("Authorization").replace("Bearer ", ""));
+                        authenticationService.saveToken(response.headers("Authorization").replace("Bearer ", ""));
                     }
 
-                    $rootScope.payload = AuthenticationService.readPayload();
+                    $rootScope.payload = authenticationService.readPayload();
 
-                    return response;			
+                    return response;
                 }
             }
         }
@@ -46,7 +46,7 @@ var carraigOgRegisterApp = angular.module("carraigOgRegister",
 		$httpProvider.interceptors.push("httpRequestInterceptor");
 		$httpProvider.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 	}])
-  	.run(["$rootScope", "AuthenticationService", function ($rootScope, AuthenticationService) {
+  	.run(["$rootScope", function ($rootScope) {
         $rootScope.homeURL = "#/";
         $rootScope.payload = null;
                  

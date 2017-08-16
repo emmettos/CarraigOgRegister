@@ -1,4 +1,4 @@
-angular.module("homeService", []).factory("HomeService", ["$http", 
+angular.module("app.service.homeService", []).factory("homeService", ["$http", 
     function ($http) {
         return {
             readCurrentSettings : function () {

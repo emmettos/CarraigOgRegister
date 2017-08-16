@@ -1,4 +1,4 @@
-angular.module("authenticationService", []).factory("AuthenticationService", ["$window", 
+angular.module("app.service.authenticationService", []).factory("authenticationService", ["$window", 
     function ($window) {
         return {
             saveToken : function (token) {

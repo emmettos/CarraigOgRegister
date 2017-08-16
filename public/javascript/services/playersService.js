@@ -1,4 +1,4 @@
-angular.module("playersService", []).factory("PlayersService", ["$http", 
+angular.module("app.service.playersService", []).factory("playersService", ["$http", 
     function ($http) {
         return {
             readPlayersSummary : function (yearOfBirth) {
