@@ -1,6 +1,7 @@
-/node_modules
-/db_scripts
-/db_backups
-/public/libs
+.vscode/
+node_modules/
+db_scripts/
+db_backups/
+public/libs/
 npm-debug.log
 /*.env
