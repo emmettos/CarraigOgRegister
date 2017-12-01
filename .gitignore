@@ -3,5 +3,6 @@ node_modules/
 db_scripts/
 db_backups/
 public/libs/
+.DS_Store
 npm-debug.log
 /*.env
