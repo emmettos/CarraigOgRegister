@@ -16,6 +16,11 @@ gulp.task("javascript", function () {
         .pipe(gulp.dest("./public/javascript"));
 });
 
+gulp.task("html", function () {
+    gulp.src("./src/html/**/*.*")
+        .pipe(gulp.dest("./public"));
+});
+
 gulp.task("build", function () {
-    gulp.start(["css", "javascript"]);
+    gulp.start(["css", "javascript", "html"]);
 });
