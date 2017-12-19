@@ -1,0 +1,8 @@
+[
+    "./libs/angular/angular.js",
+    "./libs/angular-route/angular-route.js",
+    "./libs/angular-messages/angular-messages.js",
+    "./libs/angular-bootstrap/ui-bootstrap-tpls.js",
+    "./libs/moment/moment.js",
+    "./src/javascript/**/*.js"
+]

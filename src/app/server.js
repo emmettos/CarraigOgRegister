@@ -7,9 +7,9 @@ var bunyan          = require("bunyan");
 var app = express();
 
 var config          = require("./config/config");
-var authenticator   = require("./app/authenticator");
+var authenticator   = require("./authenticator");
 
-var currentSettings = require("./app/models/currentSettings");
+var currentSettings = require("./models/currentSettings");
 
 var port = process.env.PORT || 8081;
 
@@ -43,9 +43,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.json( {type: "application/vnd.api+json"} ));
 app.use(bodyParser.urlencoded( { extended: true } ));
 app.use(methodOverride("X-HTTP-Method-Override"));
-app.use(express.static(__dirname + "/public"));
+app.use(express.static("public"));
 
-require("./app/logger")(app, bunyan.createLogger(loggerOptions));
+require("./logger")(app, bunyan.createLogger(loggerOptions));
 
 app.use(function (request, response, next) {
     if (mongoose.connection.readyState !== 1) {
@@ -71,8 +71,8 @@ mongoose.connect(config.database)
     .then(function (settings) {
         app.currentSettings = settings;
 
-        require("./app/routes")(app, express.Router());
-        require("./app/errorHandlers")(app);
+        require("./routes")(app, express.Router());
+        require("./errorHandlers")(app);
 
         app.listen(port);
     })

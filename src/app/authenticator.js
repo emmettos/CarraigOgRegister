@@ -2,7 +2,7 @@
 
 var JSONWebToken = require("jsonwebtoken");
 
-var config = require("../config/config");
+var config = require("./config/config");
 
 var group   = require("./models/group");
 var user 	= require("./models/user");

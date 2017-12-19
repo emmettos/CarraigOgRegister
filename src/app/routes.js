@@ -2,7 +2,7 @@
 
 var mongoose = require("mongoose");
 
-var config          = require("../config/config");
+var config          = require("./config/config");
 var authenticator   = require("./authenticator");
 var authorizer      = require("./authorizer");
 
