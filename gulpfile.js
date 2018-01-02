@@ -4,6 +4,7 @@ var rename      = require("gulp-rename");
 var uglify      = require("gulp-uglify");
 var cleanCSS    = require("gulp-clean-css");
 var plumber     = require("gulp-plumber");
+var revAll      = require("gulp-rev-all");
 
 var scripts = require("./scripts");
 var styles  = require("./styles");
@@ -41,6 +42,19 @@ gulp.task("html", function () {
         .pipe(gulp.dest("./public"));
 });
 
+gulp.task("version", ["html", "css", "scripts"], function () {
+    gulp.src([
+            "./public/javascript/scripts.min.js",
+            "./public/css/styles.min.css",
+            "./public/index.html"
+        ])
+        .pipe(plumber())
+        .pipe(revAll.revision({
+            dontRenameFile: ["index.html"]
+        }))
+        .pipe(gulp.dest("./public"))
+});
+
 gulp.task("build", function () {
-    gulp.start(["html", "css", "scripts"]);
+    gulp.start(["version"]);
 });

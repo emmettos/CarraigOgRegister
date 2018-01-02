@@ -16,6 +16,7 @@
     "gulp-clean-css": "~3.9.2",
     "gulp-concat": "~2.6.1",
     "gulp-rename": "~1.2.2",
+    "gulp-rev-all": "~0.9.7",
     "gulp-uglify": "~3.0.0",
     "jsonwebtoken": "~7.1.9",
     "method-override": "~2.0.2",
