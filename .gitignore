@@ -1,6 +1,5 @@
 .vscode/
 node_modules/
-db_scripts/
 db_backups/
 public/
 .DS_Store
