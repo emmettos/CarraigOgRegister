@@ -1,6 +1,7 @@
 .vscode/
 node_modules/
 db_backups/
+db_scripts/
 public/
 .DS_Store
 npm-debug.log

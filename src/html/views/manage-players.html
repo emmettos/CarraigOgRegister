@@ -10,12 +10,12 @@
             <div class="form-group col-md-2">
                 <div class="input-group">
                     <input  type="text" 
-                            name="dateOfBirth"
+                            name="localeDateOfBirth"
                             class="form-control" 
                             placeholder="dd/MM/YYYY"
                             uib-datepicker-popup="dd/MM/yyyy"
-                            ng-disabled="!selectedYear" 
-                            ng-model="dateOfBirth"
+                            ng-disabled="!selectedYear"
+                            ng-model="localeDateOfBirth"
                             is-open="dateOfBirthDatePickerStatus.opened" 
                             datepicker-options="dateOptions" 
                             close-text="Close" 
@@ -24,13 +24,13 @@
                         <button type="button" class="btn btn-default" ng-disabled="!selectedYear" ng-click="openDateOfBirthDatePicker()"><i class="fa fa-calendar"></i></button>
                     </span>
                 </div>
-                <span class="text-info" ng-show="selectedYear && !dateOfBirth">Enter player Date of Birth</span>
+                <span class="text-info" ng-show="selectedYear && !localeDateOfBirth">Enter player Date of Birth</span>
             </div>
             <div class="form-group col-md-2">
                 <input  type="button"
                         class="btn btn-info" 
                         value="Search Players"
-                        ng-disabled="!dateOfBirth || playerSaved"
+                        ng-disabled="!localeDateOfBirth || playerSaved"
                         ng-click="searchPlayers()">
             </div>
         </div>
@@ -70,14 +70,14 @@
             <legend></legend>
             <div class="row">
                 <div class="form-group col-md-2 col-md-offset-5">
-                    <label class="control-label" for="lastRegisteredDate">Last Registered Date:</label>
+                    <label class="control-label" for="localeLastRegisteredDate">Last Registered Date:</label>
                     <p class="input-group">
                         <input  type="text" 
-                                name="lastRegisteredDate"
+                                name="localeLastRegisteredDate"
                                 class="form-control" 
                                 placeholder="dd/MM/YYYY"
                                 uib-datepicker-popup="dd/MM/yyyy" 
-                                ng-model="playerDetails.lastRegisteredDate"
+                                ng-model="localeLastRegisteredDate"
                                 ng-disabled="!searchedForPlayers || playerSaved"
                                 is-open="lastRegisteredDatePickerStatus.opened" 
                                 datepicker-options="dateOptions" 

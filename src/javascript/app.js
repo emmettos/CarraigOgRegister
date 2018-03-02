@@ -52,3 +52,14 @@ var carraigOgRegisterApp = angular.module("carraigOgRegister",
                  
     	$rootScope.alerts = [];
 	}]);
+
+Number.prototype.pad = function(size) {
+    var paddedString = String(this);
+    
+    while (paddedString.length < (size || 2)) {
+        paddedString = "0" + paddedString;
+    }
+
+    return paddedString;
+};
+

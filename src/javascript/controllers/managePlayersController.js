@@ -21,7 +21,8 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
         $scope.playerSelected = false;
         $scope.playerSaved = false;
 
-        $scope.dateOfBirth = null;
+        $scope.localeDateOfBirth = null;
+        $scope.localeLastRegisteredDate = null;
         $scope.matchedPlayersDetails = [];
         $scope.playerDetails = {};
 
@@ -41,7 +42,7 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
             $scope.lastRegisteredDatePickerStatus.opened = true;
         };
 
-        $scope.$watch("dateOfBirth", function () {
+        $scope.$watch("localeDateOfBirth", function () {
             me.resetPage(false);
             me.resetPlayerDetails();
         });
@@ -51,7 +52,8 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
                 .then(function (response) {
                     $scope.playersForYear = response.data.body.players;
 
-                    $scope.dateOfBirth = null;
+                    $scope.localeDateOfBirth = null;
+                    $scope.localeLastRegisteredDate = null;
 
                     me.resetPage(false);
                     me.resetPlayerDetails();
@@ -59,14 +61,14 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
         };
 
         $scope.searchPlayers = function () {
-            var dateOfBirthISOString = $scope.dateOfBirth.toISOString();
-
-            if (!$scope.dateOfBirth) {
+            if (!$scope.localeDateOfBirth) {
                 return;
             }
-            
+
+            $scope.dateOfBirth = moment.utc($scope.localeDateOfBirth).add(0 - $scope.localeDateOfBirth.getTimezoneOffset(), "m");
+
             $scope.matchedPlayersDetails = $scope.playersForYear.filter(function (item) {
-                return item.dateOfBirth === dateOfBirthISOString;
+                return $scope.dateOfBirth.isSame(item.dateOfBirth);
             });
 
             $scope.searchedForPlayers = true;
@@ -78,8 +80,9 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
             $scope.playerDetails._id = matchedPlayerDetails._id;
             $scope.playerDetails.__v = matchedPlayerDetails.__v;
 
-            $scope.playerDetails.lastRegisteredDate = moment(matchedPlayerDetails.lastRegisteredDate, moment.ISO_8601, true).toDate();
-            
+            var lrd = moment(matchedPlayerDetails.lastRegisteredDate).toDate();
+            $scope.localeLastRegisteredDate = moment(lrd).add(lrd.getTimezoneOffset(), "m").toDate();
+
             $scope.playerDetails.firstName = matchedPlayerDetails.firstName;
             $scope.playerDetails.surname = matchedPlayerDetails.surname;
             $scope.playerDetails.dateOfBirth = matchedPlayerDetails.dateOfBirth;
@@ -95,6 +98,9 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
         };
 
         $scope.savePlayer = function () {
+            var lrd = $scope.localeLastRegisteredDate;
+            $scope.playerDetails.lastRegisteredDate = moment.utc(lrd).add(0 - lrd.getTimezoneOffset(), "m").toISOString();
+
             if ($scope.playerDetails._id) {
                 playersService.updatePlayer($scope.playerDetails, $rootScope.currentSettings.year, $scope.selectedYear)
                     .then(function (response) {
@@ -107,8 +113,8 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
                         
                         savedPlayer.__v = returnedPlayer.__v;
 
-                        savedPlayer.lastRegisteredDate = moment(returnedPlayer.lastRegisteredDate, moment.ISO_8601, true).toDate();
-                        
+                        savedPlayer.lastRegisteredDate = returnedPlayer.lastRegisteredDate;
+                                    
                         savedPlayer.addressLine1 = returnedPlayer.addressLine1;
                         savedPlayer.addressLine2 = returnedPlayer.addressLine2;
                         savedPlayer.addressLine3 = returnedPlayer.addressLine3;
@@ -139,8 +145,6 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
                     .then(function (response) {
                         var returnedPlayer = response.data.body.player;
 
-                        returnedPlayer.lastRegisteredDate = moment(returnedPlayer.lastRegisteredDate, moment.ISO_8601, true).toDate();
-
                         $scope.playersForYear.push(returnedPlayer)
 
                         me.resetPage(true);
@@ -159,8 +163,8 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
         };
         
         $scope.reset = function () {
-            $scope.dateOfBirth = null;
-
+            $scope.localeDateOfBirth = null;
+            
             me.resetPage(false);
             me.resetPlayerDetails();
 
@@ -179,7 +183,7 @@ angular.module("app.controller.managePlayersController", []).controller("manageP
             $scope.playerDetails._id = null;
             $scope.playerDetails.__v = null;
 
-            $scope.playerDetails.lastRegisteredDate = null;
+            $scope.localeLastRegisteredDate = null;
             
             $scope.playerDetails.firstName = "";
             $scope.playerDetails.surname = "";
