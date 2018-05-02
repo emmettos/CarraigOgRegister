@@ -1,0 +1,98 @@
+<div>
+  <div class="row text-center">
+      <div class="col-lg-12">
+          <h2><label class="badge badge-light">{{ groupName }} Players</label></h2>
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-sm-3 col-md-2 col-lg-1">
+          <h4><span class="badge badge-primary">Total {{ registeredCount }}</span></h4>
+      </div>
+      <div class="col-sm-3 col-md-2 col-lg-1">
+          <h4><span class="badge badge-success">New {{ newCount }}</span></h4>
+      </div>
+      <div class="col-sm-3 col-md-2 col-lg-1">
+          <h4><span class="badge badge-warning">Missing {{ missingCount }}</span></h4>
+      </div>
+      <div class="col-sm-4 col-md-6 col-lg-9">
+      </div>
+  </div>
+  <br />
+  <form [formGroup]="filterForm">
+    <div class="form-row align-items-center">
+      <div class="col-md-4 col-lg-3">
+        <input  type="text" 
+                formControlName="nameFilter" 
+                class="form-control" 
+                placeholder="Name Filter">
+      </div>
+      <div class="col-md-4 col-lg-3">
+        <div class="form-check">
+          <input  type="checkbox" 
+                  formControlName="currentlyRegistered"
+                  class="form-check-input"> 
+          <label class="form-check-label">Currently Registered Only</label>
+        </div>
+      </div>
+      <div class="col-md-4 col-lg-6 text-right">
+        <span>Displaying {{ filteredPlayers?.length }} Players</span>
+      </div>
+    </div>
+  </form>
+  <br />
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped table-hover">
+      <thead>
+        <tr>
+          <th (click)="onClickHeader('playerState')" class="text-right"><span class="float-left mr-1">Status</span><i [ngClass]="headerSortCSSClass('playerState')"></i></th>
+          <th (click)="onClickHeader('surname')" class="text-right"><span class="float-left mr-1">Surname</span><i [ngClass]="headerSortCSSClass('surname')"></i></th>
+          <th (click)="onClickHeader('firstName')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('firstName')"></i></th>
+          <th (click)="onClickHeader('addressLine2')" class="text-right"><span class="float-left mr-1">Address</span><i [ngClass]="headerSortCSSClass('addressLine2')"></i></th>
+          <th (click)="onClickHeader('dateOfBirth')" class="text-right"><span class="float-left mr-1">DOB</span><i [ngClass]="headerSortCSSClass('dateOfBirth')"></i></th>
+          <th (click)="onClickHeader('lastRegisteredDate')" class="text-right"><span class="float-left mr-1">Registered</span><i [ngClass]="headerSortCSSClass('lastRegisteredDate')"></i></th>
+          <th (click)="onClickHeader('medicalConditions')" class="text-right"><span class="float-left mr-1">Medical</span><i [ngClass]="headerSortCSSClass('medicalConditions')"></i></th>
+          <th (click)="onClickHeader('school')" class="text-right"><span class="float-left mr-1">School</span><i [ngClass]="headerSortCSSClass('school')"></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let currentPlayer of filteredPlayers" (click)="onClickRow(content, currentPlayer._id)">
+          <td><span class="badge player-detail-badge" [ngClass]="playerStateCSSClass(currentPlayer)"> </span></td>
+          <td>{{ currentPlayer.surname }}</td>
+          <td>{{ currentPlayer.firstName }}</td>
+          <td>{{ currentPlayer.addressLine2 }}</td>
+          <td>{{ currentPlayer.dateOfBirth | date : "dd/MM/yyyy" }}</td>
+          <td>{{ currentPlayer.lastRegisteredDate | date : "dd/MM/yyyy" }}</td>
+          <td>{{ currentPlayer.medicalConditions }}</td>
+          <td>{{ currentPlayer.school }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<ng-template #content>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-header">
+        <h5>{{ selectedPlayer?.firstName + ' ' + selectedPlayer?.surname }}</h5>
+        <p>
+          {{ selectedPlayer?.addressLine1 }}<br>
+          {{ selectedPlayer?.addressLine2 }}<br>
+          {{ selectedPlayer?.addressLine3 }}
+        </p>
+      </div>
+      <div class="card-body">
+        <p class="card-text"><strong>Date of Birth:</strong> {{ selectedPlayer?.dateOfBirth | date : "dd/MM/yyyy" }}</p>
+        <p class="card-text"><strong>Medical Conditions:</strong> {{ selectedPlayer?.medicalConditions }}</p>
+        <p class="card-text"><strong>Contact Name:</strong> {{ selectedPlayer?.contactName }}</p>
+        <p class="card-text"><strong>Contact Mobile:</strong> {{ selectedPlayer?.contactMobileNumber }}</p>
+        <p class="card-text"><strong>Contact Phone:</strong> {{ selectedPlayer?.contactHomeNumber }}</p>
+        <p class="card-text"><strong>Contact Email:</strong> {{ selectedPlayer?.contactEmailAddress }}</p>
+        <p class="card-text"><strong>School:</strong> {{ selectedPlayer?.school }}</p>
+      </div>
+      <div class="card-footer text-muted">
+        Last Registered Date: {{ selectedPlayer?.lastRegisteredDate | date : "dd/MM/yyyy" }}
+      </div>
+    </div>
+  </div>
+</ng-template>

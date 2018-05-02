@@ -2,8 +2,7 @@
 node_modules/
 db_backups/
 db_scripts/
-public/
+dist/
 .DS_Store
 npm-debug.log
 /*.env
-libs/

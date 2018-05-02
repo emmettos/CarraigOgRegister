@@ -1,0 +1,13 @@
+<div>
+  <div class="row text-center">
+    <div class="col-lg-12">
+      <h2><label class="label label-default">{{ currentYear }} Carraig Og Groups</label></h2>
+    </div>
+  </div>
+  <br>
+  <div class="row">
+    <div *ngFor="let group of groups" class="col-md-6 col-lg-4 mb-3">
+      <app-group-thumbnail [group]="group"></app-group-thumbnail>
+    </div>
+  </div>
+</div>

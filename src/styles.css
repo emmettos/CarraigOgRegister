@@ -1,0 +1,32 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~angular2-toaster/toaster.min.css";
+@import "~bootstrap/dist/css/bootstrap.min.css";
+@import "~font-awesome/css/font-awesome.min.css";
+
+th {
+  white-space: nowrap;
+}
+
+a.card:link {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.card:visited {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.card:hover {
+  color: inherit;
+  text-decoration: none;
+}
+
+a.card:active {
+  color: inherit;
+  text-decoration: none;
+}
+
+.invalid-feedback {
+  display: block;
+}

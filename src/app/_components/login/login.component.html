@@ -1,0 +1,101 @@
+<div>
+  <div class="row">
+    <div class="col-md-12">
+      <h2 class="text-center">Please enter your login details to enter Carraig Og Register</h2>
+    </div>
+  </div>
+  <div class="row text-center">
+      <div class="col-md-12">
+          <h3 *ngIf="authenticationFailed" class="text-warning"><strong>{{ errorMessage }}</strong></h3>
+          <h3 *ngIf="passwordChanged" class="text-success"><strong>Password Successfully Changed</strong></h3>
+      </div>
+  </div>
+  <br />
+  <div class="row">
+    <div class="col-md-12">
+      <div class="row">
+        <div class="col-sm-4 offset-sm-4">
+          <form [formGroup]="loginForm" (ngSubmit)="onSubmit(loginForm.value)" novalidate>
+            <div class="row">
+              <div class="col-md-12 form-group">
+                <div class="checkbox">
+                  <label>
+                    <input  type="checkbox" 
+                            formControlName="changePasswordMode"
+                            (change)="onChangeChangePasswordMode()" 
+                            autofocus> Change Password
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="panel panel-default">
+              <div class="panel-heading">
+                <div class="row">
+                  <div class="col-md-12 form-group">
+                    <input  type="email" 
+                            formControlName="emailAddress" 
+                            class="form-control" 
+                            [ngClass]="{'is-invalid': emailAddressControl.invalid && emailAddressControl.touched}" 
+                            placeholder="Email Address" 
+                            autofocus>
+                    <validation-message [control]="emailAddressControl"></validation-message>
+                  </div>
+                </div>
+                <div formGroupName="passwordGroup">
+                  <div class="row">
+                    <div class="col-md-12 form-group">
+                      <input  type="password" 
+                              formControlName="password" 
+                              class="form-control"
+                              [ngClass]="{'is-invalid': passwordControl.invalid && passwordControl.touched}" 
+                              maxlength="12" 
+                              placeholder="Password">
+                      <validation-message [control]="passwordControl"></validation-message>
+                    </div>
+                  </div>
+                  <div [hidden]="!changePasswordModeControl.value">
+                    <div class="row">
+                      <div class="col-md-12 form-group">
+                        <input  type="password" 
+                                formControlName="newPassword" 
+                                class="form-control" 
+                                [ngClass]="{'is-invalid': newPasswordControl.invalid && newPasswordControl.touched}" 
+                                maxlength="12" 
+                                placeholder="New Password">
+                        <validation-message [control]="newPasswordControl"></validation-message>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12 form-group">
+                        <input  type="password" 
+                                formControlName="confirmPassword" 
+                                class="form-control" 
+                                [ngClass]="{'is-invalid': confirmPasswordControl.invalid && confirmPasswordControl.touched}" 
+                                maxlength="12" 
+                                placeholder="Confirm New Password">
+                        <validation-message [control]="confirmPasswordControl"></validation-message>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="row text-center">
+                  <div class="col-md-12 form-group">
+                    <button type="submit" 
+                            [disabled]="loginForm.invalid" 
+                            class="btn btn-primary">
+                      {{ changePasswordModeControl.value && "Change Password" || "Sign In" }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 
+<p>Form values: {{ loginForm.value | json }}</p>
+<p> Form status: {{ loginForm.status}}</p>
+-->

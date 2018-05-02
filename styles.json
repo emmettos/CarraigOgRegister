@@ -1,7 +1,0 @@
-[
-    "./libs/bootstrap/dist/css/bootstrap.min.css",
-    "./libs/bootstrap/fonts/*.*",
-    "./libs/font-awesome/css/font-awesome.min.css",
-    "./libs/font-awesome/fonts/*.*",
-    "./src/css/**/*.css"
-]
