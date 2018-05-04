@@ -6,7 +6,8 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { APP_SETTINGS } from '../../_helpers/index';
 import { IPlayer, PlayerState } from '../../_models/index';
-import { AlertService, PlayersService } from '../../_services/index';
+import { PlayersService } from '../../_services/index';
+import { AlertService } from '../../_modules/shared/_services/index';
 
 
 @Component({

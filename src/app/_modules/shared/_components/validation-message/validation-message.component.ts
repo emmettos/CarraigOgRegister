@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { ValidationService } from '../../../_services/index';
+import { ValidationService } from '../../_services/index';
 
 
 @Component({
