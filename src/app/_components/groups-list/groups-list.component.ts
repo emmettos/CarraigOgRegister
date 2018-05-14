@@ -30,7 +30,7 @@ export class GroupsListComponent implements OnInit {
         errorResponse => {
           console.error(errorResponse);
 
-          this.alertService.error(errorResponse.error);
+          this.alertService.error(errorResponse.message, errorResponse.error.error.message);
         });
   }
 }

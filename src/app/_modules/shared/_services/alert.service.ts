@@ -25,17 +25,17 @@ export class AlertService {
         });
   }
 
-  error(message: string, keepAfterNavigationChange: boolean = false) {
-    this.keepAfterNavigationChange = keepAfterNavigationChange;
-    this.subject.next({ type: 'error', text: message });
-  }
-
-  getMessage(): Observable<any> {
+  alertStream(): Observable<any> {
     return this.subject.asObservable();
   }
 
-  success(message: string, keepAfterNavigationChange: boolean = false) {
+  error(header: string, message: string, keepAfterNavigationChange: boolean = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
-    this.subject.next({ type: 'success', text: message });
+    this.subject.next({ type: 'error', title: header, text: message });
+  }
+
+  success(header: string, message: string, keepAfterNavigationChange: boolean = false) {
+    this.keepAfterNavigationChange = keepAfterNavigationChange;
+    this.subject.next({ type: 'success', title: header, text: message });
   }
 }

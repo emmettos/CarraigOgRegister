@@ -9,16 +9,16 @@ import { AlertService } from '../../_services/index';
   templateUrl: './alert.component.html'
 })
 export class AlertComponent implements OnInit {
-  message: any;
+  alert: any;
 
   constructor(private alertService: AlertService) { 
   }
 
   ngOnInit() {
-    this.alertService.getMessage()
+    this.alertService.alertStream()
       .subscribe(
-        message => {
-          this.message = message;
+        alert => {
+          this.alert = alert;
         }
       )
   }

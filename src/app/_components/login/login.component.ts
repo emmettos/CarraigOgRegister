@@ -101,12 +101,14 @@ export class LoginComponent implements OnInit {
         errorResponse => {
           console.error(errorResponse);
 
+          let errorMessage = errorResponse.error.error.message;
+
           if (errorResponse.status === 401) {
-            this.errorMessage = errorResponse.error.error.message;
+            this.errorMessage = errorMessage;
             this.authenticationFailed = true;
           }
           else {
-            this.alertService.error(errorResponse.error);
+            this.alertService.error(errorResponse.message, errorMessage);
           }
         });
   }
@@ -120,12 +122,14 @@ export class LoginComponent implements OnInit {
         errorResponse => {
           console.error(errorResponse);
 
+          let errorMessage = errorResponse.error.error.message;
+
           if (errorResponse.status === 401) {
-            this.errorMessage = errorResponse.error.error.message;
+            this.errorMessage = errorMessage;
             this.authenticationFailed = true;
           }
           else {
-            this.alertService.error(errorResponse.message);
+            this.alertService.error(errorResponse.message, errorMessage);
           }
         });
   }

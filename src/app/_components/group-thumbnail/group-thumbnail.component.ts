@@ -12,7 +12,6 @@ import { IGroup, IPayload, IUserProfile } from '../../_models/index';
 export class GroupThumbnailComponent implements OnInit {
   @Input() group: IGroup;
   
-  enum 
   constructor(private authorizationService: AuthorizationService) { 
   }
 
