@@ -7,8 +7,11 @@
 
   <div class="navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul class="navbar-nav mr-auto">
-      <li class="nav-item">
-        <a *ngIf="authorizationService.getActivePayload?.userProfile.isAdministrator" routerLink="/manage-players" routerLinkActive="active" class="nav-link">Manage Players</a>
+      <li ngbDropdown class="nav-item dropdown">
+        <a *ngIf="authorizationService.getActivePayload?.userProfile.isAdministrator" id="dropdownAdministration" class="nav-link dropdown-toggle" ngbDropdownToggle>Administration</a>
+        <div ngbDropdownMenu aria-labelledby="dropdownAdministration">
+          <a class="dropdown-item" routerLink="/administration/manage-players">Manage Players</a>
+        </div>
       </li>
     </ul>
     <ul class="navbar-nav ml-auto">

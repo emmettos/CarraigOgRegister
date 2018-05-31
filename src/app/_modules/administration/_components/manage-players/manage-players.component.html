@@ -1,0 +1,53 @@
+<div>
+  <form [formGroup]="managePlayersForm" (ngSubmit)="onSubmit()" novalidate>
+    <div class="row">
+      <div class="form-group col-lg-2 offset-lg-3">
+        <select formControlName="groupYear"
+                [ngClass]="{ 'is-invalid': managePlayersForm.controls['groupYear'].invalid }" 
+                class="form-control"
+                (change)="onChangeGroupYear($event.target.value)">
+          <option *ngFor="let groupYear of groupYears">{{ groupYear }}</option>
+        </select>
+      </div>
+      <div class="form-group col-lg-2">
+        <app-date-picker 
+          [parentForm]="managePlayersForm" 
+          [resetDate]="resetDateOfBirth" 
+          [minDate]="dateOfBirthMinDate"
+          [maxDate]="dateOfBirthMaxDate"
+          [startDate]="dateOfBirthStartDate"
+          [enabled]="!managePlayersForm.get('groupYear').invalid"></app-date-picker>
+      </div>
+      <div class="form-group col-lg-2">
+        <input  type="submit"
+                class="btn btn-info"
+                [disabled]="managePlayersForm.invalid || !groupPlayers"
+                value="Search Players">
+      </div>
+    </div>
+    <hr/>
+    <div class="table-responsive" [hidden]="!matchedPlayers?.length">
+      <table class="table table-bordered table-striped table-hover select-row">
+        <thead>
+          <tr>
+            <th>Surname</th>
+            <th>First Name</th>
+            <th>Address Line 1</th>
+            <th>Address Line 2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let currentPlayer of matchedPlayers">
+            <td>{{ currentPlayer.surname }}</td>
+            <td>{{ currentPlayer.firstName }}</td>
+            <td>{{ currentPlayer.addressLine1 }}</td>
+            <td>{{ currentPlayer.addressLine2 }}</td>
+          </tr>                
+        </tbody>
+      </table>
+    </div>
+    <hr/>
+  </form>
+</div>
+<p>Form values: {{ managePlayersForm.value | json }}</p>
+<p>Form status: {{ managePlayersForm.status }}</p>

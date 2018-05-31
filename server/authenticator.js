@@ -22,11 +22,6 @@ exports.authenticate = function (request, response, next) {
       JSONWebToken.verify(token, config.secret, function (error, payload) {
         try {
           if (!error) {
-          //   if (request.payload) {
-          //     delete request.payload;
-          //   }
-          // }
-          // else {
             request.logger.trace({ payload: payload });
 
             request.payload = payload;
@@ -49,11 +44,6 @@ exports.authenticate = function (request, response, next) {
       });
     }
     else {
-      // if (request.payload) {
-      //   delete request.payload;
-      // }
-
-      // This is to prevent a browser from using a cached header if Express is going to return a 304 status code.
       if (request.xhr) {
         userProfile.ID = null;
         userProfile.isAdministrator = false;
@@ -116,7 +106,7 @@ exports.createToken = function (request, currentUser) {
 
 var signToken = function (userProfile, expiration) {
   return JSONWebToken.sign({
-    exp: expiration || Math.floor(Date.now() / 1000) + (60 * 1),
+    exp: expiration || Math.floor(Date.now() / 1000) + (60 * 60),
     userProfile
   }, config.secret);
 }

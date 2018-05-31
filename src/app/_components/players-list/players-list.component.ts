@@ -15,6 +15,8 @@ import { AlertService } from '../../_modules/shared/_services/index';
   styleUrls: ['./players-list.component.css']
 })
 export class PlayersListComponent implements OnInit {
+  playerState = PlayerState;
+  
   filterForm: FormGroup;
 
   nameFilterControl: FormControl;

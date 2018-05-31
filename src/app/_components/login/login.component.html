@@ -38,7 +38,7 @@
                             [ngClass]="{'is-invalid': emailAddressControl.invalid && emailAddressControl.touched}" 
                             placeholder="Email Address" 
                             autofocus>
-                    <validation-message [control]="emailAddressControl"></validation-message>
+                    <app-validation-message [control]="emailAddressControl"></app-validation-message>
                   </div>
                 </div>
                 <div formGroupName="passwordGroup">
@@ -50,7 +50,7 @@
                               [ngClass]="{'is-invalid': passwordControl.invalid && passwordControl.touched}" 
                               maxlength="12" 
                               placeholder="Password">
-                      <validation-message [control]="passwordControl"></validation-message>
+                      <app-validation-message [control]="passwordControl"></app-validation-message>
                     </div>
                   </div>
                   <div [hidden]="!changePasswordModeControl.value">
@@ -62,7 +62,7 @@
                                 [ngClass]="{'is-invalid': newPasswordControl.invalid && newPasswordControl.touched}" 
                                 maxlength="12" 
                                 placeholder="New Password">
-                        <validation-message [control]="newPasswordControl"></validation-message>
+                        <app-validation-message [control]="newPasswordControl"></app-validation-message>
                       </div>
                     </div>
                     <div class="row">
@@ -73,7 +73,7 @@
                                 [ngClass]="{'is-invalid': confirmPasswordControl.invalid && confirmPasswordControl.touched}" 
                                 maxlength="12" 
                                 placeholder="Confirm New Password">
-                        <validation-message [control]="confirmPasswordControl"></validation-message>
+                        <app-validation-message [control]="confirmPasswordControl"></app-validation-message>
                       </div>
                     </div>
                   </div>

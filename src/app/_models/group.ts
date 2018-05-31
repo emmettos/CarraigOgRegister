@@ -9,5 +9,5 @@ export interface IGroup {
 
   numberOfPlayers: number;
 
-  lastUpdatedDate: Date;
+  lastUpdatedDate: string;
 }

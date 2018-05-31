@@ -12,4 +12,8 @@ export class PlayersService {
   readCurrentPlayers(yearOfBirth: number): Observable<any> {
     return this.http.get<any>('/api/playersDetail/' + yearOfBirth);
   }
+
+  readAllPlayers(yearOfBirth: number): Observable<any> {
+    return this.http.get<any>('/api/playersDetail/' + yearOfBirth + '/true');    
+  }
 }

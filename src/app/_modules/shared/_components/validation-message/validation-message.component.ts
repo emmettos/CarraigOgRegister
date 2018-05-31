@@ -5,16 +5,17 @@ import { ValidationService } from '../../_services/index';
 
 
 @Component({
-  selector: 'validation-message',
-  template: `<div class="invalid-feedback" [hidden]="!validationMessage">{{ validationMessage }}</div>`
+  selector: 'app-validation-message',
+  template: `<div class="invalid-feedback" [hidden]="!getValidationMessage">{{ getValidationMessage }}</div>`
 })
 export class ValidationMessageComponent {
-  @Input() control: FormControl;
+  @Input() 
+  control: FormControl;
 
   constructor(private validationService: ValidationService) {
   }
 
-  get validationMessage() {
+  get getValidationMessage() {
     if (this.control.touched) {      
       for (let errorName in this.control.errors) {
         return this.validationService.validationMessage(errorName, this.control.errors[errorName]);

@@ -8,9 +8,10 @@ import { PlayersListComponent } from "./_components/players-list/players-list.co
 
 
 const routes: Routes = [
-  { path: "groups", component: GroupsListComponent, canActivate: [AuthorizationGuard] },
   { path: "login", component: LoginComponent, canActivate: [LoginGuard] },
+  { path: "groups", component: GroupsListComponent, canActivate: [AuthorizationGuard] },
   { path: "players/:groupName/:yearOfBirth", component: PlayersListComponent, canActivate: [AuthorizationGuard] },
+  { path: "administration", loadChildren: "app/_modules/administration/administration.module#AdministrationModule" },
   { path: "", redirectTo: "/login", pathMatch: "full" }
 ];
 

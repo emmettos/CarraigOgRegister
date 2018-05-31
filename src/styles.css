@@ -30,3 +30,17 @@ a.card:active {
 .invalid-feedback {
   display: block;
 }
+
+.btn-outline-secondary.is-invalid {
+  border-top-color: #dc3545;
+  border-right-color: #dc3545;
+  border-bottom-color: #dc3545;
+}
+
+table.select-row tbody tr {
+  cursor: pointer;
+}
+
+table.player-detail tbody tr.missing {
+  color: #ffc107;
+}

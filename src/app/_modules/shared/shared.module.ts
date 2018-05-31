@@ -1,7 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
-  
+import { ReactiveFormsModule } from '@angular/forms';
+
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { AlertComponent } from './_components/alert/alert.component';
+import { DatePickerComponent } from './_components/date-picker/date-picker.component';
 import { ValidationMessageComponent } from './_components/validation-message/validation-message.component';
 
 import { 
@@ -12,10 +16,13 @@ import {
 @NgModule({
   declarations: [
     AlertComponent,
+    DatePickerComponent,
     ValidationMessageComponent,
   ],
   imports: [
-    CommonModule
+    CommonModule,
+    NgbModule,
+    ReactiveFormsModule
   ],
   providers: [
     AlertService,
@@ -23,6 +30,7 @@ import {
   ],
   exports: [
     AlertComponent,
+    DatePickerComponent,
     ValidationMessageComponent    
   ]
 })

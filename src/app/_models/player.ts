@@ -8,14 +8,14 @@ export interface IPlayer {
   addressLine1: string,
   addressLine2: string,
   addressLine3: string,
-  dateOfBirth: Date,
+  dateOfBirth: string,
   medicalConditions: string,
   contactName: string,
   contactMobileNumber: string,
   contactHomeNumber: string,
   contactEmailAddress: string,
   school: string,
-  lastRegisteredDate: Date,
+  lastRegisteredDate: string,
   lastRegisteredYear: number,
   registeredYears: number[]
 }
