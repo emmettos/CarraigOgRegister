@@ -6,8 +6,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { APP_SETTINGS } from '../../_helpers/index';
 import { IPlayer, PlayerState } from '../../_models/index';
-import { PlayersService } from '../../_services/index';
-import { AlertService } from '../../_modules/shared/_services/index';
+import { AlertService, PlayersService } from '../../_services/index';
 
 
 @Component({
@@ -106,6 +105,8 @@ export class PlayersListComponent implements OnInit {
               });
     
           this.filteredPlayers = this.players.slice(0);
+
+          this.onClickHeader(this.sortKey, false);
         },
         errorResponse => {
           console.error(errorResponse);
@@ -167,22 +168,21 @@ export class PlayersListComponent implements OnInit {
   }
 
   onClickRow(content: any, playerId: string) {
-    let search = (players, targetPlayerId, startIndex, endIndex) => {
-      let middleIndex = Math.floor((startIndex + endIndex) / 2);
+    let startIndex = 0,
+        endIndex = this.players.length - 1,
+        middleIndex = Math.floor((startIndex + endIndex) / 2)
 
-      if (targetPlayerId === players[middleIndex]._id) {
-        return players[middleIndex];
+    while (this.players[middleIndex]._id !== playerId && startIndex < endIndex) {
+      if (playerId < this.players[middleIndex]._id) {
+        endIndex = middleIndex - 1
+      } else {
+        startIndex = middleIndex + 1
       }
 
-      if (targetPlayerId > players[middleIndex]._id) {
-        return search(players, playerId, middleIndex, endIndex);
-      }
-      if (targetPlayerId < players[middleIndex]._id) {
-        return search(players, playerId, startIndex, middleIndex);
-      }
-    };
+      middleIndex = Math.floor((startIndex + endIndex) / 2)
+    }
 
-    this.selectedPlayer = search(this.players, playerId, 0, this.players.length - 1);
+    this.selectedPlayer = this.players[middleIndex];
 
     this.modalService.open(content);
   }

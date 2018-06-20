@@ -1,18 +1,14 @@
-import { 
-  Component, 
-  ComponentRef,
-  ElementRef,
-  OnInit } from '@angular/core';
-import { 
-  FormBuilder, 
-  FormGroup } from '@angular/forms';
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
-import { NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import * as moment from 'moment';
+
+import { NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 import { APP_SETTINGS } from '../../../../_helpers/app.initializer.helper';
 import { IPlayer } from '../../../../_models/index';
-import { PlayersService } from '../../../../_services/index';
-import { AlertService, ValidationService } from '../../../../_modules/shared/_services/index';
+import { AlertService, PlayersService } from '../../../../_services/index';
+import { ValidationService } from '../../../shared/_services/index';
 
 
 @Component({
@@ -22,16 +18,28 @@ import { AlertService, ValidationService } from '../../../../_modules/shared/_se
 export class ManagePlayersComponent implements OnInit {
   managePlayersForm: FormGroup;
 
-  groupYears: any[] = null;
+  formState = FormState;
+  currentState: FormState = FormState.SearchForPlayer;
 
-  dateOfBirthMinDate: NgbDateStruct;
-  dateOfBirthMaxDate: NgbDateStruct;
-  dateOfBirthStartDate: any;
-  
-  resetDateOfBirth: boolean = true;
+  groupYears: any[] = null;
+  groupYear: any = 'Select Year';
+
+  dateOfBirthPickerLabel: string;
+  dateOfBirthPickerEnabled: boolean;
+  dateOfBirthPickerMinDate: NgbDateStruct;
+  dateOfBirthPickerMaxDate: NgbDateStruct;
+  dateOfBirthPickerStartDate: any;
+
+  lastRegisteredDatePickerLabel: string;
+  lastRegisteredDatePickerEnabled: boolean;
+  lastRegisteredDatePickerMinDate: NgbDateStruct;
+  lastRegisteredDatePickerMaxDate: NgbDateStruct;
+  lastRegisteredDatePickerStartDate: any;
 
   groupPlayers: IPlayer[] = null;
   matchedPlayers: IPlayer[] = null;
+
+  playerDetails: IPlayer = (<IPlayer>{});
 
   constructor(
     private formBuilder: FormBuilder,
@@ -41,24 +49,41 @@ export class ManagePlayersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.groupYears = APP_SETTINGS.groupYears;
+    this.groupYears = JSON.parse(JSON.stringify(APP_SETTINGS.groupYears));
     this.groupYears.unshift('Select Year');
 
     this.managePlayersForm = this.formBuilder.group({
-      'groupYear': ['Select Year', this.validationService.groupYearValidator]
+      'groupYear': ['Select Year', this.validationService.groupYearValidator],
+      'dateOfBirthPicker': this.formBuilder.group({}),
+      'lastRegisteredDatePicker': this.formBuilder.group({}),
+      'firstName': ['', Validators.required],
+      'surname': ['', Validators.required],
+      'addressLine1': ['', Validators.required],
+      'addressLine2': [''],
+      'addressLine3': [''],
+      'school': [''],
+      'medicalConditions': [''],
+      'contactName': [''],
+      'contactEmailAddress': [''],
+      'contactMobileNumber': [''],
+      'contactHomeNumber': ['']
     });
+
+    this.dateOfBirthPickerEnabled = false;
+
+    this.lastRegisteredDatePickerLabel = "Last Registered Date";
+    this.lastRegisteredDatePickerEnabled = false;
   }
 
   onChangeGroupYear(groupYear: string) {
-    this.resetDateOfBirth = !this.resetDateOfBirth;
+    this.groupYear = groupYear;
+
     this.groupPlayers = null;
 
     if (groupYear !== 'Select Year') {
       this.playersService.readAllPlayers(+groupYear)
         .subscribe(
           response => {
-            let playerIndex = 0;
-
             this.groupPlayers = response.body.players;
           },
           errorResponse => {
@@ -66,24 +91,262 @@ export class ManagePlayersComponent implements OnInit {
 
             this.alertService.error(errorResponse.message, errorResponse.error.error.message);
           });
-
-      this.dateOfBirthMinDate = { year: +groupYear, month: 1, day: 1 };
-      this.dateOfBirthMaxDate = { year: +groupYear, month: 12, day: 31 };
-
-      this.dateOfBirthStartDate = { year: +groupYear, month: 6 };
     }
+
+    this.playerDetails = (<IPlayer>{});
+
+    this.processEvent(FormEvent.YearChanged);
   }
 
-  onSubmit() {
-    let dateOfBirthValue = this.managePlayersForm.get('datePickerTextBox').value,
-        dateOfBirth = new Date(Date.UTC(+dateOfBirthValue.year, +dateOfBirthValue.month - 1, +dateOfBirthValue.day));
+  onDateOfBirthPickerChange(dateOfBirth) {
+    this.processEvent(FormEvent.DateOfBirthChanged);
+  }
 
+  onSearchPlayers() {
+    let dobPicker = this.managePlayersForm.controls['dateOfBirthPicker'].value.datePickerTextBox,
+        dateOfBirth = new Date(dobPicker.year + '-' + dobPicker.month + '-' + dobPicker.day + 'T00:00:00.000Z');
+        
     this.matchedPlayers = this.groupPlayers
       .filter(
         player => {
           let playerDateOfBirth = new Date(player.dateOfBirth);
           
-          return dateOfBirth.getTime() === playerDateOfBirth.getTime();
-        });
+          return playerDateOfBirth.getTime() === dateOfBirth.getTime();
+        })
+      
+    this.matchedPlayers.sort(
+      (player1: IPlayer, player2: IPlayer) => {
+        let returnValue: number = 1;
+
+        if (player1.surname < player2.surname) {
+          returnValue = -1;
+        }
+        else if (player1.surname === player2.surname) {
+          returnValue = 0;
+        }
+        
+        return returnValue;
+      });
+
+    this.playerDetails = (<IPlayer>{});
+
+    if (this.matchedPlayers.length > 0) {
+      this.processEvent(FormEvent.PlayersFound)
+    }
+    else {
+      this.processEvent(FormEvent.NoPlayersFound)
+    }
   }
+
+  onClickRow(playerId: string) {
+    this.playerDetails = this.matchedPlayers
+      .filter(
+        player => {
+          return player._id === playerId;
+        })[0];
+
+    this.processEvent(FormEvent.PlayerSelected);
+  }
+
+  onReset() {
+    this.playerDetails = (<IPlayer>{});
+
+    this.processEvent(FormEvent.ResetPage);
+  }
+
+  onSubmit(formValues: any) {
+    this.readPlayerDetailsFields(formValues);
+
+    if (this.playerDetails._id) {
+      this.playersService.updatePlayer(this.playerDetails, APP_SETTINGS.currentYear, this.groupYear)
+        .subscribe(
+          response => {
+            this.playerDetails.__v = response.body.player.__v;
+
+            //$window.scrollTo(0, 0);
+          },
+          errorResponse => {
+            console.error(errorResponse);
+
+            this.alertService.error(errorResponse.message, errorResponse.error.error.message);
+          });
+    }
+    else {
+      let dobPicker = formValues.dateOfBirthPicker.datePickerTextBox,
+          localeDateOfBirth = new Date(dobPicker.year, dobPicker.month - 1, dobPicker.day),
+          dateOfBirth = moment.utc(localeDateOfBirth).add(0 - localeDateOfBirth.getTimezoneOffset(), "m");
+
+      this.playerDetails.dateOfBirth = dateOfBirth.toISOString();
+
+      this.playersService.createPlayer(this.playerDetails, APP_SETTINGS.currentYear, this.groupYear)
+        .subscribe(
+          response => {
+            this.groupPlayers.push(response.body.player)
+
+            //$window.scrollTo(0, 0);
+          },
+          errorResponse => {
+            console.error(errorResponse);
+
+            this.alertService.error(errorResponse.message, errorResponse.error.error.message);
+          });
+    }
+
+    this.processEvent(FormEvent.SavePlayer);
+  }
+
+  private processEvent(event: FormEvent): void {
+    let dateOfBirthPicker: AbstractControl = null,
+        lastRegisteredDatePicker: AbstractControl = null;
+
+    switch (event) {
+      case FormEvent.YearChanged:
+        this.managePlayersForm.controls['firstName'].markAsUntouched();
+        this.managePlayersForm.controls['surname'].markAsUntouched();
+        this.managePlayersForm.controls['addressLine1'].markAsUntouched();
+
+        dateOfBirthPicker = this.managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox'),
+        lastRegisteredDatePicker = this.managePlayersForm.controls['lastRegisteredDatePicker'].get('datePickerTextBox');
+
+        dateOfBirthPicker.markAsTouched();
+        lastRegisteredDatePicker.markAsUntouched();
+
+        dateOfBirthPicker.setValue('yyyy-MM-dd');
+        lastRegisteredDatePicker.setValue('yyyy-MM-dd');
+
+        this.lastRegisteredDatePickerEnabled = false;
+
+        if (this.groupYear === 'Select Year') {
+          this.dateOfBirthPickerEnabled = false;
+        }
+        else {
+          this.dateOfBirthPickerEnabled = true;
+
+          this.dateOfBirthPickerMinDate = { year: +this.groupYear, month: 1, day: 1 };
+          this.dateOfBirthPickerMaxDate = { year: +this.groupYear, month: 12, day: 31 };
+
+          this.dateOfBirthPickerStartDate = { year: +this.groupYear, month: 6 };
+        }
+
+        this.currentState = FormState.SearchForPlayer;
+        break;
+      case FormEvent.DateOfBirthChanged:
+        if (this.currentState !== FormState.SearchForPlayer) {
+          lastRegisteredDatePicker = this.managePlayersForm.controls['lastRegisteredDatePicker'].get('datePickerTextBox');
+            
+          lastRegisteredDatePicker.markAsUntouched();
+          lastRegisteredDatePicker.setValue('yyyy-MM-dd')
+
+          this.lastRegisteredDatePickerEnabled = false;
+
+          this.managePlayersForm.controls['firstName'].markAsUntouched();
+          this.managePlayersForm.controls['surname'].markAsUntouched();
+          this.managePlayersForm.controls['addressLine1'].markAsUntouched();
+
+          this.playerDetails = (<IPlayer>{});
+
+          this.currentState = FormState.SearchForPlayer;
+        }
+        break;
+      case FormEvent.PlayersFound:
+        this.currentState = FormState.PlayersListed;
+        break;
+      case FormEvent.NoPlayersFound:
+      case FormEvent.PlayerSelected:
+        let currentDate: Date = new Date(Date.now());
+
+        this.managePlayersForm.controls['lastRegisteredDatePicker'].patchValue({
+          datePickerTextBox: {
+            day: currentDate.getDate(),
+            month: currentDate.getMonth() + 1,
+            year: currentDate.getFullYear()
+          }
+        });
+
+        this.lastRegisteredDatePickerEnabled = true;
+
+        if (event === FormEvent.NoPlayersFound) {
+          this.currentState = FormState.AddPlayer;
+        }
+        else {
+          this.currentState = FormState.EditPlayer;
+        }
+        break;
+      case FormEvent.SavePlayer:
+        this.lastRegisteredDatePickerEnabled = false;
+        
+        this.currentState = FormState.PlayerSaved;
+        break;
+      case FormEvent.ResetPage:
+        this.managePlayersForm.controls['firstName'].markAsUntouched();
+        this.managePlayersForm.controls['surname'].markAsUntouched();
+        this.managePlayersForm.controls['addressLine1'].markAsUntouched();
+    
+        this.managePlayersForm.controls['lastRegisteredDatePicker'].get('datePickerTextBox').setValue('yyyy-MM-dd');
+
+        this.dateOfBirthPickerStartDate = { year: +this.groupYear, month: 6 };
+
+        this.lastRegisteredDatePickerEnabled = false;
+
+        this.currentState = FormState.SearchForPlayer;
+        break;
+      default:
+        break;
+    }
+
+    this.updatePlayerDetailsFields();
+  }
+
+  private updatePlayerDetailsFields(): void {
+    this.managePlayersForm.get('firstName').setValue(this.playerDetails.firstName);
+    this.managePlayersForm.get('surname').setValue(this.playerDetails.surname);
+    this.managePlayersForm.get('addressLine1').setValue(this.playerDetails.addressLine1);
+    this.managePlayersForm.get('addressLine2').setValue(this.playerDetails.addressLine2);
+    this.managePlayersForm.get('addressLine3').setValue(this.playerDetails.addressLine3);
+    this.managePlayersForm.get('school').setValue(this.playerDetails.school);
+    this.managePlayersForm.get('medicalConditions').setValue(this.playerDetails.medicalConditions);
+    this.managePlayersForm.get('contactName').setValue(this.playerDetails.contactName);
+    this.managePlayersForm.get('contactEmailAddress').setValue(this.playerDetails.contactEmailAddress);
+    this.managePlayersForm.get('contactMobileNumber').setValue(this.playerDetails.contactMobileNumber);
+    this.managePlayersForm.get('contactHomeNumber').setValue(this.playerDetails.contactHomeNumber);
+  }
+
+  private readPlayerDetailsFields(formValues: any): void {
+    let lrdPicker = formValues.lastRegisteredDatePicker.datePickerTextBox,
+        localeLastRegisteredDate = new Date(lrdPicker.year, lrdPicker.month - 1, lrdPicker.day),
+        lastRegisteredDate = moment.utc(localeLastRegisteredDate).add(0 - localeLastRegisteredDate.getTimezoneOffset(), "m");
+
+    this.playerDetails.lastRegisteredDate = lastRegisteredDate.toISOString();
+    this.playerDetails.lastRegisteredYear = lrdPicker.year;
+
+    this.playerDetails.firstName = formValues.firstName;
+    this.playerDetails.surname = formValues.surname;
+    this.playerDetails.addressLine1 = formValues.addressLine1;
+    this.playerDetails.addressLine2 = formValues.addressLine2;
+    this.playerDetails.addressLine3 = formValues.addressLine3;
+    this.playerDetails.school = formValues.school;
+    this.playerDetails.medicalConditions = formValues.medicalConditions;
+    this.playerDetails.contactName = formValues.contactName;
+    this.playerDetails.contactEmailAddress = formValues.contactEmailAddress;
+    this.playerDetails.contactMobileNumber = formValues.contactMobileNumber;
+    this.playerDetails.contactHomeNumber = formValues.contactHomeNumber;
+  }
+}
+
+enum FormState {
+  SearchForPlayer,
+  PlayersListed,
+  AddPlayer,
+  EditPlayer,
+  PlayerSaved
+}
+
+enum FormEvent {
+  YearChanged,
+  DateOfBirthChanged,
+  NoPlayersFound,
+  PlayersFound,
+  PlayerSelected,
+  SavePlayer,
+  ResetPage
 }

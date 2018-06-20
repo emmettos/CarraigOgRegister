@@ -2,9 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { AuthorizationService, UserService } from '../../_services/index';
-import { IPayload } from '../../_models/index';
-import { AlertService, ValidationService } from '../../_modules/shared/_services/index';
+import { AlertService, AuthorizationService, UserService } from '../../_services/index';
+import { ValidationService } from '../../_modules/shared/_services/index';
 
 
 @Component({

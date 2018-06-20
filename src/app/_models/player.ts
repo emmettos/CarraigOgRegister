@@ -18,6 +18,8 @@ export interface IPlayer {
   lastRegisteredDate: string,
   lastRegisteredYear: number,
   registeredYears: number[]
+
+  __v: number;
 }
 
 export enum PlayerState {

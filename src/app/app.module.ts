@@ -16,12 +16,14 @@ import { readConfigurationSettings, HttpInterceptorHelper } from './_helpers/ind
 
 import { AuthorizationGuard, LoginGuard } from './_guards/index';
 import { 
+  AlertService,
   AuthorizationService, 
   ConfigurationService,
   GroupsService,
   UserService, 
   PlayersService } from './_services/index';
   
+import { AlertComponent } from './_components/alert/alert.component';
 import { AppComponent } from './app.component';
 import { LoginComponent } from './_components/login/login.component';
 import { GroupsListComponent } from './_components/groups-list/groups-list.component';
@@ -32,6 +34,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
 
 @NgModule({
   declarations: [
+    AlertComponent,
     AppComponent,
     GroupsListComponent,
     GroupThumbnailComponent,
@@ -52,6 +55,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
   providers: [
     AuthorizationGuard,
     LoginGuard,
+    AlertService,
     AuthorizationService,
     ConfigurationService,
     GroupsService,

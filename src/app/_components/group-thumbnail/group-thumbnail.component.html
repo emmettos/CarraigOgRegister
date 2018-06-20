@@ -1,7 +1,7 @@
 <a routerLink="../players/{{ group.name }}/{{ group.yearOfBirth }}" [class.disabled]="!group.canViewPlayers" class="card h-100">
-  <h5 class="card-header">{{ group.name }}</h5>
+  <h5 class="card-header"><strong>{{ group.name }}</strong> (Year of Birth: {{ group.yearOfBirth }})</h5>
   <div class="card-body">
-    <p class="card-text"><strong>Year of Birth:</strong> {{ group.yearOfBirth }}</p>
+<!--    <p class="card-text"><strong>Year of Birth:</strong> {{ group.yearOfBirth }}</p>  -->
     <p class="card-text"><strong>Football Manager:</strong> {{ group.footballManager }}</p>
     <p class="card-text"><strong>Hurling Manager:</strong> {{ group.hurlingManager }}</p>
     <p class="card-text">No. players currently registered: {{ group.numberOfPlayers }}</p>

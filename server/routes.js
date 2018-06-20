@@ -392,7 +392,7 @@ exports = module.exports = function (app, router) {
     newPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
     newPlayer.registeredYears.push(newPlayer.lastRegisteredYear);
 
-    newPlayer.modifiedBy = request.payload.ID;
+    newPlayer.modifiedBy = request.payload.userProfile.ID;
 
     newPlayer.save()
       .then(function (savedPlayer) {
@@ -460,7 +460,7 @@ exports = module.exports = function (app, router) {
           foundPlayer.registeredYears.push(foundPlayer.lastRegisteredYear);
         }
 
-        foundPlayer.modifiedBy = request.payload.ID;
+        foundPlayer.modifiedBy = request.payload.userProfile.ID;
         foundPlayer.increment();
 
         return foundPlayer.save();

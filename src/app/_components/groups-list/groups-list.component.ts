@@ -2,8 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { APP_SETTINGS } from '../../_helpers/index';
 import { IGroup } from '../../_models/index';
-import { GroupsService } from '../../_services/index';
-import { AlertService } from '../../_modules/shared/_services/index';
+import { AlertService, GroupsService } from '../../_services/index';
 
 
 @Component({

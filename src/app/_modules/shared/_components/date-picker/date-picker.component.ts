@@ -2,9 +2,10 @@ import {
   Component,
   ComponentRef,
   ElementRef,
+  EventEmitter,
   Input,
-  OnChanges,
   OnInit,
+  Output,
   SimpleChange,
   ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
@@ -31,8 +32,12 @@ import { ValidationService } from '../../_services/index';
 })
 export class DatePickerComponent implements OnInit {
   @Input() 
-  parentForm: FormGroup;
+  parentGroup: FormGroup;
 
+  @Input()
+  label: string;
+  @Input()
+  enabled: boolean;
   @Input()
   minDate: NgbDateStruct;
   @Input()
@@ -40,15 +45,12 @@ export class DatePickerComponent implements OnInit {
   @Input()
   startDate: any;
 
-  @Input()
-  resetDate: boolean;
-
-  @Input()
-  enabled: boolean;
-
   @ViewChild('datePicker') 
   datePicker: NgbDatepicker;
 
+  @Output() 
+  valueChange = new EventEmitter();
+  
   private inputDatePicker: NgbInputDatepicker;
 
   constructor(
@@ -59,37 +61,43 @@ export class DatePickerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.parentForm.addControl('datePickerTextBox', this.formBuilder.control({value: 'yyyy-MM-dd', disabled: !this.enabled}, this.validationService.dateOfBirthValidator));
+    this.parentGroup.addControl('datePickerTextBox', 
+      this.formBuilder.control({ value: 'yyyy-MM-dd', disabled: !this.enabled }, 
+        [this.validationService.dateOfBirthValidator]));
+
+    this.parentGroup.controls['datePickerTextBox'].valueChanges.subscribe(
+      formValue => {
+        this.datePicker.startDate = null;
+
+        this.valueChange.emit(formValue);
+      });    
   }
 
   ngOnChanges(changes: {[propKey: string]: SimpleChange}) {
-    for (let propName in changes) {
-      let changedProp = changes[propName];
+   for (let propName in changes) {
+      let changedProp: SimpleChange = changes[propName];
+
+      if (changedProp.firstChange) {
+        continue;
+      }
 
       switch (propName) {
-        case 'resetDate':
-          if (this.parentForm.get('datePickerTextBox')) {
-            this.parentForm.get('datePickerTextBox').setValue('yyyy-MM-dd');
+        case 'enabled':
+          if (changedProp.currentValue) {
+            this.parentGroup.get('datePickerTextBox').enable();
           }
+          else {
+            this.parentGroup.get('datePickerTextBox').disable();
+          }            
           break;
         case 'minDate':
-          this.datePickerConfig.minDate = this.minDate;
+          this.datePicker.minDate = changedProp.currentValue;
           break;
         case 'maxDate':
-          this.datePickerConfig.maxDate = this.maxDate;
+          this.datePicker.maxDate = changedProp.currentValue;
           break;
         case 'startDate':
-          this.datePicker.startDate = this.startDate;
-          break;
-        case 'enabled':
-          if (this.parentForm.get('datePickerTextBox')) {
-            if (this.enabled) {
-              this.parentForm.get('datePickerTextBox').enable();
-            }
-            else {
-              this.parentForm.get('datePickerTextBox').disable();
-            }
-          }
+          this.datePicker.startDate = changedProp.currentValue;
           break;
         default:
           break;

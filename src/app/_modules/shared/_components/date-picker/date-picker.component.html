@@ -1,8 +1,10 @@
-<div class="input-group" [formGroup]="parentForm" tabindex="0">
+<label *ngIf="label" class="control-label" for="datePicker">{{ label }}</label>
+<div class="input-group" [formGroup]="parentGroup" tabindex="0">
   <input  type="text"
           id="datePicker"
+          name="datePicker"
           formControlName="datePickerTextBox"
-          [ngClass]="{ 'is-invalid': this.parentForm.get('datePickerTextBox').invalid && enabled }"
+          [ngClass]="{ 'is-invalid': parentGroup.get('datePickerTextBox').invalid && parentGroup.get('datePickerTextBox').touched }"
           class="form-control"
           readonly
           placeholder="yyyy-MM-dd"
@@ -13,7 +15,7 @@
   <div class="input-group-append">
     <button type="button"
             [disabled]="!enabled"
-            [ngClass]="{ 'is-invalid': this.parentForm.get('datePickerTextBox').invalid && enabled }"
+            [ngClass]="{ 'is-invalid': parentGroup.get('datePickerTextBox').invalid && parentGroup.get('datePickerTextBox').touched }"
             class="btn btn-outline-secondary" 
             (click)="datePicker.toggle(); onClickDatePicker(datePicker)"
             tabindex="-2">

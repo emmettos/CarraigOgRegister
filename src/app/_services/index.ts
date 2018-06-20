@@ -1,3 +1,4 @@
+export * from './alert.service';
 export * from './authorization.service';
 export * from './configuration.service';
 export * from './groups.service';

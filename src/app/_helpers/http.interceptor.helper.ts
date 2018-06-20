@@ -60,7 +60,7 @@ export class HttpInterceptorHelper implements HttpInterceptor {
       },
       (error: any) => {
         if (error instanceof HttpErrorResponse) {
-          if (error.status === 401 || error.status === 403) {
+          if (error.status === 401 && error.url.indexOf('api/authenticate') === -1) {
             // Unable to inject Router so explicitly getting it here.
             let router: Router = this.injector.get(Router),
                 toasterTitle: string = '[I] Unauthorized Access';

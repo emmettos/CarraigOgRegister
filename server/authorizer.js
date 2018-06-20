@@ -41,7 +41,7 @@ exports.authorize = function (requiredProfile) {
         }
 
         customError = new Error("User not authorized");
-        customError.code = 403;
+        customError.code = 401;
 
         throw customError;
       }

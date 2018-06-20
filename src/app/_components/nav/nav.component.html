@@ -8,15 +8,20 @@
   <div class="navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul class="navbar-nav mr-auto">
       <li ngbDropdown class="nav-item dropdown">
-        <a *ngIf="authorizationService.getActivePayload?.userProfile.isAdministrator" id="dropdownAdministration" class="nav-link dropdown-toggle" ngbDropdownToggle>Administration</a>
-        <div ngbDropdownMenu aria-labelledby="dropdownAdministration">
+        <a *ngIf="authorizationService.getActivePayload?.userProfile.isAdministrator" class="nav-link dropdown-toggle" ngbDropdownToggle>Administration</a>
+        <div ngbDropdownMenu>
           <a class="dropdown-item" routerLink="/administration/manage-players">Manage Players</a>
         </div>
       </li>
     </ul>
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item">
-        <a *ngIf="authorizationService.getActivePayload" id="logout" (click)="onClickLogout()" class="nav-link">Sign Out</a>
+      <li ngbDropdown class="nav-item dropdown">
+        <a *ngIf="authorizationService.getActivePayload" class="nav-link dropdown-toggle" ngbDropdownToggle>
+          <i class="fa fa-user fa-2x"></i>
+        </a>
+        <div ngbDropdownMenu class="dropdown-menu-right">
+          <a class="dropdown-item" (click)="onClickLogout()">Sign Out</a>
+        </div>
       </li>
     </ul>
   </div>
