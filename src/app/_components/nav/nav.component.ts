@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { IPayload } from '../../_models/index';
-
 import { AuthorizationService } from '../../_services/index';
 
 

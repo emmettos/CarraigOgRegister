@@ -16,8 +16,6 @@ import 'rxjs/add/operator/do';
 
 import { AuthorizationService } from '../_services/index';
 
-import { IPayload } from '../_models/index';
-
 
 @Injectable()
 export class HttpInterceptorHelper implements HttpInterceptor {

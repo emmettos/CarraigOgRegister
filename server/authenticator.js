@@ -5,7 +5,6 @@ var JSONWebToken = require("jsonwebtoken");
 var config = require("./config/config");
 
 var group = require("./models/group");
-var user = require("./models/user");
 
 
 exports.authenticate = function (request, response, next) {
@@ -13,8 +12,7 @@ exports.authenticate = function (request, response, next) {
     var authorizationHeader = request.headers.authorization,
         token = null,
         userProfile = {},
-        refreshedToken = null,
-        customError = null;
+        refreshedToken = null;
 
     if (authorizationHeader) {
       token = authorizationHeader.replace("Bearer ", "");
@@ -27,6 +25,7 @@ exports.authenticate = function (request, response, next) {
             request.payload = payload;
 
             userProfile.ID = payload.userProfile.ID;
+            userProfile.fullName = payload.userProfile.fullName;
             userProfile.isAdministrator = payload.userProfile.isAdministrator;
             userProfile.isManager = payload.userProfile.isManager;
             userProfile.groups = payload.userProfile.groups.slice();
@@ -46,6 +45,7 @@ exports.authenticate = function (request, response, next) {
     else {
       if (request.xhr) {
         userProfile.ID = null;
+        userProfile.fullName = null;
         userProfile.isAdministrator = false;
         userProfile.isManager = false;
         userProfile.groups = [];
@@ -65,11 +65,10 @@ exports.authenticate = function (request, response, next) {
 
 exports.createToken = function (request, currentUser) {
   var promise = new Promise(function (resolve, reject) {
-    var currentDate = null,
-        userProfile = {},
-        refreshedToken = null;
+    var userProfile = {};
 
     userProfile.ID = currentUser.emailAddress;
+    userProfile.fullName = currentUser.firstName + ' ' + currentUser.surname;
     userProfile.isAdministrator = currentUser.isAdministrator;
     userProfile.isManager = false;
     userProfile.groups = [];
