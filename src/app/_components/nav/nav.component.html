@@ -8,16 +8,19 @@
   <div class="navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul class="navbar-nav mr-auto">
       <li ngbDropdown class="nav-item dropdown">
-        <a *ngIf="authorizationService.getActivePayload?.userProfile.isAdministrator" class="nav-link dropdown-toggle" ngbDropdownToggle>Administration</a>
+        <a *ngIf="authorizationService.getActivePayload?.userProfile.isAdministrator" ngbDropdownToggle class="nav-link dropdown-toggle">Administration</a>
         <div ngbDropdownMenu>
           <a class="dropdown-item" routerLink="/administration/manage-players">Manage Players</a>
         </div>
       </li>
     </ul>
-    <ul class="navbar-nav ml-auto">
+    <ul *ngIf="authorizationService.getActivePayload" class="navbar-nav ml-auto">
+      <li class="nav-item">
+          <span class="navbar-text mr-3">Signed in as - {{ authorizationService.getActivePayload?.userProfile.fullName }}</span>
+      </li>
       <li ngbDropdown class="nav-item dropdown">
-        <a *ngIf="authorizationService.getActivePayload" class="nav-link dropdown-toggle" ngbDropdownToggle>
-          <i class="fa fa-user fa-2x"></i>
+        <a ngbDropdownToggle class="nav-link dropdown-toggle">
+          <i class="fa fa-user fa-lg"></i>
         </a>
         <div ngbDropdownMenu class="dropdown-menu-right">
           <a class="dropdown-item" (click)="onClickLogout()">Sign Out</a>
