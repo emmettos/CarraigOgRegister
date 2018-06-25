@@ -1,4 +1,4 @@
-<header class="navbar navbar-light navbar-fixed-top navbar-expand-sm">
+<header class="navbar navbar-dark bg-primary navbar-fixed-top navbar-expand-sm mb-3">
   <a class="navbar-brand" routerLink="/groups" (click)="navbarCollapsed = true">Carraig Og Register</a>
 
   <button class="navbar-toggler navbar-toggler-right" type="button" (click)="navbarCollapsed = !navbarCollapsed">
@@ -16,7 +16,7 @@
     </ul>
     <ul *ngIf="authorizationService.getActivePayload" class="navbar-nav ml-auto">
       <li class="nav-item">
-          <span class="navbar-text mr-3">Signed in as - {{ authorizationService.getActivePayload?.userProfile.fullName }}</span>
+          <span class="navbar-text mr-3" style="color:#FFFFFF">Signed in as - {{ authorizationService.getActivePayload?.userProfile.fullName }}</span>
       </li>
       <li ngbDropdown class="nav-item dropdown">
         <a ngbDropdownToggle class="nav-link dropdown-toggle">
