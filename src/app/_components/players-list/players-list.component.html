@@ -73,7 +73,7 @@
 <ng-template #content>
   <div class="modal-body">
     <div class="card">
-      <div class="card-header">
+      <div class="card-header" [ngClass]="playerPopupHeaderCSSClass(selectedPlayer)">
         <h5>{{ selectedPlayer?.firstName + ' ' + selectedPlayer?.surname }}</h5>
         <p>
           {{ selectedPlayer?.addressLine1 }}<br>
@@ -90,7 +90,7 @@
         <p class="card-text"><strong>Contact Email:</strong> {{ selectedPlayer?.contactEmailAddress }}</p>
         <p class="card-text"><strong>School:</strong> {{ selectedPlayer?.school }}</p>
       </div>
-      <div class="card-footer text-muted">
+      <div class="card-footer text-muted" [ngClass]="playerPopupFooterCSSClass(selectedPlayer)">
         Last Registered Date: {{ selectedPlayer?.lastRegisteredDate | date : "dd/MM/yyyy" }}
       </div>
     </div>

@@ -3,6 +3,10 @@
 @import "~bootstrap/dist/css/bootstrap.min.css";
 @import "~font-awesome/css/font-awesome.min.css";
 
+.bg-carraig {
+  background-color: #1800db;
+}
+
 th {
   white-space: nowrap;
 }
@@ -43,4 +47,24 @@ table.select-row tbody tr {
 
 table.player-detail tbody tr.missing {
   color: #ffc107;
+}
+
+.bg-info-light {
+  background-color: #a8dce4;
+}
+
+.bg-success-light {
+  background-color: #aedeb9;
+}
+
+.bg-warning-light {
+  background-color: #ffe8a2;
+}
+
+.group-card .card-header {
+  background-color: #83e6ff;
+}
+
+.group-card .card-footer {
+  background-color: #d1f6ff;
 }
