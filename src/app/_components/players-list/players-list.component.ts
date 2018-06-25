@@ -202,7 +202,7 @@ export class PlayersListComponent implements OnInit {
     return CSSClass;
   };
 
-  playerStateCSSClass(player: any) {
+  playerStateCSSClass(player: IPlayer) {
     var CSSClass = 'badge-info';
 
     if (player.playerState === PlayerState.New) {
@@ -210,6 +210,40 @@ export class PlayersListComponent implements OnInit {
     }
     else if (player.playerState === PlayerState.Missing) {
         CSSClass = 'badge-warning';               
+    }
+
+    return CSSClass;
+  }
+
+  playerPopupHeaderCSSClass(player: IPlayer) {
+    if (!player) {
+      return;
+    }
+
+    var CSSClass = 'bg-info';
+
+    if (player.playerState === PlayerState.New) {
+        CSSClass = 'bg-success';
+    }
+    else if (player.playerState === PlayerState.Missing) {
+        CSSClass = 'bg-warning';
+    }
+
+    return CSSClass;
+  }
+
+  playerPopupFooterCSSClass(player: IPlayer) {
+    if (!player) {
+      return;
+    }
+    
+    var CSSClass = 'bg-info-light';
+
+    if (player.playerState === PlayerState.New) {
+        CSSClass = 'bg-success-light';
+    }
+    else if (player.playerState === PlayerState.Missing) {
+        CSSClass = 'bg-warning-light';
     }
 
     return CSSClass;
