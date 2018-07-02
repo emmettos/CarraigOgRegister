@@ -14,7 +14,10 @@
       <div class="col-sm-3 col-md-2 col-lg-1">
           <h4><span class="badge badge-warning">Missing {{ missingCount }}</span></h4>
       </div>
-      <div class="col-sm-4 col-md-6 col-lg-9">
+      <div class="col-sm-3 col-md-3 col-lg-7">
+      </div>
+      <div class="col-sm-3 col-md-3 col-lg-2">
+        <button type="button" (click)="onClickDownloadCSV()" class="btn btn-info">Download CSV</button>
       </div>
   </div>
   <br />
@@ -85,9 +88,9 @@
         <p class="card-text"><strong>Date of Birth:</strong> {{ selectedPlayer?.dateOfBirth | date : "dd/MM/yyyy" }}</p>
         <p class="card-text"><strong>Medical Conditions:</strong> {{ selectedPlayer?.medicalConditions }}</p>
         <p class="card-text"><strong>Contact Name:</strong> {{ selectedPlayer?.contactName }}</p>
+        <p class="card-text"><strong>Contact Email:</strong> {{ selectedPlayer?.contactEmailAddress }}</p>
         <p class="card-text"><strong>Contact Mobile:</strong> {{ selectedPlayer?.contactMobileNumber }}</p>
         <p class="card-text"><strong>Contact Phone:</strong> {{ selectedPlayer?.contactHomeNumber }}</p>
-        <p class="card-text"><strong>Contact Email:</strong> {{ selectedPlayer?.contactEmailAddress }}</p>
         <p class="card-text"><strong>School:</strong> {{ selectedPlayer?.school }}</p>
       </div>
       <div class="card-footer text-muted" [ngClass]="playerPopupFooterCSSClass(selectedPlayer)">
