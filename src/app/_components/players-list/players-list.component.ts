@@ -4,6 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
+import * as moment from 'moment';
+
+import { Angular5Csv } from 'angular5-csv/Angular5-csv';
+
 import { APP_SETTINGS } from '../../_helpers/index';
 import { IPlayer, PlayerState } from '../../_models/index';
 import { AlertService, PlayersService } from '../../_services/index';
@@ -185,6 +189,50 @@ export class PlayersListComponent implements OnInit {
     this.selectedPlayer = this.players[middleIndex];
 
     this.modalService.open(content);
+  }
+
+  onClickDownloadCSV() {
+    let csvPlayers: any[] = [];
+
+    this.filteredPlayers.forEach(player => {
+      let csvPLayer: any = {};
+      
+      csvPLayer.surname = player.surname;
+      csvPLayer.firstName = player.firstName;
+      csvPLayer.addressLine1 = player.addressLine1;
+      csvPLayer.addressLine2 = player.addressLine2;
+      csvPLayer.addressLine3 = player.addressLine3;
+      csvPLayer.dateOfBirth = moment.utc(player.dateOfBirth).format("YYYY-MM-DD");
+      csvPLayer.lastRegisteredDate = moment.utc(player.lastRegisteredDate).format("YYYY-MM-DD");
+      csvPLayer.medicalConditions = player.medicalConditions;
+      csvPLayer.contactName = player.contactName;
+      csvPLayer.contactEmailAddress = player.contactEmailAddress;
+      csvPLayer.contactMobileNumber = player.contactMobileNumber;
+      csvPLayer.contactHomeNumber = player.contactHomeNumber;
+      csvPLayer.school = player.school;
+
+      csvPlayers.push(csvPLayer);
+    });
+
+    var options = { 
+      showLabels: true, 
+      headers: [
+        "Surname", 
+        "First Name", 
+        "Address Line 1", 
+        "Address Line 2", 
+        "Address Line 3",
+        "Date of Birth",
+        "Last Registered Date",
+        "Medical Conditions",
+        "Contact Name",
+        "Contact Email",
+        "Contact Mobile",
+        "Contact Home",
+        "School"]
+    };
+
+    new Angular5Csv(csvPlayers, 'CarraigOgPlayers', options);
   }
 
   headerSortCSSClass(keyName) {
