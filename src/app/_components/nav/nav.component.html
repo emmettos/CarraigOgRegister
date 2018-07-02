@@ -1,4 +1,4 @@
-<header class="navbar navbar-dark bg-carraig navbar-fixed-top navbar-expand-sm mb-3">
+<header class="navbar navbar-dark navbar-fixed-top navbar-expand-sm mb-3">
   <a class="navbar-brand" routerLink="/groups" (click)="navbarCollapsed = true">Carraig Og Register</a>
 
   <button class="navbar-toggler navbar-toggler-right" type="button" (click)="navbarCollapsed = !navbarCollapsed">
@@ -23,7 +23,7 @@
           <i class="fa fa-user fa-lg"></i>
         </a>
         <div ngbDropdownMenu class="dropdown-menu-right">
-          <a class="dropdown-item" (click)="onClickLogout()">Sign Out</a>
+          <a class="dropdown-item" (click)="onClickLogout()" routerLink="#">Sign Out</a>
         </div>
       </li>
     </ul>

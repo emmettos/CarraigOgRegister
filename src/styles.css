@@ -3,8 +3,8 @@
 @import "~bootstrap/dist/css/bootstrap.min.css";
 @import "~font-awesome/css/font-awesome.min.css";
 
-.bg-carraig {
-  background-color: #1800db;
+.navbar-dark {
+  background-color: #100e91
 }
 
 th {
@@ -62,9 +62,9 @@ table.player-detail tbody tr.missing {
 }
 
 .group-card .card-header {
-  background-color: #83e6ff;
+  background-color: #c5bff6;
 }
 
 .group-card .card-footer {
-  background-color: #d1f6ff;
+  background-color: #e2dffb;
 }
