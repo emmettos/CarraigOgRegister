@@ -60,11 +60,3 @@ table.player-detail tbody tr.missing {
 .bg-warning-light {
   background-color: #ffe8a2;
 }
-
-.group-card .card-header {
-  background-color: #c5bff6;
-}
-
-.group-card .card-footer {
-  background-color: #e2dffb;
-}
