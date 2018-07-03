@@ -152,6 +152,8 @@ export class ManagePlayersComponent implements OnInit {
     this.playerDetails = (<IPlayer>{});
 
     this.processEvent(FormEvent.ResetPage);
+
+    window.scrollTo(0, 0);
   }
 
   onSubmit(formValues: any) {
@@ -163,7 +165,7 @@ export class ManagePlayersComponent implements OnInit {
           response => {
             this.playerDetails.__v = response.body.player.__v;
 
-            //$window.scrollTo(0, 0);
+            window.scrollTo(0, 0);
           },
           errorResponse => {
             console.error(errorResponse);
@@ -183,7 +185,7 @@ export class ManagePlayersComponent implements OnInit {
           response => {
             this.groupPlayers.push(response.body.player)
 
-            //$window.scrollTo(0, 0);
+            window.scrollTo(0, 0);
           },
           errorResponse => {
             console.error(errorResponse);
@@ -289,6 +291,7 @@ export class ManagePlayersComponent implements OnInit {
         this.lastRegisteredDatePickerEnabled = false;
 
         this.currentState = FormState.SearchForPlayer;
+
         break;
       default:
         break;
