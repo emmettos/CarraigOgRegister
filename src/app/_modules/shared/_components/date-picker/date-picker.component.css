@@ -1,3 +1,4 @@
 input[type=text]:enabled {
+  background-color: #ffffff;
   cursor: pointer;
 }

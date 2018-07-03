@@ -2,3 +2,11 @@ a.disabled {
   pointer-events: none;
   cursor: not-allowed;
 }
+
+.card-header {
+  background-color: #8bd1db;
+}
+
+.card-footer {
+  background-color: #c5e8ed;
+} 
