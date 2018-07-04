@@ -8,13 +8,11 @@ import {
 import { ToasterService } from 'angular2-toaster';
 
 import { AuthorizationService } from '../_services/index';
-
 import { IPayload } from '../_models/index';
 
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
-
   constructor(
     private authorizationService: AuthorizationService,
     private router: Router,
@@ -40,14 +38,14 @@ export class AuthorizationGuard implements CanActivate {
 
       this.router.navigate(['/login'], { queryParams : { return: state.url } });
       
-      return false;    
+      return false;
     }
 
-    if (state.url == '/manage-players') {
+    if (state.url === '/administration/manage-players') {
       if (!this.authorizationService.getPayload.userProfile.isAdministrator) {
         this.toasterService.pop('warning', 'Unauthorized Access', 'Administrator access only');
 
-        this.router.navigate(['/home']);
+        this.router.navigate(['/groups']);
 
         return false;
       }

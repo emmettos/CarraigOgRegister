@@ -13,7 +13,7 @@ const routes: Routes = [
   { path: "groups", component: GroupsListComponent, canActivate: [AuthorizationGuard] },
   { path: "players/:groupName/:yearOfBirth", component: PlayersListComponent, canActivate: [AuthorizationGuard] },
   { path: "administration", loadChildren: "app/_modules/administration/administration.module#AdministrationModule" },
-  { path: "", redirectTo: "/login", pathMatch: "full" },
+  { path: "", redirectTo: "login", pathMatch: "full" },
   { path: '**', component: PageNotFoundComponent }
 ];
 
