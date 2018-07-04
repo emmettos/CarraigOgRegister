@@ -5,6 +5,7 @@ import { AuthorizationGuard, LoginGuard } from './_guards/index';
 import { GroupsListComponent } from "./_components/groups-list/groups-list.component";
 import { LoginComponent } from "./_components/login/login.component";
 import { PlayersListComponent } from "./_components/players-list/players-list.component";
+import { PageNotFoundComponent } from "./_modules/shared/_components/page-not-found/page-not-found.component";
 
 
 const routes: Routes = [
@@ -12,7 +13,8 @@ const routes: Routes = [
   { path: "groups", component: GroupsListComponent, canActivate: [AuthorizationGuard] },
   { path: "players/:groupName/:yearOfBirth", component: PlayersListComponent, canActivate: [AuthorizationGuard] },
   { path: "administration", loadChildren: "app/_modules/administration/administration.module#AdministrationModule" },
-  { path: "", redirectTo: "/login", pathMatch: "full" }
+  { path: "", redirectTo: "/login", pathMatch: "full" },
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({
