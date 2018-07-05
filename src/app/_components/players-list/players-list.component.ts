@@ -111,11 +111,6 @@ export class PlayersListComponent implements OnInit {
           this.filteredPlayers = this.players.slice(0);
 
           this.onClickHeader(this.sortKey, false);
-        },
-        errorResponse => {
-          console.error(errorResponse);
-
-          this.alertService.error(errorResponse.message, errorResponse.error.error.message);
         });
   }
 

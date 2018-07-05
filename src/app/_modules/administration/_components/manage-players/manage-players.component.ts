@@ -85,11 +85,6 @@ export class ManagePlayersComponent implements OnInit {
         .subscribe(
           response => {
             this.groupPlayers = response.body.players;
-          },
-          errorResponse => {
-            console.error(errorResponse);
-
-            this.alertService.error(errorResponse.message, errorResponse.error.error.message);
           });
     }
 
@@ -166,11 +161,6 @@ export class ManagePlayersComponent implements OnInit {
             this.playerDetails.__v = response.body.player.__v;
 
             window.scrollTo(0, 0);
-          },
-          errorResponse => {
-            console.error(errorResponse);
-
-            this.alertService.error(errorResponse.message, errorResponse.error.error.message);
           });
     }
     else {
@@ -186,11 +176,6 @@ export class ManagePlayersComponent implements OnInit {
             this.groupPlayers.push(response.body.player)
 
             window.scrollTo(0, 0);
-          },
-          errorResponse => {
-            console.error(errorResponse);
-
-            this.alertService.error(errorResponse.message, errorResponse.error.error.message);
           });
     }
 

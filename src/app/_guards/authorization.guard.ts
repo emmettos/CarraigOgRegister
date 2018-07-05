@@ -13,6 +13,7 @@ import { IPayload } from '../_models/index';
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
+
   constructor(
     private authorizationService: AuthorizationService,
     private router: Router,
@@ -22,8 +23,7 @@ export class AuthorizationGuard implements CanActivate {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     let payload: IPayload = null;
 
-    if (!this.authorizationService.getPayload)
-    {
+    if (!this.authorizationService.getPayload) {
       this.toasterService.pop('warning', '[G] Unauthorized Access', 'Please Login');
 
       this.router.navigate(['/login'], { queryParams : { return: state.url } });
