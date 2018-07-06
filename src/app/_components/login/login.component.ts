@@ -97,17 +97,10 @@ export class LoginComponent implements OnInit {
 
           this.passwordChanged = true;
         },
-        errorResponse => {
-          console.error(errorResponse);
-
-          let errorMessage = errorResponse.error.error.message;
-
-          if (errorResponse.status === 401) {
-            this.errorMessage = errorMessage;
+        error => {
+          if (error.status === 401) {
+            this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
-          }
-          else {
-            this.alertService.error(errorResponse.message, errorMessage);
           }
         });
   }
@@ -118,17 +111,10 @@ export class LoginComponent implements OnInit {
         data => {
           this.router.navigate(['/groups']);
         },
-        errorResponse => {
-          console.error(errorResponse);
-
-          let errorMessage = errorResponse.error.error.message;
-
-          if (errorResponse.status === 401) {
-            this.errorMessage = errorMessage;
+        error => {
+          if (error.status === 401) {
+            this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
-          }
-          else {
-            this.alertService.error(errorResponse.message, errorMessage);
           }
         });
   }

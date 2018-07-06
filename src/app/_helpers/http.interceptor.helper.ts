@@ -14,7 +14,7 @@ import { Observable } from 'rxjs/Observable';
 
 import 'rxjs/add/operator/do';
 
-import { AuthorizationService } from '../_services/index';
+import { AlertService, AuthorizationService } from '../_services/index';
 
 
 @Injectable()
@@ -51,30 +51,46 @@ export class HttpInterceptorHelper implements HttpInterceptor {
           if (authorizationHeader) {
             this.authorizationService.parseToken(authorizationHeader.replace('Bearer ', ''), true);
           }
-          // else {
-          //   this.authorizationService.deleteToken();
-          // }
         }
       },
       (error: any) => {
+        console.error(error);
+
         if (error instanceof HttpErrorResponse) {
-          if (error.status === 401 && error.url.indexOf('api/authenticate') === -1) {
-            // Unable to inject Router so explicitly getting it here.
-            let router: Router = this.injector.get(Router),
-                toasterTitle: string = '[I] Unauthorized Access';
+          // These conditions should never occur because they will be caught in the route gaurds.
+          // Leaving them here though just in case (IE. someone could try hack the JSON Web Token).
+          if (error.status === 401) {
+            if (error.url.indexOf('api/authenticate') === -1) {
+              // Unable to inject Router so explicitly getting it here.
+              let router: Router = this.injector.get(Router);
 
-            if (this.authorizationService.getPayload) {
-              this.authorizationService.deleteToken();
-              
-              toasterTitle = '[I] Your session has expired';
+              if (this.authorizationService.getPayload) {
+                if(!this.authorizationService.getActivePayload) {
+                  this.authorizationService.deleteToken();
+                  
+                  this.toasterService.pop('warning', 'Your session has expired', 'Please login');
+
+                  router.navigate(['/login']);
+                }
+                else {
+                  this.toasterService.pop('warning', 'Unauthorized Access', 'Permission denied');
+
+                  router.navigate(['/groups']);    
+                }
+              }
+              else {
+                this.toasterService.pop('warning', 'Unauthorized Access', 'Please login');
+
+                router.navigate(['/login']);
+              }
             }
-              
-            this.toasterService.pop('warning', toasterTitle, 'Please login');
+          }
+          else {
+            let alertService: AlertService = this.injector.get(AlertService);
 
-            router.navigate(['/login']);
+            alertService.error(error.message, error.error.error ? error.error.error.message: "");
           }
         }
-      }
-    );
+      });
   }
 }

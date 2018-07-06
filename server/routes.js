@@ -139,33 +139,6 @@ exports = module.exports = function (app, router) {
       });
   });
 
-  router.get("/playersSummary/:yearOfBirth", authorizer.authorize(), function (request, response, next) {
-    try {
-      var fieldFilter = "-_id firstName surname addressLine2 lastRegisteredDate lastRegisteredYear registeredYears";
-
-      player.find({
-        "yearOfBirth": request.params.yearOfBirth,
-        "lastRegisteredYear": { $gte: currentSettings.year - 1 }
-      }, fieldFilter).lean().exec()
-        .then(function (players) {
-          var returnMessage = {};
-
-          returnMessage.error = null;
-          returnMessage.body = {};
-
-          returnMessage.body.players = players;
-
-          response.status(200).json(returnMessage);
-        })
-        .catch(function (error) {
-          next(error);
-        });
-    }
-    catch (error) {
-      next(error);
-    }
-  });
-
   router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isGroupManager: true }), function (request, response, next) {
     try {
       var filter = null;

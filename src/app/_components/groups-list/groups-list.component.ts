@@ -25,11 +25,6 @@ export class GroupsListComponent implements OnInit {
       .subscribe(
         response => {
           this.groups = response.body.groups;
-        },
-        errorResponse => {
-          console.error(errorResponse);
-
-          this.alertService.error(errorResponse.message, errorResponse.error.error.message);
         });
   }
 }
