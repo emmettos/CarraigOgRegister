@@ -57,6 +57,8 @@ export class HttpInterceptorHelper implements HttpInterceptor {
         console.error(error);
 
         if (error instanceof HttpErrorResponse) {
+          // These conditions should never occur because they will be caught in the route gaurds.
+          // Leaving them here though just in case (IE. someone could try hack the JSON Web Token).
           if (error.status === 401) {
             if (error.url.indexOf('api/authenticate') === -1) {
               // Unable to inject Router so explicitly getting it here.
@@ -66,18 +68,18 @@ export class HttpInterceptorHelper implements HttpInterceptor {
                 if(!this.authorizationService.getActivePayload) {
                   this.authorizationService.deleteToken();
                   
-                  this.toasterService.pop('warning', '[I] Your session has expired', 'Please login');
+                  this.toasterService.pop('warning', 'Your session has expired', 'Please login');
 
                   router.navigate(['/login']);
                 }
                 else {
-                  this.toasterService.pop('warning', '[I] Unauthorized Access', 'Permission denied');
+                  this.toasterService.pop('warning', 'Unauthorized Access', 'Permission denied');
 
                   router.navigate(['/groups']);    
                 }
               }
               else {
-                this.toasterService.pop('warning', '[I] Unauthorized Access', 'Please login');
+                this.toasterService.pop('warning', 'Unauthorized Access', 'Please login');
 
                 router.navigate(['/login']);
               }
