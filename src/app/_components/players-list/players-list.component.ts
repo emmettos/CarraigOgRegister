@@ -67,8 +67,9 @@ export class PlayersListComponent implements OnInit {
     let yearOfBirth: number = +this.activatedRoute.snapshot.paramMap.get("yearOfBirth");
 
     this.playersService.readCurrentPlayers(yearOfBirth)
-      .subscribe(
-        response => {
+      .subscribe({
+        next: response => {
+          console.log("readCurrentPlayers data");
           let playerIndex = 0;
 
           this.players = response.body.players;
@@ -111,7 +112,10 @@ export class PlayersListComponent implements OnInit {
           this.filteredPlayers = this.players.slice(0);
 
           this.onClickHeader(this.sortKey, false);
-        });
+        },
+        error: error => {
+          // This handler is just here to prevent core.js from logging an error.
+        }});
   }
 
   filterPlayers(formValues: any) {

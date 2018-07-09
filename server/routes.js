@@ -142,7 +142,7 @@ exports = module.exports = function (app, router) {
   router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isGroupManager: true }), function (request, response, next) {
     try {
       var filter = null;
-
+      
       if (request.params.allPlayers) {
         filter = { "yearOfBirth": parseInt(request.params.yearOfBirth) }
       }
