@@ -91,31 +91,31 @@ export class LoginComponent implements OnInit {
 
   private changePassword(emailAddress: string, password: string, newPassword: string) {
     this.userService.changePassword(emailAddress, password, newPassword)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: response => {
           this.onChangeChangePasswordMode();
 
           this.passwordChanged = true;
         },
-        error => {
+        error: error => {
           if (error.status === 401) {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
-        });
+        }});
   }
 
   private login(emailAddress: string, password: string) {
     this.userService.login(emailAddress, password)
-      .subscribe(
-        data => {
+      .subscribe({
+        next: response => {
           this.router.navigate(['/groups']);
         },
-        error => {
+        error: error => {
           if (error.status === 401) {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
-        });
+        }});
   }
 }
