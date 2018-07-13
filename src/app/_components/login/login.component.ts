@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
-import { AlertService, AuthorizationService, UserService } from '../../_services/index';
+import { UserService } from '../../_services/index';
 import { ValidationService } from '../../_modules/shared/_services/index';
 
 
@@ -24,8 +24,6 @@ export class LoginComponent implements OnInit {
   passwordChanged: boolean = false;
 
   constructor(
-    private alertService: AlertService,
-    private authorizationService: AuthorizationService,
     private validationService: ValidationService,
     private router: Router,
     private userService: UserService) {   
@@ -102,6 +100,9 @@ export class LoginComponent implements OnInit {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
+
+          // Do this so the error will be logged by the ApplicationErrorHandler.
+          throw error;
         }});
   }
 
@@ -116,6 +117,9 @@ export class LoginComponent implements OnInit {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
+
+          // Do this so the error will be logged by the ApplicationErrorHandler.
+          throw error;
         }});
   }
 }

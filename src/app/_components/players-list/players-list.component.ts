@@ -10,7 +10,7 @@ import { Angular5Csv } from 'angular5-csv/Angular5-csv';
 
 import { APP_SETTINGS } from '../../_helpers/index';
 import { IPlayer, PlayerState } from '../../_models/index';
-import { AlertService, PlayersService } from '../../_services/index';
+import { PlayersService } from '../../_services/index';
 
 
 @Component({
@@ -43,7 +43,6 @@ export class PlayersListComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private activatedRoute: ActivatedRoute,
-    private alertService: AlertService, 
     private playersService: PlayersService) {
   }
 
@@ -58,17 +57,17 @@ export class PlayersListComponent implements OnInit {
 
     this.filterForm.valueChanges
       .subscribe(
-          (formValues) => { 
-            this.filterPlayers(formValues)
-          });
+        (formValues) => { 
+          this.filterPlayers(formValues)
+        });
 
     this.groupName = this.activatedRoute.snapshot.paramMap.get("groupName");
 
     let yearOfBirth: number = +this.activatedRoute.snapshot.paramMap.get("yearOfBirth");
 
     this.playersService.readCurrentPlayers(yearOfBirth)
-      .subscribe({
-        next: response => {
+      .subscribe(
+        response => {
           console.log("readCurrentPlayers data");
           let playerIndex = 0;
 
@@ -112,10 +111,7 @@ export class PlayersListComponent implements OnInit {
           this.filteredPlayers = this.players.slice(0);
 
           this.onClickHeader(this.sortKey, false);
-        },
-        error: error => {
-          // This handler is just here to prevent core.js from logging an error.
-        }});
+        });
   }
 
   filterPlayers(formValues: any) {

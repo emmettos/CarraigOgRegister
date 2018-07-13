@@ -15,11 +15,10 @@ export class AlertComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.alertService.alertStream()
+    this.alertService.getAlert
       .subscribe(
         alert => {
           this.alert = alert;
-        }
-      )
+        });
   }
 }

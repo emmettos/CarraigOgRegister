@@ -2,19 +2,8 @@ import { Component } from '@angular/core';
 
 
 @Component({
-  template: `
-    <div class="jumbotron mt-5">
-      <div class="row">
-        <div class="col-12">
-          <h1 class="text-center">Page not found!</h1>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-12">
-          <p class="lead text-center">The requested page was not found</p>
-        </div>
-      </div>
-    </div>`  
+  styleUrls: ['./page-not-found.component.css'],
+  templateUrl: './page-not-found.component.html'
 })
 export class PageNotFoundComponent {
   constructor() {

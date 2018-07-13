@@ -1,4 +1,4 @@
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { ErrorHandler, NgModule, APP_INITIALIZER } from '@angular/core';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -11,20 +11,20 @@ import { AppRoutingModule } from './app-routing.module';
 import { ToasterModule, ToasterService } from 'angular2-toaster';
 
 import { SharedModule } from './_modules/shared/shared.module';
-
 import { readConfigurationSettings, HttpInterceptorHelper } from './_helpers/index';
-
 import { AuthorizationGuard, LoginGuard } from './_guards/index';
 import { 
   AlertService,
+  ApplicationErrorHandlerService,
   AuthorizationService, 
   ConfigurationService,
   GroupsService,
   UserService, 
   PlayersService } from './_services/index';
-  
+
 import { AlertComponent } from './_components/alert/alert.component';
 import { AppComponent } from './app.component';
+import { ErrorComponent } from './_components/error/error.component';
 import { LoginComponent } from './_components/login/login.component';
 import { GroupsListComponent } from './_components/groups-list/groups-list.component';
 import { GroupThumbnailComponent } from './_components/group-thumbnail/group-thumbnail.component';
@@ -36,6 +36,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
   declarations: [
     AlertComponent,
     AppComponent,
+    ErrorComponent,
     GroupsListComponent,
     GroupThumbnailComponent,
     LoginComponent,
@@ -62,6 +63,10 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
     PlayersService,
     ToasterService,
     UserService,
+    { 
+      provide: ErrorHandler, 
+      useClass: ApplicationErrorHandlerService
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: readConfigurationSettings,

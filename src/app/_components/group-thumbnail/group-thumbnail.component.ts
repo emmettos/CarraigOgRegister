@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { AuthorizationService } from '../../_services/authorization.service';
-import { IGroup, IPayload, IUserProfile } from '../../_models/index';
+import { IGroup, IUserProfile } from '../../_models/index';
 
 
 @Component({

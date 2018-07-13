@@ -461,6 +461,17 @@ exports = module.exports = function (app, router) {
       });
   });
 
+  router.post("/writeLog", authorizer.authorize(), function (request, response, next) {
+    request.logger.error({ clientError: request.body });
+    
+    var returnMessage = {};
+
+    returnMessage.error = null;
+    returnMessage.body = {};
+
+    response.status(200).json(returnMessage);
+  });
+
   app.use("/api", router);
 
   app.use(function (request, response) {

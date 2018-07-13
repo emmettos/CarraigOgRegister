@@ -54,8 +54,6 @@ export class HttpInterceptorHelper implements HttpInterceptor {
         }
       },
       (error: any) => {
-        console.error(error);
-
         if (error instanceof HttpErrorResponse) {
           // These conditions should never occur because they will be caught in the route gaurds.
           // Leaving them here though just in case (IE. someone could try hack the JSON Web Token).

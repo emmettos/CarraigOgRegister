@@ -7,8 +7,8 @@ import { Subject } from 'rxjs/Subject';
 
 @Injectable()
 export class AlertService {
-  private keepAfterNavigationChange = false;
-  private subject = new Subject<any>();
+  private keepAfterNavigationChange: boolean = false;
+  private alert: Subject<any> = new Subject<any>();
 
   constructor(private router: Router) {
     router.events
@@ -19,23 +19,23 @@ export class AlertService {
               this.keepAfterNavigationChange = false;
             }
             else {
-              this.subject.next();
+              this.alert.next();
             }
           }
         });
   }
 
-  alertStream(): Observable<any> {
-    return this.subject.asObservable();
+  get getAlert(): Subject<any> {
+    return this.alert;
   }
 
   error(header: string, message: string, keepAfterNavigationChange: boolean = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
-    this.subject.next({ type: 'error', title: header, text: message });
+    this.alert.next({ type: 'error', title: header, text: message });
   }
 
   success(header: string, message: string, keepAfterNavigationChange: boolean = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
-    this.subject.next({ type: 'success', title: header, text: message });
+    this.alert.next({ type: 'success', title: header, text: message });
   }
 }
