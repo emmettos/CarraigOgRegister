@@ -13,7 +13,7 @@ export class NavComponent {
   navbarCollapsed: boolean = true;
 
   constructor(
-    private authorizationService: AuthorizationService,
+    public authorizationService: AuthorizationService,
     private router: Router) { 
   }
 
