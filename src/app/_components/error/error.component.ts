@@ -8,13 +8,15 @@ import { ApplicationErrorHandlerService } from '../../_services/index';
   templateUrl: './error.component.html'
 })
 export class ErrorComponent implements OnInit {
-  private stackString: string;
+  public applicationErrorHandlerService: ApplicationErrorHandlerService;
+  public stackString: string;
 
   constructor(private errorHandler: ErrorHandler) { 
+    this.applicationErrorHandlerService = this.errorHandler as ApplicationErrorHandlerService;
   }
 
   ngOnInit() {
-    (this.errorHandler as ApplicationErrorHandlerService).getStackString
+    this.applicationErrorHandlerService.getStackString
       .subscribe(
         stackString => {
           this.stackString = stackString;
