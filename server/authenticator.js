@@ -43,6 +43,7 @@ exports.authenticate = function (request, response, next) {
       });
     }
     else {
+      // This is to prevent a browser from using a cached header after Express returns a 304 status code.
       if (request.xhr) {
         userProfile.ID = null;
         userProfile.fullName = null;

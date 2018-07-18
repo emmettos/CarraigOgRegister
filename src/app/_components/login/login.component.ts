@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 
 import { UserService } from '../../_services/index';
 import { ValidationService } from '../../_modules/shared/_services/index';
@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private validationService: ValidationService,
     private router: Router,
+    private activatedRoute: ActivatedRoute,
     private userService: UserService) {   
   }
 
@@ -110,7 +111,14 @@ export class LoginComponent implements OnInit {
     this.userService.login(emailAddress, password)
       .subscribe({
         next: response => {
-          this.router.navigate(['/groups']);
+          const returnUrl = this.activatedRoute.snapshot.queryParams['return'];
+          
+          if (returnUrl) {
+            this.router.navigate([decodeURIComponent(returnUrl)]);
+          }
+          else {
+            this.router.navigate(['/groups']);
+          }
         },
         error: error => {
           if (error.status === 401) {

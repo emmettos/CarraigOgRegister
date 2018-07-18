@@ -8,7 +8,7 @@ import {
 import { ToasterService } from 'angular2-toaster';
 
 import { AuthorizationService } from '../_services/index';
-import { IPayload, IUserProfile } from '../_models/index';
+import { IUserProfile } from '../_models/index';
 
 
 @Injectable()
@@ -21,8 +21,6 @@ export class AuthorizationGuard implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    let payload: IPayload = null;
-
     if (!this.authorizationService.getPayload) {
       this.toasterService.pop('warning', 'Unauthorized Access', 'Please Login');
 
