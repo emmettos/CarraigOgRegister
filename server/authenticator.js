@@ -43,6 +43,7 @@ exports.authenticate = function (request, response, next) {
       });
     }
     else {
+      // This is to prevent a browser from using a cached header after Express returns a 304 status code.
       if (request.xhr) {
         userProfile.ID = null;
         userProfile.fullName = null;
@@ -105,7 +106,7 @@ exports.createToken = function (request, currentUser) {
 
 var signToken = function (userProfile, expiration) {
   return JSONWebToken.sign({
-    exp: expiration || Math.floor(Date.now() / 1000) + (60 * 60),
+    exp: expiration || Math.floor(Date.now() / 1000) + 60,
     userProfile
   }, config.secret);
 }

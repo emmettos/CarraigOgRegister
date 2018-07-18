@@ -21,8 +21,6 @@ export class AuthorizationGuard implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    let payload: IPayload = null;
-
     if (!this.authorizationService.getPayload) {
       this.toasterService.pop('warning', 'Unauthorized Access', 'Please Login');
 
