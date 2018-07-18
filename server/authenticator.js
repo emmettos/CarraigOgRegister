@@ -106,7 +106,7 @@ exports.createToken = function (request, currentUser) {
 
 var signToken = function (userProfile, expiration) {
   return JSONWebToken.sign({
-    exp: expiration || Math.floor(Date.now() / 1000) + 60,
+    exp: expiration || Math.floor(Date.now() / 1000) + (60 * 60),
     userProfile
   }, config.secret);
 }

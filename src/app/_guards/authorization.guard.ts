@@ -8,7 +8,7 @@ import {
 import { ToasterService } from 'angular2-toaster';
 
 import { AuthorizationService } from '../_services/index';
-import { IPayload, IUserProfile } from '../_models/index';
+import { IUserProfile } from '../_models/index';
 
 
 @Injectable()
