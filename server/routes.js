@@ -2,7 +2,6 @@
 
 var mongoose = require("mongoose");
 
-var config = require("./config/config");
 var authenticator = require("./authenticator");
 var authorizer = require("./authorizer");
 
@@ -11,7 +10,8 @@ var player = require("./models/player");
 var user = require("./models/user");
 
 exports = module.exports = function (app, router) {
-  var currentSettings = app.currentSettings;
+  var currentSettings = app.currentSettings,
+      currentSavedPlayer = null;
 
   router.get("/currentSettings", function (request, response, next) {
     try {
@@ -392,10 +392,8 @@ exports = module.exports = function (app, router) {
   });
 
   router.post("/updatePlayer", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var me = this,
-      groupDetails = request.body.groupDetails,
-      playerDetails = request.body.playerDetails,
-      savedPlayer = null;
+    var groupDetails = request.body.groupDetails,
+        playerDetails = request.body.playerDetails;
 
     player.findOne({ "_id": mongoose.Types.ObjectId(playerDetails._id), "__v": playerDetails.__v })
       .then(function (foundPlayer) {
@@ -440,9 +438,9 @@ exports = module.exports = function (app, router) {
       })
       .then(function (savedPlayer) {
         var query = { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth },
-          update = { "lastUpdatedDate": new Date() };
+            update = { "lastUpdatedDate": new Date() };
 
-        me.savedPlayer = savedPlayer;
+        currentSavedPlayer = savedPlayer;
 
         return group.findOneAndUpdate(query, update);
       })
@@ -452,7 +450,7 @@ exports = module.exports = function (app, router) {
         returnMessage.error = null;
         returnMessage.body = {};
 
-        returnMessage.body.player = me.savedPlayer.toObject();
+        returnMessage.body.player = currentSavedPlayer.toObject();
 
         response.status(200).json(returnMessage);
       })

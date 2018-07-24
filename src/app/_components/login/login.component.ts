@@ -111,6 +111,8 @@ export class LoginComponent implements OnInit {
     this.userService.login(emailAddress, password)
       .subscribe({
         next: response => {
+          //throw new Error('An error has occurred');
+
           const returnUrl = this.activatedRoute.snapshot.queryParams['return'];
           
           if (returnUrl) {

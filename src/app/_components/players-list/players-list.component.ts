@@ -68,7 +68,6 @@ export class PlayersListComponent implements OnInit {
     this.playersService.readCurrentPlayers(yearOfBirth)
       .subscribe(
         response => {
-          console.log("readCurrentPlayers data");
           let playerIndex = 0;
 
           this.players = response.body.players;
