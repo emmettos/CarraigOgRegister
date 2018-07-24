@@ -22,10 +22,10 @@ export class NavComponent {
 
   onClickLogout() {
     if (!this.authorizationService.getActivePayload) {
-      this.toasterService.pop('warning', 'Your session had expired', 'Good Bye');
+      this.toasterService.pop('warning', 'Your session had expired', 'Goodbye');
     }
     else {
-      this.toasterService.pop('success', 'Successfully Signed Out', 'Good Bye');
+      this.toasterService.pop('success', 'Successfully Signed Out', 'Goodbye');
     }
 
     this.authorizationService.deleteToken();
