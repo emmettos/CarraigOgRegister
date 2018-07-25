@@ -22,7 +22,7 @@ export class NavComponent {
 
   onClickLogout() {
     if (!this.authorizationService.getActivePayload) {
-      this.toasterService.pop('warning', 'Your session had expired', 'Goodbye');
+      this.toasterService.pop('warning', 'Your session had Expired', 'Goodbye');
     }
     else {
       this.toasterService.pop('success', 'Successfully Signed Out', 'Goodbye');

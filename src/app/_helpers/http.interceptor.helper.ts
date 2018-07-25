@@ -66,7 +66,7 @@ export class HttpInterceptorHelper implements HttpInterceptor {
                   if(!this.authorizationService.getActivePayload) {
                     this.authorizationService.deleteToken();
                     
-                    this.toasterService.pop('warning', 'Your session has expired', 'Please login');
+                    this.toasterService.pop('warning', 'Your session has Expired', 'Please login');
 
                     router.navigate(['/login']);
                   }
