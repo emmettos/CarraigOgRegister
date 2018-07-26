@@ -64,7 +64,7 @@ app.use(function (request, response, next) {
 
 app.use(authenticator.authenticate);
 
-mongoose.connect(config.database)
+mongoose.connect(config.database, { useNewUrlParser: true })
   .then(function () {
     return currentSettings.findOne({}, "-_id").lean().exec();
   })
