@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { APP_SETTINGS } from '../../_helpers/index';
 import { IGroup } from '../../_models/index';
-import { AlertService, GroupsService } from '../../_services/index';
+import { GroupsService } from '../../_services/index';
 
 
 @Component({
@@ -13,9 +13,7 @@ export class GroupsListComponent implements OnInit {
   currentYear: number = 0;
   groups: IGroup[] = null;
 
-  constructor(
-    private alertService: AlertService,
-    private groupsService: GroupsService) { 
+  constructor(private groupsService: GroupsService) { 
   }
 
   ngOnInit() {

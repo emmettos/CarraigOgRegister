@@ -43,7 +43,6 @@ export class ManagePlayersComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private alertService: AlertService,
     private playersService: PlayersService,
     private validationService: ValidationService) {
   }
