@@ -99,8 +99,9 @@ export class ManagePlayersComponent implements OnInit {
 
   onSearchPlayers() {
     let dobPicker = this.managePlayersForm.controls['dateOfBirthPicker'].value.datePickerTextBox,
-        dateOfBirth = new Date(dobPicker.year + '-' + dobPicker.month + '-' + dobPicker.day + 'T00:00:00.000Z');
-        
+        dobDateString = dobPicker.year + '-' + dobPicker.month.toString().padStart(2, '0') + '-' + dobPicker.day.toString().padStart(2, '0'),
+        dateOfBirth = new Date(dobDateString + 'T00:00:00.000Z');
+
     this.matchedPlayers = this.groupPlayers
       .filter(
         player => {
