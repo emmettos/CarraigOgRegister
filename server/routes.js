@@ -336,11 +336,10 @@ exports = module.exports = function (app, router) {
   });
 
   router.post("/createPlayer", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var me = this,
-      groupDetails = request.body.groupDetails,
-      playerDetails = request.body.playerDetails,
-      newPlayer = new player(),
-      lastRegisteredDate = null;
+    var groupDetails = request.body.groupDetails,
+        playerDetails = request.body.playerDetails,
+        newPlayer = new player(),
+        lastRegisteredDate = null;
 
     newPlayer.dateOfBirth = new Date(playerDetails.dateOfBirth);
     newPlayer.yearOfBirth = newPlayer.dateOfBirth.getFullYear();
@@ -368,9 +367,9 @@ exports = module.exports = function (app, router) {
     newPlayer.save()
       .then(function (savedPlayer) {
         var query = { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth },
-          update = { "lastUpdatedDate": new Date() };
+            update = { "lastUpdatedDate": new Date() };
 
-        me.savedPlayer = savedPlayer;
+        currentSavedPlayer = savedPlayer;
 
         return group.findOneAndUpdate(query, update);
       })
@@ -380,7 +379,7 @@ exports = module.exports = function (app, router) {
         returnMessage.error = null;
         returnMessage.body = {};
 
-        returnMessage.body.player = me.savedPlayer.toObject();
+        returnMessage.body.player = currentSavedPlayer.toObject();
 
         response.status(200).json(returnMessage);
       })
