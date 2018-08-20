@@ -101,9 +101,6 @@ export class LoginComponent implements OnInit {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
-
-          // Do this so the error will be logged by the ApplicationErrorHandler.
-          throw error;
         }});
   }
 
@@ -127,9 +124,6 @@ export class LoginComponent implements OnInit {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
-
-          // Do this so the error will be logged by the ApplicationErrorHandler.
-          throw error;
         }});
   }
 }

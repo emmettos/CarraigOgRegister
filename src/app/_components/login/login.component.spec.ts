@@ -1,14 +1,16 @@
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Location } from '@angular/common';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
-import { throwError } from 'rxjs';
+import { of, throwError } from 'rxjs';
 
 import { UserService } from '../../_services';
 import { ValidationService } from '../../_modules/shared/_services';
 
+import { AppComponent } from '../../app.component';
 import { LoginComponent } from './login.component';
 
 
@@ -17,21 +19,31 @@ class MockHttpClient {
   post() {}
 }
 
-fdescribe('LoginComponent', () => {
+@Component({
+  template: 'Mock'
+})
+class MockComponent {
+}
+
+describe('LoginComponent', () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
 
+  let location: Location;
   let userService: UserService;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ 
+      declarations: [
+        MockComponent, 
         LoginComponent 
       ],
       imports: [
         HttpClientModule,
         ReactiveFormsModule,
-        RouterTestingModule
+        RouterTestingModule.withRoutes([
+          { path: "groups", component: MockComponent }
+        ])
       ],
       providers: [
         { 
@@ -50,6 +62,7 @@ fdescribe('LoginComponent', () => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
 
+    location = TestBed.get(Location);
     userService = TestBed.get(UserService);
 
     fixture.detectChanges();
@@ -112,15 +125,13 @@ fdescribe('LoginComponent', () => {
     component.loginForm.controls['changePasswordMode'].setValue(true);
 
     fixture.detectChanges();
-
-    component.newPasswordControl.enable();
-    component.confirmPasswordControl.enable();
+    component.onChangeChangePasswordMode();
 
     component.loginForm.controls['emailAddress'].setValue('user@test.com');
     component.loginForm.controls['passwordGroup'].setValue({
       password: 'password01',
-      newPassword: 'newPassword01',
-      confirmPassword: 'newPassword01'
+      newPassword: 'password02',
+      confirmPassword: 'password02'
     });
 
     expect(component.loginForm.value).toEqual({
@@ -128,8 +139,8 @@ fdescribe('LoginComponent', () => {
       emailAddress: 'user@test.com',
       passwordGroup: {
         password: 'password01',
-        newPassword: 'newPassword01',
-        confirmPassword: 'newPassword01'
+        newPassword: 'password02',
+        confirmPassword: 'password02'
       }
     });
   });
@@ -171,10 +182,17 @@ fdescribe('LoginComponent', () => {
     expect((component.loginForm.controls['passwordGroup'] as FormGroup).controls['newPassword'].invalid).toBeTruthy();
   });
 
-  it('should validate invalid new password', () => {
+  it('should validate invalid short new password', () => {
     component.newPasswordControl.enable();
 
     component.loginForm.controls['passwordGroup'].patchValue({ newPassword: 'tiny' });
+    expect((component.loginForm.controls['passwordGroup'] as FormGroup).controls['newPassword'].invalid).toBeTruthy();
+  });
+
+  it('should validate invalid long new password', () => {
+    component.newPasswordControl.enable();
+
+    component.loginForm.controls['passwordGroup'].patchValue({ newPassword: 'longPassword01' });
     expect((component.loginForm.controls['passwordGroup'] as FormGroup).controls['newPassword'].invalid).toBeTruthy();
   });
 
@@ -192,13 +210,23 @@ fdescribe('LoginComponent', () => {
     expect((component.loginForm.controls['passwordGroup'] as FormGroup).controls['confirmPassword'].invalid).toBeTruthy();
   });
 
-  it('should validate invalid confirm password', () => {
+  it('should validate invalid short confirm password', () => {
     component.newPasswordControl.enable();
     component.confirmPasswordControl.enable();
 
     component.loginForm.controls['passwordGroup'].patchValue({ 
       newPassword: 'tiny',
       confirmPassword: 'tiny' });
+    expect((component.loginForm.controls['passwordGroup'] as FormGroup).controls['confirmPassword'].invalid).toBeTruthy();
+  });
+
+  it('should validate invalid long confirm password', () => {
+    component.newPasswordControl.enable();
+    component.confirmPasswordControl.enable();
+
+    component.loginForm.controls['passwordGroup'].patchValue({ 
+      newPassword: 'longPassword01',
+      confirmPassword: 'longPassword01' });
     expect((component.loginForm.controls['passwordGroup'] as FormGroup).controls['confirmPassword'].invalid).toBeTruthy();
   });
 
@@ -349,80 +377,131 @@ fdescribe('LoginComponent', () => {
     expect(fixture.nativeElement.querySelector('#change-password').style.display).toEqual('inherit');  
   });
 
-  // it('should route to /groups after successful login', () => {
-  //   fail();
-  // });
+  it('should route to /groups after successful login', fakeAsync(() => {
+    spyOn(userService, 'login')
+      .and.returnValue(of({
+        "error": null,
+        "body": {}
+      }));
 
-  // it('should display authentication failed message after failed login', () => {
-  //   spyOn(userService, 'login')
-  //     .and.returnValue(throwError({
-  //       status: 401,
-  //       error: {
-  //         error: {
-  //           message: 'Failed authentication message'
-  //         }
-  //       }
-  //     }));
-
-  //   component.loginForm.controls['emailAddress'].setValue('user@test.com');
-  //   component.loginForm.controls['passwordGroup'].patchValue({ password: 'password01' });
-
-  //   fixture.detectChanges();
-
-  //   component.onSubmit({
-  //     emailAddress: 'user@test.com',
-  //     passwordGroup: {
-  //       password: 'password01'
-  //     }
-  //   });
-
-  //   fixture.detectChanges();
-
-  //   expect(fixture.nativeElement.querySelector('#authentication-failed-message').children[0].innerHTML).toEqual('Failed authentication message');  
-  // });
-
-  // it('should display password changed message after successful changed password', () => {
-  //   fail();
-  // });
+      component.loginForm.controls['emailAddress'].setValue('user@test.com');
+      component.loginForm.controls['passwordGroup'].patchValue({ password: 'password01' });
   
-  // it('should display authentication failed message after failed change password', () => {
-  //   spyOn(userService, 'changePassword')
-  //     .and.returnValue(throwError({
-  //       status: 401,
-  //       error: {
-  //         error: {
-  //           message: 'Failed authentication message'
-  //         }
-  //       }
-  //     }));
-
-  //   component.loginForm.controls['changePasswordMode'].setValue(true);
-
-  //   fixture.detectChanges();
-
-  //   component.newPasswordControl.enable();
-  //   component.confirmPasswordControl.enable();
+      fixture.detectChanges();
   
-  //   component.loginForm.controls['emailAddress'].setValue('user@test.com');
-  //   component.loginForm.controls['passwordGroup'].setValue({ 
-  //     password: 'password01',
-  //     newPassword: 'newPassword01',
-  //     confirmPassword: 'newPassword01'
-  //   });
+      component.onSubmit({
+        emailAddress: 'user@test.com',
+        passwordGroup: {
+          password: 'password01'
+        }
+      });
 
-  //   fixture.detectChanges();
+      tick();
 
-  //   component.onSubmit({
-  //     emailAddress: 'user@test.com',
-  //     passwordGroup: {
-  //       password: 'password01',
-  //       newPassword: 'newPassword01',
-  //       confirmPassword: 'newPassword01'
-  //     }
-  //   });
+      expect(location.path()).toBe('/groups');
+  }));
 
-  //   fixture.detectChanges();
+  it('should display authentication failed message after failed login', () => {
+    spyOn(userService, 'login')
+      .and.returnValue(throwError({
+        status: 401,
+        error: {
+          error: {
+            message: 'Failed authentication message'
+          }
+        }
+      }));
 
-  //   expect(fixture.nativeElement.querySelector('#authentication-failed-message').children[0].innerHTML).toEqual('Failed authentication message');  
-  // });
+    component.loginForm.controls['emailAddress'].setValue('user@test.com');
+    component.loginForm.controls['passwordGroup'].patchValue({ password: 'password01' });
+
+    fixture.detectChanges();
+
+    component.onSubmit({
+      emailAddress: 'user@test.com',
+      passwordGroup: {
+        password: 'password01'
+      }
+    });
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#authentication-failed-message').children[0].innerHTML).toEqual('Failed authentication message');  
+  });
+
+  it('should display password changed message after successful changed password', () => {
+    spyOn(userService, 'changePassword')
+      .and.returnValue(of({
+        "error": null,
+        "body": {}
+      }));
+
+      component.loginForm.controls['changePasswordMode'].setValue(true);
+
+      fixture.detectChanges();
+      component.onChangeChangePasswordMode();
+    
+      component.loginForm.controls['emailAddress'].setValue('user@test.com');
+      component.loginForm.controls['passwordGroup'].setValue({ 
+        password: 'password01',
+        newPassword: 'password02',
+        confirmPassword: 'password02'
+      });
+  
+      fixture.detectChanges();
+  
+      component.onSubmit({
+        changePasswordMode: true,
+        emailAddress: 'user@test.com',
+        passwordGroup: {
+          password: 'password01',
+          newPassword: 'password02',
+          confirmPassword: 'password02'
+        }
+      });
+  
+      fixture.detectChanges();
+  
+      expect(fixture.nativeElement.querySelector('#password-changed-message').children[0].innerHTML).toEqual('Password Successfully Changed');        
+  });
+  
+  it('should display authentication failed message after failed change password', () => {
+    spyOn(userService, 'changePassword')
+      .and.returnValue(throwError({
+        status: 401,
+        error: {
+          error: {
+            message: 'Failed authentication message'
+          }
+        }
+      }));
+
+    component.loginForm.controls['changePasswordMode'].setValue(true);
+
+    fixture.detectChanges();
+    component.onChangeChangePasswordMode();
+  
+    component.loginForm.controls['emailAddress'].setValue('user@test.com');
+    component.loginForm.controls['passwordGroup'].setValue({ 
+      password: 'password01',
+      newPassword: 'password02',
+      confirmPassword: 'password02'
+    });
+
+    fixture.detectChanges();
+
+    component.onSubmit({
+      changePasswordMode: true,
+      emailAddress: 'user@test.com',
+      passwordGroup: {
+        password: 'password01',
+        newPassword: 'password02',
+        confirmPassword: 'password02'
+      }
+    });
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#authentication-failed-message').children[0].innerHTML).toEqual('Failed authentication message');  
+  });
 });

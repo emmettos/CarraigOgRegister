@@ -26,12 +26,6 @@ export class ApplicationErrorHandlerService implements ErrorHandler {
   handleError(error: any) {
     let router = this.injector.get(Router);
     
-    if (error instanceof HttpErrorResponse) {
-      console.error('HTTP error Response received at [' + router.url + ']:', error);
-
-      return;
-    }
-            
     console.error('An error occurred at [' + router.url + ']:', error);
 
     this.errorMessage = error.message;

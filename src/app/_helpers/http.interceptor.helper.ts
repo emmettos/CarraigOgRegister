@@ -55,13 +55,15 @@ export class HttpInterceptorHelper implements HttpInterceptor {
         },
         error: (error: any) => {
           if (error instanceof HttpErrorResponse) {
+            // Unable to inject Router so explicitly getting it here.
+            let router: Router = this.injector.get(Router);
+
+            console.error('HTTP error Response received at [' + router.url + ']:', error);
+
             // These conditions should never occur because they will be caught in the route gaurds.
             // Leaving them here though just in case (IE. someone could try hack the JSON Web Token).
             if (error.status === 401) {
               if (error.url.indexOf('api/authenticate') === -1 && error.url.indexOf('api/writeLog') === -1) {
-                // Unable to inject Router so explicitly getting it here.
-                let router: Router = this.injector.get(Router);
-
                 if (this.authorizationService.getPayload) {
                   if(!this.authorizationService.getActivePayload) {
                     this.authorizationService.deleteToken();
