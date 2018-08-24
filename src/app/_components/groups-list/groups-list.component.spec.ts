@@ -5,6 +5,8 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { of } from 'rxjs';
 
+import { APP_SETTINGS } from '../../_helpers/index';
+
 import { GroupsService } from '../../_services';
 
 import { GroupsListComponent } from './groups-list.component';
@@ -18,6 +20,8 @@ class MockHttpClient {
 describe('GroupsListComponent', () => {
   let component: GroupsListComponent;
   let fixture: ComponentFixture<GroupsListComponent>;
+
+  APP_SETTINGS.currentYear = 2018;
 
   let groupsService: GroupsService;
 
@@ -57,8 +61,8 @@ describe('GroupsListComponent', () => {
               "year": 2018,
               "name": "Under 10",
               "yearOfBirth": 2008,
-              "footballManager": "Gerard Murphy",
-              "hurlingManager": "Sean Collins",
+              "footballManager": "Football 2008",
+              "hurlingManager": "HUrling 2008",
               "createdBy": "script",
               "createdDate": "2018-02-23T11:38:40.175Z",
               "updatedDate": "2018-02-23T11:38:40.175Z",
@@ -70,8 +74,8 @@ describe('GroupsListComponent', () => {
               "year": 2018,
               "name": "Under 9",
               "yearOfBirth": 2009,
-              "footballManager": "Dave Riordan",
-              "hurlingManager": "Kevin Geary",
+              "footballManager": "Football 2009",
+              "hurlingManager": "Hurling 2009",
               "createdBy": "script",
               "createdDate": "2018-02-23T11:41:11.887Z",
               "updatedDate": "2018-02-23T11:41:11.887Z",
@@ -83,8 +87,8 @@ describe('GroupsListComponent', () => {
               "year": 2018,
               "name": "Under 8",
               "yearOfBirth": 2010,
-              "footballManager": "Patrick Nagle",
-              "hurlingManager": "Patrick Nagle",
+              "footballManager": "Football 2010",
+              "hurlingManager": "Hurling 2010",
               "createdBy": "script",
               "createdDate": "2018-02-23T11:42:25.972Z",
               "updatedDate": "2018-02-23T11:42:25.972Z",
@@ -96,8 +100,8 @@ describe('GroupsListComponent', () => {
               "year": 2018,
               "name": "Under 7",
               "yearOfBirth": 2011,
-              "footballManager": "Derek Macken",
-              "hurlingManager": "Denis Cole",
+              "footballManager": "Football 2011",
+              "hurlingManager": "Hurling 2011",
               "createdBy": "script",
               "createdDate": "2018-02-23T11:43:59.701Z",
               "updatedDate": "2018-02-23T11:43:59.701Z",
@@ -109,8 +113,8 @@ describe('GroupsListComponent', () => {
               "year": 2018,
               "name": "Under 6",
               "yearOfBirth": 2012,
-              "footballManager": "Bill  O'Sullivan",
-              "hurlingManager": "Denis Cole",
+              "footballManager": "Football 2012",
+              "hurlingManager": "Hurling 2012",
               "createdBy": "script",
               "createdDate": "2018-02-23T11:45:03.022Z",
               "updatedDate": "2018-02-23T11:45:03.022Z",
@@ -122,8 +126,8 @@ describe('GroupsListComponent', () => {
               "year": 2018,
               "name": "Under 5",
               "yearOfBirth": 2013,
-              "footballManager": "someone@gmail.com",
-              "hurlingManager": "someone@gmail.com",
+              "footballManager": "Football 2013",
+              "hurlingManager": "Hurling 2013",
               "createdBy": "script",
               "createdDate": "2018-02-23T11:46:04.082Z",
               "updatedDate": "2018-02-23T11:46:04.082Z",
@@ -140,5 +144,21 @@ describe('GroupsListComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should call groupsService.readGroups', () => {
+    expect(groupsService.readGroups).toHaveBeenCalled();
+  });
+
+  it('should display header', () => {
+    expect(fixture.nativeElement.querySelector('#header > label').innerHTML).toEqual('2018 Carraig Og Groups');
+  });
+
+  it('should display first group', () => {
+    expect(fixture.nativeElement.querySelector('#groups > div:nth-child(1) > app-group-thumbnail')).toBeTruthy();
+  });
+
+  it('should display last group', () => {
+    expect(fixture.nativeElement.querySelector('#groups > div:nth-child(6) > app-group-thumbnail')).toBeTruthy();
   });
 });
