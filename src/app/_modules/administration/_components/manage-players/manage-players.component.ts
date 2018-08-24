@@ -7,7 +7,7 @@ import { NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 import { APP_SETTINGS } from '../../../../_helpers/app.initializer.helper';
 import { IPlayer } from '../../../../_models/index';
-import { AlertService, PlayersService } from '../../../../_services/index';
+import { PlayersService } from '../../../../_services/index';
 import { ValidationService } from '../../../shared/_services/index';
 
 
@@ -144,8 +144,6 @@ export class ManagePlayersComponent implements OnInit {
   }
 
   onReset() {
-    this.playerDetails = (<IPlayer>{});
-
     this.processEvent(FormEvent.ResetPage);
 
     window.scrollTo(0, 0);
@@ -184,7 +182,8 @@ export class ManagePlayersComponent implements OnInit {
 
   private processEvent(event: FormEvent): void {
     let dateOfBirthPicker: AbstractControl = null,
-        lastRegisteredDatePicker: AbstractControl = null;
+        lastRegisteredDatePicker: AbstractControl = null,
+        currentDate: Date = null;
 
     switch (event) {
       case FormEvent.YearChanged:
@@ -240,7 +239,7 @@ export class ManagePlayersComponent implements OnInit {
         break;
       case FormEvent.NoPlayersFound:
       case FormEvent.PlayerSelected:
-        let currentDate: Date = new Date(Date.now());
+        currentDate = new Date(Date.now());
 
         this.managePlayersForm.controls['lastRegisteredDatePicker'].patchValue({
           datePickerTextBox: {
@@ -269,13 +268,19 @@ export class ManagePlayersComponent implements OnInit {
         this.managePlayersForm.controls['surname'].markAsUntouched();
         this.managePlayersForm.controls['addressLine1'].markAsUntouched();
     
-        this.managePlayersForm.controls['lastRegisteredDatePicker'].get('datePickerTextBox').setValue('yyyy-MM-dd');
+        lastRegisteredDatePicker = this.managePlayersForm.controls['lastRegisteredDatePicker'].get('datePickerTextBox');
+            
+        lastRegisteredDatePicker.markAsUntouched();
 
-        this.dateOfBirthPickerStartDate = { year: +this.groupYear, month: 6 };
+        currentDate = new Date(Date.now());
 
-        this.lastRegisteredDatePickerEnabled = false;
-
-        this.currentState = FormState.SearchForPlayer;
+        this.managePlayersForm.controls['lastRegisteredDatePicker'].patchValue({
+          datePickerTextBox: {
+            day: currentDate.getDate(),
+            month: currentDate.getMonth() + 1,
+            year: currentDate.getFullYear()
+          }
+        });
 
         break;
       default:
@@ -286,17 +291,17 @@ export class ManagePlayersComponent implements OnInit {
   }
 
   private updatePlayerDetailsFields(): void {
-    this.managePlayersForm.get('firstName').setValue(this.playerDetails.firstName);
-    this.managePlayersForm.get('surname').setValue(this.playerDetails.surname);
-    this.managePlayersForm.get('addressLine1').setValue(this.playerDetails.addressLine1);
-    this.managePlayersForm.get('addressLine2').setValue(this.playerDetails.addressLine2);
-    this.managePlayersForm.get('addressLine3').setValue(this.playerDetails.addressLine3);
-    this.managePlayersForm.get('school').setValue(this.playerDetails.school);
-    this.managePlayersForm.get('medicalConditions').setValue(this.playerDetails.medicalConditions);
-    this.managePlayersForm.get('contactName').setValue(this.playerDetails.contactName);
-    this.managePlayersForm.get('contactEmailAddress').setValue(this.playerDetails.contactEmailAddress);
-    this.managePlayersForm.get('contactMobileNumber').setValue(this.playerDetails.contactMobileNumber);
-    this.managePlayersForm.get('contactHomeNumber').setValue(this.playerDetails.contactHomeNumber);
+    this.managePlayersForm.get('firstName').setValue(this.playerDetails.firstName ? this.playerDetails.firstName : '');
+    this.managePlayersForm.get('surname').setValue(this.playerDetails.surname ? this.playerDetails.surname : '');
+    this.managePlayersForm.get('addressLine1').setValue(this.playerDetails.addressLine1 ? this.playerDetails.addressLine1 : '');
+    this.managePlayersForm.get('addressLine2').setValue(this.playerDetails.addressLine2 ? this.playerDetails.addressLine2 : '');
+    this.managePlayersForm.get('addressLine3').setValue(this.playerDetails.addressLine3 ? this.playerDetails.addressLine3 : '');
+    this.managePlayersForm.get('school').setValue(this.playerDetails.school ? this.playerDetails.school : '');
+    this.managePlayersForm.get('medicalConditions').setValue(this.playerDetails.medicalConditions ? this.playerDetails.medicalConditions : '');
+    this.managePlayersForm.get('contactName').setValue(this.playerDetails.contactName ? this.playerDetails.contactName : '');
+    this.managePlayersForm.get('contactEmailAddress').setValue(this.playerDetails.contactEmailAddress ? this.playerDetails.contactEmailAddress : '');
+    this.managePlayersForm.get('contactMobileNumber').setValue(this.playerDetails.contactMobileNumber ? this.playerDetails.contactMobileNumber : '');
+    this.managePlayersForm.get('contactHomeNumber').setValue(this.playerDetails.contactHomeNumber ? this.playerDetails.contactHomeNumber : '');
   }
 
   private readPlayerDetailsFields(formValues: any): void {

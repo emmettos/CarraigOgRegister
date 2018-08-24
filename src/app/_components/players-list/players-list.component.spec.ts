@@ -112,35 +112,6 @@ describe('PlayersListComponent', () => {
               "updatedBy": "emmett.j.osullivan@gmail.com"
             },
             {
-              "_id": "58c669deb8a0ebcf9c5b93dc",
-              "firstName": "Eoghan",
-              "surname": "Ahern",
-              "addressLine1": "5 Owenabue Drive",
-              "addressLine2": "Carrigaline",
-              "addressLine3": "",
-              "dateOfBirth": "2009-10-10T00:00:00.000Z",
-              "yearOfBirth": 2009,
-              "medicalConditions": "",
-              "contactName": "Therese Ahern",
-              "contactMobileNumber": "087 9564971",
-              "contactHomeNumber": "086 3917516",
-              "contactEmailAddress": "thereseaherne@gmail.com",
-              "school": "Scoil Mhuire Lourdes",
-              "lastRegisteredDate": "2018-02-17T00:00:00.000Z",
-              "lastRegisteredYear": 2018,
-              "registeredYears": [
-                  2015,
-                  2016,
-                  2017,
-                  2018
-              ],
-              "__v": 2,
-              "createdBy": "script",
-              "createdDate": "2017-03-15T13:43:51.268Z",
-              "updatedDate": "2018-02-23T14:21:46.480Z",
-              "updatedBy": "emmett.j.osullivan@gmail.com"
-            },
-            {
               "_id": "58c669deb8a0ebcf9c5b93dd",
               "firstName": "Cian",
               "surname": "Aherne",

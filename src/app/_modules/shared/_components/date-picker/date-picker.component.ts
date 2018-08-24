@@ -63,7 +63,7 @@ export class DatePickerComponent implements OnInit {
   ngOnInit() {
     this.parentGroup.addControl('datePickerTextBox', 
       this.formBuilder.control({ value: 'yyyy-MM-dd', disabled: !this.enabled }, 
-        [this.validationService.dateOfBirthValidator]));
+        [this.validationService.datePickerValidator]));
 
     this.parentGroup.controls['datePickerTextBox'].valueChanges.subscribe(
       formValue => {

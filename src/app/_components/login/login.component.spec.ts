@@ -10,7 +10,6 @@ import { of, throwError } from 'rxjs';
 import { UserService } from '../../_services';
 import { ValidationService } from '../../_modules/shared/_services';
 
-import { AppComponent } from '../../app.component';
 import { LoginComponent } from './login.component';
 
 
@@ -250,7 +249,7 @@ describe('LoginComponent', () => {
     expect((component.loginForm.controls['passwordGroup'] as FormGroup).controls['confirmPassword'].invalid).toBeTruthy();
   });
 
-  it('should reset fields after switch to change password mode', () => {
+  it('should blank form password fields after switch to change password mode', () => {
     component.loginForm.controls['emailAddress'].setValue('user@test.com');
     component.loginForm.controls['passwordGroup'].patchValue({
       password: 'password'
@@ -272,7 +271,7 @@ describe('LoginComponent', () => {
     });
   });
 
-  it('should reset fields after switch from change password mode', () => {
+  it('should blank form password fields after switch from change password mode', () => {
     component.loginForm.controls['changePasswordMode'].setValue(true);
 
     fixture.detectChanges();
