@@ -35,13 +35,24 @@ describe('ErrorComponent', () => {
 
     applicationErrorHandlerService = TestBed.get(ErrorHandler);
 
-    spyOnProperty(applicationErrorHandlerService, 'getStackString', 'get')
-      .and.returnValue(of('Stack String'));
+    spyOnProperty(applicationErrorHandlerService, 'getErrorMessage', 'get')
+      .and.returnValue('Error message');
+
+      spyOnProperty(applicationErrorHandlerService, 'getStackString', 'get')
+      .and.returnValue(of('Stack Trace'));
 
     fixture.detectChanges();
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should display error message', () => {
+    expect(fixture.nativeElement.querySelector("#error-message").innerHTML).toEqual('Error message');
+  });
+
+  it('should display stack trace', () => {
+    expect(fixture.nativeElement.querySelector(".stack-trace").innerHTML).toEqual('Stack Trace');
   });
 });
