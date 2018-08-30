@@ -6,16 +6,12 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 
 import { APP_SETTINGS } from '../../_helpers/index';
-
 import { GroupsService } from '../../_services';
 
 import { GroupsListComponent } from './groups-list.component';
 
 
-class MockHttpClient {
-  get() {}
-  post() {}
-}
+class MockHttpClient {}
 
 describe('GroupsListComponent', () => {
   let component: GroupsListComponent;

@@ -15,10 +15,7 @@ import { MockDatePickerComponent } from '../../../../_modules/shared/_components
 import { ManagePlayersComponent } from './manage-players.component';
 
 
-class MockHttpClient {
-  get() {}
-  post() {}
-}
+class MockHttpClient {}
 
 describe('ManagePlayersComponent', () => {
   let component: ManagePlayersComponent;

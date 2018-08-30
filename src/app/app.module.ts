@@ -63,21 +63,14 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
     PlayersService,
     ToasterService,
     UserService,
-    { 
-      provide: ErrorHandler, 
-      useClass: ApplicationErrorHandlerService
-    },
+    { provide: ErrorHandler, useClass: ApplicationErrorHandlerService },
     {
       provide: APP_INITIALIZER,
       useFactory: readConfigurationSettings,
       deps: [ConfigurationService],
       multi: true
     },
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: HttpInterceptorHelper,
-      multi: true
-    }
+    { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorHelper, multi: true }
   ],
   bootstrap: [
     AppComponent

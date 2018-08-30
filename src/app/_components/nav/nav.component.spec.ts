@@ -13,10 +13,7 @@ import { AuthorizationService } from '../../_services/index';
 import { NavComponent } from './nav.component';
 
 
-class MockHttpClient {
-  get() {}
-  post() {}
-}
+class MockHttpClient {}
 
 describe('NavComponent', () => {
   let component: NavComponent;

@@ -13,10 +13,7 @@ import { ValidationService } from '../../_modules/shared/_services';
 import { LoginComponent } from './login.component';
 
 
-class MockHttpClient {
-  get() {}
-  post() {}
-}
+class MockHttpClient {}
 
 @Component({
   template: 'Mock'
