@@ -38,7 +38,7 @@ describe('AlertComponent', () => {
     alertService = TestBed.get(AlertService);    
     subject = new Subject();
 
-    spyOn(alertService, 'getAlert')
+    spyOnProperty(alertService, 'getAlert')
       .and.returnValue(subject);
       
     fixture.detectChanges();
@@ -46,5 +46,49 @@ describe('AlertComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should not display alert when no alert', () => {
+    expect(fixture.nativeElement.querySelector("#alert-panel")).toBeNull();
+  });
+
+  it('should display alert when alert exists', () => {
+    subject.next({ type: 'error', title: "Alert Title", text: "Alert Message" });
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#alert-panel")).toBeTruthy();
+  });
+
+  it('should display alert title', () => {
+    subject.next({ type: 'error', title: "Alert Title", text: "Alert Message" });
+
+    fixture.detectChanges();
+    
+    expect(fixture.nativeElement.querySelector("#alert-title").innerHTML).toEqual('Alert Title');
+  });
+
+  it('should display alert text', () => {
+    subject.next({ type: 'error', title: "Alert Title", text: "Alert Message" });
+
+    fixture.detectChanges();
+    
+    expect(fixture.nativeElement.querySelector("#alert-text").innerHTML).toEqual('Alert Message');
+  });
+
+  it('should display success alert', () => {
+    subject.next({ type: 'success', title: "Alert Title", text: "Alert Message" });
+
+    fixture.detectChanges();
+    
+    expect(fixture.nativeElement.querySelector("#alert-panel").style.getPropertyValue('alert-success')).toEqual('');
+  });
+
+  it('should display error alert', () => {
+    subject.next({ type: 'error', title: "Alert Title", text: "Alert Message" });
+
+    fixture.detectChanges();
+    
+    expect(fixture.nativeElement.querySelector("#alert-panel").style.getPropertyValue('alert-danger')).toEqual('');
   });
 });
