@@ -25,13 +25,47 @@ describe('ValidationMessageComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ValidationMessageComponent);
     component = fixture.componentInstance;
-  });
 
-  it('should create', () => {
     component['control'] = new FormControl('');
 
     fixture.detectChanges();
+  });
 
+  it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should not display validation message when untouched', () => {
+    component['control'].markAsTouched();
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#validation-message").style.getPropertyValue('display')).toEqual('none');
+  });
+
+  it('should not display validation message', () => {
+    component['control'].markAsTouched();
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#validation-message").style.getPropertyValue('display')).toEqual('none');
+  });
+
+  it('should display validation message', () => {
+    component['control'].markAsTouched();
+    component['control'].setErrors({ 'required': true });
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#validation-message").style.getPropertyValue('display')).toEqual('inline');
+  });
+
+  it('should use invalid-feedback class', () => {
+    component['control'].markAsTouched();
+    component['control'].setErrors({ 'required': true });
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#validation-message").style.getPropertyValue('invalid-feedback')).toEqual('');
   });
 });

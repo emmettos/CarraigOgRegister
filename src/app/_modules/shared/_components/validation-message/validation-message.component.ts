@@ -3,10 +3,9 @@ import { FormControl } from '@angular/forms';
 
 import { ValidationService } from '../../_services/index';
 
-
 @Component({
   selector: 'app-validation-message',
-  template: `<div class="invalid-feedback" [hidden]="!getValidationMessage">{{ getValidationMessage }}</div>`
+  template: `<div id="validation-message" class="invalid-feedback" [style.display]="getValidationMessage ? 'inline': 'none'">{{ getValidationMessage }}</div>`
 })
 export class ValidationMessageComponent {
   @Input() 
