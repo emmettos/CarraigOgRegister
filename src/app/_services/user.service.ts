@@ -9,11 +9,11 @@ export class UserService {
   constructor(private http: HttpClient) {
   }
 
-  changePassword(emailAddress: string, newPassword: string, password: string): Observable<any> {
+  changePassword(emailAddress: string, password: string, newPassword: string): Observable<any> {
     return this.http.post('/api/changePassword', { 
       'emailAddress': emailAddress, 
-      'newPassword': newPassword,
-      'password': password
+      'password': password,
+      'newPassword': newPassword
     });
   }
 
