@@ -59,6 +59,7 @@ describe('LoginComponent', () => {
     component = fixture.componentInstance;
 
     location = TestBed.get(Location);
+    
     userService = TestBed.get(UserService);
 
     fixture.detectChanges();

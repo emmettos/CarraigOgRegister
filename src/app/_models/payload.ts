@@ -7,9 +7,11 @@ export interface IPayload {
 
 export interface IUserProfile {
   ID: string;
+  fullName: string;
   
   isAdministrator: boolean;
   isManager: boolean;
+
 
   groups: number[];
 }

@@ -38,7 +38,7 @@ describe('ErrorComponent', () => {
     spyOnProperty(applicationErrorHandlerService, 'getErrorMessage', 'get')
       .and.returnValue('Error message');
 
-      spyOnProperty(applicationErrorHandlerService, 'getStackString', 'get')
+    spyOnProperty(applicationErrorHandlerService, 'getStackString', 'get')
       .and.returnValue(of('Stack Trace'));
 
     fixture.detectChanges();
