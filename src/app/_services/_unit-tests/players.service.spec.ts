@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { IPlayer } from '../_models';
-import { PlayersService } from './index';
+import { IPlayer } from '../../_models';
+import { PlayersService } from '../index';
 
 
 describe('PlayersService', () => {

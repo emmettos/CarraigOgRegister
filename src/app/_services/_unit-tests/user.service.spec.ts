@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { UserService } from './index';
+import { UserService } from '../index';
 
 
 describe('UserService', () => {
