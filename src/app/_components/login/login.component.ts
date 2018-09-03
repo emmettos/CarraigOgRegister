@@ -92,6 +92,8 @@ export class LoginComponent implements OnInit {
     this.userService.changePassword(emailAddress, password, newPassword)
       .subscribe({
         next: response => {
+          this.changePasswordModeControl.setValue(false);
+        
           this.onChangeChangePasswordMode();
 
           this.passwordChanged = true;
