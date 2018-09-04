@@ -1,8 +1,8 @@
 export interface IPayload {
   userProfile: IUserProfile;
   
-  iat: Date;
-  exp: Date;
+  iat: number;
+  exp: number;
 }
 
 export interface IUserProfile {
@@ -11,7 +11,6 @@ export interface IUserProfile {
   
   isAdministrator: boolean;
   isManager: boolean;
-
 
   groups: number[];
 }
