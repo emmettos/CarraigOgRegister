@@ -11,7 +11,7 @@ import { IPlayer } from '../../../../_models/index';
 import { PlayersService } from '../../../../_services';
 import { ValidationService } from '../../../../_modules/shared/_services';
 
-import { MockDatePickerComponent } from '../../../../_modules/shared/_components/_mocks/mock-date-picker/mock-date-picker.component';
+import { MockDatePickerComponent } from '../../../../_modules/shared/_components/_mocks/mock-date-picker/mock-date-picker.component.spec';
 import { ManagePlayersComponent } from './manage-players.component';
 
 

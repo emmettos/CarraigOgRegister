@@ -1,6 +1,6 @@
 import { FormControl } from '@angular/forms';
 
-import { ValidationService } from './index';
+import { ValidationService } from '../index';
 
 
 describe('ValidationService', () => {
