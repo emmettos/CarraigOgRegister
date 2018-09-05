@@ -101,7 +101,8 @@ export class LoginComponent implements OnInit {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
-        }});
+        }
+      });
   }
 
   private login(emailAddress: string, password: string) {
@@ -124,6 +125,7 @@ export class LoginComponent implements OnInit {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
-        }});
+        }
+      });
   }
 }

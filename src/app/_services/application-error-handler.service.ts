@@ -1,5 +1,8 @@
+// Haven't written any unit tests for this service. Tried but proved difficult with Jasmine not liking 
+//  any errors that are created and StackTrace making XHR requests.
+
 import { ErrorHandler, Injectable, Injector } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';

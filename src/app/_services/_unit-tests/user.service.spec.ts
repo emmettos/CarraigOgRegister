@@ -11,8 +11,12 @@ describe('UserService', () => {
   
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [UserService]
+      imports: [
+        HttpClientTestingModule
+      ],
+      providers: [
+        UserService
+      ]
     });
 
     httpMock = TestBed.get(HttpTestingController);

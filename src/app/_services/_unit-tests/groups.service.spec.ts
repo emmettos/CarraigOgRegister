@@ -11,8 +11,12 @@ describe('PlayersService', () => {
   
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [GroupsService]
+      imports: [
+        HttpClientTestingModule
+      ],
+      providers: [
+        GroupsService
+      ]
     });
 
     httpMock = TestBed.get(HttpTestingController);

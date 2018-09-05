@@ -12,8 +12,12 @@ describe('ConfigurationService', () => {
   
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [HttpClientTestingModule],
-      providers: [ConfigurationService]
+      imports: [
+        HttpClientTestingModule
+      ],
+      providers: [
+        ConfigurationService
+      ]
     });
 
     httpMock = TestBed.get(HttpTestingController);

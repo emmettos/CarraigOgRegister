@@ -18,8 +18,7 @@ class MockHttpClient {}
 @Component({
   template: 'Mock'
 })
-class MockComponent {
-}
+class MockComponent {}
 
 describe('LoginComponent', () => {
   let component: LoginComponent;
