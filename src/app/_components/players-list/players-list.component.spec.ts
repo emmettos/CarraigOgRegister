@@ -1,4 +1,4 @@
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ActivatedRoute, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
@@ -14,8 +14,6 @@ import { PlayersService } from '../../_services';
 import { PlayersListComponent } from './players-list.component';
 
 
-class MockHttpClient {}
-
 describe('PlayersListComponent', () => {
   let component: PlayersListComponent;
   let fixture: ComponentFixture<PlayersListComponent>;
@@ -28,13 +26,12 @@ describe('PlayersListComponent', () => {
         PlayersListComponent 
       ],
       imports: [
-        HttpClientModule,
+        HttpClientTestingModule,
         NgbModule.forRoot(),
         ReactiveFormsModule,
         RouterTestingModule
       ],
       providers: [
-        { provide: HttpClient, useClass: MockHttpClient },
         { provide: ActivatedRoute,
           useValue: {
             snapshot: {

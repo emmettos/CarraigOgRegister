@@ -1,6 +1,6 @@
 import { Component, NO_ERRORS_SCHEMA } from '@angular/core';
 import { Location } from '@angular/common';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { RouterTestingModule } from '@angular/router/testing';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
@@ -12,8 +12,6 @@ import { ValidationService } from '../../_modules/shared/_services';
 
 import { LoginComponent } from './login.component';
 
-
-class MockHttpClient {}
 
 @Component({
   template: 'Mock'
@@ -34,17 +32,13 @@ describe('LoginComponent', () => {
         LoginComponent 
       ],
       imports: [
-        HttpClientModule,
+        HttpClientTestingModule,
         ReactiveFormsModule,
         RouterTestingModule.withRoutes([
           { path: "groups", component: MockComponent }
         ])
       ],
       providers: [
-        { 
-          provide: HttpClient, 
-          UseClass: MockHttpClient 
-        },
         UserService,
         ValidationService
       ],

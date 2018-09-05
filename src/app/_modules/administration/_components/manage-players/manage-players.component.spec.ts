@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
@@ -14,8 +14,6 @@ import { ValidationService } from '../../../../_modules/shared/_services';
 import { MockDatePickerComponent } from '../../../../_modules/shared/_components/_mocks/mock-date-picker/mock-date-picker.component.spec';
 import { ManagePlayersComponent } from './manage-players.component';
 
-
-class MockHttpClient {}
 
 describe('ManagePlayersComponent', () => {
   let component: ManagePlayersComponent;
@@ -32,14 +30,10 @@ describe('ManagePlayersComponent', () => {
         ManagePlayersComponent 
       ],
       imports: [
-        HttpClientModule,
+        HttpClientTestingModule,
         ReactiveFormsModule
       ],
       providers: [
-        { 
-          provide: HttpClient, 
-          UseClass: MockHttpClient 
-        },
         PlayersService,
         ValidationService
       ],

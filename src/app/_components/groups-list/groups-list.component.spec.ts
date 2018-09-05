@@ -1,5 +1,5 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -10,8 +10,6 @@ import { GroupsService } from '../../_services';
 
 import { GroupsListComponent } from './groups-list.component';
 
-
-class MockHttpClient {}
 
 describe('GroupsListComponent', () => {
   let component: GroupsListComponent;
@@ -27,14 +25,10 @@ describe('GroupsListComponent', () => {
         GroupsListComponent 
       ],
       imports: [
-        HttpClientModule,
+        HttpClientTestingModule,
         RouterTestingModule
       ],
       providers: [
-        { 
-          provide: HttpClient, 
-          UseClass: MockHttpClient 
-        },
         GroupsService
       ],
       schemas: [ NO_ERRORS_SCHEMA ]

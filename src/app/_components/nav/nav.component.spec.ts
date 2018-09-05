@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
@@ -14,8 +14,6 @@ import { AuthorizationService } from '../../_services/index';
 
 import { NavComponent } from './nav.component';
 
-
-class MockHttpClient {}
 
 @Component({
   template: 'Mock'
@@ -38,6 +36,7 @@ describe('NavComponent', () => {
         NavComponent 
       ],
       imports: [
+        HttpClientTestingModule,
         RouterTestingModule.withRoutes([
           { path: "login", component: MockComponent }
         ]),
@@ -45,7 +44,6 @@ describe('NavComponent', () => {
         ToasterModule.forRoot()    
       ],
       providers: [
-        { provide: HttpClient, UseClass: MockHttpClient },
         AuthorizationService
       ]
     })
