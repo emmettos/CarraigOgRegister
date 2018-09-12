@@ -4,7 +4,7 @@ import { HttpClientTestingModule, HttpTestingController } from '@angular/common/
 import { GroupsService } from '../index';
 
 
-describe('PlayersService', () => {
+describe('GroupsService', () => {
   let httpMock: HttpTestingController;
 
   let service: GroupsService;

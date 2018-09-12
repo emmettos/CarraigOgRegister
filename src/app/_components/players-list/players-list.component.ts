@@ -64,8 +64,8 @@ export class PlayersListComponent implements OnInit {
     let yearOfBirth: number = +this.activatedRoute.snapshot.paramMap.get("yearOfBirth");
 
     this.playersService.readCurrentPlayers(yearOfBirth)
-      .subscribe(
-        response => {
+      .subscribe({
+        next: response => {
           let playerIndex = 0;
 
           this.players = response.body.players;
@@ -108,7 +108,11 @@ export class PlayersListComponent implements OnInit {
           this.filteredPlayers = this.players.slice(0);
 
           this.onClickHeader(this.sortKey, false);
-        });
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
+        }
+      });
   }
 
   onClickHeader(newSortKey: string, flipSort: boolean = true) {

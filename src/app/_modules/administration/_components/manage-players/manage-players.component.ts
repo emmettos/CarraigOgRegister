@@ -81,10 +81,14 @@ export class ManagePlayersComponent implements OnInit {
 
     if (groupYear !== 'Select Year') {
       this.playersService.readAllPlayers(+groupYear)
-        .subscribe(
-          response => {
+        .subscribe({
+          next: response => {
             this.groupPlayers = response.body.players;
-          });
+          },
+          // Need this handler otherwise the Angular error handling mechanism will kick in.
+          error: error => {
+          }
+        });
     }
 
     this.playerDetails = (<IPlayer>{});
@@ -154,12 +158,16 @@ export class ManagePlayersComponent implements OnInit {
 
     if (this.playerDetails._id) {
       this.playersService.updatePlayer(this.playerDetails, APP_SETTINGS.currentYear, this.groupYear)
-        .subscribe(
-          response => {
+        .subscribe({
+          next: response => {
             this.playerDetails.__v = response.body.player.__v;
 
             window.scrollTo(0, 0);
-          });
+            },
+          // Need this handler otherwise the Angular error handling mechanism will kick in.
+          error: error => {
+          }
+        });
     }
     else {
       let dobPicker = formValues.dateOfBirthPicker.datePickerTextBox,
@@ -169,12 +177,16 @@ export class ManagePlayersComponent implements OnInit {
       this.playerDetails.dateOfBirth = dateOfBirth.toISOString();
 
       this.playersService.createPlayer(this.playerDetails, APP_SETTINGS.currentYear, this.groupYear)
-        .subscribe(
-          response => {
+        .subscribe({
+          next: response => {
             this.groupPlayers.push(response.body.player)
 
             window.scrollTo(0, 0);
-          });
+          },
+          // Need this handler otherwise the Angular error handling mechanism will kick in.
+          error: error => {
+          }
+        });
     }
 
     this.processEvent(FormEvent.SavePlayer);

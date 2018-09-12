@@ -63,17 +63,17 @@ exports = module.exports = function (app, router) {
     Promise.all([readGroups(), readUsers(), readPlayerGroupCounts()])
       .then(function (results) {
         var groups = results[0],
-          users = results[1],
-          playerGroupCounts = results[2],
-          groupIndex = 0,
-          currentGroup = null,
-          returnMessage = {};
+            users = results[1],
+            playerGroupCounts = results[2],
+            groupIndex = 0,
+            currentGroup = null,
+            returnMessage = {};
 
         var readManagerFullName = function (managerEmailAddress) {
           var lowIndex = 0,
-            highIndex = users.length - 1,
-            middleIndex = 0,
-            managerFullName = managerEmailAddress;
+              highIndex = users.length - 1,
+              middleIndex = 0,
+              managerFullName = managerEmailAddress;
 
           while (lowIndex <= highIndex) {
             middleIndex = (lowIndex + highIndex) / 2 | 0;
@@ -94,9 +94,9 @@ exports = module.exports = function (app, router) {
         };
         var readPlayerGroupCount = function (yearOfBirth) {
           var lowIndex = 0,
-            highIndex = playerGroupCounts.length - 1,
-            middleIndex = 0,
-            playerGroupCount = 0;
+              highIndex = playerGroupCounts.length - 1,
+              middleIndex = 0,
+              playerGroupCount = 0;
 
           while (lowIndex <= highIndex) {
             middleIndex = (lowIndex + highIndex) / 2 | 0;

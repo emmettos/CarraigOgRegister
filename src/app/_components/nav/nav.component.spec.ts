@@ -6,9 +6,7 @@ import { RouterTestingModule } from '@angular/router/testing';
 
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
-import { ToasterModule } from 'angular2-toaster';
-
-import { ToasterService } from 'angular2-toaster';
+import { ToasterModule, ToasterService } from 'angular2-toaster';
 
 import { AuthorizationService } from '../../_services/index';
 
@@ -59,6 +57,8 @@ describe('NavComponent', () => {
     authorizationService = TestBed.get(AuthorizationService);
     toasterService = TestBed.get(ToasterService);
 
+    spyOn(console, 'error');
+    
     spyOn(toasterService, 'pop');
   });
 

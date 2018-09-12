@@ -20,9 +20,13 @@ export class GroupsListComponent implements OnInit {
     this.currentYear = APP_SETTINGS.currentYear;
 
     this.groupsService.readGroups()
-      .subscribe(
-        response => {
+      .subscribe({
+        next: response => {
           this.groups = response.body.groups;
-        });
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
+        }
+      });
   }
 }
