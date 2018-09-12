@@ -9,7 +9,6 @@ import { ToasterModule, ToasterService } from 'angular2-toaster';
 
 import { AlertService, AuthorizationService } from '../../_services/index';
 import { HttpInterceptorHelper } from '../index';
-import { Alert } from 'selenium-webdriver';
 
 
 @Component({
