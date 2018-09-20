@@ -74,7 +74,7 @@ describe('AuthorizationGuard', () => {
     expect(toasterService.pop).toHaveBeenCalledWith('warning', 'Unauthorized Access', 'Please login');
   });
 
-  it('should route to /login when no payload', fakeAsync(() => {
+  it('should route to /login for no payload', fakeAsync(() => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
@@ -85,7 +85,7 @@ describe('AuthorizationGuard', () => {
     expect(location.path()).toBe('/login');
   }));
 
-  it('should set return query parameter when no payload', () => {
+  it('should set return query parameter for no payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
@@ -100,7 +100,7 @@ describe('AuthorizationGuard', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/login'], { queryParams : { return: 'admin/manage-players' } });
   });
 
-  it('should not allow when expired payload', () => {
+  it('should not allow for expired payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -115,7 +115,7 @@ describe('AuthorizationGuard', () => {
     expect(authorizationGuard.canActivate(null, mockRouterStateSnapshot)).toBeFalsy();
   });
 
-  it('should display Your Session has Expired when expired payload', () => {
+  it('should display Your Session has Expired for expired payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -132,7 +132,7 @@ describe('AuthorizationGuard', () => {
     expect(toasterService.pop).toHaveBeenCalledWith('warning', 'Your Session has Expired', 'Please login');
   });
 
-  it('should route to /login when expired payload', fakeAsync(() => {
+  it('should route to /login for expired payload', fakeAsync(() => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -151,7 +151,7 @@ describe('AuthorizationGuard', () => {
     expect(location.path()).toBe('/login');
   }));
 
-  it('should set return query parameter when expired payload', () => {
+  it('should set return query parameter for expired payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -174,7 +174,7 @@ describe('AuthorizationGuard', () => {
     expect(router.navigate).toHaveBeenCalledWith(['/login'], { queryParams : { return: '/administration/manage-players' } });
   });
 
-  it('should call authorizationService.deleteToken when expired payload', () => {
+  it('should call authorizationService.deleteToken for expired payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -191,7 +191,7 @@ describe('AuthorizationGuard', () => {
     expect(authorizationService.deleteToken).toHaveBeenCalled();
   });
 
-  it('should allow /groups for up-to-date payload', () => {
+  it('should allow /groups for active payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -214,7 +214,7 @@ describe('AuthorizationGuard', () => {
     expect(authorizationGuard.canActivate(null, mockRouterStateSnapshot)).toBeTruthy();
   });
 
-  it('should not allow /administration/manage-players for up-to-date non administrator payload', () => {
+  it('should not allow /administration/manage-players for active non administrator payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -237,7 +237,7 @@ describe('AuthorizationGuard', () => {
     expect(authorizationGuard.canActivate(null, mockRouterStateSnapshot)).toBeFalsy();
   });
 
-  it('should route to /groups on attempting /administration/manage-players for up-to-date non-administrator payload', fakeAsync(() => {
+  it('should route to /groups on attempting /administration/manage-players for active non-administrator payload', fakeAsync(() => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -264,7 +264,7 @@ describe('AuthorizationGuard', () => {
     expect(location.path()).toBe('/groups');
   }));
 
-  it('should allow /administration/manage-players for up-to-date administrator payload', () => {
+  it('should allow /administration/manage-players for active administrator payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -287,7 +287,7 @@ describe('AuthorizationGuard', () => {
     expect(authorizationGuard.canActivate(null, mockRouterStateSnapshot)).toBeTruthy();
   });
 
-  it('should not allow /players/:groupName/:yearOfBirth for up-to-date non-manager payload', () => {
+  it('should not allow /players/:groupName/:yearOfBirth for active non-manager payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -312,7 +312,7 @@ describe('AuthorizationGuard', () => {
     expect(authorizationGuard.canActivate(null, mockRouterStateSnapshot)).toBeFalsy();
   });
 
-  it('should route to /groups on attempting /players/:groupName/:yearOfBirth for up-to-date non-manager payload', fakeAsync(() => {
+  it('should route to /groups on attempting /players/:groupName/:yearOfBirth for active non-manager payload', fakeAsync(() => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -341,7 +341,7 @@ describe('AuthorizationGuard', () => {
     expect(location.path()).toBe('/groups');
   }));
 
-  it('should not allow /players/:groupName/:yearOfBirth for up-to-date other manager payload', () => {
+  it('should not allow /players/:groupName/:yearOfBirth for active other manager payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -369,7 +369,7 @@ describe('AuthorizationGuard', () => {
     expect(authorizationGuard.canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)).toBeFalsy();
   });
 
-  it('should route to /groups on attempting /players/:groupName/:yearOfBirth for up-to-date other manager payload', fakeAsync(() => {
+  it('should route to /groups on attempting /players/:groupName/:yearOfBirth for active other manager payload', fakeAsync(() => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -401,7 +401,7 @@ describe('AuthorizationGuard', () => {
     expect(location.path()).toBe('/groups');
   }));
 
-  it('should allow /players/:groupName/:yearOfBirth for up-to-date manager payload', () => {
+  it('should allow /players/:groupName/:yearOfBirth for active manager payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -429,7 +429,7 @@ describe('AuthorizationGuard', () => {
     expect(authorizationGuard.canActivate(mockActivatedRouteSnapshot, mockRouterStateSnapshot)).toBeTruthy();
   });
 
-  it('should allow /players/:groupName/:yearOfBirth for up-to-date administrator payload', () => {
+  it('should allow /players/:groupName/:yearOfBirth for active administrator payload', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
