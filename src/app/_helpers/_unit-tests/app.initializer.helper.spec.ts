@@ -22,7 +22,7 @@ describe('AppInitializerHelper', () => {
   });
 
   it('should call ConfigurationService readConfigurationSettings', () => {
-    spyOn(configurationService, 'readConfigurationSettings')
+    spyOn(configurationService, 'readConfigurationSettings');
 
     readConfigurationSettings(configurationService)();
 

@@ -63,7 +63,7 @@ describe('NavComponent', () => {
   });
 
   it('should create', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
     fixture.detectChanges();
@@ -72,7 +72,7 @@ describe('NavComponent', () => {
   });
 
   it('should hide Signed in as... menu for signed out user', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
     fixture.detectChanges();
@@ -81,7 +81,7 @@ describe('NavComponent', () => {
   });
 
   it('should hide Sign Out menu for signed out user', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
     fixture.detectChanges();
@@ -90,7 +90,7 @@ describe('NavComponent', () => {
   });
 
   it('should hide Administration menu for signed out user', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
     fixture.detectChanges();
@@ -99,7 +99,7 @@ describe('NavComponent', () => {
   });
 
   it('should display Signed in as... menu for signed in user', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -114,7 +114,7 @@ describe('NavComponent', () => {
   });
 
   it('should display Sign Out menu for signed in user', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -129,7 +129,7 @@ describe('NavComponent', () => {
   });
 
   it('should hide Administration menu for non-administrators', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -144,7 +144,7 @@ describe('NavComponent', () => {
   });
 
   it('should display Administration menu for administrators', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -159,7 +159,7 @@ describe('NavComponent', () => {
   });
 
   it('should include Manage Players sub menu', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -174,7 +174,7 @@ describe('NavComponent', () => {
   });
 
   it('should display Successfully Signed Out when signing out of active session', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -183,7 +183,7 @@ describe('NavComponent', () => {
         }
       });
 
-    spyOnProperty(authorizationService, 'getActivePayload')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -200,10 +200,10 @@ describe('NavComponent', () => {
   });
 
   it('should display Your session had expired when signing out of inactive session', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
-    spyOnProperty(authorizationService, 'getActivePayload')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue(null);
 
     fixture.detectChanges();
@@ -214,7 +214,7 @@ describe('NavComponent', () => {
   });
 
   it('should call authorizationService.deleteToken when signing out', () => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -223,7 +223,7 @@ describe('NavComponent', () => {
         }
       });
 
-    spyOnProperty(authorizationService, 'getActivePayload')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -242,7 +242,7 @@ describe('NavComponent', () => {
   });
 
   it('should route to /login after signing out', fakeAsync(() => {
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -251,7 +251,7 @@ describe('NavComponent', () => {
         }
       });
 
-    spyOnProperty(authorizationService, 'getActivePayload')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',

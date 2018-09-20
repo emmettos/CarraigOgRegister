@@ -36,7 +36,14 @@ describe('ConfigurationService', () => {
 
     expect(mockRequest.request.method).toEqual("GET");
 
-    mockRequest.flush(null);
+    mockRequest.flush({
+      body: {
+        currentSettings: {
+          year: 2018,
+          groupYears: [2008, 2009, 2010, 2011, 2012, 2013]
+        }
+      }
+    });
   });
 
   it('should return promise for read configuration settings', () => {

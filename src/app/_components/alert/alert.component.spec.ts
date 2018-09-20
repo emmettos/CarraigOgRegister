@@ -38,7 +38,7 @@ describe('AlertComponent', () => {
     alertService = TestBed.get(AlertService);    
     subject = new Subject();
 
-    spyOnProperty(alertService, 'getAlertStream')
+    spyOnProperty(alertService, 'getAlertStream', 'get')
       .and.returnValue(subject);
       
     fixture.detectChanges();

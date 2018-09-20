@@ -156,7 +156,7 @@ describe('HttpInterceptorHelper', () => {
         'message': 'Invalid password'
       }}, { status: 401, statusText: '' });
 
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
     
     spyOn(toasterService, 'pop');
@@ -176,7 +176,7 @@ describe('HttpInterceptorHelper', () => {
 
     const mockRequest = httpMock.expectOne('/api/writeLog');
   
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
     
     spyOn(toasterService, 'pop');
@@ -203,7 +203,7 @@ describe('HttpInterceptorHelper', () => {
   
     const mockRequest = httpMock.expectOne('/dummy');
   
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -211,7 +211,7 @@ describe('HttpInterceptorHelper', () => {
           isAdministrator: false
         }
       });
-    spyOnProperty(authorizationService, 'getActivePayload')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue(null);
     spyOn(authorizationService, 'deleteToken');
 
@@ -239,7 +239,7 @@ describe('HttpInterceptorHelper', () => {
   
     const mockRequest = httpMock.expectOne('/dummy');
   
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -247,7 +247,7 @@ describe('HttpInterceptorHelper', () => {
           isAdministrator: false
         }
       });
-    spyOnProperty(authorizationService, 'getActivePayload')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue(null);
     spyOn(authorizationService, 'deleteToken');
 
@@ -277,7 +277,7 @@ describe('HttpInterceptorHelper', () => {
   
     const mockRequest = httpMock.expectOne('/dummy');
   
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -285,7 +285,7 @@ describe('HttpInterceptorHelper', () => {
           isAdministrator: false
         }
       });
-    spyOnProperty(authorizationService, 'getActivePayload')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -318,7 +318,7 @@ describe('HttpInterceptorHelper', () => {
   
     const mockRequest = httpMock.expectOne('/dummy');
   
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -326,7 +326,7 @@ describe('HttpInterceptorHelper', () => {
           isAdministrator: false
         }
       });
-    spyOnProperty(authorizationService, 'getActivePayload')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
@@ -361,7 +361,7 @@ describe('HttpInterceptorHelper', () => {
   
     const mockRequest = httpMock.expectOne('/dummy');
   
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
     spyOn(toasterService, 'pop');
@@ -388,7 +388,7 @@ describe('HttpInterceptorHelper', () => {
   
     const mockRequest = httpMock.expectOne('/dummy');
   
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
     spyOn(toasterService, 'pop');
@@ -417,7 +417,7 @@ describe('HttpInterceptorHelper', () => {
   
     const mockRequest = httpMock.expectOne('/dummy');
   
-    spyOnProperty(authorizationService, 'getPayload')
+    spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue(null);
 
     spyOn(alertService, 'error');
