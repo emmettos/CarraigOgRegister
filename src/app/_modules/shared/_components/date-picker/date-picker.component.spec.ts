@@ -129,9 +129,9 @@ describe('DatePickerComponent', () => {
 
   it('should set start date field', () => {
     component.ngOnChanges({
-      startDate: new SimpleChange(null, { year: 2018, month: 11, day: 19 }, false)
+      startDate: new SimpleChange(null, { year: 2018, month: 11 }, false)
     });
 
-    expect(component.datePicker.startDate).toEqual({ year: 2018, month: 11, day: 19 });
+    expect(component.datePicker.startDate).toEqual({ year: 2018, month: 11 });
   });
 });
