@@ -1,3 +1,4 @@
+<!-- Most id's are used for unit testing -->
 <header class="navbar navbar-dark navbar-fixed-top navbar-expand-sm mb-3">
   <a class="navbar-brand" routerLink="/groups" (click)="navbarCollapsed = true">Carraig Og Register</a>
 
@@ -8,22 +9,22 @@
   <div class="navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul class="navbar-nav mr-auto">
       <li ngbDropdown class="nav-item dropdown">
-        <a [style.display]="authorizationService.getPayload?.userProfile.isAdministrator ? 'inline': 'none'" ngbDropdownToggle class="nav-link dropdown-toggle">Administration</a>
-        <div ngbDropdownMenu>
+        <a id="administration-menu" [style.display]="authorizationService.getPayload?.userProfile.isAdministrator ? 'inline': 'none'" ngbDropdownToggle class="nav-link dropdown-toggle">Administration</a>
+        <div id="administration-dropdown" ngbDropdownMenu>
           <a class="dropdown-item" routerLink="/administration/manage-players">Manage Players</a>
         </div>
       </li>
     </ul>
     <ul *ngIf="authorizationService.getPayload" class="navbar-nav ml-auto">
       <li class="nav-item">
-          <span class="navbar-text mr-3" style="color:#FFFFFF">Signed in as - {{ authorizationService.getPayload?.userProfile.fullName }}</span>
+          <span id="signed-in-menu" class="navbar-text mr-3" style="color:#FFFFFF">Signed in as - {{ authorizationService.getPayload?.userProfile.fullName }}</span>
       </li>
       <li ngbDropdown class="nav-item dropdown">
         <a ngbDropdownToggle class="nav-link dropdown-toggle">
           <i class="fa fa-user fa-lg"></i>
         </a>
         <div ngbDropdownMenu class="dropdown-menu-right">
-          <a class="dropdown-item" (click)="onClickLogout()" routerLink="#">Sign Out</a>
+          <a id="sign-out-menu" class="dropdown-item" (click)="onClickLogout()" routerLink="#">Sign Out</a>
         </div>
       </li>
     </ul>

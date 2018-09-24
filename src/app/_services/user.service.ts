@@ -13,7 +13,7 @@ export class UserService {
     return this.http.post('/api/changePassword', { 
       'emailAddress': emailAddress, 
       'password': password,
-      'newPassword': newPassword,
+      'newPassword': newPassword
     });
   }
 

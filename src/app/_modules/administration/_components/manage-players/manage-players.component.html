@@ -1,3 +1,4 @@
+<!-- Most id's are used for unit testing -->
 <div>
   <form [formGroup]="managePlayersForm" (ngSubmit)="onSubmit(managePlayersForm.value)" novalidate>
     <div class="row">
@@ -8,29 +9,35 @@
         </select>
       </div>
       <div class="form-group col-lg-2">
-        <app-date-picker [parentGroup]="managePlayersForm.controls.dateOfBirthPicker" [label]="dateOfBirthPickerLabel" [enabled]="dateOfBirthPickerEnabled"
-          [minDate]="dateOfBirthPickerMinDate" [maxDate]="dateOfBirthPickerMaxDate" [startDate]="dateOfBirthPickerStartDate"
-          (valueChange)="onDateOfBirthPickerChange($event)">
+        <app-date-picker  [parentGroup]="managePlayersForm.controls.dateOfBirthPicker" 
+                          [label]="dateOfBirthPickerLabel" 
+                          [enabled]="dateOfBirthPickerEnabled"
+                          [minDate]="dateOfBirthPickerMinDate" 
+                          [maxDate]="dateOfBirthPickerMaxDate" 
+                          [startDate]="dateOfBirthPickerStartDate"
+                          (valueChange)="onDateOfBirthPickerChange($event)">
         </app-date-picker>
       </div>
       <div class="form-group col-lg-2">
-        <input type="button" class="btn btn-info" (click)="onSearchPlayers()" [disabled]="currentState !== formState.SearchForPlayer || managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').invalid || !groupPlayers"
-          value="Search Players">
+        <input  type="button" 
+                id="search-players" 
+                class="btn btn-info" 
+                (click)="onSearchPlayers()" 
+                [disabled]="currentState !== formState.SearchForPlayer || managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').invalid || !groupPlayers"
+                value="Search Players">
       </div>
     </div>
     <hr/>
     <div class="row text-center">
-      <div class="col-md-12">
+      <div id="message-panel" class="col-md-12">
         <p class="text-info" [hidden]="currentState !== formState.SearchForPlayer">Players matching the entered Date of Birth will display here</p>
         <p class="text-warning" [hidden]="currentState !== formState.AddPlayer">No players found. Add new Player.</p>
-        <p class="text-info" [hidden]="currentState !== formState.EditPlayer">Editing {{ playerDetails.firstName + ' ' + playerDetails.surname }} </p>
-        <p class="text-success" [hidden]="currentState !== formState.PlayerSaved">
-          <strong>Player Details Sucessfully Saved</strong>
-        </p>
+        <p class="text-info" [hidden]="currentState !== formState.EditPlayer">Editing {{ playerDetails.firstName + ' ' + playerDetails.surname }}</p>
+        <p class="text-success" [hidden]="currentState !== formState.PlayerSaved"><strong>Player Details Sucessfully Saved</strong></p>
       </div>
     </div>
     <div class="table-responsive" [hidden]="currentState !== formState.PlayersListed">
-      <table class="table table-bordered table-striped table-hover select-row">
+      <table id="players-table" class="table table-bordered table-striped table-hover select-row">
         <thead>
           <tr>
             <th>Surname</th>
@@ -52,91 +59,153 @@
     <hr/>
     <div class="row">
       <div class="form-group col-md-2 offset-md-5">
-        <app-date-picker [parentGroup]="managePlayersForm.controls.lastRegisteredDatePicker" [label]="lastRegisteredDatePickerLabel"
-          [enabled]="lastRegisteredDatePickerEnabled" [minDate]="lastRegisteredDatePickerMinDate" [maxDate]="lastRegisteredDatePickerMaxDate"
-          [startDate]="lastRegisteredDatePickerStartDate">
+        <app-date-picker  [parentGroup]="managePlayersForm.controls.lastRegisteredDatePicker" 
+                          [label]="lastRegisteredDatePickerLabel"
+                          [enabled]="lastRegisteredDatePickerEnabled" 
+                          [minDate]="lastRegisteredDatePickerMinDate" 
+                          [maxDate]="lastRegisteredDatePickerMaxDate"
+                          [startDate]="lastRegisteredDatePickerStartDate">
         </app-date-picker>
       </div>
     </div>
     <div class="row">
       <div class="form-group col-md-4 offset-md-2">
         <label class="control-label" for="firstName">First Name</label>
-        <input type="text" formControlName="firstName" name="firstName" [attr.disabled]="currentState !== formState.AddPlayer ? 'disabled' : null"
-          class="form-control" [ngClass]="{'is-invalid': managePlayersForm.controls.firstName.invalid && managePlayersForm.controls.firstName.touched}"
-          placeholder="First Name">
+        <input  type="text" 
+                id="player-first-name"
+                formControlName="firstName" 
+                name="firstName" 
+                [attr.disabled]="currentState !== formState.AddPlayer ? 'disabled' : null"
+                class="form-control" 
+                [ngClass]="{'is-invalid': managePlayersForm.controls.firstName.invalid && managePlayersForm.controls.firstName.touched}"
+                placeholder="First Name">
         <app-validation-message [control]="managePlayersForm.controls.firstName"></app-validation-message>
       </div>
       <div class="form-group col-md-4">
         <label class="control-label" for="surname">Surname</label>
-        <input type="text" formControlName="surname" name="surname" [attr.disabled]="currentState !== formState.AddPlayer ? 'disabled' : null"
-          class="form-control" [ngClass]="{'is-invalid': managePlayersForm.controls.surname.invalid && managePlayersForm.controls.surname.touched}"
-          placeholder="Surname">
+        <input  type="text" 
+                id="player-surname" 
+                formControlName="surname" 
+                name="surname" 
+                [attr.disabled]="currentState !== formState.AddPlayer ? 'disabled' : null"
+                class="form-control" 
+                [ngClass]="{'is-invalid': managePlayersForm.controls.surname.invalid && managePlayersForm.controls.surname.touched}"
+                placeholder="Surname">
         <app-validation-message [control]="managePlayersForm.controls.surname"></app-validation-message>
       </div>
     </div>
     <div class="row">
       <div class="form-group col-md-4 offset-md-2">
         <label class="control-label" for="addressLine1">Address Line 1</label>
-        <input type="text" formControlName="addressLine1" name="addressLine1" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
-          class="form-control" [ngClass]="{'is-invalid': managePlayersForm.controls.addressLine1.invalid && managePlayersForm.controls.addressLine1.touched}"
-          placeholder="Address Line 1">
+        <input  type="text" 
+                id="player-address-line1"
+                formControlName="addressLine1" 
+                name="addressLine1" 
+                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                class="form-control" 
+                [ngClass]="{'is-invalid': managePlayersForm.controls.addressLine1.invalid && managePlayersForm.controls.addressLine1.touched}"
+                placeholder="Address Line 1">
         <app-validation-message [control]="managePlayersForm.controls.addressLine1"></app-validation-message>
       </div>
       <div class="form-group col-md-4">
         <label class="control-label" for="addressLine2">Address Line 2</label>
-        <input type="text" formControlName="addressLine2" name="addressLine2" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
-          class="form-control" placeholder="Address Line 2">
+        <input  type="text" 
+                id="player-address-line2"
+                formControlName="addressLine2" name="addressLine2" 
+                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                class="form-control" 
+                placeholder="Address Line 2">
       </div>
     </div>
     <div class="row">
       <div class="form-group col-md-4 offset-md-2">
         <label class="control-label" for="addressLine3">Address Line 3</label>
-        <input type="text" formControlName="addressLine3" name="addressLine3" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
-          class="form-control" placeholder="Address Line 3">
+        <input  type="text" 
+                id="player-address-line3"
+                formControlName="addressLine3" 
+                name="addressLine3" 
+                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                class="form-control" 
+                placeholder="Address Line 3">
       </div>
     </div>
     <div class="row">
       <div class="form-group col-md-5 offset-md-2">
         <label class="control-label" for="medicalConditions">Medical Conditions</label>
-        <input type="text" formControlName="medicalConditions" name="medicalConditions" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
-          class="form-control" placeholder="Medical Conditions">
+        <input  type="text"
+                id="player-medical-conditions" 
+                formControlName="medicalConditions" 
+                name="medicalConditions" 
+                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                class="form-control" 
+                placeholder="Medical Conditions">
       </div>
       <div class="form-group col-md-3">
         <label class="control-label" for="school">School</label>
-        <input type="text" formControlName="school" name="school" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
-          class="form-control" placeholder="School">
+        <input  type="text" 
+                id="player-school"
+                formControlName="school" 
+                name="school" 
+                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                class="form-control" 
+                placeholder="School">
       </div>
     </div>
     <div class="row">
       <div class="form-group col-md-4 offset-md-2">
         <label class="control-label" for="contactName">Contact Name</label>
-        <input type="text" formControlName="contactName" name="contactName" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
-          class="form-control" placeholder="Contact Name">
+        <input  type="text" 
+                id="contact-name"
+                formControlName="contactName" 
+                name="contactName" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                class="form-control" 
+                placeholder="Contact Name">
       </div>
       <div class="form-group col-md-4">
         <label class="control-label" for="contactEmailAddress">Contact Email Address</label>
-        <input type="text" formControlName="contactEmailAddress" name="contactEmailAddress" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
-          class="form-control" placeholder="Contact Email Address">
+        <input  type="text" 
+                id="contact-email-address"
+                formControlName="contactEmailAddress" 
+                name="contactEmailAddress" 
+                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                class="form-control" 
+                placeholder="Contact Email Address">
       </div>
     </div>
     <div class="row">
       <div class="form-group col-md-4 offset-md-2">
         <label class="control-label" for="contactMobileNumber">Contact Mobile Number</label>
-        <input type="text" formControlName="contactMobileNumber" name="contactMobileNumber" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
-          class="form-control" placeholder="Contact Mobile Number">
+        <input  type="text" 
+                id="contact-mobile-number"
+                formControlName="contactMobileNumber" 
+                name="contactMobileNumber" 
+                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                class="form-control" 
+                placeholder="Contact Mobile Number">
       </div>
       <div class="form-group col-md-4">
         <label class="control-label" for="contactHomeNumber">Contact Home Number</label>
-        <input type="text" formControlName="contactHomeNumber" name="contactHomeNumber" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
-          class="form-control" placeholder="Contact Home Number">
+        <input  type="text" 
+                id="contact-home-number"
+                formControlName="contactHomeNumber" 
+                name="contactHomeNumber" 
+                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                class="form-control" 
+                placeholder="Contact Home Number">
       </div>
     </div>
     <div class="row mb-3">
       <div class="col-md-2 offset-md-5">
-        <input type="button" class="btn btn-info mr-3" (click)="onReset()" [disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer)"
-          value="Reset">
-        <input type="submit" class="btn btn-info" [disabled]="managePlayersForm.status === 'INVALID' || !(currentState === formState.AddPlayer || currentState === formState.EditPlayer)"
-          value="Save">
+        <input  type="button" 
+                id="reset" 
+                class="btn btn-info mr-3" 
+                (click)="onReset()" 
+                [disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer)"
+                value="Reset">
+        <input  type="submit" 
+                class="btn btn-info" 
+                [disabled]="managePlayersForm.status === 'INVALID' || !(currentState === formState.AddPlayer || currentState === formState.EditPlayer)"
+                value="Save">
       </div>
     </div>
   </form>

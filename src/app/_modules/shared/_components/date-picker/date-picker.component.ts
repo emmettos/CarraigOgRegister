@@ -7,13 +7,13 @@ import {
   OnInit,
   Output,
   SimpleChange,
-  ViewChild } from '@angular/core';
+  ViewChild, 
+  OnChanges} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { 
   NgbDatepicker, 
   NgbInputDatepicker, 
-  NgbDatepickerConfig, 
   NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 import { ValidationService } from '../../_services/index';
@@ -26,11 +26,8 @@ import { ValidationService } from '../../_services/index';
   selector: 'app-date-picker',
   templateUrl: './date-picker.component.html',
   styleUrls: ['./date-picker.component.css'],
-  providers: [
-    NgbDatepickerConfig
-  ]
 })
-export class DatePickerComponent implements OnInit {
+export class DatePickerComponent implements OnInit, OnChanges {
   @Input() 
   parentGroup: FormGroup;
 
@@ -56,14 +53,13 @@ export class DatePickerComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private validationService: ValidationService,
-    private datePickerConfig: NgbDatepickerConfig,
     private eRef: ElementRef) {
   }
 
   ngOnInit() {
     this.parentGroup.addControl('datePickerTextBox', 
       this.formBuilder.control({ value: 'yyyy-MM-dd', disabled: !this.enabled }, 
-        [this.validationService.dateOfBirthValidator]));
+        [this.validationService.datePickerValidator]));
 
     this.parentGroup.controls['datePickerTextBox'].valueChanges.subscribe(
       formValue => {

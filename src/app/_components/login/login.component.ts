@@ -51,9 +51,9 @@ export class LoginComponent implements OnInit {
     this.confirmPasswordControl.disable();
   }
 
-  onChangeChangePasswordMode() {
+  onChangeChangePasswordMode(passwordChanged: boolean = false) {
     this.authenticationFailed = false;
-    this.passwordChanged = false;
+    this.passwordChanged = passwordChanged;
 
     this.loginForm.controls['passwordGroup'].setValue({
       password: '',
@@ -92,21 +92,17 @@ export class LoginComponent implements OnInit {
     this.userService.changePassword(emailAddress, password, newPassword)
       .subscribe({
         next: response => {
-          this.changePasswordModeControl.setValue(false);
-        
-          this.onChangeChangePasswordMode();
+          this.loginForm.controls['changePasswordMode'].setValue(false);
 
-          this.passwordChanged = true;
+          this.onChangeChangePasswordMode(true);
         },
         error: error => {
           if (error.status === 401) {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
-
-          // Do this so the error will be logged by the ApplicationErrorHandler.
-          throw error;
-        }});
+        }
+      });
   }
 
   private login(emailAddress: string, password: string) {
@@ -129,9 +125,7 @@ export class LoginComponent implements OnInit {
             this.errorMessage = error.error.error.message;
             this.authenticationFailed = true;
           }
-
-          // Do this so the error will be logged by the ApplicationErrorHandler.
-          throw error;
-        }});
+        }
+      });
   }
 }

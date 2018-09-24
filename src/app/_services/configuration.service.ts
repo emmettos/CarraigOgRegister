@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable } from 'rxjs';
-
 // Referencing _helpers/index.ts is resulting in a Circular Dependency warning.
 import { APP_SETTINGS } from '../_helpers/app.initializer.helper';
 

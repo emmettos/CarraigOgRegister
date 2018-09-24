@@ -6,8 +6,8 @@
   </div>
   <div class="row text-center mt-2">
     <div class="col-md-12">
-      <h3 *ngIf="authenticationFailed" class="text-warning"><strong>{{ errorMessage }}</strong></h3>
-      <h3 *ngIf="passwordChanged" class="text-success"><strong>Password Successfully Changed</strong></h3>
+      <h3 *ngIf="authenticationFailed" id="authentication-failed-message" class="text-warning"><strong>{{ errorMessage }}</strong></h3>
+      <h3 *ngIf="passwordChanged" id="password-changed-message" class="text-success"><strong>Password Successfully Changed</strong></h3>
     </div>
   </div>
   <br />
@@ -52,7 +52,7 @@
                       <app-validation-message [control]="passwordControl"></app-validation-message>
                     </div>
                   </div>
-                  <div [hidden]="!changePasswordModeControl.value">
+                  <div id="change-password" [style.display]="changePasswordModeControl.value ? 'inherit' : 'none'">
                     <div class="row">
                       <div class="col-md-12 form-group">
                         <input  type="password" 
@@ -94,7 +94,7 @@
     </div>
   </div>
 </div>
-<!-- 
+<!--
 <p>Form values: {{ loginForm.value | json }}</p>
 <p> Form status: {{ loginForm.status}}</p>
 -->

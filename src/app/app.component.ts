@@ -9,8 +9,6 @@ import { ToasterConfig } from 'angular2-toaster';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'app';
-
   config: ToasterConfig = new ToasterConfig({
     animation: 'fade',
     limit: 5
