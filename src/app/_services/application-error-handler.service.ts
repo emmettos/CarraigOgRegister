@@ -1,5 +1,8 @@
+// Haven't written any unit tests for this service. Tried but proved difficult with Jasmine not liking 
+//  any errors that are created and StackTrace making XHR requests.
+
 import { ErrorHandler, Injectable, Injector } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 import { Observable } from 'rxjs';
@@ -26,12 +29,6 @@ export class ApplicationErrorHandlerService implements ErrorHandler {
   handleError(error: any) {
     let router = this.injector.get(Router);
     
-    if (error instanceof HttpErrorResponse) {
-      console.error('HTTP error Response received at [' + router.url + ']:', error);
-
-      return;
-    }
-            
     console.error('An error occurred at [' + router.url + ']:', error);
 
     this.errorMessage = error.message;

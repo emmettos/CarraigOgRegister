@@ -1,8 +1,9 @@
+<!-- Most id's are used for unit testing -->
 <div class="jumbotron">
   <h1 class="display-4">An Application Error has Occurred</h1>
   <h4>Apologies for this. A notification has been sent to support.</h4>
   <p class="mt-2 lead">To continue please refresh CarraigOgRegister in your browser</p>
   <hr class="my-4">
-  <p>{{ applicationErrorHandlerService.getErrorMessage }}</p>
+  <p id="error-message">{{ applicationErrorHandlerService.getErrorMessage }}</p>
   <p class="stack-trace">{{ stackString }}</p>
 </div>

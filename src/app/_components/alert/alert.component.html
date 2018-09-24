@@ -1,4 +1,5 @@
-<div *ngIf="alert" class="alert" [ngClass]="{ 'alert-success': alert.type === 'success', 'alert-danger': alert.type === 'error' }">
-  <h4>{{ alert.title }}</h4>
-  <p>{{ alert.text }}</p>
+<!-- Most id's are used for unit testing -->
+<div *ngIf="alert" id="alert-panel" class="alert" [ngClass]="{ 'alert-success': alert.type === 'success', 'alert-danger': alert.type === 'error' }">
+  <h4 id="alert-title">{{ alert.title }}</h4>
+  <p id="alert-text">{{ alert.text }}</p>
 </div>

@@ -6,8 +6,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import * as moment from 'moment';
 
-import { Angular5Csv } from 'angular5-csv/Angular5-csv';
-
 import { APP_SETTINGS } from '../../_helpers/index';
 import { IPlayer, PlayerState } from '../../_models/index';
 import { PlayersService } from '../../_services/index';
@@ -66,8 +64,8 @@ export class PlayersListComponent implements OnInit {
     let yearOfBirth: number = +this.activatedRoute.snapshot.paramMap.get("yearOfBirth");
 
     this.playersService.readCurrentPlayers(yearOfBirth)
-      .subscribe(
-        response => {
+      .subscribe({
+        next: response => {
           let playerIndex = 0;
 
           this.players = response.body.players;
@@ -110,28 +108,11 @@ export class PlayersListComponent implements OnInit {
           this.filteredPlayers = this.players.slice(0);
 
           this.onClickHeader(this.sortKey, false);
-        });
-  }
-
-  filterPlayers(formValues: any) {
-    this.filteredPlayers = this.players
-      .filter(
-        player => {
-          let nameFilter = formValues.nameFilter;
-
-          if (nameFilter === null) {
-            nameFilter = '';
-          }
-
-          if ((player.firstName.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1 ||
-              player.surname.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1)
-                && 
-              !(formValues.currentlyRegistered && player.lastRegisteredYear !== APP_SETTINGS.currentYear)) {
-            return true;
-          }
-        });
-    
-    this.onClickHeader(this.sortKey, false);
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
+        }
+      });
   }
 
   onClickHeader(newSortKey: string, flipSort: boolean = true) {
@@ -208,25 +189,28 @@ export class PlayersListComponent implements OnInit {
       csvPlayers.push(csvPLayer);
     });
 
-    var options = { 
-      showLabels: true, 
-      headers: [
-        "Surname", 
-        "First Name", 
-        "Address Line 1", 
-        "Address Line 2", 
-        "Address Line 3",
-        "Date of Birth",
-        "Last Registered Date",
-        "Medical Conditions",
-        "Contact Name",
-        "Contact Email",
-        "Contact Mobile",
-        "Contact Home",
-        "School"]
-    };
+    this.playersService.downloadCSV(csvPlayers);
+  }
 
-    new Angular5Csv(csvPlayers, 'CarraigOgPlayers', options);
+  filterPlayers(formValues: any) {
+    this.filteredPlayers = this.players
+      .filter(
+        player => {
+          let nameFilter = formValues.nameFilter;
+
+          if (nameFilter === null) {
+            nameFilter = '';
+          }
+
+          if ((player.firstName.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1 ||
+              player.surname.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1)
+                && 
+              !(formValues.currentlyRegistered && player.lastRegisteredYear !== APP_SETTINGS.currentYear)) {
+            return true;
+          }
+        });
+    
+    this.onClickHeader(this.sortKey, false);
   }
 
   headerSortCSSClass(keyName) {

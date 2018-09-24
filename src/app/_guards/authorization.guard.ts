@@ -32,7 +32,7 @@ export class AuthorizationGuard implements CanActivate {
     if (!this.authorizationService.getActivePayload) {
       this.authorizationService.deleteToken();
       
-      this.toasterService.pop('warning', 'Your session has Expired', 'Please login');
+      this.toasterService.pop('warning', 'Your Session has Expired', 'Please login');
 
       this.router.navigate(['/login'], { queryParams : { return: state.url } });
       

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
+import { Angular5Csv } from 'angular5-csv/Angular5-csv';
+
 import { IPlayer } from '../_models';
 
 
@@ -41,5 +43,27 @@ export class PlayersService {
     postData['playerDetails'] = playerDetails;
 
     return this.http.post("/api/createPlayer", postData);    
+  }
+
+  downloadCSV(csvPlayers: any[]) {
+    let options = { 
+      showLabels: true, 
+      headers: [
+        "Surname", 
+        "First Name", 
+        "Address Line 1", 
+        "Address Line 2", 
+        "Address Line 3",
+        "Date of Birth",
+        "Last Registered Date",
+        "Medical Conditions",
+        "Contact Name",
+        "Contact Email",
+        "Contact Mobile",
+        "Contact Home",
+        "School"]
+    };
+
+    new Angular5Csv(csvPlayers, 'CarraigOgPlayers', options);
   }
 }

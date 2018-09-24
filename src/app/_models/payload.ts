@@ -1,12 +1,13 @@
 export interface IPayload {
   userProfile: IUserProfile;
   
-  iat: Date;
-  exp: Date;
+  iat: number;
+  exp: number;
 }
 
 export interface IUserProfile {
   ID: string;
+  fullName: string;
   
   isAdministrator: boolean;
   isManager: boolean;

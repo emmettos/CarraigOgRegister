@@ -15,12 +15,12 @@ export class ValidationService {
     };  
   }
 
-  dateOfBirthValidator(control: FormControl): {[key: string]: any} {
+  datePickerValidator(control: FormControl): {[key: string]: any} {
     if (control.value && control.value !== 'yyyy-MM-dd') {
       return null;
     }
       
-    return { 'invalidDateOfBirth': true };
+    return { 'invalidDatePicker': true };
   }
 
   emailValidator(control: FormControl): {[key: string]: any} {

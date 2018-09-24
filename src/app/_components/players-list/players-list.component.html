@@ -1,3 +1,4 @@
+<!-- Most id's are used for unit testing -->
 <div>
   <div class="row text-center">
       <div class="col-lg-12">
@@ -6,13 +7,13 @@
   </div>
   <div class="row">
       <div class="col-sm-3 col-md-2 col-lg-1">
-          <h4><span class="badge badge-primary">Total {{ registeredCount }}</span></h4>
+          <h4><span id="total-count" class="badge badge-primary">Total {{ registeredCount }}</span></h4>
       </div>
       <div class="col-sm-3 col-md-2 col-lg-1">
-          <h4><span class="badge badge-success">New {{ newCount }}</span></h4>
+          <h4><span id="new-count" class="badge badge-success">New {{ newCount }}</span></h4>
       </div>
       <div class="col-sm-3 col-md-2 col-lg-1">
-          <h4><span class="badge badge-warning">Missing {{ missingCount }}</span></h4>
+          <h4><span id="missing-count" class="badge badge-warning">Missing {{ missingCount }}</span></h4>
       </div>
       <div class="col-sm-3 col-md-3 col-lg-7">
       </div>
@@ -38,13 +39,13 @@
         </div>
       </div>
       <div class="col-md-4 col-lg-6 text-right">
-        <span>Displaying {{ filteredPlayers?.length }} Players</span>
+        <span id="displaying-message">Displaying {{ filteredPlayers?.length }} Players</span>
       </div>
     </div>
   </form>
   <br />
   <div class="table-responsive">
-    <table class="table table-bordered table-striped table-hover player-detail select-row">
+    <table id="players-table" class="table table-bordered table-striped table-hover player-detail select-row">
       <thead>
         <tr>
           <th (click)="onClickHeader('playerState')" class="text-right"><span class="float-left mr-1">Status</span><i [ngClass]="headerSortCSSClass('playerState')"></i></th>

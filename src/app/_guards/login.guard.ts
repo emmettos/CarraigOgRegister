@@ -21,10 +21,8 @@ export class LoginGuard implements CanActivate {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    let payload: IPayload = this.authorizationService.getPayload;
-
-    if (payload && (new Date()).getTime() <= +payload.exp * 1000) {
-      this.toasterService.pop('success', 'Active Session found', 'Redirecting to Home');
+    if (this.authorizationService.getActivePayload) {
+      this.toasterService.pop('success', 'Active Session Found', 'Redirecting to Home');
       
       this.router.navigate(['/groups']);
 
