@@ -77,7 +77,7 @@ describe('PlayersListComponent', () => {
               'contactHomeNumber': '',
               'contactEmailAddress': 'keatingdavidj@gmail.com',
               'school': '',
-              'lastRegisteredDate': '2018-05-08T23:00:00.000Z',
+              'lastRegisteredDate': '2018-05-09T00:00:00.000Z',
               'lastRegisteredYear': 2018,
               'registeredYears': [
                   2017,
@@ -349,7 +349,7 @@ describe('PlayersListComponent', () => {
       'contactHomeNumber': '',
       'contactEmailAddress': 'keatingdavidj@gmail.com',
       'school': '',
-      'lastRegisteredDate': '2018-05-08T23:00:00.000Z',
+      'lastRegisteredDate': '2018-05-09T00:00:00.000Z',
       'lastRegisteredYear': 2018,
       'registeredYears': [
           2017,
