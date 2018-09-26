@@ -11,6 +11,12 @@ cache:
 addons:
   chrome: stable
 
+branches:
+  only:
+    - master
+    - develop
+    - /^v\d+\.\d+\.\d+$/
+
 before_script:
   - "sudo chown root /opt/google/chrome/chrome-sandbox"
   - "sudo chmod 4755 /opt/google/chrome/chrome-sandbox"
