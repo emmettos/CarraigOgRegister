@@ -5,10 +5,11 @@ import { IPayload } from '../_models/index';
 
 @Injectable()
 export class AuthorizationService {
-  private payload: IPayload = null;
+  // This is public so that FakeBackendInterceptorHelper can write to it (easier that faking a JWT).
+  payload: IPayload = null;
 
   constructor() {
-    this.parseToken(localStorage['carraig_og_jwt_token']);
+    this.parseToken(localStorage.getItem('carraig-og-register.jwt'));
   }
 
   get getActivePayload(): IPayload {
@@ -34,7 +35,7 @@ export class AuthorizationService {
       if (incoming) {
         if ((new Date()).getTime() <= payload.exp * 1000) {
           this.payload = payload;
-          localStorage['carraig_og_jwt_token'] = token;
+          localStorage.setItem('carraig-og-register.jwt', token);
         }
       }
       else {
@@ -44,11 +45,11 @@ export class AuthorizationService {
   }
 
   readToken() {
-    return localStorage['carraig_og_jwt_token'];
+    return localStorage.getItem('carraig-og-register.jwt');
   }
 
   deleteToken() {
     this.payload = null;
-    localStorage.removeItem('carraig_og_jwt_token');
+    localStorage.removeItem('carraig-og-register.jwt');
   }
 }
