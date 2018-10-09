@@ -3,13 +3,15 @@ import { Injectable } from '@angular/core';
 import { IPayload } from '../_models/index';
 
 
+const JWT_KEY = 'carraig-og-register.jwt';
+
 @Injectable()
 export class AuthorizationService {
   // This is public so that FakeBackendInterceptorHelper can write to it (easier that faking a JWT).
   payload: IPayload = null;
 
   constructor() {
-    this.parseToken(localStorage.getItem('carraig-og-register.jwt'));
+    this.parseToken(localStorage.getItem(JWT_KEY));
   }
 
   get getActivePayload(): IPayload {
@@ -35,7 +37,7 @@ export class AuthorizationService {
       if (incoming) {
         if ((new Date()).getTime() <= payload.exp * 1000) {
           this.payload = payload;
-          localStorage.setItem('carraig-og-register.jwt', token);
+          localStorage.setItem(JWT_KEY, token);
         }
       }
       else {
@@ -45,11 +47,11 @@ export class AuthorizationService {
   }
 
   readToken() {
-    return localStorage.getItem('carraig-og-register.jwt');
+    return localStorage.getItem(JWT_KEY);
   }
 
   deleteToken() {
     this.payload = null;
-    localStorage.removeItem('carraig-og-register.jwt');
+    localStorage.removeItem(JWT_KEY);
   }
 }
