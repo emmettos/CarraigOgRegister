@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import { 
   HttpRequest, 
   HttpResponse, 
@@ -7,11 +7,11 @@ import {
   HttpInterceptor } from '@angular/common/http';
 
 import { Observable, of, throwError } from 'rxjs';
-import { delay, mergeMap, materialize, dematerialize } from 'rxjs/operators';
+import { delay, mergeMap } from 'rxjs/operators';
 
 import { IGroup, IPlayer } from '../_models/index'; 
 import { APP_SETTINGS } from '../_helpers/app.initializer.helper';
-import { AuthorizationService } from '../_services/index';
+import { AuthorizationService, AlertService } from '../_services/index';
 
 
 const CURRENT_SETTINGS_KEY = 'carraig-og-register.fake-backend.currentSettings';
@@ -26,7 +26,9 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
   private groups: IGroup[];
   private players: IPlayer[];
 
-  constructor(private authorizationService: AuthorizationService) { 
+  constructor(
+      private injector: Injector,
+      private authorizationService: AuthorizationService) { 
     this.currentSettings = JSON.parse(localStorage.getItem(CURRENT_SETTINGS_KEY)) || {
       year: 2018,
       groupYears: [2008, 2009, 2010, 2011, 2012, 2013]
@@ -1060,204 +1062,217 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return of(null)
-      .pipe(mergeMap(() => {
-        if (request.url.endsWith('/currentSettings')) {
-          let body = {
-            currentSettings: this.currentSettings
-          };
+    return of(null).pipe(
+      mergeMap(() => {
+        try {
+          if (request.url.endsWith('/currentSettings')) {
+            let body = {
+              currentSettings: this.currentSettings
+            };
 
-          return of(new HttpResponse({ status: 200, body: { body: body }}));
-        }
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
 
-        if (request.url.endsWith('/authenticate')) {
-          let user: any = this.users.find(user => {
-            return user.emailAddress === request.body.emailAddress;
-          });
+          if (request.url.endsWith('/authenticate')) {
+            let user: any = this.users.find(user => {
+              return user.emailAddress === request.body.emailAddress;
+            });
 
-          if (!user) {
-            return throwError({ 
-              status: 401,
-              error: {
+            if (!user) {
+              return throwError({ 
+                status: 401,
                 error: {
-                  message: 'User not found'
-              }   }
-            });
-          }
-
-          if (user.password !== request.body.password) {
-            return throwError({ 
-              status: 401,
-              error: {
-                error: {
-                  message: 'Invalid password'
-              }   }
-            });
-          }
-
-          let issuedTime: number = Math.floor(Date.now() / 1000);
-
-          this.authorizationService.payload = {
-            userProfile: {
-              ID: user.emailAddress,
-              fullName: user.fullName,
-              isAdministrator: user.isAdministrator,
-              isManager: user.isManager,
-              groups: user.groups
-            },
-            iat: issuedTime,
-            exp: issuedTime + (60 * 60)
-          }
-
-          return of(new HttpResponse({ status: 200, body: {} }));
-        }
-
-        if (request.url.endsWith('/changePassword')) {
-          let user: any = this.users.find(user => {
-            return user.emailAddress === request.body.emailAddress;
-          });
-
-          if (!user) {
-            return throwError({ 
-              status: 401,
-              error: {
-                error: {
-                  message: 'User not found'
-              }   }
-            });
-          }
-
-          if (user.password !== request.body.password) {
-            return throwError({ 
-              status: 401,
-              error: {
-                error: {
-                  message: 'Invalid password'
-              }   }
-            });
-          }
-
-          user.password = request.body.newPassword;
-
-          localStorage.setItem(USERS_KEY, JSON.stringify(this.users));
-
-          return of(new HttpResponse({ status: 200, body: {} }));
-        }
-
-        if (request.url.endsWith('/groups')) {
-          let body = {
-            groups: this.groups
-          };
-
-          return of(new HttpResponse({ status: 200, body: { body: body }}));
-        }
-
-        if (/.*\/api\/playersDetail\/2[0-9]{3}$/.test(request.url)) {
-          let yearOfBirth: number = +request.url.substring(request.url.length - 4);
-
-          let body = {
-            players: this.players.filter(player => {
-              return player.yearOfBirth === yearOfBirth
-               && (player.lastRegisteredYear === APP_SETTINGS.currentYear || player.lastRegisteredYear === APP_SETTINGS.currentYear - 1);
-            })
-          };
-
-          return of(new HttpResponse({ status: 200, body: { body: body }}));
-        }
-
-        if (/.*\/api\/playersDetail\/2[0-9]{3}\/true$/.test(request.url)) {
-          let yearOfBirth: number = +request.url.substring(request.url.length - 9, request.url.length - 5);
-
-          let body = {
-            players: this.players.filter(player => {
-              return player.yearOfBirth === yearOfBirth;
-            })
-          };
-
-          return of(new HttpResponse({ status: 200, body: { body: body }}));
-        }
-
-        if (request.url.endsWith('/updatePlayer') || request.url.endsWith('/createPlayer')) {
-          let playerDetails: IPlayer = null;
-          
-          if (request.url.endsWith('/updatePlayer')) {
-            playerDetails = this.players.find(player => {
-              return player._id === request.body.playerDetails._id;
-            });
-          }
-          else {
-            playerDetails = <IPlayer>{};
-
-            playerDetails._id = Math.floor(Math.random() * 16777215).toString(16);
-
-            playerDetails.firstName = request.body.playerDetails.firstName;
-            playerDetails.surname = request.body.playerDetails.surname;
-            
-            playerDetails.dateOfBirth = request.body.playerDetails.dateOfBirth;
-            playerDetails.yearOfBirth = (new Date(playerDetails.dateOfBirth)).getFullYear();
-
-            playerDetails.__v = 0;
-
-            this.players.push(playerDetails);
-          }
-          
-          playerDetails.addressLine1 = request.body.playerDetails.addressLine1;
-          playerDetails.addressLine2 = request.body.playerDetails.addressLine2;
-          playerDetails.addressLine3 = request.body.playerDetails.addressLine3;
-          playerDetails.medicalConditions = request.body.playerDetails.medicalConditions;
-          playerDetails.contactName = request.body.playerDetails.contactName;
-          playerDetails.contactHomeNumber = request.body.playerDetails.contactHomeNumber;
-          playerDetails.contactMobileNumber = request.body.playerDetails.contactMobileNumber;
-          playerDetails.contactEmailAddress = request.body.playerDetails.contactEmailAddress;
-          playerDetails.school = request.body.playerDetails.school;
-  
-          playerDetails.lastRegisteredDate = request.body.playerDetails.lastRegisteredDate;
-          playerDetails.lastRegisteredYear = (new Date(playerDetails.lastRegisteredDate)).getFullYear();
-  
-          if (request.url.endsWith('/updatePlayer')) {
-            let lastRegisteredYear: number = playerDetails.registeredYears.find(registeredYear => {
-              return registeredYear === playerDetails.lastRegisteredYear;
-            });
-            if (!lastRegisteredYear) {
-              playerDetails.registeredYears.push(playerDetails.lastRegisteredYear);
+                  error: {
+                    message: 'User not found'
+                  }   
+                }
+              });
             }
+
+            if (user.password !== request.body.password) {
+              return throwError({ 
+                status: 401,
+                error: {
+                  error: {
+                    message: 'Invalid password'
+                  }   
+                }
+              });
+            }
+
+            let issuedTime: number = Math.floor(Date.now() / 1000);
+
+            this.authorizationService.payload = {
+              userProfile: {
+                ID: user.emailAddress,
+                fullName: user.fullName,
+                isAdministrator: user.isAdministrator,
+                isManager: user.isManager,
+                groups: user.groups
+              },
+              iat: issuedTime,
+              exp: issuedTime + (60 * 60)
+            }
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: {} }));
           }
-          else {
-            playerDetails.registeredYears = [playerDetails.lastRegisteredYear];
+
+          if (request.url.endsWith('/changePassword')) {
+            let user: any = this.users.find(user => {
+              return user.emailAddress === request.body.emailAddress;
+            });
+
+            if (!user) {
+              return throwError({ 
+                status: 401,
+                error: {
+                  error: {
+                    message: 'User not found'
+                  }   
+                }
+              });
+            }
+
+            if (user.password !== request.body.password) {
+              return throwError({ 
+                status: 401,
+                error: {
+                  error: {
+                    message: 'Invalid password'
+                  }   
+                }
+              });
+            }
+
+            user.password = request.body.newPassword;
+
+            localStorage.setItem(USERS_KEY, JSON.stringify(this.users));
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: {} }));
           }
-          
-          let lastUpdatedDate = (new Date(Date.now())).toISOString();
 
-          playerDetails.updatedDate = lastUpdatedDate;
-          playerDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
+          if (request.url.endsWith('/groups')) {
+            let body = {
+              groups: this.groups
+            };
 
-          playerDetails.__v++;
-
-          localStorage.setItem(PLAYERS_KEY, JSON.stringify(this.players));
-
-          let group = this.groups.find(group => {
-            return group.yearOfBirth === +request.body.groupDetails.yearOfBirth;
-          });
-
-          if (request.url.endsWith('/createPlayer')) {
-            group.numberOfPlayers++;
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
-          group.lastUpdatedDate = lastUpdatedDate;
+          if (/.*\/api\/playersDetail\/2[0-9]{3}$/.test(request.url)) {
+            let yearOfBirth: number = +request.url.substring(request.url.length - 4);
 
-          localStorage.setItem(GROUPS_KEY, JSON.stringify(this.groups));
+            let body = {
+              players: this.players.filter(player => {
+                return player.yearOfBirth === yearOfBirth
+                && (player.lastRegisteredYear === APP_SETTINGS.currentYear || player.lastRegisteredYear === APP_SETTINGS.currentYear - 1);
+              })
+            };
 
-          let body = {
-            player: playerDetails
-          };
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
 
-          return of(new HttpResponse({ status: 200, body: { body: body }}));
+          if (/.*\/api\/playersDetail\/2[0-9]{3}\/true$/.test(request.url)) {
+            let yearOfBirth: number = +request.url.substring(request.url.length - 9, request.url.length - 5);
+
+            let body = {
+              players: this.players.filter(player => {
+                return player.yearOfBirth === yearOfBirth;
+              })
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
+          if (request.url.endsWith('/updatePlayer') || request.url.endsWith('/createPlayer')) {
+            let playerDetails: IPlayer = null;
+            
+            if (request.url.endsWith('/updatePlayer')) {
+              playerDetails = this.players.find(player => {
+                return player._id === request.body.playerDetails._id;
+              });
+            }
+            else {
+              playerDetails = <IPlayer>{};
+
+              playerDetails._id = Math.floor(Math.random() * 16777215).toString(16);
+
+              playerDetails.firstName = request.body.playerDetails.firstName;
+              playerDetails.surname = request.body.playerDetails.surname;
+              
+              playerDetails.dateOfBirth = request.body.playerDetails.dateOfBirth;
+              playerDetails.yearOfBirth = (new Date(playerDetails.dateOfBirth)).getFullYear();
+
+              playerDetails.__v = 0;
+
+              this.players.push(playerDetails);
+            }
+            
+            playerDetails.addressLine1 = request.body.playerDetails.addressLine1;
+            playerDetails.addressLine2 = request.body.playerDetails.addressLine2;
+            playerDetails.addressLine3 = request.body.playerDetails.addressLine3;
+            playerDetails.medicalConditions = request.body.playerDetails.medicalConditions;
+            playerDetails.contactName = request.body.playerDetails.contactName;
+            playerDetails.contactHomeNumber = request.body.playerDetails.contactHomeNumber;
+            playerDetails.contactMobileNumber = request.body.playerDetails.contactMobileNumber;
+            playerDetails.contactEmailAddress = request.body.playerDetails.contactEmailAddress;
+            playerDetails.school = request.body.playerDetails.school;
+    
+            playerDetails.lastRegisteredDate = request.body.playerDetails.lastRegisteredDate;
+            playerDetails.lastRegisteredYear = (new Date(playerDetails.lastRegisteredDate)).getFullYear();
+    
+            if (request.url.endsWith('/updatePlayer')) {
+              let lastRegisteredYear: number = playerDetails.registeredYears.find(registeredYear => {
+                return registeredYear === playerDetails.lastRegisteredYear;
+              });
+              if (!lastRegisteredYear) {
+                playerDetails.registeredYears.push(playerDetails.lastRegisteredYear);
+              }
+            }
+            else {
+              playerDetails.registeredYears = [playerDetails.lastRegisteredYear];
+            }
+            
+            let lastUpdatedDate = (new Date(Date.now())).toISOString();
+
+            playerDetails.updatedDate = lastUpdatedDate;
+            playerDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
+
+            playerDetails.__v++;
+
+            localStorage.setItem(PLAYERS_KEY, JSON.stringify(this.players));
+
+            let group = this.groups.find(group => {
+              return group.yearOfBirth === +request.body.groupDetails.yearOfBirth;
+            });
+
+            if (request.url.endsWith('/createPlayer')) {
+              group.numberOfPlayers++;
+            }
+
+            group.lastUpdatedDate = lastUpdatedDate;
+
+            localStorage.setItem(GROUPS_KEY, JSON.stringify(this.groups));
+
+            let body = {
+              player: playerDetails
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
+          let alertService: AlertService = this.injector.get(AlertService);
+
+          alertService.error('Fake HTTP 404 Response', 'Fake backend does not support ' + request.url);
         }
+        catch (error) {
+          console.error(error);
 
-        return next.handle(request);      
-      }))
-      .pipe(materialize())
-      .pipe(delay(500))
-      .pipe(dematerialize());
+          let alertService: AlertService = this.injector.get(AlertService);
+
+          alertService.error('Fake HTTP 500 Response', error.message);
+        }
+      }),
+      delay(200));
   }
 }
