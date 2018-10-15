@@ -44,86 +44,62 @@ describe('GroupsListComponent', () => {
     
     spyOn(groupsService, 'readGroups')
       .and.returnValue(of({
-        "error": null,
-        "body": {
-          "groups": [
+        'error': null,
+        'body': {
+          'groups': [
             {
-              "year": 2018,
-              "name": "Under 10",
-              "yearOfBirth": 2008,
-              "footballManager": "Football 2008",
-              "hurlingManager": "HUrling 2008",
-              "createdBy": "script",
-              "createdDate": "2018-02-23T11:38:40.175Z",
-              "updatedDate": "2018-02-23T11:38:40.175Z",
-              "updatedBy": "script",
-              "lastUpdatedDate": "2018-02-27T15:57:21.582Z",
-              "numberOfPlayers": 29
+              'year': 2018,
+              'name': 'Under 10',
+              'yearOfBirth': 2008,
+              'footballManager': 'Football 2008',
+              'hurlingManager': 'HUrling 2008',
+              'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
+              'numberOfPlayers': 29
             },
             {
-              "year": 2018,
-              "name": "Under 9",
-              "yearOfBirth": 2009,
-              "footballManager": "Football 2009",
-              "hurlingManager": "Hurling 2009",
-              "createdBy": "script",
-              "createdDate": "2018-02-23T11:41:11.887Z",
-              "updatedDate": "2018-02-23T11:41:11.887Z",
-              "updatedBy": "script",
-              "lastUpdatedDate": "2018-07-26T16:29:25.372Z",
-              "numberOfPlayers": 42
+              'year': 2018,
+              'name': 'Under 9',
+              'yearOfBirth': 2009,
+              'footballManager': 'Football 2009',
+              'hurlingManager': 'Hurling 2009',
+              'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
+              'numberOfPlayers': 42
             },
             {
-              "year": 2018,
-              "name": "Under 8",
-              "yearOfBirth": 2010,
-              "footballManager": "Football 2010",
-              "hurlingManager": "Hurling 2010",
-              "createdBy": "script",
-              "createdDate": "2018-02-23T11:42:25.972Z",
-              "updatedDate": "2018-02-23T11:42:25.972Z",
-              "updatedBy": "script",
-              "lastUpdatedDate": "2018-02-28T11:22:24.262Z",
-              "numberOfPlayers": 29
+              'year': 2018,
+              'name': 'Under 8',
+              'yearOfBirth': 2010,
+              'footballManager': 'Football 2010',
+              'hurlingManager': 'Hurling 2010',
+              'lastUpdatedDate': '2018-02-28T11:22:24.262Z',
+              'numberOfPlayers': 29
             },
             {
-              "year": 2018,
-              "name": "Under 7",
-              "yearOfBirth": 2011,
-              "footballManager": "Football 2011",
-              "hurlingManager": "Hurling 2011",
-              "createdBy": "script",
-              "createdDate": "2018-02-23T11:43:59.701Z",
-              "updatedDate": "2018-02-23T11:43:59.701Z",
-              "updatedBy": "script",
-              "lastUpdatedDate": "2018-02-27T16:00:20.439Z",
-              "numberOfPlayers": 33
+              'year': 2018,
+              'name': 'Under 7',
+              'yearOfBirth': 2011,
+              'footballManager': 'Football 2011',
+              'hurlingManager': 'Hurling 2011',
+              'lastUpdatedDate': '2018-02-27T16:00:20.439Z',
+              'numberOfPlayers': 33
             },
             {
-              "year": 2018,
-              "name": "Under 6",
-              "yearOfBirth": 2012,
-              "footballManager": "Football 2012",
-              "hurlingManager": "Hurling 2012",
-              "createdBy": "script",
-              "createdDate": "2018-02-23T11:45:03.022Z",
-              "updatedDate": "2018-02-23T11:45:03.022Z",
-              "updatedBy": "script",
-              "lastUpdatedDate": "2018-02-27T12:20:39.338Z",
-              "numberOfPlayers": 42
+              'year': 2018,
+              'name': 'Under 6',
+              'yearOfBirth': 2012,
+              'footballManager': 'Football 2012',
+              'hurlingManager': 'Hurling 2012',
+              'lastUpdatedDate': '2018-02-27T12:20:39.338Z',
+              'numberOfPlayers': 42
             },
             {
-              "year": 2018,
-              "name": "Under 5",
-              "yearOfBirth": 2013,
-              "footballManager": "Football 2013",
-              "hurlingManager": "Hurling 2013",
-              "createdBy": "script",
-              "createdDate": "2018-02-23T11:46:04.082Z",
-              "updatedDate": "2018-02-23T11:46:04.082Z",
-              "updatedBy": "script",
-              "lastUpdatedDate": "2018-02-27T12:09:40.660Z",
-              "numberOfPlayers": 16
+              'year': 2018,
+              'name': 'Under 5',
+              'yearOfBirth': 2013,
+              'footballManager': 'Football 2013',
+              'hurlingManager': 'Hurling 2013',
+              'lastUpdatedDate': '2018-02-27T12:09:40.660Z',
+              'numberOfPlayers': 16
             }
           ]
         }

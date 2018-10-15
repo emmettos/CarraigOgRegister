@@ -179,7 +179,7 @@ export class ManagePlayersComponent implements OnInit {
       this.playersService.createPlayer(this.playerDetails, APP_SETTINGS.currentYear, this.groupYear)
         .subscribe({
           next: response => {
-            this.groupPlayers.push(response.body.player)
+            this.groupPlayers.push(response.body.player);
 
             window.scrollTo(0, 0);
           },
@@ -241,7 +241,7 @@ export class ManagePlayersComponent implements OnInit {
           this.managePlayersForm.controls['surname'].markAsUntouched();
           this.managePlayersForm.controls['addressLine1'].markAsUntouched();
 
-          this.playerDetails = (<IPlayer>{});
+          this.playerDetails = <IPlayer>{};
 
           this.currentState = FormState.SearchForPlayer;
         }
