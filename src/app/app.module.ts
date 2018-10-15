@@ -11,7 +11,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { ToasterModule, ToasterService } from 'angular2-toaster';
 
 import { SharedModule } from './_modules/shared/shared.module';
-import { readConfigurationSettings, HttpInterceptorHelper } from './_helpers/index';
+import { readConfigurationSettings, HttpInterceptorHelper, FakeBackendInterceptorHelper } from './_helpers/index';
 import { AuthorizationGuard, LoginGuard } from './_guards/index';
 import { 
   AlertService,
@@ -63,14 +63,27 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
     PlayersService,
     ToasterService,
     UserService,
-    { provide: ErrorHandler, useClass: ApplicationErrorHandlerService },
+    { 
+      provide: ErrorHandler, 
+      useClass: ApplicationErrorHandlerService 
+    },
     {
       provide: APP_INITIALIZER,
       useFactory: readConfigurationSettings,
       deps: [ConfigurationService],
       multi: true
     },
-    { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorHelper, multi: true }
+    { 
+      provide: HTTP_INTERCEPTORS, 
+      useClass: HttpInterceptorHelper, 
+      multi: true 
+    },
+    // Uncomment the below HTTP_INTERCEPTOR to use to application with a fake backend.
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: FakeBackendInterceptorHelper,
+    //   multi: true
+    // }
   ],
   bootstrap: [
     AppComponent

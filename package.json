@@ -1,6 +1,6 @@
 {
   "name": "carraig-og-register",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "main": "server.js",
   "engines": {
     "node": "8.9.3"
@@ -10,7 +10,7 @@
     "ng": "ng",
     "build": "ng build --prod",
     "start": "node ./server.js",
-    "test": "ng test",
+    "test": "ng test --browsers ChromeHeadless --watch=false",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "postinstall": "ng build --prod --source-map"

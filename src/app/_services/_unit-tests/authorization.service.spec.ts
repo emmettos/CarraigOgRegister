@@ -8,7 +8,7 @@ describe('AuthorizationService', () => {
   let newJWTToken: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MzYwNjQyMTgsInVzZXJQcm9maWxlIjp7IklEIjoiZ2VhcnlrQGdtYWlsLmNvbSIsImZ1bGxOYW1lIjoiS2V2aW4gR2VhcnkiLCJpc0FkbWluaXN0cmF0b3IiOmZhbHNlLCJpc01hbmFnZXIiOnRydWUsImdyb3VwcyI6WzIwMDldfSwiaWF0IjoxNTM2MDYwNjE4fQ.MQXPgvt-g6-7l2B9YgPC3DDi8CJh5XCZ3xDbDS9oYEc';
   
   beforeEach(() => {
-    localStorage["carraig_og_jwt_token"] = JWTToken;
+    localStorage.setItem('carraig-og-register.jwt', JWTToken);
 
     service = new AuthorizationService();
   });
@@ -67,7 +67,7 @@ describe('AuthorizationService', () => {
   });
 
   it('should not parse empty token', () => {
-    localStorage.removeItem('carraig_og_jwt_token');
+    localStorage.removeItem('carraig-og-register.jwt');
 
     service = new AuthorizationService();
 
@@ -108,6 +108,6 @@ describe('AuthorizationService', () => {
   it('should delete token', () => {
     service.deleteToken();
 
-    expect(localStorage['carraig_og_jwt_token']).toBeUndefined();
+    expect(localStorage.getItem('carraig-og-register.jwt')).toBeNull();
   });
 });
