@@ -1,9 +1,9 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
-import { of } from 'rxjs';
+import { of, asyncScheduler } from 'rxjs';
 
 import { APP_SETTINGS } from '../../../../_helpers/index';
 
@@ -15,7 +15,7 @@ import { MockDatePickerComponent } from '../../../../_modules/shared/_components
 import { ManagePlayersComponent } from './manage-players.component';
 
 
-describe('ManagePlayersComponent', () => {
+fdescribe('ManagePlayersComponent', () => {
   let component: ManagePlayersComponent;
   let fixture: ComponentFixture<ManagePlayersComponent>;
 
@@ -204,7 +204,7 @@ describe('ManagePlayersComponent', () => {
             "updatedBy": "unittest@gmail.com"
           }
         }
-      }));
+      }, asyncScheduler));
 
     fixture.detectChanges();
   });
@@ -525,7 +525,7 @@ describe('ManagePlayersComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#message-panel > :nth-child(2)').hidden).toBeFalsy();  
+    expect(fixture.nativeElement.querySelector('#message-panel > :nth-child(3)').hidden).toBeFalsy();  
   });
 
   it('should move into add player mode if no player found', () => {
@@ -584,7 +584,7 @@ describe('ManagePlayersComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#message-panel > :nth-child(3)').innerHTML).toEqual('Editing Cian Aherne')
+    expect(fixture.nativeElement.querySelector('#message-panel > :nth-child(4)').innerHTML).toEqual('Editing Cian Aherne')
   });
 
   it('should move into edit player mode after selecting a player to edit', () => {
@@ -3155,7 +3155,7 @@ describe('ManagePlayersComponent', () => {
     expect(playersService.createPlayer).toHaveBeenCalled();
   });
 
-  it('should add new player to group players after adding a new player', () => {
+  it('should add new player to group players after adding a new player', fakeAsync(() => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3182,10 +3182,12 @@ describe('ManagePlayersComponent', () => {
 
     component.onSubmit(component.managePlayersForm.value);
 
-    expect(component.groupPlayers.length).toEqual(5);
-  });
+    tick();
 
-  it('should display player saved message after saving a player', () => {
+    expect(component.groupPlayers.length).toEqual(5);
+  }));
+
+  it('should move to SavingPlayer state after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3214,10 +3216,44 @@ describe('ManagePlayersComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#message-panel > :nth-child(4)').hidden).toBeFalsy();  
+    expect(component.currentState).toEqual(component.formState.SavingPlayer);  
   });
 
-  it('should disable last registered date field after saving a player', () => {
+  it('should display player saved message after submitting a player to be saved', fakeAsync(() => {
+    component.managePlayersForm.controls['groupYear'].setValue('2010');
+
+    fixture.detectChanges();
+
+    component.onChangeGroupYear('2010');
+
+    component.managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').setValue({
+      year: 2010,
+      month: 2,
+      day: 1
+    });
+
+    fixture.detectChanges();
+
+    component.onSearchPlayers();
+
+    fixture.detectChanges();
+
+    component.managePlayersForm.controls['firstName'].setValue('Test');
+    component.managePlayersForm.controls['surname'].setValue('Name');
+    component.managePlayersForm.controls['addressLine1'].setValue('Address Line');
+
+    fixture.detectChanges();
+    
+    component.onSubmit(component.managePlayersForm.value);
+
+    tick();
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#message-panel > :nth-child(5)').hidden).toBeFalsy();  
+  }));
+
+  it('should disable last registered date field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3249,7 +3285,7 @@ describe('ManagePlayersComponent', () => {
     expect(component.lastRegisteredDatePickerEnabled).toBeFalsy();  
   });
 
-  it('should disable first name field after saving a player', () => {
+  it('should disable first name field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3281,7 +3317,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#player-first-name').disabled).toBeTruthy();  
   });
 
-  it('should disable surname field after saving a player', () => {
+  it('should disable surname field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3313,7 +3349,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#player-surname').disabled).toBeTruthy();  
   });
 
-  it('should disable address line 1 field after saving a player', () => {
+  it('should disable address line 1 field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3345,7 +3381,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#player-address-line1').disabled).toBeTruthy();  
   });
 
-  it('should disable address line 2 field after saving a player', () => {
+  it('should disable address line 2 field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3377,7 +3413,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#player-address-line2').disabled).toBeTruthy();  
   });
 
-  it('should disable address line 3 field after saving a player', () => {
+  it('should disable address line 3 field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3409,7 +3445,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#player-address-line3').disabled).toBeTruthy();  
   });
 
-  it('should disable school field after saving a player', () => {
+  it('should disable school field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3441,7 +3477,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#player-school').disabled).toBeTruthy();  
   });
 
-  it('should disable medical conditions field after saving a player', () => {
+  it('should disable medical conditions field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3473,7 +3509,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#player-medical-conditions').disabled).toBeTruthy();  
   });
 
-  it('should disable contact name field after saving a player', () => {
+  it('should disable contact name field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3505,7 +3541,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#contact-name').disabled).toBeTruthy();  
   });
 
-  it('should disable contact email address field after saving a player', () => {
+  it('should disable contact email address field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3537,7 +3573,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#contact-email-address').disabled).toBeTruthy();  
   });
 
-  it('should disable contact mobile number field after saving a player', () => {
+  it('should disable contact mobile number field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3569,7 +3605,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#contact-mobile-number').disabled).toBeTruthy();  
   });
 
-  it('should disable contact home number field after saving a player', () => {
+  it('should disable contact home number field after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3601,7 +3637,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#contact-home-number').disabled).toBeTruthy();  
   });
 
-  it('should disable reset button after saving a player', () => {
+  it('should disable reset button after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3633,7 +3669,7 @@ describe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('#reset').disabled).toBeTruthy();  
   });
 
-  it('should disable save player button after saving a player', () => {
+  it('should disable save player button after submitting a player to be saved', () => {
     component.managePlayersForm.controls['groupYear'].setValue('2010');
 
     fixture.detectChanges();
@@ -3664,4 +3700,38 @@ describe('ManagePlayersComponent', () => {
 
     expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();  
   });
+
+  it('should move to PlayerSaved state after saving a player', fakeAsync(() => {
+    component.managePlayersForm.controls['groupYear'].setValue('2010');
+
+    fixture.detectChanges();
+
+    component.onChangeGroupYear('2010');
+
+    component.managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').setValue({
+      year: 2010,
+      month: 2,
+      day: 1
+    });
+
+    fixture.detectChanges();
+
+    component.onSearchPlayers();
+
+    fixture.detectChanges();
+
+    component.managePlayersForm.controls['firstName'].setValue('Test');
+    component.managePlayersForm.controls['surname'].setValue('Name');
+    component.managePlayersForm.controls['addressLine1'].setValue('Address Line');
+
+    fixture.detectChanges();
+    
+    component.onSubmit(component.managePlayersForm.value);
+
+    tick();
+
+    fixture.detectChanges();
+
+    expect(component.currentState).toEqual(component.formState.PlayerSaved);
+  }));
 });

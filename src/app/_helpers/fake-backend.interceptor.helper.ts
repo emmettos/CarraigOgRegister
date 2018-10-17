@@ -1261,6 +1261,10 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
+          if (request.url.endsWith('/writeLog')) {
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200 }));
+          }
+
           let alertService: AlertService = this.injector.get(AlertService);
 
           alertService.error('Fake HTTP 404 Response', 'Fake backend does not support ' + request.url);

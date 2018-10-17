@@ -162,8 +162,10 @@ export class ManagePlayersComponent implements OnInit {
           next: response => {
             this.playerDetails.__v = response.body.player.__v;
 
+            this.processEvent(FormEvent.PlayerSaved);
+
             window.scrollTo(0, 0);
-            },
+          },
           // Need this handler otherwise the Angular error handling mechanism will kick in.
           error: error => {
           }
@@ -181,6 +183,8 @@ export class ManagePlayersComponent implements OnInit {
           next: response => {
             this.groupPlayers.push(response.body.player);
 
+            this.processEvent(FormEvent.PlayerSaved);
+
             window.scrollTo(0, 0);
           },
           // Need this handler otherwise the Angular error handling mechanism will kick in.
@@ -189,13 +193,15 @@ export class ManagePlayersComponent implements OnInit {
         });
     }
 
-    this.processEvent(FormEvent.SavePlayer);
+    this.processEvent(FormEvent.SavingPlayer);
   }
 
   private processEvent(event: FormEvent): void {
     let dateOfBirthPicker: AbstractControl = null,
         lastRegisteredDatePicker: AbstractControl = null,
         currentDate: Date = null;
+
+    console.log('Processing event: ' + event);
 
     switch (event) {
       case FormEvent.YearChanged:
@@ -247,8 +253,6 @@ export class ManagePlayersComponent implements OnInit {
         }
         break;
       case FormEvent.PlayersFound:
-        this.currentState = FormState.PlayersListed;
-        break;
       case FormEvent.NoPlayersFound:
       case FormEvent.PlayerSelected:
         currentDate = new Date(Date.now());
@@ -267,12 +271,20 @@ export class ManagePlayersComponent implements OnInit {
           this.currentState = FormState.AddPlayer;
         }
         else {
-          this.currentState = FormState.EditPlayer;
+          if (event === FormEvent.PlayerSelected) {
+            this.currentState = FormState.EditPlayer;
+          }
+          else {
+            this.currentState = FormState.PlayersListed;
+          }
         }
         break;
-      case FormEvent.SavePlayer:
+      case FormEvent.SavingPlayer:
         this.lastRegisteredDatePickerEnabled = false;
         
+        this.currentState = FormState.SavingPlayer;
+        break;
+      case FormEvent.PlayerSaved:
         this.currentState = FormState.PlayerSaved;
         break;
       case FormEvent.ResetPage:
@@ -343,6 +355,7 @@ enum FormState {
   PlayersListed,
   AddPlayer,
   EditPlayer,
+  SavingPlayer,
   PlayerSaved
 }
 
@@ -352,6 +365,7 @@ enum FormEvent {
   NoPlayersFound,
   PlayersFound,
   PlayerSelected,
-  SavePlayer,
+  SavingPlayer,
+  PlayerSaved,
   ResetPage
 }
