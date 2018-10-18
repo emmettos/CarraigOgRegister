@@ -76,7 +76,6 @@
                 id="player-first-name"
                 formControlName="firstName" 
                 name="firstName" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed) ? 'disabled' : null"
                 class="form-control" 
                 [ngClass]="{'is-invalid': managePlayersForm.controls.firstName.invalid && managePlayersForm.controls.firstName.touched}"
                 placeholder="First Name">
@@ -88,7 +87,6 @@
                 id="player-surname" 
                 formControlName="surname" 
                 name="surname" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed) ? 'disabled' : null"
                 class="form-control" 
                 [ngClass]="{'is-invalid': managePlayersForm.controls.surname.invalid && managePlayersForm.controls.surname.touched}"
                 placeholder="Surname">
@@ -102,7 +100,6 @@
                 id="player-address-line1"
                 formControlName="addressLine1" 
                 name="addressLine1" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 [ngClass]="{'is-invalid': managePlayersForm.controls.addressLine1.invalid && managePlayersForm.controls.addressLine1.touched}"
                 placeholder="Address Line 1">
@@ -113,7 +110,6 @@
         <input  type="text" 
                 id="player-address-line2"
                 formControlName="addressLine2" name="addressLine2" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Address Line 2">
       </div>
@@ -125,7 +121,6 @@
                 id="player-address-line3"
                 formControlName="addressLine3" 
                 name="addressLine3" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Address Line 3">
       </div>
@@ -137,7 +132,6 @@
                 id="player-medical-conditions" 
                 formControlName="medicalConditions" 
                 name="medicalConditions" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Medical Conditions">
       </div>
@@ -147,7 +141,6 @@
                 id="player-school"
                 formControlName="school" 
                 name="school" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="School">
       </div>
@@ -159,7 +152,6 @@
                 id="contact-name"
                 formControlName="contactName" 
                 name="contactName" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Contact Name">
       </div>
@@ -169,7 +161,6 @@
                 id="contact-email-address"
                 formControlName="contactEmailAddress" 
                 name="contactEmailAddress" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Contact Email Address">
       </div>
@@ -181,7 +172,6 @@
                 id="contact-mobile-number"
                 formControlName="contactMobileNumber" 
                 name="contactMobileNumber" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Contact Mobile Number">
       </div>
@@ -191,7 +181,6 @@
                 id="contact-home-number"
                 formControlName="contactHomeNumber" 
                 name="contactHomeNumber" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Contact Home Number">
       </div>

@@ -55,17 +55,17 @@ export class ManagePlayersComponent implements OnInit {
       'groupYear': ['Select Year', this.validationService.groupYearValidator],
       'dateOfBirthPicker': this.formBuilder.group({}),
       'lastRegisteredDatePicker': this.formBuilder.group({}),
-      'firstName': ['', Validators.required],
-      'surname': ['', Validators.required],
-      'addressLine1': ['', Validators.required],
-      'addressLine2': [''],
-      'addressLine3': [''],
-      'school': [''],
-      'medicalConditions': [''],
-      'contactName': [''],
-      'contactEmailAddress': [''],
-      'contactMobileNumber': [''],
-      'contactHomeNumber': ['']
+      'firstName': [{ value: '', disabled: true }, Validators.required],
+      'surname': [{ value: '', disabled: true }, Validators.required],
+      'addressLine1': [{ value: '', disabled: true }, Validators.required],
+      'addressLine2': [{ value: '', disabled: true }],
+      'addressLine3': [{ value: '', disabled: true }],
+      'school': [{ value: '', disabled: true }],
+      'medicalConditions': [{ value: '', disabled: true }],
+      'contactName': [{ value: '', disabled: true }],
+      'contactEmailAddress': [{ value: '', disabled: true }],
+      'contactMobileNumber': [{ value: '', disabled: true }],
+      'contactHomeNumber': [{ value: '', disabled: true }]
     });
 
     this.dateOfBirthPickerEnabled = false;
@@ -201,8 +201,6 @@ export class ManagePlayersComponent implements OnInit {
         lastRegisteredDatePicker: AbstractControl = null,
         currentDate: Date = null;
 
-    console.log('Processing event: ' + event);
-
     switch (event) {
       case FormEvent.YearChanged:
         this.managePlayersForm.controls['firstName'].markAsUntouched();
@@ -218,8 +216,6 @@ export class ManagePlayersComponent implements OnInit {
         dateOfBirthPicker.setValue('yyyy-MM-dd');
         lastRegisteredDatePicker.setValue('yyyy-MM-dd');
 
-        this.lastRegisteredDatePickerEnabled = false;
-
         if (this.groupYear === 'Select Year') {
           this.dateOfBirthPickerEnabled = false;
         }
@@ -233,6 +229,7 @@ export class ManagePlayersComponent implements OnInit {
         }
 
         this.currentState = FormState.SearchForPlayer;
+
         break;
       case FormEvent.DateOfBirthChanged:
         if (this.currentState !== FormState.SearchForPlayer) {
@@ -240,8 +237,6 @@ export class ManagePlayersComponent implements OnInit {
             
           lastRegisteredDatePicker.markAsUntouched();
           lastRegisteredDatePicker.setValue('yyyy-MM-dd')
-
-          this.lastRegisteredDatePickerEnabled = false;
 
           this.managePlayersForm.controls['firstName'].markAsUntouched();
           this.managePlayersForm.controls['surname'].markAsUntouched();
@@ -265,8 +260,6 @@ export class ManagePlayersComponent implements OnInit {
           }
         });
 
-        this.lastRegisteredDatePickerEnabled = true;
-
         if (event === FormEvent.NoPlayersFound) {
           this.currentState = FormState.AddPlayer;
         }
@@ -280,12 +273,12 @@ export class ManagePlayersComponent implements OnInit {
         }
         break;
       case FormEvent.SavingPlayer:
-        this.lastRegisteredDatePickerEnabled = false;
-        
         this.currentState = FormState.SavingPlayer;
+
         break;
       case FormEvent.PlayerSaved:
         this.currentState = FormState.PlayerSaved;
+
         break;
       case FormEvent.ResetPage:
         this.managePlayersForm.controls['firstName'].markAsUntouched();
@@ -310,6 +303,8 @@ export class ManagePlayersComponent implements OnInit {
       default:
         break;
     }
+
+    this.enableDisableControls();
 
     this.updatePlayerDetailsFields();
   }
@@ -347,6 +342,52 @@ export class ManagePlayersComponent implements OnInit {
     this.playerDetails.contactEmailAddress = formValues.contactEmailAddress;
     this.playerDetails.contactMobileNumber = formValues.contactMobileNumber;
     this.playerDetails.contactHomeNumber = formValues.contactHomeNumber;
+  }
+
+  private enableDisableControls(): void {
+    switch (this.currentState) {
+      case FormState.SearchForPlayer:
+      case FormState.SavingPlayer:
+        this.lastRegisteredDatePickerEnabled = false;
+        this.managePlayersForm.controls['firstName'].disable();
+        this.managePlayersForm.controls['surname'].disable();
+        this.managePlayersForm.controls['addressLine1'].disable();
+        this.managePlayersForm.controls['addressLine2'].disable();
+        this.managePlayersForm.controls['addressLine3'].disable();
+        this.managePlayersForm.controls['school'].disable();
+        this.managePlayersForm.controls['medicalConditions'].disable();
+        this.managePlayersForm.controls['contactName'].disable();
+        this.managePlayersForm.controls['contactEmailAddress'].disable();
+        this.managePlayersForm.controls['contactMobileNumber'].disable();
+        this.managePlayersForm.controls['contactHomeNumber'].disable();
+
+        break;
+      case FormState.PlayersListed:
+      case FormState.AddPlayer:
+      case FormState.EditPlayer:
+        this.lastRegisteredDatePickerEnabled = true;
+        if (this.currentState === FormState.EditPlayer) {
+          this.managePlayersForm.controls['firstName'].disable();
+          this.managePlayersForm.controls['surname'].disable();
+        }
+        else {
+          this.managePlayersForm.controls['firstName'].enable();
+          this.managePlayersForm.controls['surname'].enable();
+        }
+        this.managePlayersForm.controls['addressLine1'].enable();
+        this.managePlayersForm.controls['addressLine2'].enable();
+        this.managePlayersForm.controls['addressLine3'].enable();
+        this.managePlayersForm.controls['school'].enable();
+        this.managePlayersForm.controls['medicalConditions'].enable();
+        this.managePlayersForm.controls['contactName'].enable();
+        this.managePlayersForm.controls['contactEmailAddress'].enable();
+        this.managePlayersForm.controls['contactMobileNumber'].enable();
+        this.managePlayersForm.controls['contactHomeNumber'].enable();
+
+        break;
+      default:
+        break;
+    }
   }
 }
 
