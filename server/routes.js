@@ -213,7 +213,7 @@ exports = module.exports = function (app, router) {
     if (!(request.body.emailAddress && request.body.password)) {
       customError = new Error("Username and password are required");
 
-      customError.code = 400;
+      customError.httpCode = 400;
 
       throw customError;
     }
@@ -225,7 +225,7 @@ exports = module.exports = function (app, router) {
         if (!foundUser) {
           customError = new Error("User not found");
 
-          customError.code = 401;
+          customError.httpCode = 401;
 
           throw customError;
         }
@@ -255,7 +255,7 @@ exports = module.exports = function (app, router) {
         if (!foundUser) {
           customError = new Error("User not found");
 
-          customError.code = 401;
+          customError.httpCode = 401;
 
           throw customError;
         }
@@ -268,7 +268,7 @@ exports = module.exports = function (app, router) {
         if (!foundUser) {
           customError = new Error("Invalid password");
 
-          customError.code = 401;
+          customError.httpCode = 401;
 
           throw customError;
         }
@@ -313,7 +313,7 @@ exports = module.exports = function (app, router) {
         if (!foundUser) {
           customError = new Error("Invalid password");
 
-          customError.code = 401;
+          customError.httpCode = 401;
 
           throw customError;
         }
@@ -401,7 +401,7 @@ exports = module.exports = function (app, router) {
         if (!foundPlayer) {
           customError = new Error("Player not found");
 
-          customError.code = 409;
+          customError.httpCode = 409;
 
           throw customError;
         }

@@ -1193,6 +1193,20 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               });
             }
             else {
+              let existingplayerDetails: IPlayer = this.players.find(player => {
+                return player.dateOfBirth === request.body.playerDetails.dateOfBirth &&
+                  player.firstName === request.body.playerDetails.firstName &&
+                  player.surname === request.body.playerDetails.surname;
+              });
+
+              if (existingplayerDetails) {
+                let alertService: AlertService = this.injector.get(AlertService);
+
+                alertService.error('Fake HTTP 500 Response', 'Fake duplicate key error collection: CarraigOgRegister.players index: dateOfBirth_1_firstName_1_surname_1');
+
+                return;
+              }
+
               playerDetails = <IPlayer>{};
 
               playerDetails._id = Math.floor(Math.random() * 16777215).toString(16);
