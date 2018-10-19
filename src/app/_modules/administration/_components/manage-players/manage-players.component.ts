@@ -331,8 +331,10 @@ export class ManagePlayersComponent implements OnInit {
     this.playerDetails.lastRegisteredDate = lastRegisteredDate.toISOString();
     this.playerDetails.lastRegisteredYear = lrdPicker.year;
 
-    this.playerDetails.firstName = formValues.firstName;
-    this.playerDetails.surname = formValues.surname;
+    if (this.currentState === FormState.AddPlayer || this.currentState === FormState.PlayersListed) {
+      this.playerDetails.firstName = formValues.firstName;
+      this.playerDetails.surname = formValues.surname;
+    }
     this.playerDetails.addressLine1 = formValues.addressLine1;
     this.playerDetails.addressLine2 = formValues.addressLine2;
     this.playerDetails.addressLine3 = formValues.addressLine3;
