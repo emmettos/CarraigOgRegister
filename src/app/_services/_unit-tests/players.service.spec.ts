@@ -64,35 +64,37 @@ describe('PlayersService', () => {
 
   it('should pass request body for update player', () => {
     let player: IPlayer = {
-      '_id': '58c669deb8a0ebcf9c5b93c9',
-      'firstName': 'Jos',
-      'surname': 'Keating',
-      'addressLine1': 'Leela Hill House',
-      'addressLine2': 'KnockNaLurgan',
-      'addressLine3': 'Carrigaline',
-      'dateOfBirth': '2009-01-01T00:00:00.000Z',
-      'yearOfBirth': 2009,
+      '_id': '0c7858f9e15c90f70efba83e',
+      'firstName': 'Luke',
+      'surname': 'Stewart',
+      'addressLine1': '1035 Harley Brook Lane',
+      'addressLine2': 'Carrigaline',
+      'addressLine3': '',
+      'dateOfBirth': '2010-07-02T00:00:00.000Z',
+      'yearOfBirth': 2010,
       'medicalConditions': '',
-      'contactName': 'David Keating',
-      'contactMobileNumber': '087 6874814',
+      'contactName': 'Danelle Stewart',
+      'contactMobileNumber': '087 9733637',
       'contactHomeNumber': '',
-      'contactEmailAddress': 'keatingdavidj@gmail.com',
-      'school': '',
-      'lastRegisteredDate': '2018-05-08T23:00:00.000Z',
+      'contactEmailAddress': 'danelle_stewart@gmail.com',
+      'school': 'Gaelscoil',
+      'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
       'lastRegisteredYear': 2018,
       'registeredYears': [
-          2017,
-          2018
+        2015,
+        2016,
+        2017,
+        2018
       ],
       '__v': 1,
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-05-09T09:55:59.735Z',
+      'updatedDate': '2018-02-13T10:17:21.332Z',
       'updatedBy': 'emmett.j.osullivan@gmail.com',
       'playerState': 0
     }
 
-    service.updatePlayer(player, 2018, 2009)
+    service.updatePlayer(player, 2018, 2010)
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/updatePlayer');
@@ -100,35 +102,37 @@ describe('PlayersService', () => {
     expect(mockRequest.request.body).toEqual({
       groupDetails: {
         year: 2018,
-        yearOfBirth: 2009
+        yearOfBirth: 2010
       },
       playerDetails: {
-        '_id': '58c669deb8a0ebcf9c5b93c9',
-        'firstName': 'Jos',
-        'surname': 'Keating',
-        'addressLine1': 'Leela Hill House',
-        'addressLine2': 'KnockNaLurgan',
-        'addressLine3': 'Carrigaline',
-        'dateOfBirth': '2009-01-01T00:00:00.000Z',
-        'yearOfBirth': 2009,
+        '_id': '0c7858f9e15c90f70efba83e',
+        'firstName': 'Luke',
+        'surname': 'Stewart',
+        'addressLine1': '1035 Harley Brook Lane',
+        'addressLine2': 'Carrigaline',
+        'addressLine3': '',
+        'dateOfBirth': '2010-07-02T00:00:00.000Z',
+        'yearOfBirth': 2010,
         'medicalConditions': '',
-        'contactName': 'David Keating',
-        'contactMobileNumber': '087 6874814',
+        'contactName': 'Danelle Stewart',
+        'contactMobileNumber': '087 9733637',
         'contactHomeNumber': '',
-        'contactEmailAddress': 'keatingdavidj@gmail.com',
-        'school': '',
-        'lastRegisteredDate': '2018-05-08T23:00:00.000Z',
+        'contactEmailAddress': 'danelle_stewart@gmail.com',
+        'school': 'Gaelscoil',
+        'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
         'lastRegisteredYear': 2018,
         'registeredYears': [
-            2017,
-            2018
+          2015,
+          2016,
+          2017,
+          2018
         ],
         '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedDate': '2018-02-13T10:17:21.332Z',
         'updatedBy': 'emmett.j.osullivan@gmail.com',
-        'playerState': 0  
+        'playerState': 0
       }
     });
 
@@ -149,34 +153,38 @@ describe('PlayersService', () => {
   it('should pass request body for create player', () => {
     let player: IPlayer = {
       '_id': '58c669deb8a0ebcf9c5b93c9',
-      'firstName': 'Jos',
-      'surname': 'Keating',
-      'addressLine1': 'Leela Hill House',
-      'addressLine2': 'KnockNaLurgan',
+      'firstName': 'James',
+      'surname': 'Maxwell',
+      'addressLine1': '485 Meadowcrest Lane',
+      'addressLine2': 'Capitol',
       'addressLine3': 'Carrigaline',
-      'dateOfBirth': '2009-01-01T00:00:00.000Z',
-      'yearOfBirth': 2009,
-      'medicalConditions': '',
-      'contactName': 'David Keating',
-      'contactMobileNumber': '087 6874814',
+      'dateOfBirth': '2008-10-10T00:00:00.000Z',
+      'yearOfBirth': 2008,
+      'medicalConditions': 'Heart Murmur',
+      'contactName': 'Kevia Maxwell',
+      'contactMobileNumber': '087 3514954',
       'contactHomeNumber': '',
-      'contactEmailAddress': 'keatingdavidj@gmail.com',
-      'school': '',
-      'lastRegisteredDate': '2018-05-08T23:00:00.000Z',
+      'contactEmailAddress': 'kevia_maxwell@gmail.com',
+      'school': 'Scoil Mhuire Lourdes',
+      'lastRegisteredDate': '2018-05-09T00:00:00.000Z',
       'lastRegisteredYear': 2018,
       'registeredYears': [
-          2017,
-          2018
+        2013,
+        2014,
+        2015,
+        2016,
+        2017,
+        2018
       ],
       '__v': 1,
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
       'updatedBy': 'emmett.j.osullivan@gmail.com',
-      'playerState': 0
-    }
+      playerState: 0
+    };
 
-    service.createPlayer(player, 2018, 2009)
+    service.createPlayer(player, 2018, 2008)
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/createPlayer');
@@ -184,35 +192,39 @@ describe('PlayersService', () => {
     expect(mockRequest.request.body).toEqual({
       groupDetails: {
         year: 2018,
-        yearOfBirth: 2009
+        yearOfBirth: 2008
       },
       playerDetails: {
         '_id': '58c669deb8a0ebcf9c5b93c9',
-        'firstName': 'Jos',
-        'surname': 'Keating',
-        'addressLine1': 'Leela Hill House',
-        'addressLine2': 'KnockNaLurgan',
+        'firstName': 'James',
+        'surname': 'Maxwell',
+        'addressLine1': '485 Meadowcrest Lane',
+        'addressLine2': 'Capitol',
         'addressLine3': 'Carrigaline',
-        'dateOfBirth': '2009-01-01T00:00:00.000Z',
-        'yearOfBirth': 2009,
-        'medicalConditions': '',
-        'contactName': 'David Keating',
-        'contactMobileNumber': '087 6874814',
+        'dateOfBirth': '2008-10-10T00:00:00.000Z',
+        'yearOfBirth': 2008,
+        'medicalConditions': 'Heart Murmur',
+        'contactName': 'Kevia Maxwell',
+        'contactMobileNumber': '087 3514954',
         'contactHomeNumber': '',
-        'contactEmailAddress': 'keatingdavidj@gmail.com',
-        'school': '',
-        'lastRegisteredDate': '2018-05-08T23:00:00.000Z',
+        'contactEmailAddress': 'kevia_maxwell@gmail.com',
+        'school': 'Scoil Mhuire Lourdes',
+        'lastRegisteredDate': '2018-05-09T00:00:00.000Z',
         'lastRegisteredYear': 2018,
         'registeredYears': [
-            2017,
-            2018
+          2013,
+          2014,
+          2015,
+          2016,
+          2017,
+          2018
         ],
         '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'emmett.j.osullivan@gmail.com',
-        'playerState': 0  
+        playerState: 0
       }
     });
 
