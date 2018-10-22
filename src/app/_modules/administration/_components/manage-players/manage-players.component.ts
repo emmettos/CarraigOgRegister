@@ -55,17 +55,17 @@ export class ManagePlayersComponent implements OnInit {
       'groupYear': ['Select Year', this.validationService.groupYearValidator],
       'dateOfBirthPicker': this.formBuilder.group({}),
       'lastRegisteredDatePicker': this.formBuilder.group({}),
-      'firstName': ['', Validators.required],
-      'surname': ['', Validators.required],
-      'addressLine1': ['', Validators.required],
-      'addressLine2': [''],
-      'addressLine3': [''],
-      'school': [''],
-      'medicalConditions': [''],
-      'contactName': [''],
-      'contactEmailAddress': [''],
-      'contactMobileNumber': [''],
-      'contactHomeNumber': ['']
+      'firstName': [{ value: '', disabled: true }, Validators.required],
+      'surname': [{ value: '', disabled: true }, Validators.required],
+      'addressLine1': [{ value: '', disabled: true }, Validators.required],
+      'addressLine2': [{ value: '', disabled: true }],
+      'addressLine3': [{ value: '', disabled: true }],
+      'school': [{ value: '', disabled: true }],
+      'medicalConditions': [{ value: '', disabled: true }],
+      'contactName': [{ value: '', disabled: true }],
+      'contactEmailAddress': [{ value: '', disabled: true }],
+      'contactMobileNumber': [{ value: '', disabled: true }],
+      'contactHomeNumber': [{ value: '', disabled: true }]
     });
 
     this.dateOfBirthPickerEnabled = false;
@@ -162,8 +162,10 @@ export class ManagePlayersComponent implements OnInit {
           next: response => {
             this.playerDetails.__v = response.body.player.__v;
 
+            this.processEvent(FormEvent.PlayerSaved);
+
             window.scrollTo(0, 0);
-            },
+          },
           // Need this handler otherwise the Angular error handling mechanism will kick in.
           error: error => {
           }
@@ -181,6 +183,8 @@ export class ManagePlayersComponent implements OnInit {
           next: response => {
             this.groupPlayers.push(response.body.player);
 
+            this.processEvent(FormEvent.PlayerSaved);
+
             window.scrollTo(0, 0);
           },
           // Need this handler otherwise the Angular error handling mechanism will kick in.
@@ -189,7 +193,7 @@ export class ManagePlayersComponent implements OnInit {
         });
     }
 
-    this.processEvent(FormEvent.SavePlayer);
+    this.processEvent(FormEvent.SavingPlayer);
   }
 
   private processEvent(event: FormEvent): void {
@@ -212,8 +216,6 @@ export class ManagePlayersComponent implements OnInit {
         dateOfBirthPicker.setValue('yyyy-MM-dd');
         lastRegisteredDatePicker.setValue('yyyy-MM-dd');
 
-        this.lastRegisteredDatePickerEnabled = false;
-
         if (this.groupYear === 'Select Year') {
           this.dateOfBirthPickerEnabled = false;
         }
@@ -227,6 +229,7 @@ export class ManagePlayersComponent implements OnInit {
         }
 
         this.currentState = FormState.SearchForPlayer;
+
         break;
       case FormEvent.DateOfBirthChanged:
         if (this.currentState !== FormState.SearchForPlayer) {
@@ -234,8 +237,6 @@ export class ManagePlayersComponent implements OnInit {
             
           lastRegisteredDatePicker.markAsUntouched();
           lastRegisteredDatePicker.setValue('yyyy-MM-dd')
-
-          this.lastRegisteredDatePickerEnabled = false;
 
           this.managePlayersForm.controls['firstName'].markAsUntouched();
           this.managePlayersForm.controls['surname'].markAsUntouched();
@@ -247,8 +248,6 @@ export class ManagePlayersComponent implements OnInit {
         }
         break;
       case FormEvent.PlayersFound:
-        this.currentState = FormState.PlayersListed;
-        break;
       case FormEvent.NoPlayersFound:
       case FormEvent.PlayerSelected:
         currentDate = new Date(Date.now());
@@ -261,19 +260,25 @@ export class ManagePlayersComponent implements OnInit {
           }
         });
 
-        this.lastRegisteredDatePickerEnabled = true;
-
         if (event === FormEvent.NoPlayersFound) {
           this.currentState = FormState.AddPlayer;
         }
         else {
-          this.currentState = FormState.EditPlayer;
+          if (event === FormEvent.PlayerSelected) {
+            this.currentState = FormState.EditPlayer;
+          }
+          else {
+            this.currentState = FormState.PlayersListed;
+          }
         }
         break;
-      case FormEvent.SavePlayer:
-        this.lastRegisteredDatePickerEnabled = false;
-        
+      case FormEvent.SavingPlayer:
+        this.currentState = FormState.SavingPlayer;
+
+        break;
+      case FormEvent.PlayerSaved:
         this.currentState = FormState.PlayerSaved;
+
         break;
       case FormEvent.ResetPage:
         this.managePlayersForm.controls['firstName'].markAsUntouched();
@@ -298,6 +303,8 @@ export class ManagePlayersComponent implements OnInit {
       default:
         break;
     }
+
+    this.enableDisableControls();
 
     this.updatePlayerDetailsFields();
   }
@@ -324,8 +331,10 @@ export class ManagePlayersComponent implements OnInit {
     this.playerDetails.lastRegisteredDate = lastRegisteredDate.toISOString();
     this.playerDetails.lastRegisteredYear = lrdPicker.year;
 
-    this.playerDetails.firstName = formValues.firstName;
-    this.playerDetails.surname = formValues.surname;
+    if (this.currentState === FormState.AddPlayer || this.currentState === FormState.PlayersListed) {
+      this.playerDetails.firstName = formValues.firstName;
+      this.playerDetails.surname = formValues.surname;
+    }
     this.playerDetails.addressLine1 = formValues.addressLine1;
     this.playerDetails.addressLine2 = formValues.addressLine2;
     this.playerDetails.addressLine3 = formValues.addressLine3;
@@ -336,6 +345,52 @@ export class ManagePlayersComponent implements OnInit {
     this.playerDetails.contactMobileNumber = formValues.contactMobileNumber;
     this.playerDetails.contactHomeNumber = formValues.contactHomeNumber;
   }
+
+  private enableDisableControls(): void {
+    switch (this.currentState) {
+      case FormState.SearchForPlayer:
+      case FormState.SavingPlayer:
+        this.lastRegisteredDatePickerEnabled = false;
+        this.managePlayersForm.controls['firstName'].disable();
+        this.managePlayersForm.controls['surname'].disable();
+        this.managePlayersForm.controls['addressLine1'].disable();
+        this.managePlayersForm.controls['addressLine2'].disable();
+        this.managePlayersForm.controls['addressLine3'].disable();
+        this.managePlayersForm.controls['school'].disable();
+        this.managePlayersForm.controls['medicalConditions'].disable();
+        this.managePlayersForm.controls['contactName'].disable();
+        this.managePlayersForm.controls['contactEmailAddress'].disable();
+        this.managePlayersForm.controls['contactMobileNumber'].disable();
+        this.managePlayersForm.controls['contactHomeNumber'].disable();
+
+        break;
+      case FormState.PlayersListed:
+      case FormState.AddPlayer:
+      case FormState.EditPlayer:
+        this.lastRegisteredDatePickerEnabled = true;
+        if (this.currentState === FormState.EditPlayer) {
+          this.managePlayersForm.controls['firstName'].disable();
+          this.managePlayersForm.controls['surname'].disable();
+        }
+        else {
+          this.managePlayersForm.controls['firstName'].enable();
+          this.managePlayersForm.controls['surname'].enable();
+        }
+        this.managePlayersForm.controls['addressLine1'].enable();
+        this.managePlayersForm.controls['addressLine2'].enable();
+        this.managePlayersForm.controls['addressLine3'].enable();
+        this.managePlayersForm.controls['school'].enable();
+        this.managePlayersForm.controls['medicalConditions'].enable();
+        this.managePlayersForm.controls['contactName'].enable();
+        this.managePlayersForm.controls['contactEmailAddress'].enable();
+        this.managePlayersForm.controls['contactMobileNumber'].enable();
+        this.managePlayersForm.controls['contactHomeNumber'].enable();
+
+        break;
+      default:
+        break;
+    }
+  }
 }
 
 enum FormState {
@@ -343,6 +398,7 @@ enum FormState {
   PlayersListed,
   AddPlayer,
   EditPlayer,
+  SavingPlayer,
   PlayerSaved
 }
 
@@ -352,6 +408,7 @@ enum FormEvent {
   NoPlayersFound,
   PlayersFound,
   PlayerSelected,
-  SavePlayer,
+  SavingPlayer,
+  PlayerSaved,
   ResetPage
 }

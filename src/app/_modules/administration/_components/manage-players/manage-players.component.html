@@ -28,14 +28,6 @@
       </div>
     </div>
     <hr/>
-    <div class="row text-center">
-      <div id="message-panel" class="col-md-12">
-        <p class="text-info" [hidden]="currentState !== formState.SearchForPlayer">Players matching the entered Date of Birth will display here</p>
-        <p class="text-warning" [hidden]="currentState !== formState.AddPlayer">No players found. Add new Player.</p>
-        <p class="text-info" [hidden]="currentState !== formState.EditPlayer">Editing {{ playerDetails.firstName + ' ' + playerDetails.surname }}</p>
-        <p class="text-success" [hidden]="currentState !== formState.PlayerSaved"><strong>Player Details Sucessfully Saved</strong></p>
-      </div>
-    </div>
     <div class="table-responsive" [hidden]="currentState !== formState.PlayersListed">
       <table id="players-table" class="table table-bordered table-striped table-hover select-row">
         <thead>
@@ -56,6 +48,15 @@
         </tbody>
       </table>
     </div>
+    <div class="row text-center">
+      <div id="message-panel" class="col-md-12">
+        <p class="text-info" [hidden]="currentState !== formState.SearchForPlayer">Players matching the entered Date of Birth will display here</p>
+        <p class="text-info" [hidden]="currentState !== formState.PlayersListed">Select player to edit or add new Player.</p>
+        <p class="text-info" [hidden]="currentState !== formState.AddPlayer">No existing players found. Add new Player.</p>
+        <p class="text-info" [hidden]="currentState !== formState.EditPlayer">Editing {{ playerDetails.firstName + ' ' + playerDetails.surname }}</p>
+        <p class="text-success" [hidden]="currentState !== formState.PlayerSaved"><strong>Player Details Sucessfully Saved</strong></p>
+      </div>
+    </div>
     <hr/>
     <div class="row">
       <div class="form-group col-md-2 offset-md-5">
@@ -75,7 +76,6 @@
                 id="player-first-name"
                 formControlName="firstName" 
                 name="firstName" 
-                [attr.disabled]="currentState !== formState.AddPlayer ? 'disabled' : null"
                 class="form-control" 
                 [ngClass]="{'is-invalid': managePlayersForm.controls.firstName.invalid && managePlayersForm.controls.firstName.touched}"
                 placeholder="First Name">
@@ -87,7 +87,6 @@
                 id="player-surname" 
                 formControlName="surname" 
                 name="surname" 
-                [attr.disabled]="currentState !== formState.AddPlayer ? 'disabled' : null"
                 class="form-control" 
                 [ngClass]="{'is-invalid': managePlayersForm.controls.surname.invalid && managePlayersForm.controls.surname.touched}"
                 placeholder="Surname">
@@ -101,7 +100,6 @@
                 id="player-address-line1"
                 formControlName="addressLine1" 
                 name="addressLine1" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 [ngClass]="{'is-invalid': managePlayersForm.controls.addressLine1.invalid && managePlayersForm.controls.addressLine1.touched}"
                 placeholder="Address Line 1">
@@ -112,7 +110,6 @@
         <input  type="text" 
                 id="player-address-line2"
                 formControlName="addressLine2" name="addressLine2" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Address Line 2">
       </div>
@@ -124,7 +121,6 @@
                 id="player-address-line3"
                 formControlName="addressLine3" 
                 name="addressLine3" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Address Line 3">
       </div>
@@ -136,7 +132,6 @@
                 id="player-medical-conditions" 
                 formControlName="medicalConditions" 
                 name="medicalConditions" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Medical Conditions">
       </div>
@@ -146,7 +141,6 @@
                 id="player-school"
                 formControlName="school" 
                 name="school" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="School">
       </div>
@@ -157,7 +151,7 @@
         <input  type="text" 
                 id="contact-name"
                 formControlName="contactName" 
-                name="contactName" [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
+                name="contactName" 
                 class="form-control" 
                 placeholder="Contact Name">
       </div>
@@ -167,7 +161,6 @@
                 id="contact-email-address"
                 formControlName="contactEmailAddress" 
                 name="contactEmailAddress" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Contact Email Address">
       </div>
@@ -179,7 +172,6 @@
                 id="contact-mobile-number"
                 formControlName="contactMobileNumber" 
                 name="contactMobileNumber" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Contact Mobile Number">
       </div>
@@ -189,7 +181,6 @@
                 id="contact-home-number"
                 formControlName="contactHomeNumber" 
                 name="contactHomeNumber" 
-                [attr.disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer) ? 'disabled' : null"
                 class="form-control" 
                 placeholder="Contact Home Number">
       </div>
@@ -200,11 +191,11 @@
                 id="reset" 
                 class="btn btn-info mr-3" 
                 (click)="onReset()" 
-                [disabled]="!(currentState === formState.AddPlayer || currentState === formState.EditPlayer)"
+                [disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer)"
                 value="Reset">
         <input  type="submit" 
                 class="btn btn-info" 
-                [disabled]="managePlayersForm.status === 'INVALID' || !(currentState === formState.AddPlayer || currentState === formState.EditPlayer)"
+                [disabled]="managePlayersForm.status === 'INVALID' || !(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer)"
                 value="Save">
       </div>
     </div>

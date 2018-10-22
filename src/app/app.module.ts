@@ -78,7 +78,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
       useClass: HttpInterceptorHelper, 
       multi: true 
     },
-    // Uncomment the below HTTP_INTERCEPTOR to use to application with a fake backend.
+    // Uncomment the below HTTP_INTERCEPTOR to use to the application with a fake backend.
     // {
     //   provide: HTTP_INTERCEPTORS,
     //   useClass: FakeBackendInterceptorHelper,

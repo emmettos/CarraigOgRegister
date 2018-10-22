@@ -13,7 +13,7 @@ exports = module.exports = function (app) {
     returnMessage.error = {};
 
     if (request.xhr) {
-      returnMessage.error.statusCode = error.code || 500;
+      returnMessage.error.statusCode = error.httpCode || 500;
       returnMessage.error.requestID = request.logger.fields.requestID;
       returnMessage.error.message = error.message;
 
