@@ -1,0 +1,150 @@
+<!-- Most id's are used for unit testing -->
+<div>
+  <div class="row text-center">
+      <div class="col-lg-12">
+          <h2>CarraigOg Users</h2>
+      </div>
+  </div>
+  <div class="row">
+      <div class="col-sm-3 col-md-2 col-lg-1">
+          <h4><span id="total-count" class="badge badge-primary">Total {{ totalCount }}</span></h4>
+      </div>
+      <div class="col-sm-3 col-md-2 col-lg-1">
+          <h4><span id="active-count" class="badge badge-success">Active {{ activeCount }}</span></h4>
+      </div>
+      <div class="col-sm-3 col-md-2 col-lg-1">
+          <h4><span id="dormant-count" class="badge badge-warning">Dormant {{ dormantCount }}</span></h4>
+      </div>
+      <div class="col-sm-3 col-md-3 col-lg-7">
+      </div>
+      <div class="col-sm-3 col-md-3 col-lg-2">
+        <button type="button" class="btn btn-info">Download CSV</button>
+<!--
+        <button type="button" (click)="onClickDownloadCSV()" class="btn btn-info">Download CSV</button>
+-->      
+    </div>
+  </div>
+  <br />  
+  <form [formGroup]="manageUsersFilterForm">
+    <div class="form-row align-items-center">
+      <div class="col-md-4 col-lg-3">
+        <input  type="text" 
+                formControlName="nameFilter" 
+                class="form-control" 
+                placeholder="Name Filter">
+      </div>
+      <div class="col-md-4 col-lg-3">
+        <div class="form-check">
+          <input  type="checkbox" 
+                  formControlName="currentlyActive"
+                  class="form-check-input"> 
+          <label class="form-check-label">Currently Active Only</label>
+        </div>
+      </div>
+      <div class="col-md-4 col-lg-6 text-right">
+        <span id="displaying-message">Displaying {{ filteredUsers?.length }} Users</span>
+      </div>
+    </div>
+  </form>
+  <br />    
+  <div class="table-responsive">
+    <table id="users-table" class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th (click)="onClickHeader('userState')" class="text-right"><span class="float-left mr-1">Status</span><i [ngClass]="headerSortCSSClass('userState')"></i></th>
+          <th (click)="onClickHeader('surname')" class="text-right"><span class="float-left mr-1">Surname</span><i [ngClass]="headerSortCSSClass('surname')"></i></th>
+          <th (click)="onClickHeader('firstName')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('firstName')"></i></th>
+          <th (click)="onClickHeader('emailAddress')" class="text-right"><span class="float-left mr-1">Email Address</span><i [ngClass]="headerSortCSSClass('addressLine2')"></i></th>
+          <th (click)="onClickHeader('phoneNumber')" class="text-right"><span class="float-left mr-1">Phone Number</span><i [ngClass]="headerSortCSSClass('dateOfBirth')"></i></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let currentUser of filteredUsers" [class.missing]="currentUser.userState === userState.Missing">
+          <td><span class="badge user-detail-badge" [ngClass]="userStateCSSClass(currentUser)"> </span></td>
+          <td>{{ currentUser.surname }}</td>
+          <td>{{ currentUser.firstName }}</td>
+          <td>{{ currentUser.emailAddress }}</td>
+          <td>{{ currentUser.phoneNumber }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!--
+  <hr/>
+  <form [formGroup]="manageUsersForm" (ngSubmit)="onSubmit(manageUsersForm.value)" novalidate>
+    <div class="row text-center">
+      <div id="message-panel" class="col-md-12">
+        <p class="text-info" [hidden]="currentState !== formState.SearchForPlayer">Players matching the entered Date of Birth will display here</p>
+        <p class="text-info" [hidden]="currentState !== formState.PlayersListed">Select player to edit or add new Player.</p>
+        <p class="text-info" [hidden]="currentState !== formState.AddPlayer">No existing players found. Add new Player.</p>
+        <p class="text-info" [hidden]="currentState !== formState.EditPlayer">Editing {{ playerDetails.firstName + ' ' + playerDetails.surname }}</p>
+        <p class="text-success" [hidden]="currentState !== formState.PlayerSaved"><strong>Player Details Sucessfully Saved</strong></p>
+      </div>
+    </div>
+    <hr/>
+    <div class="row">
+      <div class="form-group col-md-4 offset-md-2">
+        <label class="control-label" for="firstName">First Name</label>
+        <input  type="text" 
+                id="player-first-name"
+                formControlName="firstName" 
+                name="firstName" 
+                class="form-control" 
+                [ngClass]="{'is-invalid': managePlayersForm.controls.firstName.invalid && managePlayersForm.controls.firstName.touched}"
+                placeholder="First Name">
+        <app-validation-message [control]="managePlayersForm.controls.firstName"></app-validation-message>
+      </div>
+      <div class="form-group col-md-4">
+        <label class="control-label" for="surname">Surname</label>
+        <input  type="text" 
+                id="player-surname" 
+                formControlName="surname" 
+                name="surname" 
+                class="form-control" 
+                [ngClass]="{'is-invalid': managePlayersForm.controls.surname.invalid && managePlayersForm.controls.surname.touched}"
+                placeholder="Surname">
+        <app-validation-message [control]="managePlayersForm.controls.surname"></app-validation-message>
+      </div>
+    </div>
+    <div class="row">
+      <div class="form-group col-md-4 offset-md-2">
+        <label class="control-label" for="addressLine1">Address Line 1</label>
+        <input  type="text" 
+                id="player-address-line1"
+                formControlName="addressLine1" 
+                name="addressLine1" 
+                class="form-control" 
+                [ngClass]="{'is-invalid': managePlayersForm.controls.addressLine1.invalid && managePlayersForm.controls.addressLine1.touched}"
+                placeholder="Address Line 1">
+        <app-validation-message [control]="managePlayersForm.controls.addressLine1"></app-validation-message>
+      </div>
+      <div class="form-group col-md-4">
+        <label class="control-label" for="addressLine2">Address Line 2</label>
+        <input  type="text" 
+                id="player-address-line2"
+                formControlName="addressLine2" name="addressLine2" 
+                class="form-control" 
+                placeholder="Address Line 2">
+      </div>
+    </div>
+    <div class="row mb-3">
+      <div class="col-md-2 offset-md-5">
+        <input  type="button" 
+                id="reset" 
+                class="btn btn-info mr-3" 
+                (click)="onReset()" 
+                [disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer)"
+                value="Reset">
+        <input  type="submit" 
+                class="btn btn-info" 
+                [disabled]="managePlayersForm.status === 'INVALID' || !(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer)"
+                value="Save">
+      </div>
+    </div>
+  </form>
+-->
+</div>
+<!--
+<p>Form values: {{ manageUsersForm.value | json }}</p>
+<p>Form status: {{ manageUsersForm.status }}</p>
+-->

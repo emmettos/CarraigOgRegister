@@ -39,7 +39,7 @@ export class AuthorizationGuard implements CanActivate {
       return false;
     }
 
-    if (state.url === '/administration/manage-players') {
+    if (state.url === '/administration/manage-players' || state.url === '/administration/manage-users') {
       if (!this.authorizationService.getActivePayload.userProfile.isAdministrator) {
         this.toasterService.pop('warning', 'Unauthorized Access', 'Administrator access only');
 

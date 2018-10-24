@@ -17,31 +17,31 @@ var playerSchema = new Schema({
 	contactName: { type: String },
 	contactMobileNumber: { type: String },
 	contactHomeNumber: { type: String },
-	contactEmailAddress: { type: String},
+	contactEmailAddress: { type: String },
 	school: { type: String },
 	lastRegisteredDate: { type: Date, required: true },
 	lastRegisteredYear: { type: Number, required: true },
-	registeredYears: [ { type: Number }],
-  createdBy: { type: String, required: true },
-  createdDate: { type: Date, required: true },
-  updatedBy: { type: String, required: true },
-  updatedDate: { type: Date, required: true }
+	registeredYears: [{ type: Number }],
+	createdBy: { type: String, required: true },
+	createdDate: { type: Date, required: true },
+	updatedBy: { type: String, required: true },
+	updatedDate: { type: Date, required: true }
 });
 
-playerSchema.index({ yearOfBirth: 1});
-playerSchema.index({ dateOfBirth: 1, firstName: 1, surname: 1}, { unique: true });
+playerSchema.index({ yearOfBirth: 1 });
+playerSchema.index({ dateOfBirth: 1, firstName: 1, surname: 1 }, { unique: true });
 
 playerSchema.virtual("modifiedBy").set(function (userId) {
-    var player = this,
-        currentDate = new Date();
+	var player = this,
+		currentDate = new Date();
 
-    if (player.isNew) {
-        player.createdBy = userId;
-        player.createdDate = player.updatedDate = currentDate;
-    }
+	if (player.isNew) {
+		player.createdBy = userId;
+		player.createdDate = player.updatedDate = currentDate;
+	}
 
-    player.updatedBy = userId;
-    player.updatedDate = currentDate;
+	player.updatedBy = userId;
+	player.updatedDate = currentDate;
 });
 
 module.exports = mongoose.model("player", playerSchema);

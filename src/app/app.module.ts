@@ -19,7 +19,7 @@ import {
   AuthorizationService, 
   ConfigurationService,
   GroupsService,
-  UserService, 
+  UsersService, 
   PlayersService } from './_services/index';
 
 import { AlertComponent } from './_components/alert/alert.component';
@@ -62,7 +62,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
     GroupsService,
     PlayersService,
     ToasterService,
-    UserService,
+    UsersService,
     { 
       provide: ErrorHandler, 
       useClass: ApplicationErrorHandlerService 
@@ -79,11 +79,11 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
       multi: true 
     },
     // Uncomment the below HTTP_INTERCEPTOR to use to the application with a fake backend.
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: FakeBackendInterceptorHelper,
-    //   multi: true
-    // }
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: FakeBackendInterceptorHelper,
+      multi: true
+    }
   ],
   bootstrap: [
     AppComponent

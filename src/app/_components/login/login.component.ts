@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
-import { UserService } from '../../_services/index';
+import { UsersService } from '../../_services/index';
 import { ValidationService } from '../../_modules/shared/_services/index';
 
 
@@ -27,7 +27,7 @@ export class LoginComponent implements OnInit {
     private validationService: ValidationService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private userService: UserService) {   
+    private usersService: UsersService) {   
   }
 
   ngOnInit() {
@@ -89,7 +89,7 @@ export class LoginComponent implements OnInit {
   }
 
   private changePassword(emailAddress: string, password: string, newPassword: string) {
-    this.userService.changePassword(emailAddress, password, newPassword)
+    this.usersService.changePassword(emailAddress, password, newPassword)
       .subscribe({
         next: response => {
           this.loginForm.controls['changePasswordMode'].setValue(false);
@@ -106,7 +106,7 @@ export class LoginComponent implements OnInit {
   }
 
   private login(emailAddress: string, password: string) {
-    this.userService.login(emailAddress, password)
+    this.usersService.login(emailAddress, password)
       .subscribe({
         next: response => {
           //throw new Error('An error has occurred');

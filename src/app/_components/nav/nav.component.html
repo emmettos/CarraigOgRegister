@@ -12,6 +12,7 @@
         <a id="administration-menu" [style.display]="authorizationService.getPayload?.userProfile.isAdministrator ? 'inline': 'none'" ngbDropdownToggle class="nav-link dropdown-toggle">Administration</a>
         <div id="administration-dropdown" ngbDropdownMenu>
           <a class="dropdown-item" routerLink="/administration/manage-players">Manage Players</a>
+          <a class="dropdown-item" routerLink="/administration/manage-users">Manage Users</a>
         </div>
       </li>
     </ul>

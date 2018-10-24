@@ -8,6 +8,7 @@ import { AdministrationRoutingModule } from './administration-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { ManagePlayersComponent } from "./_components/manage-players/manage-players.component";
+import { ManageUsersComponent } from './_components/manage-users/manage-users.component';
 
 
 @NgModule({
@@ -19,7 +20,8 @@ import { ManagePlayersComponent } from "./_components/manage-players/manage-play
     SharedModule
   ],
   declarations: [
-    ManagePlayersComponent
+    ManagePlayersComponent,
+    ManageUsersComponent
   ],
 })
 export class AdministrationModule { }

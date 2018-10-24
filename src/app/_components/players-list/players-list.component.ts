@@ -24,7 +24,6 @@ export class PlayersListComponent implements OnInit {
   currentlyRegisteredControl: FormControl;
 
   groupName: string = null;
-  view: string = null;
 
   sortKey: string = "surname";
   reverse: boolean = false;
@@ -66,44 +65,40 @@ export class PlayersListComponent implements OnInit {
     this.playersService.readCurrentPlayers(yearOfBirth)
       .subscribe({
         next: response => {
-          let playerIndex = 0;
-
           this.players = response.body.players;
 
-          for (playerIndex = 0; playerIndex < this.players.length; playerIndex++) {
-              if (this.players[playerIndex].lastRegisteredYear === APP_SETTINGS.currentYear) {
-                  this.registeredCount++;
+          this.players.forEach(player => {
+            if (player.lastRegisteredYear === APP_SETTINGS.currentYear) {
+              this.registeredCount++;
 
-                  if (this.players[playerIndex].registeredYears.length === 1) {
-                      this.players[playerIndex].playerState = PlayerState.New;
+              if (player.registeredYears.length === 1) {
+                player.playerState = PlayerState.New;
 
-                      this.newCount++;
-                  }
-                  else {
-                      this.players[playerIndex].playerState = PlayerState.Existing;
-                  }
+                this.newCount++;
               }
               else {
-                  this.players[playerIndex].playerState = PlayerState.Missing;
-
-                  this.missingCount++;
+                player.playerState = PlayerState.Existing;
               }
-          }
+            }
+            else {
+              player.playerState = PlayerState.Missing;
 
-          this.players
-            .sort(
-              (player1: IPlayer, player2: IPlayer) => {
-                let returnValue: number = 1;
-    
-                if (player1._id < player2._id) {
-                  returnValue = -1;
-                }
-                else if (player1._id === player2._id) {
-                  returnValue = 0;
-                }
-                
-                return returnValue;
-              });
+              this.missingCount++;
+            }
+          });
+
+          this.players.sort((player1: IPlayer, player2: IPlayer) => {
+            let returnValue: number = 1;
+
+            if (player1._id < player2._id) {
+              returnValue = -1;
+            }
+            else if (player1._id === player2._id) {
+              returnValue = 0;
+            }
+            
+            return returnValue;
+          });
     
           this.filteredPlayers = this.players.slice(0);
 
@@ -127,23 +122,22 @@ export class PlayersListComponent implements OnInit {
     }
     
     this.filteredPlayers
-      .sort(
-        (player1: IPlayer, player2: IPlayer) => {
-          let returnValue: number = 1;
+      .sort((player1: IPlayer, player2: IPlayer) => {
+        let returnValue: number = 1;
 
-          if (player1[this.sortKey] < player2[this.sortKey]) {
-            returnValue = -1;
-          }
-          else if (player1[this.sortKey] === player2[this.sortKey]) {
-            returnValue = 0;
-          }
+        if (player1[this.sortKey] < player2[this.sortKey]) {
+          returnValue = -1;
+        }
+        else if (player1[this.sortKey] === player2[this.sortKey]) {
+          returnValue = 0;
+        }
 
-          if (this.reverse) {
-            returnValue = returnValue * -1;
-          }
-          
-          return returnValue;
-        });
+        if (this.reverse) {
+          returnValue = returnValue * -1;
+        }
+        
+        return returnValue;
+      });
   }
 
   onClickRow(content: any, playerId: string) {

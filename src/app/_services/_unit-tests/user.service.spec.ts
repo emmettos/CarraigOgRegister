@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { UserService } from '../index';
+import { UsersService } from '../index';
 
 
 describe('UserService', () => {
   let httpMock: HttpTestingController;
 
-  let service: UserService;
+  let usersService: UsersService;
   
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -15,13 +15,13 @@ describe('UserService', () => {
         HttpClientTestingModule
       ],
       providers: [
-        UserService
+        UsersService
       ]
     });
 
     httpMock = TestBed.get(HttpTestingController);
 
-    service = TestBed.get(UserService);
+    usersService = TestBed.get(UsersService);
   });
 
   afterEach(() => {
@@ -29,7 +29,7 @@ describe('UserService', () => {
   });
 
   it('should call url for authenticate', () => {
-    service.login('test@gmail.com', 'Password01')
+    usersService.login('test@gmail.com', 'Password01')
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/authenticate');
@@ -40,7 +40,7 @@ describe('UserService', () => {
   });
 
   it('should pass request body for authenticate', () => {
-    service.login('test@gmail.com', 'Password01')
+    usersService.login('test@gmail.com', 'Password01')
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/authenticate');
@@ -54,7 +54,7 @@ describe('UserService', () => {
   });
 
   it('should call url for change password', () => {
-    service.changePassword('test@gmail.com', 'Password01', 'Password02')
+    usersService.changePassword('test@gmail.com', 'Password01', 'Password02')
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/changePassword');
@@ -65,7 +65,7 @@ describe('UserService', () => {
   });
 
   it('should pass request body for change password', () => {
-    service.changePassword('test@gmail.com', 'Password01', 'Password02')
+    usersService.changePassword('test@gmail.com', 'Password01', 'Password02')
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/changePassword');

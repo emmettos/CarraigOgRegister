@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 
 @Injectable()
-export class UserService {
+export class UsersService {
   constructor(private http: HttpClient) {
   }
 
@@ -22,5 +22,9 @@ export class UserService {
       'emailAddress': emailAddress, 
       'password': password 
     });
+  }
+
+  readUsers(): Observable<any> {
+    return this.http.get<any>('/api/users');
   }
 }
