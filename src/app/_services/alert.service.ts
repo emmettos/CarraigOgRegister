@@ -30,7 +30,7 @@ export class AlertService {
 
   error(header: string, message: string, keepAfterNavigationChange: boolean = false) {
     this.keepAfterNavigationChange = keepAfterNavigationChange;
-    this.alertStream.next({ type: 'error', title: header, text: message });
+    this.alertStream.next({ type: 'danger', title: header, text: message });
   }
 
   success(header: string, message: string, keepAfterNavigationChange: boolean = false) {

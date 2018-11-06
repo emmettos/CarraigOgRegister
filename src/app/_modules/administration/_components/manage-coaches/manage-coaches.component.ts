@@ -1,0 +1,207 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
+
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+
+import { ToasterService } from 'angular2-toaster';
+
+import { ICoach } from '../../../../_models/index';
+import { CoachesService } from '../../../../_services/index';
+import { CoachFormComponent } from '../coach-form/coach-form.component';
+
+
+@Component({
+  templateUrl: './manage-coaches.component.html',
+  styleUrls: ['./manage-coaches.component.css']
+})
+export class ManageCoachesComponent implements OnInit {
+  manageCoachesFilterForm: FormGroup;
+
+  sortKey: string = "surname";
+  reverse: boolean = false;
+
+  coaches: ICoach[] = null;
+  filteredCoaches: ICoach[] = null;
+
+  totalCount: number = 0;
+  activeCount: number = 0;
+  dormantCount: number = 0;
+
+  constructor(
+    private modalService: NgbModal,
+    private formBuilder: FormBuilder,
+    private toasterService: ToasterService,
+    private coachesService: CoachesService) {
+  }
+
+  ngOnInit() {
+    this.manageCoachesFilterForm = this.formBuilder.group({
+      'nameFilter': [''],
+      'currentlyActive': [false]
+    });
+
+    this.manageCoachesFilterForm.valueChanges
+      .subscribe(formValues => { 
+        this.filterCoaches(formValues)
+      });
+
+    this.coachesService.readCoaches()
+      .subscribe({
+        next: response => {
+          this.processReturnedCoaches(response.body.coaches);
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
+        }
+      });
+  }
+
+  onClickHeader(newSortKey: string, flipSort: boolean = true) {
+    if (this.sortKey === newSortKey) {
+      if (flipSort) {
+        this.reverse = !this.reverse;
+      }
+    }
+    else {
+      this.sortKey = newSortKey;
+      this.reverse = false;
+    }
+    
+    this.filteredCoaches
+      .sort((coach1: any, coach2: any) => {
+        let returnValue: number = 1;
+
+        if (coach1[this.sortKey] < coach2[this.sortKey]) {
+          returnValue = -1;
+        }
+        else if (coach1[this.sortKey] === coach2[this.sortKey]) {
+          returnValue = 0;
+        }
+
+        if (this.reverse) {
+          returnValue = returnValue * -1;
+        }
+        
+        return returnValue;
+      });
+  }
+
+  onClickAddCoach() {
+    const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
+
+    modalRef.result
+      .then(returnObject => {
+        if (returnObject) {
+          this.toasterService.pop('success', 'Coach Successfully Added', returnObject.coachDetails.emailAddress);
+
+          this.processReturnedCoaches(returnObject.updatedCoaches);
+        }
+      })
+      .catch(error => {
+        this.toasterService.pop('error', 'Failed Adding Coach', error.coachDetails.emailAddress);
+      });
+  }
+
+  onClickEditCoach(coach: ICoach) {
+    const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
+
+    modalRef.componentInstance.coachDetails = coach;
+
+    modalRef.result
+      .then(returnObject => {
+        if (returnObject) {
+          this.toasterService.pop('success', 'Coach Successfully Updated', returnObject.coachDetails.emailAddress);
+
+          this.processReturnedCoaches(returnObject.updatedCoaches);
+        }
+      })
+      .catch(error => {
+        this.toasterService.pop('error', 'Failed Updating Coach', error.coachDetails.emailAddress);
+      });
+  }
+
+  onClickDeleteCoach(coachId: number) {
+    console.log('onClickDeleteCoach');
+  }
+
+  headerSortCSSClass(keyName) {
+    var CSSClass = "fa fa-sort";
+
+    if (this.sortKey === keyName) {
+      if (this.reverse) {
+        CSSClass = "fa fa-sort-desc";
+      }
+      else {
+        CSSClass = "fa fa-sort-asc";
+      }
+    }
+
+    return CSSClass;
+  };
+
+  coachStateCSSClass(coach: ICoach) {
+    var CSSClass = 'badge-success';
+
+    if (!coach.active) {
+      CSSClass = 'badge-warning';
+    }
+
+    return CSSClass;
+  }
+
+  private filterCoaches(formValues: any) {
+    this.filteredCoaches = this.coaches
+      .filter(coach => {
+        let nameFilter = formValues.nameFilter;
+
+        if (nameFilter === null) {
+          nameFilter = '';
+        }
+
+        if ((coach.firstName.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1 ||
+            coach.surname.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1)
+              && 
+            !(formValues.currentlyActive && !coach.active)) {
+          return true;
+        }
+      });
+    
+    this.onClickHeader(this.sortKey, false);
+  }
+
+  private processReturnedCoaches(coaches: ICoach[]) {
+    this.coaches = coaches;
+
+    this.totalCount = 0;
+    this.activeCount = 0;
+    this.dormantCount = 0;
+
+    this.coaches.forEach(coach => {
+      this.totalCount++;
+
+      if (coach.active) {
+        this.activeCount++;              
+      }
+      else {
+        this.dormantCount++;
+      }
+    });
+
+    this.coaches.sort((coach1: any, coach2: any) => {
+      let returnValue: number = 1;
+
+      if (coach1._id < coach2._id) {
+        returnValue = -1;
+      }
+      else if (coach1._id === coach2._id) {
+        returnValue = 0;
+      }
+      
+      return returnValue;
+    });
+
+    this.filteredCoaches = this.coaches.slice(0);
+
+    this.onClickHeader(this.sortKey, false);
+  }
+}

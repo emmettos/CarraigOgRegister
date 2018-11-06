@@ -9,21 +9,20 @@ import {
 import { Observable, of, throwError } from 'rxjs';
 import { delay, mergeMap } from 'rxjs/operators';
 
-import { IGroup, IPlayer } from '../_models/index'; 
+import { IGroup, IPlayer, ICoach } from '../_models/index'; 
 import { APP_SETTINGS } from '../_helpers/app.initializer.helper';
 import { AuthorizationService, AlertService } from '../_services/index';
-import { group } from '@angular/animations';
 
 
 const CURRENT_SETTINGS_KEY = 'carraig-og-register.fake-backend.currentSettings';
-const USERS_KEY = 'carraig-og-register.fake-backend.users';
+const COACHES_KEY = 'carraig-og-register.fake-backend.coaches';
 const GROUPS_KEY = 'carraig-og-register.fake-backend.groups';
 const PLAYERS_KEY = 'carraig-og-register.fake-backend.players';
 
 @Injectable()
 export class FakeBackendInterceptorHelper implements HttpInterceptor {
   private currentSettings: any;
-  private users: any[];
+  private coaches: any[];
   private groups: any[];
   private players: IPlayer[];
 
@@ -35,12 +34,12 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
       'groupYears': [2008, 2009, 2010, 2011, 2012, 2013]
     };
 
-    this.users = JSON.parse(localStorage.getItem(USERS_KEY)) || [
+    this.coaches = JSON.parse(localStorage.getItem(COACHES_KEY)) || [
       {
         '_id': 'b093d6d273adfb49ae33e6e1',
         'firstName': 'Administrator',
         'surname': '',
-        'emailAddress': 'administrator@carraigog.com',
+        'emailAddress': 'admin@carraigog.com',
         'phoneNumber': '086 1550344',
         'password': 'Password01#',
         'isAdministrator': true,
@@ -1247,11 +1246,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           }
 
           if (request.url.endsWith('/authenticate')) {
-            let user: any = this.users.find(user => {
-              return user.emailAddress === request.body.emailAddress;
+            let coach: any = this.coaches.find(coach => {
+              return coach.emailAddress === request.body.emailAddress;
             });
 
-            if (!user) {
+            if (!coach) {
               return throwError({ 
                 status: 401,
                 error: {
@@ -1262,7 +1261,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               });
             }
 
-            if (user.password !== request.body.password) {
+            if (coach.password !== request.body.password) {
               return throwError({ 
                 status: 401,
                 error: {
@@ -1274,9 +1273,9 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             }
 
             let userProfile = {
-              ID: user.emailAddress,
-              fullName: user.firstName + ' ' + user.surname,
-              isAdministrator: user.isAdministrator,
+              ID: coach.emailAddress,
+              fullName: coach.firstName + ' ' + coach.surname,
+              isAdministrator: coach.isAdministrator,
               isManager: false,
               groups: []
             };
@@ -1287,7 +1286,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
                   return group.year === this.currentSettings.year;
                 })
                 .forEach(group => {
-                  if (group.footballManager === user.emailAddress || group.hurlingManager === user.emailAddress) {
+                  if (group.footballManager === coach.emailAddress || group.hurlingManager === coach.emailAddress) {
                     userProfile.isManager = true;
       
                     userProfile.groups.push(group.yearOfBirth);
@@ -1306,11 +1305,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           }
 
           if (request.url.endsWith('/changePassword')) {
-            let user: any = this.users.find(user => {
-              return user.emailAddress === request.body.emailAddress;
+            let coach: any = this.coaches.find(coach => {
+              return coach.emailAddress === request.body.emailAddress;
             });
 
-            if (!user) {
+            if (!coach) {
               return throwError({ 
                 status: 401,
                 error: {
@@ -1321,7 +1320,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               });
             }
 
-            if (user.password !== request.body.password) {
+            if (coach.password !== request.body.password) {
               return throwError({ 
                 status: 401,
                 error: {
@@ -1332,27 +1331,21 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               });
             }
 
-            user.password = request.body.newPassword;
-            user.__v++;
-            user.updatedDate = (new Date(Date.now())).toISOString();
-            user.updatedBy = request.body.emailAddress;
+            coach.password = request.body.newPassword;
+            coach.__v++;
+            coach.updatedDate = (new Date(Date.now())).toISOString();
+            coach.updatedBy = request.body.emailAddress;
             
-            localStorage.setItem(USERS_KEY, JSON.stringify(this.users));
+            localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: {} }));
           }
 
-          if (request.url.endsWith('/users')) {
-            let users: any[] = this.users.slice(0);
-            
-            users.forEach(user => {
-              delete user.password;
-
-              user.active = true;
-            });
+          if (request.url.endsWith('/coaches')) {
+            let coaches: ICoach[] = this.createCoachesListForClient();
 
             let body = {
-              users: users
+              coaches: coaches
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -1364,18 +1357,24 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             });
 
             groups.forEach(group => {
-              let hurlingManager: any = this.users.find(user => {
-                return user.emailAddress === group.hurlingManager;
+              let hurlingManager: any = this.coaches.find(coach => {
+                return coach.emailAddress === group.hurlingManager;
               });
               if (hurlingManager) {
-                group.hurlingManager = hurlingManager.firstName + ' ' + hurlingManager.surname;
+                group.hurlingManagerFullName = hurlingManager.firstName + ' ' + hurlingManager.surname;
+              }
+              else {
+                group.hurlingManagerFullName = group.hurlingManager;
               }
 
-              let footballManager: any = this.users.find(user => {
-                return user.emailAddress === group.footballManager;
+              let footballManager: any = this.coaches.find(coach => {
+                return coach.emailAddress === group.footballManager;
               });
               if (footballManager) {
-                group.footballManager = footballManager.firstName + ' ' + footballManager.surname;
+                group.footballManagerFullName = footballManager.firstName + ' ' + footballManager.surname;
+              }
+              else {
+                group.footballManagerFullName = group.footballManager;
               }
 
               let groupPlayers: any = this.players.filter(player => {
@@ -1427,13 +1426,13 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               });
             }
             else {
-              let existingplayerDetails: IPlayer = this.players.find(player => {
+              let existingPlayerDetails: IPlayer = this.players.find(player => {
                 return player.dateOfBirth === request.body.playerDetails.dateOfBirth &&
                   player.firstName === request.body.playerDetails.firstName &&
                   player.surname === request.body.playerDetails.surname;
               });
 
-              if (existingplayerDetails) {
+              if (existingPlayerDetails) {
                 let alertService: AlertService = this.injector.get(AlertService);
 
                 alertService.error('Fake HTTP 500 Response', 'Fake duplicate key error collection: CarraigOgRegister.players index: dateOfBirth_1_firstName_1_surname_1');
@@ -1510,6 +1509,82 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
+          if (request.url.endsWith('/updateCoach') || request.url.endsWith('/createCoach')) {
+            let coachDetails: ICoach = null;
+            
+            if (request.url.endsWith('/updateCoach')) {
+              coachDetails = this.coaches.find(coach => {
+                return coach._id === request.body.coachDetails._id;
+              });
+            }
+            else {
+              let existingCoachDetails: ICoach = this.coaches.find(coach => {
+                return coach.emailAddress === request.body.coachDetails.emailAddress;
+              });
+
+              if (existingCoachDetails) {
+                let alertService: AlertService = this.injector.get(AlertService);
+
+                alertService.error('Fake HTTP 500 Response', 'Fake duplicate key error collection: CarraigOgRegister.coach index: emailAddress');
+
+                return;
+              }
+
+              coachDetails = <ICoach>{};
+
+              coachDetails._id = Math.floor(Math.random() * 16777215).toString(16);
+
+              coachDetails.emailAddress = request.body.coachDetails.emailAddress;
+
+              coachDetails.createdDate = (new Date(Date.now())).toISOString();
+              coachDetails.createdBy = this.authorizationService.payload.userProfile.ID;
+  
+              coachDetails.__v = 0;
+
+              this.coaches.push(coachDetails);
+            }
+            
+            coachDetails.firstName = request.body.coachDetails.firstName;
+            coachDetails.surname = request.body.coachDetails.surname;
+            coachDetails.phoneNumber = request.body.coachDetails.phoneNumber;
+            coachDetails.isAdministrator = request.body.coachDetails.isAdministrator;
+  
+            coachDetails.updatedDate = (new Date(Date.now())).toISOString();
+            coachDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
+
+            coachDetails.__v++;
+
+            localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
+
+            let coaches: ICoach[] = this.createCoachesListForClient();
+
+            let body = {
+              coaches: coaches
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
+          if (request.url.endsWith('/deleteCoach')) {
+            let coachIndex: number = this.coaches.findIndex(coach => {
+              return coach._id === request.body.coachDetails._id;
+            });
+
+            if (coachIndex === -1) {
+              let alertService: AlertService = this.injector.get(AlertService);
+
+              alertService.error('Fake HTTP 500 Response', 'Fake key not found: CarraigOgRegister.coach _id');
+
+              return;
+            }
+
+            this.coaches.splice(coachIndex, 1);
+  
+            localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: {} }));
+          }
+
           if (request.url.endsWith('/writeLog')) {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200 }));
           }
@@ -1527,5 +1602,27 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         }
       }),
       delay(200));
+  }
+
+  private createCoachesListForClient(): ICoach[] { 
+    let coaches: any[] = JSON.parse(JSON.stringify(this.coaches));
+            
+    coaches.forEach(coach => {
+      delete coach.password;
+
+      let group: any = this.groups.find(group => {
+        return group.year === this.currentSettings.year &&
+          (group.footballManager === coach.emailAddress || group.hurlingManager === coach.emailAddress)
+      });
+
+      if (group) {
+        coach.active = true;
+      }
+      else {
+        coach.active = false;
+      }
+    });
+
+    return coaches;
   }
 }

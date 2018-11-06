@@ -12,12 +12,12 @@ import { PlayersService } from '../../../../_services';
 import { ValidationService } from '../../../../_modules/shared/_services';
 
 import { MockDatePickerComponent } from '../../../../_modules/shared/_components/_mocks/mock-date-picker/mock-date-picker.component.spec';
-import { ManageUsersComponent } from './manage-users.component';
+import { CoachFormComponent } from './coach-form.component';
 
 
-describe('ManageUsersComponent', () => {
-  let component: ManageUsersComponent;
-  let fixture: ComponentFixture<ManageUsersComponent>;
+describe('CoachFormComponent', () => {
+  let component: CoachFormComponent;
+  let fixture: ComponentFixture<CoachFormComponent>;
 
   let playersService: PlayersService;
 
@@ -27,7 +27,7 @@ describe('ManageUsersComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ 
         MockDatePickerComponent,
-        ManageUsersComponent 
+        CoachFormComponent 
       ],
       imports: [
         HttpClientTestingModule,
@@ -43,7 +43,7 @@ describe('ManageUsersComponent', () => {
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ManageUsersComponent);
+    fixture = TestBed.createComponent(CoachFormComponent);
     component = fixture.componentInstance;
 
     APP_SETTINGS.currentYear = 2018;

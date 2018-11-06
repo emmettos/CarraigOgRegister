@@ -53,10 +53,9 @@ export class PlayersListComponent implements OnInit {
     });
 
     this.filterForm.valueChanges
-      .subscribe(
-        (formValues) => { 
-          this.filterPlayers(formValues)
-        });
+      .subscribe(formValues => { 
+        this.filterPlayers(formValues)
+      });
 
     this.groupName = this.activatedRoute.snapshot.paramMap.get("groupName");
 

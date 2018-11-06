@@ -19,7 +19,7 @@ import {
   AuthorizationService, 
   ConfigurationService,
   GroupsService,
-  UsersService, 
+  CoachesService, 
   PlayersService } from './_services/index';
 
 import { AlertComponent } from './_components/alert/alert.component';
@@ -62,7 +62,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
     GroupsService,
     PlayersService,
     ToasterService,
-    UsersService,
+    CoachesService,
     { 
       provide: ErrorHandler, 
       useClass: ApplicationErrorHandlerService 

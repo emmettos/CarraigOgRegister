@@ -8,10 +8,16 @@ import { AdministrationRoutingModule } from './administration-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { ManagePlayersComponent } from "./_components/manage-players/manage-players.component";
-import { ManageUsersComponent } from './_components/manage-users/manage-users.component';
+import { ManageCoachesComponent } from './_components/manage-coaches/manage-coaches.component';
+import { CoachFormComponent } from './_components/coach-form/coach-form.component';
 
 
 @NgModule({
+  declarations: [
+    ManagePlayersComponent,
+    ManageCoachesComponent,
+    CoachFormComponent
+  ],
   imports: [
     AdministrationRoutingModule,
     CommonModule,
@@ -19,9 +25,8 @@ import { ManageUsersComponent } from './_components/manage-users/manage-users.co
     ReactiveFormsModule,
     SharedModule
   ],
-  declarations: [
-    ManagePlayersComponent,
-    ManageUsersComponent
-  ],
+  entryComponents: [
+    CoachFormComponent
+  ]
 })
 export class AdministrationModule { }

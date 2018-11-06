@@ -9,10 +9,10 @@
   <div class="navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul class="navbar-nav mr-auto">
       <li ngbDropdown class="nav-item dropdown">
-        <a id="administration-menu" [style.display]="authorizationService.getPayload?.userProfile.isAdministrator ? 'inline': 'none'" ngbDropdownToggle class="nav-link dropdown-toggle">Administration</a>
+        <a id="administration-menu" [style.display]="authorizationService.getPayload?.userProfile.isAdministrator ? 'inline': 'none'" ngbDropdownToggle class="nav-link dropdown-toggle">Admin</a>
         <div id="administration-dropdown" ngbDropdownMenu>
-          <a class="dropdown-item" routerLink="/administration/manage-players">Manage Players</a>
-          <a class="dropdown-item" routerLink="/administration/manage-users">Manage Users</a>
+          <a class="dropdown-item" routerLink="/administration/manage-players">Players</a>
+          <a class="dropdown-item" routerLink="/administration/manage-coaches">Coaches</a>
         </div>
       </li>
     </ul>

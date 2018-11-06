@@ -103,14 +103,14 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#signed-in-menu").innerHTML).toEqual('Signed in as - Test User');
+    expect(fixture.nativeElement.querySelector("#signed-in-menu").innerHTML).toEqual('Signed in as - Test Coach');
   });
 
   it('should display Sign Out menu for signed in user', () => {
@@ -118,7 +118,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -133,7 +133,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -148,7 +148,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: true
         }
       });
@@ -163,7 +163,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: true
         }
       });
@@ -178,7 +178,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -187,7 +187,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -218,7 +218,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -227,7 +227,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -246,7 +246,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -255,7 +255,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });

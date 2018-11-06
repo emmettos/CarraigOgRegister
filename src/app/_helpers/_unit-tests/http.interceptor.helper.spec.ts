@@ -207,7 +207,7 @@ describe('HttpInterceptorHelper', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -243,7 +243,7 @@ describe('HttpInterceptorHelper', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -281,7 +281,7 @@ describe('HttpInterceptorHelper', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -289,7 +289,7 @@ describe('HttpInterceptorHelper', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -322,7 +322,7 @@ describe('HttpInterceptorHelper', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -330,7 +330,7 @@ describe('HttpInterceptorHelper', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });

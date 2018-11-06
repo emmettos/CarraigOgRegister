@@ -105,7 +105,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -120,7 +120,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -137,7 +137,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -156,7 +156,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -179,7 +179,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -196,7 +196,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -204,7 +204,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -219,7 +219,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -227,7 +227,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -242,7 +242,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -250,7 +250,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -269,7 +269,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: true
         }
       });
@@ -277,7 +277,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: true
         }
       });
@@ -292,7 +292,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: false
         }
@@ -301,7 +301,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: false
         }
@@ -317,7 +317,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: false
         }
@@ -326,7 +326,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: false
         }
@@ -346,7 +346,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: true,
           groups: [2008]
@@ -356,7 +356,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: true,
           groups: [2008]
@@ -374,7 +374,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: true,
           groups: [2008]
@@ -384,7 +384,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: true,
           groups: [2008]
@@ -406,7 +406,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: true,
           groups: [2008]
@@ -416,7 +416,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false,
           isManager: true,
           groups: [2008]
@@ -434,7 +434,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: true,
         }
       });
@@ -442,7 +442,7 @@ describe('AuthorizationGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: true,
         }
       });

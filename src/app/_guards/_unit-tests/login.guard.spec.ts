@@ -59,7 +59,7 @@ describe('LoginGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -72,7 +72,7 @@ describe('LoginGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -87,7 +87,7 @@ describe('LoginGuard', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });

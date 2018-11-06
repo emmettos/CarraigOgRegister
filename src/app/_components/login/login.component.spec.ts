@@ -7,7 +7,7 @@ import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core
 
 import { of, throwError } from 'rxjs';
 
-import { UsersService } from '../../_services';
+import { CoachesService } from '../../_services';
 import { ValidationService } from '../../_modules/shared/_services';
 
 import { LoginComponent } from './login.component';
@@ -23,7 +23,7 @@ describe('LoginComponent', () => {
   let fixture: ComponentFixture<LoginComponent>;
 
   let location: Location;
-  let usersService: UsersService;
+  let coachesService: CoachesService;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -39,7 +39,7 @@ describe('LoginComponent', () => {
         ])
       ],
       providers: [
-        UsersService,
+        CoachesService,
         ValidationService
       ],
       schemas: [ NO_ERRORS_SCHEMA ]
@@ -53,7 +53,7 @@ describe('LoginComponent', () => {
 
     location = TestBed.get(Location);
     
-    usersService = TestBed.get(UsersService);
+    coachesService = TestBed.get(CoachesService);
 
     fixture.detectChanges();
   });
@@ -368,7 +368,7 @@ describe('LoginComponent', () => {
   });
 
   it('should route to /groups after successful login', fakeAsync(() => {
-    spyOn(usersService, 'login')
+    spyOn(coachesService, 'login')
       .and.returnValue(of({
         "error": null,
         "body": {}
@@ -392,7 +392,7 @@ describe('LoginComponent', () => {
   }));
 
   it('should display authentication failed message after failed login', () => {
-    spyOn(usersService, 'login')
+    spyOn(coachesService, 'login')
       .and.returnValue(throwError({
         status: 401,
         error: {
@@ -420,7 +420,7 @@ describe('LoginComponent', () => {
   });
 
   it('should display password changed message after successful changed password', () => {
-    spyOn(usersService, 'changePassword')
+    spyOn(coachesService, 'changePassword')
       .and.returnValue(of({
         "error": null,
         "body": {}
@@ -456,7 +456,7 @@ describe('LoginComponent', () => {
   });
   
   it('should display authentication failed message after failed change password', () => {
-    spyOn(usersService, 'changePassword')
+    spyOn(coachesService, 'changePassword')
       .and.returnValue(throwError({
         status: 401,
         error: {

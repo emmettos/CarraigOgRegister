@@ -1,7 +1,5 @@
-export interface IUser {
+export interface ICoach {
   _id: string;
-
-  userState: UserState;
 
 	firstName: string;
 	surname: string;
@@ -9,15 +7,12 @@ export interface IUser {
 	phoneNumber: string;
 	isAdministrator: boolean;
 
+  active: Boolean;
+
   createdBy: string;
   createdDate: string;
   updatedDate: string;
   updatedBy: string;
 
   __v: number;
-}
-
-export enum UserState {
-  Active,
-  Dormant
 }

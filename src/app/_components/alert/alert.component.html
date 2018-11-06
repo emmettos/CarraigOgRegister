@@ -1,5 +1,5 @@
 <!-- Most id's are used for unit testing -->
-<div *ngIf="alert" id="alert-panel" class="alert" [ngClass]="{ 'alert-success': alert.type === 'success', 'alert-danger': alert.type === 'error' }">
+<ngb-alert *ngIf="alert" id="alert-panel" [type]="alert.type" (close)="alert = null">
   <h4 id="alert-title">{{ alert.title }}</h4>
   <p id="alert-text">{{ alert.text }}</p>
-</div>
+</ngb-alert>

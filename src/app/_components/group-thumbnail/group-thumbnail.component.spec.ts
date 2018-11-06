@@ -34,8 +34,8 @@ describe('GroupThumbnailComponent', () => {
     component['group'] = {
       name: 'Test Group',
       yearOfBirth: 2009,
-      footballManager: 'Pat Football',
-      hurlingManager: 'John Hurling',
+      footballManagerFullName: 'Pat Football',
+      hurlingManagerFullName: 'John Hurling',
       numberOfPlayers: 51,
       lastUpdatedDate: '2018-02-27T15:57:21.582Z'    
     } as IGroup;

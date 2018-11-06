@@ -119,8 +119,8 @@ exports = module.exports = function (app, router) {
         for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
           currentGroup = groups[groupIndex];
 
-          currentGroup.footballManager = readManagerFullName(currentGroup.footballManager);
-          currentGroup.hurlingManager = readManagerFullName(currentGroup.hurlingManager);
+          currentGroup.footballManagerFullName = readManagerFullName(currentGroup.footballManager);
+          currentGroup.hurlingManagerFullName = readManagerFullName(currentGroup.hurlingManager);
 
           currentGroup.numberOfPlayers = readPlayerGroupCount(currentGroup.yearOfBirth);
         }

@@ -1,0 +1,87 @@
+<!-- Most id's are used for unit testing -->
+<div class="modal-header">
+  <h4 class="modal-title">{{ title }}</h4>
+</div>
+<div class="modal-body">
+  <div class="container">
+    <form [formGroup]="coachForm" (ngSubmit)="onSubmit(coachForm.value)" novalidate>
+      <div class="row" [hidden]="editingCoach">
+        <div class="form-group col-md-8 offset-md-2">
+          <label class="control-label" for="emailAddress">Email Address</label>
+          <input  type="text" 
+                  id="coach-email-address"
+                  formControlName="emailAddress" 
+                  name="emailAddress" 
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': coachForm.controls.emailAddress.invalid && coachForm.controls.emailAddress.touched}"
+                  placeholder="Email Address">
+          <app-validation-message [control]="coachForm.controls.emailAddress"></app-validation-message>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-4 offset-md-2">
+          <label class="control-label" for="firstName">First Name</label>
+          <input  type="text" 
+                  id="coach-first-name"
+                  formControlName="firstName" 
+                  name="firstName" 
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': coachForm.controls.firstName.invalid && coachForm.controls.firstName.touched}"
+                  placeholder="First Name">
+          <app-validation-message [control]="coachForm.controls.firstName"></app-validation-message>
+        </div>
+        <div class="form-group col-md-4">
+          <label class="control-label" for="surname">Surname</label>
+          <input  type="text" 
+                  id="coach-surname" 
+                  formControlName="surname" 
+                  name="surname" 
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': coachForm.controls.surname.invalid && coachForm.controls.surname.touched}"
+                  placeholder="Surname">
+          <app-validation-message [control]="coachForm.controls.surname"></app-validation-message>
+        </div>
+      </div>
+      <div class="row align-items-center">
+        <div class="form-group col-md-4 offset-md-2">
+          <label class="control-label" for="phoneNumber">Phone Number</label>
+          <input  type="text" 
+                  id="phone-number"
+                  formControlName="phoneNumber" 
+                  name="phoneNumber" 
+                  class="form-control" 
+                  placeholder="Phone Number">
+        </div>
+        <div class="form-group col-md-4">
+          <label class="control-label" for="isAdministrator"></label>
+          <div class="form-check">
+            <input  type="checkbox" 
+                    formControlName="isAdministrator"
+                    class="form-check-input"> 
+            <label class="form-check-label">Administrator</label>
+          </div>
+        </div>
+      </div>
+      <div class="row my-3">
+        <div class="col-md-2 offset-md-4">
+          <input  type="button" 
+                  id="cancel" 
+                  class="btn btn-info btn-block" 
+                  (click)="onClickCancel()" 
+                  [disabled]="savingCoach"
+                  value="Cancel">
+        </div>
+        <div class="col-md-2">
+          <input  type="submit" 
+                  class="btn btn-info btn-block" 
+                  [disabled]="coachForm.status === 'INVALID' || savingCoach"
+                  value="Save">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!--
+<p>Form values: {{ coachForm.value | json }}</p>
+<p>Form status: {{ coachForm.status }}</p>
+-->
