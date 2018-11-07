@@ -1567,7 +1567,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
           if (request.url.endsWith('/deleteCoach')) {
             let coachIndex: number = this.coaches.findIndex(coach => {
-              return coach._id === request.body.coachDetails._id;
+              return coach._id === request.body.coachId;
             });
 
             if (coachIndex === -1) {
@@ -1582,7 +1582,13 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
   
             localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
 
-            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: {} }));
+            let coaches: ICoach[] = this.createCoachesListForClient();
+
+            let body = {
+              coaches: coaches
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
           if (request.url.endsWith('/writeLog')) {

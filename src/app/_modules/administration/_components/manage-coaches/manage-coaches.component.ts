@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
@@ -8,6 +8,7 @@ import { ToasterService } from 'angular2-toaster';
 import { ICoach } from '../../../../_models/index';
 import { CoachesService } from '../../../../_services/index';
 import { CoachFormComponent } from '../coach-form/coach-form.component';
+import { ConfirmDeleteCoachComponent } from '../confirm-delete-coach/confirm-delete-coach.component';
 
 
 @Component({
@@ -16,6 +17,9 @@ import { CoachFormComponent } from '../coach-form/coach-form.component';
 })
 export class ManageCoachesComponent implements OnInit {
   manageCoachesFilterForm: FormGroup;
+
+  @ViewChild('nameFilter') 
+  nameFilterElementRef: ElementRef;
 
   sortKey: string = "surname";
   reverse: boolean = false;
@@ -96,6 +100,8 @@ export class ManageCoachesComponent implements OnInit {
 
           this.processReturnedCoaches(returnObject.updatedCoaches);
         }
+
+        this.nameFilterElementRef.nativeElement.focus();
       })
       .catch(error => {
         this.toasterService.pop('error', 'Failed Adding Coach', error.coachDetails.emailAddress);
@@ -120,8 +126,24 @@ export class ManageCoachesComponent implements OnInit {
       });
   }
 
-  onClickDeleteCoach(coachId: number) {
-    console.log('onClickDeleteCoach');
+  onClickDeleteCoach(coach: ICoach) {
+    const modalRef: NgbModalRef = this.modalService.open(ConfirmDeleteCoachComponent, { backdrop: 'static' });
+
+    modalRef.componentInstance.coachDetails = coach;
+
+    modalRef.result
+      .then(returnObject => {
+        if (returnObject) {
+          this.toasterService.pop('success', 'Coach Successfully Deleted', returnObject.coachDetails.emailAddress);
+
+          this.processReturnedCoaches(returnObject.updatedCoaches);
+        }
+
+        this.nameFilterElementRef.nativeElement.focus();
+      })
+      .catch(error => {
+        this.toasterService.pop('error', 'Failed Deleting Coach', error.coachDetails.emailAddress);
+      });
   }
 
   headerSortCSSClass(keyName) {

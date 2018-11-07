@@ -10,13 +10,15 @@ import { SharedModule } from '../shared/shared.module';
 import { ManagePlayersComponent } from "./_components/manage-players/manage-players.component";
 import { ManageCoachesComponent } from './_components/manage-coaches/manage-coaches.component';
 import { CoachFormComponent } from './_components/coach-form/coach-form.component';
+import { ConfirmDeleteCoachComponent } from './_components/confirm-delete-coach/confirm-delete-coach.component';
 
 
 @NgModule({
   declarations: [
     ManagePlayersComponent,
     ManageCoachesComponent,
-    CoachFormComponent
+    CoachFormComponent,
+    ConfirmDeleteCoachComponent
   ],
   imports: [
     AdministrationRoutingModule,
@@ -26,7 +28,8 @@ import { CoachFormComponent } from './_components/coach-form/coach-form.componen
     SharedModule
   ],
   entryComponents: [
-    CoachFormComponent
+    CoachFormComponent,
+    ConfirmDeleteCoachComponent
   ]
 })
 export class AdministrationModule { }

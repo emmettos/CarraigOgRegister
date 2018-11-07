@@ -29,6 +29,7 @@
         <input  type="text" 
                 formControlName="nameFilter" 
                 class="form-control" 
+                #nameFilter
                 placeholder="Name Filter">
       </div>
       <div class="col-md-4 col-lg-3">
@@ -76,7 +77,7 @@
           <td>{{ currentCoach.phoneNumber }}</td>
           <td class="text-center">{{ currentCoach.isAdministrator ? 'YES' : 'NO' }}</td>
           <td class="text-center"><a href=""><span (click)="!!onClickEditCoach(currentCoach)">Edit</span></a></td>
-          <td class="text-center"><a href=""><span (click)="!!onClickDeleteCoach(currentCoach._id)">Delete</span></a></td>
+          <td class="text-center"><a href=""><span (click)="!!onClickDeleteCoach(currentCoach)">Delete</span></a></td>
         </tr>
       </tbody>
     </table>
