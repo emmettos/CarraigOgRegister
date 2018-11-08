@@ -127,11 +127,11 @@ exports = module.exports = function (app, router) {
       });
   });
 
-  router.get("/coaches", function (request, response, next) {
+  router.get("/coaches", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
     readCoaches(currentSettings, response, next);
   });
 
-  router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isGroupManager: true }), function (request, response, next) {
+  router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
     try {
       var filter = null;
       
@@ -400,26 +400,28 @@ exports = module.exports = function (app, router) {
             throw customError;
           }
 
-          foundPlayer.addressLine1 = playerDetails.addressLine1;
-          foundPlayer.addressLine2 = playerDetails.addressLine2;
-          foundPlayer.addressLine3 = playerDetails.addressLine3;
-          foundPlayer.addressLine4 = playerDetails.addressLine4;
-          foundPlayer.medicalConditions = playerDetails.medicalConditions;
-          foundPlayer.contactName = playerDetails.contactName;
-          foundPlayer.contactHomeNumber = playerDetails.contactHomeNumber;
-          foundPlayer.contactMobileNumber = playerDetails.contactMobileNumber;
-          foundPlayer.contactEmailAddress = playerDetails.contactEmailAddress;
-          foundPlayer.school = playerDetails.school;
+          foundPlayer.addressLine1 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine1') ? playerDetails.addressLine1 : foundPlayer.addressLine1;
+          foundPlayer.addressLine2 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine2') ? playerDetails.addressLine2 : foundPlayer.addressLine2;
+          foundPlayer.addressLine3 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine3') ? playerDetails.addressLine3 : foundPlayer.addressLine3;
+          foundPlayer.addressLine4 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine4') ? playerDetails.addressLine4 : foundPlayer.addressLine4;
+          foundPlayer.medicalConditions = Object.prototype.hasOwnProperty.call(playerDetails, 'medicalConditions') ? playerDetails.medicalConditions : foundPlayer.medicalConditions;
+          foundPlayer.contactName = Object.prototype.hasOwnProperty.call(playerDetails, 'contactName') ? playerDetails.contactName : foundPlayer.contactName;
+          foundPlayer.contactHomeNumber = Object.prototype.hasOwnProperty.call(playerDetails, 'contactHomeNumber') ? playerDetails.contactHomeNumber : foundPlayer.contactHomeNumber;
+          foundPlayer.contactMobileNumber = Object.prototype.hasOwnProperty.call(playerDetails, 'contactMobileNumber') ? playerDetails.contactMobileNumber : foundPlayer.contactMobileNumber;
+          foundPlayer.contactEmailAddress = Object.prototype.hasOwnProperty.call(playerDetails, 'contactEmailAddress') ? playerDetails.contactEmailAddress : foundPlayer.contactEmailAddress;
+          foundPlayer.school = Object.prototype.hasOwnProperty.call(playerDetails, 'school') ? playerDetails.school : foundPlayer.school;
 
-          lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
-          foundPlayer.lastRegisteredDate = lastRegisteredDate;
-          foundPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'lastRegisteredDate')) {
+            lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
+            foundPlayer.lastRegisteredDate = lastRegisteredDate;
+            foundPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
 
-          lastRegisteredYear = foundPlayer.registeredYears.find(function (item) {
-            return item === foundPlayer.lastRegisteredYear;
-          });
-          if (!lastRegisteredYear) {
-            foundPlayer.registeredYears.push(foundPlayer.lastRegisteredYear);
+            lastRegisteredYear = foundPlayer.registeredYears.find(function (item) {
+              return item === foundPlayer.lastRegisteredYear;
+            });
+            if (!lastRegisteredYear) {
+              foundPlayer.registeredYears.push(foundPlayer.lastRegisteredYear);
+            }
           }
 
           foundPlayer.modifiedBy = request.payload.userProfile.ID;
@@ -471,7 +473,7 @@ exports = module.exports = function (app, router) {
       });
   });
 
-  router.post("/updateCoach", function (request, response, next) {
+  router.post("/updateCoach", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
     var userDetails = request.body.coachDetails;
 
     user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
@@ -505,7 +507,7 @@ exports = module.exports = function (app, router) {
       });
   });
 
-  router.post("/deleteCoach", function (request, response, next) {
+  router.post("/deleteCoach", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
     var userDetails = request.body.coachDetails;
 
     user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
