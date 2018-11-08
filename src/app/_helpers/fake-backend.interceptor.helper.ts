@@ -9,7 +9,7 @@ import {
 import { Observable, of, throwError } from 'rxjs';
 import { delay, mergeMap } from 'rxjs/operators';
 
-import { IGroup, IPlayer, ICoach } from '../_models/index'; 
+import { IPlayer, ICoach } from '../_models/index'; 
 import { APP_SETTINGS } from '../_helpers/app.initializer.helper';
 import { AuthorizationService, AlertService } from '../_services/index';
 
@@ -47,7 +47,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '6293c9a83fd22e7fa8e66d3f',
@@ -61,7 +61,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '77b61339ebb9c8fc7c51618a',
@@ -75,7 +75,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '92b996d531a4a456db9c1f37',
@@ -89,7 +89,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '6a0dd3e9fb7cfd4790683ebe',
@@ -103,7 +103,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'f5c807364e40be179e876840',
@@ -117,7 +117,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '6f7aa0a93c2d423b308f9dfa',
@@ -131,7 +131,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'f9d2e596bb0fffebad95ae6a',
@@ -145,7 +145,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '21cfbcbee1da872f1b95dbbf',
@@ -159,7 +159,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'f346034eb1af16e3845a8dee',
@@ -173,7 +173,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'bfb745f486e7b352f2f40924',
@@ -187,7 +187,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '573d088683acbba74068c0ea',
@@ -201,7 +201,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       }
     ];
 
@@ -218,7 +218,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-27T15:57:21.582Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '24eef4f773a9cc7b17a539e9',
@@ -232,7 +232,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-07-26T16:29:25.372Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '6cc1fec86fb94e11121dcf2a',
@@ -246,7 +246,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-28T11:22:24.262Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '7f499865b3bbf13a60536e36',
@@ -260,7 +260,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-27T16:00:20.439Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'd387d6632a7750967c8f1b0d',
@@ -274,7 +274,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-27T12:20:39.338Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '00d7988eee11f94ad6bb5422',
@@ -288,7 +288,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-27T12:09:40.660Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       }
     ];
 
@@ -323,7 +323,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'b159d6e49a41877180ba3826',
@@ -353,7 +353,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2018-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-23T15:14:53.115Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'aaf6ddc582e9d0d86610e025',
@@ -384,7 +384,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T14:38:36.668Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '4162aaefa0842a667363b49c',
@@ -414,7 +414,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2017-03-15T13:43:51.268Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       // 2009 players (10 current - 1 missing - 1 gone)
       {
@@ -442,7 +442,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'd081a7d3547019f961490701',
@@ -472,7 +472,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T09:57:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '607ee42c60e409ac1c65525f',
@@ -502,7 +502,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-20T12:12:47.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '8f9d3ffcec6738a57d4586b7',
@@ -528,7 +528,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T09:58:11.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '122e56fa9d578c7d5c5777f7',
@@ -558,7 +558,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:00:42.251Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '510239c0556e1f1c0591df47',
@@ -588,7 +588,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-13T10:02:53.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '380afa03b146e48007ebbe2e',
@@ -618,7 +618,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T13:12:02.563Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'ed8d5d4c80eb6f61479364ed',
@@ -647,7 +647,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-12T10:55:43.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '57e4879d1213f48fdcb1d713',
@@ -677,7 +677,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:11:22.989Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'b5206d7a3fa266dcd76f1182',
@@ -705,7 +705,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:15:01.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'ed39407459c1f36f79d4c533',
@@ -732,7 +732,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2017-02-13T10:15:01.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'c836901fac13de5d9e05a330',
@@ -758,7 +758,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2017-03-15T13:43:51.268Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       // 2010 players (4 current - 1 missing)
       {
@@ -788,7 +788,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:17:21.332Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'e943c923036a302151ad8ecd',
@@ -816,7 +816,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:18:45.622Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '5c9370bdf1715519108e526e',
@@ -845,7 +845,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:21:40.545Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '42fc90bd782e4c0d683b014b',
@@ -874,7 +874,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:23:40.012Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '66b6d82e1e2e55a0a20cfd5a',
@@ -902,7 +902,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2017-05-13T11:44:40.001Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       // 2011 players (5 current)
       {
@@ -931,7 +931,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-06-17T12:07:22.735Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '3df691919cee6a5e2248e349',
@@ -959,7 +959,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:30:01.222Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'b1fa15340170ce42880ddea5',
@@ -987,7 +987,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:30:33.722Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '5236fda1a40968c993b2c4e1',
@@ -1015,7 +1015,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:30:11.556Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'b98e73d80dc910404a0a18ed',
@@ -1041,7 +1041,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:45:11.013Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       // 2012 players (3 current)
       {
@@ -1069,7 +1069,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T11:01:53.715Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': 'b6dbe6a9a6965f2050c43bc4',
@@ -1096,7 +1096,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T11:22:20.002Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '72eadb693ea976d6ab6ef69d',
@@ -1123,7 +1123,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T11:22:11.766Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       // 2013 players (4 current)
       {
@@ -1150,7 +1150,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T12:10:11.002Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '4458405291e9e8d309559d03',
@@ -1176,7 +1176,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T12:10:10.288Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '2d2a3e07ffb28694438ce90f',
@@ -1202,7 +1202,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T09:34:49.734Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
       {
         '_id': '80bdda0c8e7fdde6c2345c91',
@@ -1228,7 +1228,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-01T12:35:14.332Z',
         'updatedBy': 'administrator@carraigog.com',
-        '__v': 1
+        '__v': 0
       },
     ]
   }
@@ -1424,6 +1424,8 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               playerDetails = this.players.find(player => {
                 return player._id === request.body.playerDetails._id;
               });
+
+              playerDetails.__v++;
             }
             else {
               let existingPlayerDetails: IPlayer = this.players.find(player => {
@@ -1485,8 +1487,6 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             playerDetails.updatedDate = lastUpdatedDate;
             playerDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
 
-            playerDetails.__v++;
-
             localStorage.setItem(PLAYERS_KEY, JSON.stringify(this.players));
 
             let group = this.groups.find(group => {
@@ -1516,6 +1516,8 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               coachDetails = this.coaches.find(coach => {
                 return coach._id === request.body.coachDetails._id;
               });
+
+              coachDetails.__v++;
             }
             else {
               let existingCoachDetails: ICoach = this.coaches.find(coach => {
@@ -1551,8 +1553,6 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
   
             coachDetails.updatedDate = (new Date(Date.now())).toISOString();
             coachDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
-
-            coachDetails.__v++;
 
             localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
 

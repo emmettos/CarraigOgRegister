@@ -7,7 +7,7 @@ export interface ICoach {
 	phoneNumber: string;
 	isAdministrator: boolean;
 
-  active: Boolean;
+  active: boolean;
 
   createdBy: string;
   createdDate: string;

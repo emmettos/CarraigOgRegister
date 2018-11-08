@@ -36,7 +36,7 @@ export class ConfirmDeleteCoachComponent implements OnInit {
   }
 
   onSubmit(formValues: any) {
-    this.coachesService.deleteCoach(this.coachDetails._id, formValues.sendGoodbyeEmail)
+    this.coachesService.deleteCoach(this.coachDetails, formValues.sendGoodbyeEmail)
       .subscribe({
         next: response => {
           let returnObject: any = {}

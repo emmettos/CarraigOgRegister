@@ -10,8 +10,7 @@ var player = require("./models/player");
 var user = require("./models/user");
 
 exports = module.exports = function (app, router) {
-  var currentSettings = app.currentSettings,
-      currentSavedPlayer = null;
+  var currentSettings = app.currentSettings;
 
   router.get("/currentSettings", function (request, response, next) {
     try {
@@ -30,42 +29,33 @@ exports = module.exports = function (app, router) {
   });
 
   router.get("/groups", authorizer.authorize(), function (request, response, next) {
-    var readGroups = function () {
-      return group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec();
-    };
-    var readUsers = function () {
-      return user.find({}).sort({ emailAddress: "ascending" }).lean().exec();
-    };
-    var readPlayerGroupCounts = function () {
-      return player.aggregate([
-        {
-          $match: {
-            $and: [
-              { yearOfBirth: { $gte: currentSettings.year - 10 } },
-              { lastRegisteredYear: currentSettings.year }
-            ]
-          }
-        },
-        {
-          $project: { year: { $year: "$dateOfBirth" } }
-        },
-        {
-          $group:
-            {
-              _id: "$year",
-              total: { $sum: 1 }
+    var readGroups = group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec(),
+        readUsers = user.find({}).sort({ emailAddress: "ascending" }).lean().exec(),
+        readPlayerGroupCounts = player.aggregate([
+          {
+            $match: {
+              $and: [
+                { yearOfBirth: { $gte: currentSettings.year - 10 } },
+                { lastRegisteredYear: currentSettings.year }
+              ]
             }
-        },
-        { $sort: { "_id": 1 } }
-      ]);
-    };
+          },
+          {
+            $project: { year: { $year: "$dateOfBirth" } }
+          },
+          {
+            $group:
+              {
+                _id: "$year",
+                total: { $sum: 1 }
+              }
+          },
+          { $sort: { "_id": 1 } }
+        ]);
 
-    Promise.all([readGroups(), readUsers(), readPlayerGroupCounts()])
-      .then(function (results) {
-        var groups = results[0],
-            users = results[1],
-            playerGroupCounts = results[2],
-            groupIndex = 0,
+    Promise.all([readGroups, readUsers, readPlayerGroupCounts])
+      .then(function ([groups, users, playerGroupCounts]) {
+        var groupIndex = 0,
             currentGroup = null,
             returnMessage = {};
 
@@ -135,6 +125,10 @@ exports = module.exports = function (app, router) {
       .catch(function (error) {
         next(error);
       });
+  });
+
+  router.get("/coaches", function (request, response, next) {
+    readCoaches(currentSettings, response, next);
   });
 
   router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isGroupManager: true }), function (request, response, next) {
@@ -322,7 +316,7 @@ exports = module.exports = function (app, router) {
 
         return foundUser.save();
       })
-      .then(function (token) {
+      .then(function (updatedUser) {
         var returnMessage = {};
 
         returnMessage.error = null;
@@ -392,64 +386,144 @@ exports = module.exports = function (app, router) {
     var groupDetails = request.body.groupDetails,
         playerDetails = request.body.playerDetails;
 
-    player.findOne({ "_id": mongoose.Types.ObjectId(playerDetails._id), "__v": playerDetails.__v })
-      .then(function (foundPlayer) {
-        var lastRegisteredDate = null,
-          lastRegisteredYear = null,
-          customError = null;
+    var findPlayer = player.findOne({ "_id": mongoose.Types.ObjectId(playerDetails._id), "__v": playerDetails.__v }),
+        updatePlayer = findPlayer.then(function (foundPlayer) {
+          var lastRegisteredDate = null,
+              lastRegisteredYear = null,
+              customError = null;
 
-        if (!foundPlayer) {
-          customError = new Error("Player not found");
+          if (!foundPlayer) {
+            customError = new Error("Player not found");
+
+            customError.httpCode = 409;
+
+            throw customError;
+          }
+
+          foundPlayer.addressLine1 = playerDetails.addressLine1;
+          foundPlayer.addressLine2 = playerDetails.addressLine2;
+          foundPlayer.addressLine3 = playerDetails.addressLine3;
+          foundPlayer.addressLine4 = playerDetails.addressLine4;
+          foundPlayer.medicalConditions = playerDetails.medicalConditions;
+          foundPlayer.contactName = playerDetails.contactName;
+          foundPlayer.contactHomeNumber = playerDetails.contactHomeNumber;
+          foundPlayer.contactMobileNumber = playerDetails.contactMobileNumber;
+          foundPlayer.contactEmailAddress = playerDetails.contactEmailAddress;
+          foundPlayer.school = playerDetails.school;
+
+          lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
+          foundPlayer.lastRegisteredDate = lastRegisteredDate;
+          foundPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
+
+          lastRegisteredYear = foundPlayer.registeredYears.find(function (item) {
+            return item === foundPlayer.lastRegisteredYear;
+          });
+          if (!lastRegisteredYear) {
+            foundPlayer.registeredYears.push(foundPlayer.lastRegisteredYear);
+          }
+
+          foundPlayer.modifiedBy = request.payload.userProfile.ID;
+          foundPlayer.increment();
+
+          return foundPlayer.save();
+        }),
+        updateGroup = updatePlayer.then(function (updatedPlayer) {
+          return group.findOneAndUpdate(
+            { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth }, 
+            { "lastUpdatedDate": new Date() });
+        });
+
+    Promise.all([findPlayer, updatePlayer, updateGroup])
+      .then(function ([foundPlayer, updatedPlayer, updatedGroup]) {
+        var returnMessage = {};
+
+        returnMessage.error = null;
+        returnMessage.body = {};
+
+        returnMessage.body.player = updatedPlayer.toObject();
+
+        response.status(200).json(returnMessage);
+      })
+      .catch(function (error) {
+        next(error);
+      });
+  });
+
+  router.post("/createCoach", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
+    var userDetails = request.body.coachDetails,
+        newUser = new user();
+
+    newUser.firstName = userDetails.firstName;
+    newUser.surname = userDetails.surname;
+    newUser.emailAddress = userDetails.emailAddress;
+    newUser.phoneNumber = userDetails.phoneNumber;
+    newUser.isAdministrator = userDetails.isAdministrator;
+    newUser.password = 'Password01#';
+
+    newUser.modifiedBy = request.payload.userProfile.ID;
+
+    newUser.save()
+      .then(function (savedUser) {
+        readCoaches(currentSettings, response, next);
+      })
+      .catch(function (error) {
+        next(error);
+      });
+  });
+
+  router.post("/updateCoach", function (request, response, next) {
+    var userDetails = request.body.coachDetails;
+
+    user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
+      .then(function (foundUser) {
+        var customError = null;
+
+        if (!foundUser) {
+          customError = new Error("User not found");
 
           customError.httpCode = 409;
 
           throw customError;
         }
 
-        foundPlayer.addressLine1 = playerDetails.addressLine1;
-        foundPlayer.addressLine2 = playerDetails.addressLine2;
-        foundPlayer.addressLine3 = playerDetails.addressLine3;
-        foundPlayer.addressLine4 = playerDetails.addressLine4;
-        foundPlayer.medicalConditions = playerDetails.medicalConditions;
-        foundPlayer.contactName = playerDetails.contactName;
-        foundPlayer.contactHomeNumber = playerDetails.contactHomeNumber;
-        foundPlayer.contactMobileNumber = playerDetails.contactMobileNumber;
-        foundPlayer.contactEmailAddress = playerDetails.contactEmailAddress;
-        foundPlayer.school = playerDetails.school;
+        foundUser.firstName = Object.prototype.hasOwnProperty.call(userDetails, 'firstName') ? userDetails.firstName : foundUser.firstName;
+        foundUser.surname = Object.prototype.hasOwnProperty.call(userDetails, 'surname') ? userDetails.surname : foundUser.surname;
+        foundUser.emailAddress = Object.prototype.hasOwnProperty.call(userDetails, 'emailAddress') ? userDetails.emailAddress : foundUser.emailAddress;
+        foundUser.phoneNumber = Object.prototype.hasOwnProperty.call(userDetails, 'phoneNumber') ? userDetails.phoneNumber : foundUser.phoneNumber;
+        foundUser.isAdministrator = Object.prototype.hasOwnProperty.call(userDetails, 'isAdministrator') ? userDetails.isAdministrator : foundUser.isAdministrator;
+    
+        foundUser.modifiedBy = request.payload.userProfile.ID;
+        foundUser.increment();
 
-        lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
-        foundPlayer.lastRegisteredDate = lastRegisteredDate;
-        foundPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
+        return foundUser.save();
+      })
+      .then(function (savedUser) {
+        readCoaches(currentSettings, response, next);
+      })
+      .catch(function (error) {
+        next(error);
+      });
+  });
 
-        lastRegisteredYear = foundPlayer.registeredYears.find(function (item) {
-          return item === foundPlayer.lastRegisteredYear;
-        });
-        if (!lastRegisteredYear) {
-          foundPlayer.registeredYears.push(foundPlayer.lastRegisteredYear);
+  router.post("/deleteCoach", function (request, response, next) {
+    var userDetails = request.body.coachDetails;
+
+    user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
+      .then(function (foundUser) {
+        var customError = null;
+
+        if (!foundUser) {
+          customError = new Error("User not found");
+
+          customError.httpCode = 409;
+
+          throw customError;
         }
 
-        foundPlayer.modifiedBy = request.payload.userProfile.ID;
-        foundPlayer.increment();
-
-        return foundPlayer.save();
-      })
-      .then(function (savedPlayer) {
-        var query = { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth },
-            update = { "lastUpdatedDate": new Date() };
-
-        currentSavedPlayer = savedPlayer;
-
-        return group.findOneAndUpdate(query, update);
+        return user.deleteOne({ "_id": mongoose.Types.ObjectId(foundUser._id), "__v": foundUser.__v })
       })
       .then(function () {
-        var returnMessage = {};
-
-        returnMessage.error = null;
-        returnMessage.body = {};
-
-        returnMessage.body.player = currentSavedPlayer.toObject();
-
-        response.status(200).json(returnMessage);
+        readCoaches(currentSettings, response, next);
       })
       .catch(function (error) {
         next(error);
@@ -472,4 +546,39 @@ exports = module.exports = function (app, router) {
   app.use(function (request, response) {
     response.sendfile("./dist/index.html");
   });
+}
+
+var readCoaches = function (currentSettings, response, next) {
+  var readUsers = user.find({}, "-password").lean().exec(),
+      readGroups = readUsers.then(function (users) {
+        return group.find({ "year": currentSettings.year }).lean().exec();
+      });
+  
+  Promise.all([readUsers, readGroups])
+    .then(function([users, groups]) {
+      var returnMessage = {};
+
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      users.forEach(function (user) {
+        var group = groups.find(function (group) {
+          return group.footballManager === user.emailAddress || group.hurlingManager === user.emailAddress;
+        });
+    
+        if (group) {
+          user.active = true;
+        }
+        else {
+          user.active = false;
+        }
+      });
+
+      returnMessage.body.coaches = users;
+
+      response.status(200).json(returnMessage);
+    })
+    .catch(function (error) {
+      next(error);
+    });
 };

@@ -46,10 +46,10 @@ export class CoachesService {
     return this.http.post("/api/createCoach", postData);    
   }
 
-  deleteCoach(coachId: string, sendGoodByeEmail: Boolean): Observable<any> {
+  deleteCoach(coachDetails: ICoach, sendGoodByeEmail: Boolean): Observable<any> {
     let postData = {};
 
-    postData['coachId'] = coachId;
+    postData['coachDetails'] = coachDetails;
     postData['sendGoodByeEmail'] = sendGoodByeEmail;
 
     return this.http.post("/api/deleteCoach", postData);    
