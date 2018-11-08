@@ -358,22 +358,21 @@ exports = module.exports = function (app, router) {
 
     newPlayer.modifiedBy = request.payload.userProfile.ID;
 
-    newPlayer.save()
-      .then(function (savedPlayer) {
-        var query = { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth },
-            update = { "lastUpdatedDate": new Date() };
+    var savePlayer = newPlayer.save(),
+        updateGroup = savePlayer.then(function (savedPlayer) {
+          return group.findOneAndUpdate(
+            { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth }, 
+            { "lastUpdatedDate": new Date() });
+        });
 
-        currentSavedPlayer = savedPlayer;
-
-        return group.findOneAndUpdate(query, update);
-      })
-      .then(function () {
+    Promise.all([savePlayer, updateGroup])
+      .then(function ([savedPlayer, updatedGroup]) {
         var returnMessage = {};
 
         returnMessage.error = null;
         returnMessage.body = {};
 
-        returnMessage.body.player = currentSavedPlayer.toObject();
+        returnMessage.body.player = savedPlayer.toObject();
 
         response.status(200).json(returnMessage);
       })
