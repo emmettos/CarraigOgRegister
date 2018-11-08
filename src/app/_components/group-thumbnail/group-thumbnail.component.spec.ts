@@ -32,12 +32,12 @@ describe('GroupThumbnailComponent', () => {
     component = fixture.componentInstance;
 
     component['group'] = {
-      name: 'Test Group',
-      yearOfBirth: 2009,
-      footballManagerFullName: 'Pat Football',
-      hurlingManagerFullName: 'John Hurling',
-      numberOfPlayers: 51,
-      lastUpdatedDate: '2018-02-27T15:57:21.582Z'    
+      'name': 'Test Group',
+      'yearOfBirth': 2009,
+      'footballManagerFullName': 'Pat Football',
+      'hurlingManagerFullName': 'John Hurling',
+      'numberOfPlayers': 51,
+      'lastUpdatedDate': '2018-02-27T15:57:21.582Z'    
     } as IGroup;
 
     authorizationService = TestBed.get(AuthorizationService);    

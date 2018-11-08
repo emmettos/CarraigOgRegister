@@ -168,8 +168,8 @@ describe('PlayersListComponent', () => {
     expect(playersService.readCurrentPlayers).toHaveBeenCalledWith(2008);
   });
 
-  it('should display total count', () => {
-    expect(fixture.nativeElement.querySelector('#total-count').innerHTML).toEqual('Total 2');
+  it('should display registered count', () => {
+    expect(fixture.nativeElement.querySelector('#registered-count').innerHTML).toEqual('Regd 2');
   });
 
   it('should display new count', () => {

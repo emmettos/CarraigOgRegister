@@ -42,7 +42,8 @@ describe('NavComponent', () => {
         ToasterModule.forRoot()    
       ],
       providers: [
-        AuthorizationService
+        AuthorizationService,
+        ToasterService
       ]
     })
     .compileComponents();
@@ -143,7 +144,7 @@ describe('NavComponent', () => {
     expect(fixture.nativeElement.querySelector("#administration-menu").style.getPropertyValue('display')).toEqual('none');
   });
 
-  it('should display Administration menu for administrators', () => {
+  it('should display Admin menu for administrators', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -158,7 +159,7 @@ describe('NavComponent', () => {
     expect(fixture.nativeElement.querySelector("#administration-menu").style.getPropertyValue('display')).toEqual('inline');
   });
 
-  it('should include Manage Players sub menu', () => {
+  it('should include Players sub menu', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -170,7 +171,22 @@ describe('NavComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#administration-dropdown > a").innerHTML).toEqual('Manage Players');
+    expect(fixture.nativeElement.querySelector("#administration-dropdown a:nth-child(1)").innerHTML).toEqual('Players');
+  });
+
+  it('should include Coaches sub menu', () => {
+    spyOnProperty(authorizationService, 'getPayload', 'get')
+      .and.returnValue({
+        userProfile: {
+          ID: 'xxx',
+          fullName: 'Test Coach',
+          isAdministrator: true
+        }
+      });
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#administration-dropdown a:nth-child(2)").innerHTML).toEqual('Coaches');
   });
 
   it('should display Successfully Signed Out when signing out of active session', () => {
