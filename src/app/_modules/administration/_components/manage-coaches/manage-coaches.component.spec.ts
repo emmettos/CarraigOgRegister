@@ -7,7 +7,7 @@ import { of, asyncScheduler } from 'rxjs';
 
 import { NgbModule, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ToasterModule, ToasterService, ToasterService } from 'angular2-toaster';
+import { ToasterModule, ToasterService } from 'angular2-toaster';
 
 import { CoachesService } from '../../../../_services';
 import { ValidationService } from '../../../../_modules/shared/_services';
@@ -15,7 +15,7 @@ import { ValidationService } from '../../../../_modules/shared/_services';
 import { ManageCoachesComponent } from './manage-coaches.component';
 
 
-fdescribe('ManageCoachesComponent', () => {
+describe('ManageCoachesComponent', () => {
   let component: ManageCoachesComponent;
   let fixture: ComponentFixture<ManageCoachesComponent>;
 
