@@ -52,7 +52,7 @@
                       <app-validation-message [control]="passwordControl"></app-validation-message>
                     </div>
                   </div>
-                  <div id="change-password" [style.display]="changePasswordModeControl.value ? 'inherit' : 'none'">
+                  <div id="change-password" [hidden]="!changePasswordModeControl.value">
                     <div class="row">
                       <div class="col-md-12 form-group">
                         <input  type="password" 

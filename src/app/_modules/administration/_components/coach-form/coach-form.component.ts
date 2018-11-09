@@ -31,18 +31,20 @@ export class CoachFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    if (this.coachDetails) {
-      this.editingCoach = true;
-      this.title = 'Edit Coach - ' + this.coachDetails.emailAddress;
-    }
-
     this.coachForm = this.formBuilder.group({
+      'emailAddress': [{ value: this.coachDetails ? this.coachDetails.emailAddress : '', disabled: this.coachDetails }, Validators.compose([Validators.required, this.validationService.emailValidator])],
       'firstName': [this.coachDetails ? this.coachDetails.firstName : '', Validators.required],
       'surname': [this.coachDetails ? this.coachDetails.surname : '', Validators.required],
-      'emailAddress': [{ value: this.coachDetails ? this.coachDetails.emailAddress : '', disabled: this.coachDetails }, Validators.compose([Validators.required, this.validationService.emailValidator])],
       'phoneNumber': [this.coachDetails ? this.coachDetails.phoneNumber : ''],
       'isAdministrator': [this.coachDetails ? this.coachDetails.isAdministrator : false],
     });
+
+    if (this.coachDetails) {
+      this.editingCoach = true;
+      this.title = 'Edit Coach - ' + this.coachDetails.emailAddress;
+
+      this.coachForm.controls['emailAddress'].disable();
+    }
   }
  
   onClickCancel() {

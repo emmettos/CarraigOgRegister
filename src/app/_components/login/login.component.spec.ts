@@ -83,7 +83,7 @@ describe('LoginComponent', () => {
   });
 
   it('should initialize change password div to be hidden', () => {
-    expect(fixture.nativeElement.querySelector('#change-password').style.display).toEqual('none');  
+    expect(fixture.nativeElement.querySelector('#change-password').hidden).toBeTruthy();  
   });
 
   it('should initialize new password field', () => {
@@ -364,7 +364,7 @@ describe('LoginComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#change-password').style.display).toEqual('inherit');  
+    expect(fixture.nativeElement.querySelector('#change-password').hidden).toBeFalsy();  
   });
 
   it('should route to /groups after successful login', fakeAsync(() => {
