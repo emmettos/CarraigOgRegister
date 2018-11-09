@@ -16,7 +16,7 @@ import { ConfirmDeleteCoachComponent } from '../confirm-delete-coach/confirm-del
   styleUrls: ['./manage-coaches.component.css']
 })
 export class ManageCoachesComponent implements OnInit {
-  manageCoachesFilterForm: FormGroup;
+  filterForm: FormGroup;
 
   @ViewChild('nameFilter') 
   nameFilterElementRef: ElementRef;
@@ -39,12 +39,12 @@ export class ManageCoachesComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.manageCoachesFilterForm = this.formBuilder.group({
+    this.filterForm = this.formBuilder.group({
       'nameFilter': [''],
       'currentlyActive': [false]
     });
 
-    this.manageCoachesFilterForm.valueChanges
+    this.filterForm.valueChanges
       .subscribe(formValues => { 
         this.filterCoaches(formValues)
       });
@@ -189,7 +189,7 @@ export class ManageCoachesComponent implements OnInit {
     return CSSClass;
   }
 
-  private filterCoaches(formValues: any) {
+  filterCoaches(formValues: any) {
     this.filteredCoaches = this.coaches
       .filter(coach => {
         let nameFilter = formValues.nameFilter;
