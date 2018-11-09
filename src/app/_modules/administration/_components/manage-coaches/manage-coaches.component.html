@@ -54,7 +54,7 @@
     </div>
   </form>
   <div class="table-responsive">
-    <table id="coaches-table" class="table table-bordered table-striped">
+    <table id="coaches-table" class="table table-bordered table-striped table-hover coach-detail">
       <thead>
         <tr>
           <th (click)="onClickHeader('active')" class="text-right"><span class="float-left mr-1">Status</span><i [ngClass]="headerSortCSSClass('coachState')"></i></th>
@@ -69,7 +69,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let currentCoach of filteredCoaches" [class.missing]="!currentCoach.active">
-          <td><span class="badge coach-detail-badge" [ngClass]="coachStateCSSClass(currentCoach)"></span></td>
+          <td><span class="badge detail-badge" [ngClass]="coachStateCSSClass(currentCoach)"></span></td>
           <td>{{ currentCoach.surname }}</td>
           <td>{{ currentCoach.firstName }}</td>
           <td>{{ currentCoach.emailAddress }}</td>

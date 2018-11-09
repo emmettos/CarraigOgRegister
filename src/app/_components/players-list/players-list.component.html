@@ -60,7 +60,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let currentPlayer of filteredPlayers" [class.missing]="currentPlayer.playerState === playerState.Missing" (click)="onClickRow(content, currentPlayer._id)">
-          <td><span class="badge player-detail-badge" [ngClass]="playerStateCSSClass(currentPlayer)"> </span></td>
+          <td><span class="badge detail-badge" [ngClass]="playerStateCSSClass(currentPlayer)"> </span></td>
           <td>{{ currentPlayer.surname }}</td>
           <td>{{ currentPlayer.firstName }}</td>
           <td>{{ currentPlayer.addressLine2 }}</td>

@@ -45,8 +45,18 @@ table.select-row tbody tr {
   cursor: pointer;
 }
 
-table.player-detail tbody tr.missing {
+table tbody tr.missing {
   color: #ffc107;
+}
+
+.detail-badge {
+  display: inline-block;
+  height: 2em;
+  width: 5em;
+}
+
+.badge:empty {
+  display: inherit;
 }
 
 .bg-info-light {
