@@ -146,6 +146,24 @@ export class ManageCoachesComponent implements OnInit {
       });
   }
 
+  onClickDownloadCSV() {
+    let csvCoaches: any[] = [];
+
+    this.filteredCoaches.forEach(coach => {
+      let csvCoach: any = {};
+      
+      csvCoach.emailAddress = coach.emailAddress;
+      csvCoach.surname = coach.surname;
+      csvCoach.firstName = coach.firstName;
+      csvCoach.phoneNumber = coach.phoneNumber;
+      csvCoach.administrator = coach.isAdministrator ? 'YES' : 'NO';
+
+      csvCoaches.push(csvCoach);
+    });
+
+    this.coachesService.downloadCSV(csvCoaches);
+  }
+
   headerSortCSSClass(keyName) {
     var CSSClass = "fa fa-sort";
 

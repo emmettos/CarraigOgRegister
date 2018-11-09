@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
+import { Angular5Csv } from 'angular5-csv/Angular5-csv';
+
 import { ICoach } from '../_models/index';
 
 
@@ -53,5 +55,20 @@ export class CoachesService {
     postData['sendGoodByeEmail'] = sendGoodByeEmail;
 
     return this.http.post("/api/deleteCoach", postData);    
+  }
+
+  downloadCSV(csvCoaches: any[]) {
+    let options = { 
+      showLabels: true, 
+      headers: [
+        "Email Address", 
+        "Surname", 
+        "First Name", 
+        "Phone Number", 
+        "Administrator"
+      ]
+    };
+
+    new Angular5Csv(csvCoaches, 'CarraigOgCoaches', options);
   }
 }
