@@ -1,6 +1,6 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ReactiveFormsModule, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { of, asyncScheduler } from 'rxjs';
@@ -20,7 +20,8 @@ describe('ManageCoachesComponent', () => {
   let fixture: ComponentFixture<ManageCoachesComponent>;
 
   let coachesService: CoachesService,
-      toasterService: ToasterService;
+      toasterService: ToasterService,
+      modalService: NgbModal;
   
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -52,6 +53,7 @@ describe('ManageCoachesComponent', () => {
 
     coachesService = TestBed.get(CoachesService);
     toasterService = TestBed.get(ToasterService);
+    modalService = TestBed.get(NgbModal);
 
     spyOn(coachesService, 'readCoaches')
       .and.returnValue(of({
@@ -318,9 +320,6 @@ describe('ManageCoachesComponent', () => {
   });
 
   it('should process returned coaches after add coach', fakeAsync(() => {
-    let modalService: NgbModal;
-    modalService = TestBed.get(NgbModal);
-
     spyOn(modalService, 'open')
       .and.returnValue({
         result: Promise.resolve({
@@ -487,9 +486,6 @@ describe('ManageCoachesComponent', () => {
   }));
 
   it('should display successfully added coach popup', fakeAsync(() => {
-    let modalService: NgbModal;
-    modalService = TestBed.get(NgbModal);
-
     spyOn(modalService, 'open')
       .and.returnValue({
         result: Promise.resolve({
@@ -584,9 +580,6 @@ describe('ManageCoachesComponent', () => {
   }));
 
   it('should display failed adding coach popup', fakeAsync(() => {
-    let modalService: NgbModal;
-    modalService = TestBed.get(NgbModal);
-
     spyOn(modalService, 'open')
       .and.returnValue({
         result: Promise.reject({
@@ -608,9 +601,6 @@ describe('ManageCoachesComponent', () => {
   }));
 
   it('should process returned coaches after edit coach', fakeAsync(() => {
-    let modalService: NgbModal;
-    modalService = TestBed.get(NgbModal);
-
     spyOn(modalService, 'open')
       .and.returnValue({
         componentInstance: {},
@@ -768,9 +758,6 @@ describe('ManageCoachesComponent', () => {
   }));
 
   it('should display successfully edited coach popup', fakeAsync(() => {
-    let modalService: NgbModal;
-    modalService = TestBed.get(NgbModal);
-
     spyOn(modalService, 'open')
       .and.returnValue({
         componentInstance: {},
@@ -886,9 +873,6 @@ describe('ManageCoachesComponent', () => {
   }));
 
   it('should display failed editing coach popup', fakeAsync(() => {
-    let modalService: NgbModal;
-    modalService = TestBed.get(NgbModal);
-
     spyOn(modalService, 'open')
       .and.returnValue({
         componentInstance: {},
@@ -931,9 +915,6 @@ describe('ManageCoachesComponent', () => {
   }));
 
   it('should process returned coaches after delete coach', fakeAsync(() => {
-    let modalService: NgbModal;
-    modalService = TestBed.get(NgbModal);
-
     spyOn(modalService, 'open')
       .and.returnValue({
         componentInstance: {},
@@ -1063,9 +1044,6 @@ describe('ManageCoachesComponent', () => {
   }));
 
   it('should display successfully deleted coach popup', fakeAsync(() => {
-    let modalService: NgbModal;
-    modalService = TestBed.get(NgbModal);
-
     spyOn(modalService, 'open')
       .and.returnValue({
         componentInstance: {},
@@ -1152,9 +1130,6 @@ describe('ManageCoachesComponent', () => {
   }));
 
   it('should display failed deleting coach popup', fakeAsync(() => {
-    let modalService: NgbModal;
-    modalService = TestBed.get(NgbModal);
-
     spyOn(modalService, 'open')
       .and.returnValue({
         componentInstance: {},

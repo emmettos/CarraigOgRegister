@@ -69,7 +69,7 @@ export class CoachFormComponent implements OnInit {
             let errorObject: any = {}
 
             errorObject.coachDetails = this.coachDetails;
-            errorObject.error = error;
+            errorObject.error = error.message
             
             this.activeModal.dismiss(errorObject);
           }
@@ -90,7 +90,7 @@ export class CoachFormComponent implements OnInit {
             let errorObject: any = {}
 
             errorObject.coachDetails = this.coachDetails;
-            errorObject.error = error;
+            errorObject.error = error.message;
             
             this.activeModal.dismiss(errorObject);
           }
