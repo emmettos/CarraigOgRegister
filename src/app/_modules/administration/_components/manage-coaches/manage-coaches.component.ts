@@ -5,8 +5,8 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ToasterService } from 'angular2-toaster';
 
-import { ICoach } from '../../../../_models/index';
-import { CoachesService } from '../../../../_services/index';
+import { ICoach, IUserProfile } from '../../../../_models/index';
+import { CoachesService, AuthorizationService } from '../../../../_services/index';
 import { CoachFormComponent } from '../coach-form/coach-form.component';
 import { ConfirmDeleteCoachComponent } from '../confirm-delete-coach/confirm-delete-coach.component';
 
@@ -35,7 +35,8 @@ export class ManageCoachesComponent implements OnInit {
     private modalService: NgbModal,
     private formBuilder: FormBuilder,
     private toasterService: ToasterService,
-    private coachesService: CoachesService) {
+    private coachesService: CoachesService,
+    private authorizationService: AuthorizationService) {
   }
 
   ngOnInit() {
@@ -210,6 +211,8 @@ export class ManageCoachesComponent implements OnInit {
   }
 
   private processReturnedCoaches(coaches: ICoach[]) {
+    let userProfile: IUserProfile = this.authorizationService.getActivePayload.userProfile;
+
     this.coaches = coaches;
 
     this.totalCount = 0;
@@ -224,6 +227,10 @@ export class ManageCoachesComponent implements OnInit {
       }
       else {
         this.dormantCount++;
+      }
+
+      if (coach.emailAddress === userProfile.ID) {
+        coach.currentSessionOwner = true;
       }
     });
 

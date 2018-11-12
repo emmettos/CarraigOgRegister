@@ -76,7 +76,10 @@
           <td>{{ currentCoach.phoneNumber }}</td>
           <td class="text-center">{{ currentCoach.isAdministrator ? 'YES' : 'NO' }}</td>
           <td class="text-center"><a href=""><span (click)="!!onClickEditCoach(currentCoach)">Edit</span></a></td>
-          <td class="text-center"><a href=""><span (click)="!!onClickDeleteCoach(currentCoach)">Delete</span></a></td>
+          <td class="text-center">
+            <a *ngIf="!currentCoach.currentSessionOwner" href=""><span (click)="!!onClickDeleteCoach(currentCoach)">Delete</span></a>
+            <span *ngIf="currentCoach.currentSessionOwner"></span>
+          </td>
         </tr>
       </tbody>
     </table>

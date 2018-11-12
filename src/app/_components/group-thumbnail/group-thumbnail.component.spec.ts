@@ -44,7 +44,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should create', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: true
@@ -56,7 +56,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should display group name', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: true
@@ -68,7 +68,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should display football manager', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: true
@@ -80,7 +80,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should display hurling manager', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: true
@@ -92,7 +92,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should display number of players', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: true
@@ -104,7 +104,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should display last updated date', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: true
@@ -116,7 +116,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should create group details link', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: true
@@ -128,7 +128,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should enable group link for an administrator', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: true
@@ -140,7 +140,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should enable group link for a manager', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: false,
@@ -154,7 +154,7 @@ describe('GroupThumbnailComponent', () => {
   });
 
   it('should disable group link for other manager', () => {
-    spyOnProperty(authorizationService, 'getPayload', 'get')
+    spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
           isAdministrator: false,

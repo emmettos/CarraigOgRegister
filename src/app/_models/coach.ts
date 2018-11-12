@@ -7,12 +7,13 @@ export interface ICoach {
 	phoneNumber: string;
 	isAdministrator: boolean;
 
-  active: boolean;
-
   createdBy: string;
   createdDate: string;
   updatedDate: string;
   updatedBy: string;
 
   __v: number;
+
+  active: boolean;
+  currentSessionOwner: boolean;  
 }

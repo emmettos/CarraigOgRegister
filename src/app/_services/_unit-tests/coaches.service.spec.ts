@@ -115,7 +115,8 @@ describe('CoachesService', () => {
       'updatedDate': '2018-05-09T09:55:59.735Z',
       'updatedBy': 'administrator@carraigog.com',
       '__v': 0,
-      'active': false
+      'active': false,
+      'currentSessionOwner': true
     }
 
     service.updateCoach(coach)
@@ -136,7 +137,8 @@ describe('CoachesService', () => {
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': false
+        'active': false,
+        'currentSessionOwner': true
       }
     });
 
@@ -205,7 +207,8 @@ describe('CoachesService', () => {
       'updatedDate': '2018-05-09T09:55:59.735Z',
       'updatedBy': 'administrator@carraigog.com',
       '__v': 0,
-      'active': false
+      'active': false,
+      'currentSessionOwner': true
     }
 
     service.deleteCoach(coach, true)
@@ -226,8 +229,9 @@ describe('CoachesService', () => {
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': false
-      },
+        'active': false,
+        'currentSessionOwner': true
+        },
       sendGoodByeEmail: true
     });
 

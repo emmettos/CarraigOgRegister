@@ -60,7 +60,8 @@ describe('ConfirmDeleteCoachComponent', () => {
       'updatedDate': '2018-05-09T09:55:59.735Z',
       'updatedBy': 'administrator@carraigog.com',
       '__v': 0,
-      'active': true
+      'active': true,
+      'currentSessionOwner': false
     } as ICoach;
 
     fixture.detectChanges();
@@ -108,7 +109,8 @@ describe('ConfirmDeleteCoachComponent', () => {
               'updatedDate': '2018-05-09T09:55:59.735Z',
               'updatedBy': 'administrator@carraigog.com',
               '__v': 0,
-              'active': false
+              'active': false,
+              'currentSessionOwner': true
             }
           ]
         }
@@ -128,7 +130,8 @@ describe('ConfirmDeleteCoachComponent', () => {
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': true
+        'active': true,
+        'currentSessionOwner': false
       }, true);
   });
 
@@ -150,7 +153,8 @@ describe('ConfirmDeleteCoachComponent', () => {
               'updatedDate': '2018-05-09T09:55:59.735Z',
               'updatedBy': 'administrator@carraigog.com',
               '__v': 0,
-              'active': false
+              'active': false,
+              'currentSessionOwner': true
             }
           ]
         }
@@ -179,7 +183,8 @@ describe('ConfirmDeleteCoachComponent', () => {
               'updatedDate': '2018-05-09T09:55:59.735Z',
               'updatedBy': 'administrator@carraigog.com',
               '__v': 0,
-              'active': false
+              'active': false,
+              'currentSessionOwner': true
             }
           ]
         }
@@ -202,7 +207,8 @@ describe('ConfirmDeleteCoachComponent', () => {
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': true
+        'active': true,
+        'currentSessionOwner': false
         },
       updatedCoaches: [
         {
@@ -217,7 +223,8 @@ describe('ConfirmDeleteCoachComponent', () => {
           'updatedDate': '2018-05-09T09:55:59.735Z',
           'updatedBy': 'administrator@carraigog.com',
           '__v': 0,
-          'active': false
+          'active': false,
+          'currentSessionOwner': true
         }
       ]
     });
@@ -246,7 +253,8 @@ describe('ConfirmDeleteCoachComponent', () => {
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': true
+        'active': true,
+        'currentSessionOwner': false
       },
       error: 'Fake error'
     });

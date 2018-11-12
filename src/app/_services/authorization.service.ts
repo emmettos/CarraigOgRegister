@@ -7,7 +7,7 @@ const JWT_KEY = 'carraig-og-register.jwt';
 
 @Injectable()
 export class AuthorizationService {
-  // This is public so that FakeBackendInterceptorHelper can write to it (easier that faking a JWT).
+  // This is public so that FakeBackendInterceptorHelper can write to it (easier than faking a JWT).
   payload: IPayload = null;
 
   constructor() {

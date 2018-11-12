@@ -140,7 +140,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'emailAddress': 'siward_hansen@carraigog.com',
         'phoneNumber': '086 1949623',
         'password': 'Password01#',
-        'isAdministrator': false,
+        'isAdministrator': true,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
