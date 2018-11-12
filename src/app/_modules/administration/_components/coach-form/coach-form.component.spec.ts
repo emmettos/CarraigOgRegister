@@ -338,7 +338,7 @@ describe('CoachFormComponent', () => {
     component.coachForm.controls['emailAddress'].setValue('test@gmail.com');
     component.coachForm.controls['firstName'].setValue('FirstName');
     component.coachForm.controls['surname'].setValue('Surname');
-    component.coachForm.controls['isAdministrator'].setValue('true');
+    component.coachForm.controls['isAdministrator'].setValue(true);
 
     fixture.detectChanges();
 
@@ -352,7 +352,7 @@ describe('CoachFormComponent', () => {
 
     fixture.detectChanges();
 
-    component.coachForm.controls['isAdministrator'].setValue('true');
+    component.coachForm.controls['isAdministrator'].setValue(true);
 
     fixture.detectChanges();
 
@@ -830,7 +830,7 @@ describe('CoachFormComponent', () => {
     expect(fixture.nativeElement.querySelector('#cancel').disabled).toBeTruthy();  
   });
 
-  it('should disable save player button after submitting a coach to be saved', () => {
+  it('should disable save coach button after submitting a coach to be saved', () => {
     fixture.detectChanges();
 
     component.coachForm.controls['emailAddress'].setValue('test@gmail.com');

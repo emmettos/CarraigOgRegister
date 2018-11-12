@@ -1,13 +1,13 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
-import { ReactiveFormsModule, FormGroup } from '@angular/forms';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { of, asyncScheduler } from 'rxjs';
+import { of, asyncScheduler, throwError } from 'rxjs';
 
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { IPlayer, ICoach } from '../../../../_models/index';
+import { ICoach } from '../../../../_models/index';
 import { CoachesService } from '../../../../_services';
 import { ValidationService } from '../../../../_modules/shared/_services';
 
@@ -17,6 +17,9 @@ import { ConfirmDeleteCoachComponent } from './confirm-delete-coach.component';
 describe('ConfirmDeleteCoachComponent', () => {
   let component: ConfirmDeleteCoachComponent;
   let fixture: ComponentFixture<ConfirmDeleteCoachComponent>;
+
+  let coachesService: CoachesService,
+      activeModal: NgbActiveModal;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -42,19 +45,22 @@ describe('ConfirmDeleteCoachComponent', () => {
     fixture = TestBed.createComponent(ConfirmDeleteCoachComponent);
     component = fixture.componentInstance;
 
+    coachesService = TestBed.get(CoachesService);
+    activeModal = TestBed.get(NgbActiveModal);
+
     component['coachDetails'] = {
-      '_id': 'b093d6d273adfb49ae33e6e1',
-      'firstName': 'Administrator',
-      'surname': '',
-      'emailAddress': 'admin@carraigog.com',
-      'phoneNumber': '086 1550344',
-      'isAdministrator': true,
+      '_id': '6293c9a83fd22e7fa8e66d3f',
+      'firstName': 'Erick',
+      'surname': 'Norris',
+      'emailAddress': 'erick_norris@carraigog.com',
+      'phoneNumber': '086 6095372',
+      'isAdministrator': false,
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
       'updatedBy': 'administrator@carraigog.com',
       '__v': 0,
-      'active': false
+      'active': true
     } as ICoach;
 
     fixture.detectChanges();
@@ -62,5 +68,209 @@ describe('ConfirmDeleteCoachComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should display coach email address', () => {
+    expect(fixture.nativeElement.querySelector('#coach-email-address').innerHTML).toEqual('erick_norris@carraigog.com');  
+  });
+
+  it('should initialize new coach send goodbye email checkbox', () => {
+    fixture.detectChanges();
+
+    expect(component.deleteCoachForm.controls['sendGoodByeEmail'].value).toBeFalsy();
+  });
+
+  it('should update form value', () => {
+    component.deleteCoachForm.controls['sendGoodByeEmail'].setValue(true);
+
+    expect(component.deleteCoachForm.value).toEqual({
+      sendGoodByeEmail: true
+    });
+  });
+
+  it('should call coachesService.deleteCoach when deleting a coach', () => {
+    component.deleteCoachForm.controls['sendGoodByeEmail'].setValue(true);
+
+    spyOn(coachesService, 'deleteCoach')
+      .and.returnValue(of({
+        "error": null,
+        "body": {
+          coaches: [
+            {
+              '_id': 'b093d6d273adfb49ae33e6e1',
+              'firstName': 'Administrator',
+              'surname': '',
+              'emailAddress': 'admin@carraigog.com',
+              'phoneNumber': '086 1550344',
+              'isAdministrator': true,
+              'createdBy': 'script',
+              'createdDate': '2017-03-15T13:43:51.268Z',
+              'updatedDate': '2018-05-09T09:55:59.735Z',
+              'updatedBy': 'administrator@carraigog.com',
+              '__v': 0,
+              'active': false
+            }
+          ]
+        }
+      }));
+
+    component.onSubmit(component.deleteCoachForm.value);
+
+    expect(coachesService.deleteCoach).toHaveBeenCalledWith({
+        '_id': '6293c9a83fd22e7fa8e66d3f',
+        'firstName': 'Erick',
+        'surname': 'Norris',
+        'emailAddress': 'erick_norris@carraigog.com',
+        'phoneNumber': '086 6095372',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0,
+        'active': true
+      }, true);
+  });
+
+  it('should set deletingCoach to true after submitting a coach to be deleted', () => {
+    spyOn(coachesService, 'deleteCoach')
+      .and.returnValue(of({
+        "error": null,
+        "body": {
+          coaches: [
+            {
+              '_id': 'b093d6d273adfb49ae33e6e1',
+              'firstName': 'Administrator',
+              'surname': '',
+              'emailAddress': 'admin@carraigog.com',
+              'phoneNumber': '086 1550344',
+              'isAdministrator': true,
+              'createdBy': 'script',
+              'createdDate': '2017-03-15T13:43:51.268Z',
+              'updatedDate': '2018-05-09T09:55:59.735Z',
+              'updatedBy': 'administrator@carraigog.com',
+              '__v': 0,
+              'active': false
+            }
+          ]
+        }
+      }, asyncScheduler));
+
+    component.onSubmit(component.deleteCoachForm.value);
+
+    expect(component.deletingCoach).toBeTruthy();
+  });
+
+  it('should call activeModal.close after successfully deleting a coach', () => {
+    spyOn(coachesService, 'deleteCoach')
+      .and.returnValue(of({
+        "error": null,
+        "body": {
+          coaches: [
+            {
+              '_id': 'b093d6d273adfb49ae33e6e1',
+              'firstName': 'Administrator',
+              'surname': '',
+              'emailAddress': 'admin@carraigog.com',
+              'phoneNumber': '086 1550344',
+              'isAdministrator': true,
+              'createdBy': 'script',
+              'createdDate': '2017-03-15T13:43:51.268Z',
+              'updatedDate': '2018-05-09T09:55:59.735Z',
+              'updatedBy': 'administrator@carraigog.com',
+              '__v': 0,
+              'active': false
+            }
+          ]
+        }
+      }));
+
+    spyOn(activeModal, 'close');
+
+    component.onSubmit(component.deleteCoachForm.value);
+
+    expect(activeModal.close).toHaveBeenCalledWith({
+      coachDetails: { 
+        '_id': '6293c9a83fd22e7fa8e66d3f',
+        'firstName': 'Erick',
+        'surname': 'Norris',
+        'emailAddress': 'erick_norris@carraigog.com',
+        'phoneNumber': '086 6095372',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0,
+        'active': true
+        },
+      updatedCoaches: [
+        {
+          '_id': 'b093d6d273adfb49ae33e6e1',
+          'firstName': 'Administrator',
+          'surname': '',
+          'emailAddress': 'admin@carraigog.com',
+          'phoneNumber': '086 1550344',
+          'isAdministrator': true,
+          'createdBy': 'script',
+          'createdDate': '2017-03-15T13:43:51.268Z',
+          'updatedDate': '2018-05-09T09:55:59.735Z',
+          'updatedBy': 'administrator@carraigog.com',
+          '__v': 0,
+          'active': false
+        }
+      ]
+    });
+  });
+
+  it('should call activeModal.dismiss after failing to delete a coach', () => {
+    spyOn(coachesService , 'deleteCoach')
+      .and.callFake(() => {
+        return throwError(new Error('Fake error'));
+      });
+
+    spyOn(activeModal, 'dismiss');
+  
+    component.onSubmit(component.deleteCoachForm.value);
+
+    expect(activeModal.dismiss).toHaveBeenCalledWith({
+      coachDetails: { 
+        '_id': '6293c9a83fd22e7fa8e66d3f',
+        'firstName': 'Erick',
+        'surname': 'Norris',
+        'emailAddress': 'erick_norris@carraigog.com',
+        'phoneNumber': '086 6095372',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0,
+        'active': true
+      },
+      error: 'Fake error'
+    });
+  });
+
+  it('should disable sendGoodByeEmail field after submitting a coach to be deleted', () => {
+    component.onSubmit(component.deleteCoachForm.value);
+
+    expect(fixture.nativeElement.querySelector('#send-goodbye-email').disabled).toBeTruthy();  
+  });
+
+  it('should disable cancel button after submitting a coach to be deleted', () => {
+    component.onSubmit(component.deleteCoachForm.value);
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#cancel').disabled).toBeTruthy();  
+  });
+
+  it('should disable Ok button after submitting a coach to be deleted', () => {
+    component.onSubmit(component.deleteCoachForm.value);
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();  
   });
 });

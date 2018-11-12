@@ -12,13 +12,14 @@
       </div>
       <div class="row">
           <div class="col-md-12">
-            <h5 class="text-center">{{ coachDetails.emailAddress }}</h5>
+            <h5 id="coach-email-address" class="text-center">{{ coachDetails.emailAddress }}</h5>
           </div>
       </div>
       <div class="row align-items-center mt-2">
         <div class="col-12 text-center">
           <div class="form-check form-check-inline">
             <input  type="checkbox" 
+                    id="send-goodbye-email"
                     class="form-check-input" 
                     formControlName="sendGoodByeEmail">
             <label class="form-check-label" for="sendGoodByeEmail">Send Goodbye Email</label>
@@ -28,7 +29,7 @@
       <div class="row mt-4 mb-2">
         <div class="col-md-4 offset-md-2">
           <input  type="button" 
-                  id="canel" 
+                  id="cancel" 
                   class="btn btn-info btn-block" 
                   (click)="onClickCancel()" 
                   [disabled]="deletingCoach"

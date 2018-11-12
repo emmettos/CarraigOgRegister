@@ -36,7 +36,7 @@ export class ConfirmDeleteCoachComponent implements OnInit {
   }
 
   onSubmit(formValues: any) {
-    this.coachesService.deleteCoach(this.coachDetails, formValues.sendGoodbyeEmail)
+    this.coachesService.deleteCoach(this.coachDetails, formValues.sendGoodByeEmail)
       .subscribe({
         next: response => {
           let returnObject: any = {}
@@ -50,7 +50,7 @@ export class ConfirmDeleteCoachComponent implements OnInit {
           let errorObject: any = {}
 
           errorObject.coachDetails = this.coachDetails;
-          errorObject.error = error;
+          errorObject.error = error.message;
           
           this.activeModal.dismiss(errorObject);
         }
