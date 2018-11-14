@@ -9,6 +9,10 @@ var group = require("./models/group");
 var player = require("./models/player");
 var user = require("./models/user");
 
+var emailHelper = require('sendgrid').mail;
+var sendGrid = require('sendgrid')('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');
+
+
 exports = module.exports = function (app, router) {
   var currentSettings = app.currentSettings;
 
@@ -253,6 +257,14 @@ exports = module.exports = function (app, router) {
 
           throw customError;
         }
+        
+        if (foundUser.password === "") {
+          customError = new Error("User not validated");
+
+          customError.httpCode = 401;
+
+          throw customError;
+        }
 
         return foundUser.comparePassword(request.body.password);
       })
@@ -459,13 +471,28 @@ exports = module.exports = function (app, router) {
     newUser.emailAddress = userDetails.emailAddress;
     newUser.phoneNumber = userDetails.phoneNumber;
     newUser.isAdministrator = userDetails.isAdministrator;
-    newUser.password = 'Password01#';
+    newUser.password = "";
 
     newUser.modifiedBy = request.payload.userProfile.ID;
 
     newUser.save()
       .then(function (savedUser) {
-        readCoaches(currentSettings, response, next);
+      //   var from_email = new emailHelper.Email('test@example.com');
+      //   var to_email = new emailHelper.Email('emmett.j.osullivan@gmail.com');
+      //   var subject = 'Hello World from the SendGrid Node.js Library!';
+      //   var content = new emailHelper.Content('text/plain', 'Hello, Email!');
+      //   var mail = new emailHelper.Mail(from_email, subject, to_email, content);
+
+      //   var request = sendGrid.emptyRequest({
+      //     method: 'POST',
+      //     path: '/v3/mail/send',
+      //     body: mail.toJSON(),
+      //   });
+
+      //   return sendGrid.API(request);
+      // })
+      // .then(function () {
+          readCoaches(currentSettings, response, next);
       })
       .catch(function (error) {
         next(error);

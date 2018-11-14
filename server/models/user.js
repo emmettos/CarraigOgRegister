@@ -10,7 +10,7 @@ var userSchema = new Schema({
 	surname: { type: String, required: true },
 	emailAddress: { type: String, required: true, unique: true },
 	phoneNumber: { type: String },
-	password: { type: String, required: true },
+	password: { type: String },
 	isAdministrator: { type: Boolean, required: true },
 	createdBy: { type: String, required: true },
 	createdDate: { type: Date, required: true },
@@ -71,7 +71,7 @@ userSchema.pre("save", function (next) {
 		return promise;
 	}
 
-	if (user.isModified("password") || user.isNew) {
+	if (!user.isNew && user.isModified("password")) {
 		createSalt()
 			.then(createPasswordHash)
 			.then(function (hash) {
