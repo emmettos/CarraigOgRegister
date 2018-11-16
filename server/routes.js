@@ -1,6 +1,12 @@
 "use strict";
 
+var fs = require('fs');
+
 var mongoose = require("mongoose");
+var JSONWebToken = require("jsonwebtoken");
+var sgMail = require('@sendgrid/mail');
+
+var config = require("./config/config");
 
 var authenticator = require("./authenticator");
 var authorizer = require("./authorizer");
@@ -8,9 +14,6 @@ var authorizer = require("./authorizer");
 var group = require("./models/group");
 var player = require("./models/player");
 var user = require("./models/user");
-
-var emailHelper = require('sendgrid').mail;
-var sendGrid = require('sendgrid')('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');
 
 
 exports = module.exports = function (app, router) {
@@ -169,80 +172,83 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/register", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var newUser = null;
+  router.post("/verifyUser", function (request, response, next) {
+    // TODO: Validate the passed in token and parse the email address from the token. Return the email address
+    // and a temporary authorization token.
 
-    if (!(request.body.emailAddress && request.body.password)) {
-      throw new Error("Please provide name and password.");
-    }
+    // var newUser = null;
 
-    newUser = new user();
+    // if (!(request.body.emailAddress && request.body.password)) {
+    //   throw new Error("Please provide name and password.");
+    // }
 
-    newUser.emailAddress = request.body.emailAddress,
-      newUser.firstName = request.body.firstName,
-      newUser.surname = request.body.surname,
-      newUser.isAdministrator = request.body.isAdministrator,
-      newUser.password = request.body.password
+    // newUser = new user();
 
-    newUser.modifiedBy = request.body.emailAddress;
+    // newUser.emailAddress = request.body.emailAddress,
+    //   newUser.firstName = request.body.firstName,
+    //   newUser.surname = request.body.surname,
+    //   newUser.isAdministrator = request.body.isAdministrator,
+    //   newUser.password = request.body.password
 
-    newUser.save(function (error) {
-      var returnMessage = {};
+    // newUser.modifiedBy = request.body.emailAddress;
 
-      try {
-        if (error) {
-          throw error;
-        }
+    // newUser.save(function (error) {
+    //   var returnMessage = {};
 
-        returnMessage.error = null;
-        returnMessage.body = {};
+    //   try {
+    //     if (error) {
+    //       throw error;
+    //     }
 
-        response.status(200).json(returnMessage);
-      }
-      catch (error) {
-        next(error);
-      }
-    });
+    //     returnMessage.error = null;
+    //     returnMessage.body = {};
+
+    //     response.status(200).json(returnMessage);
+    //   }
+    //   catch (error) {
+    //     next(error);
+    //   }
+    // });
   });
 
-  router.post("/resetPassword", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var customError = null;
+  router.post("/createPassword", authorizer.authorize({ allowTemporaryToken: true }), function (request, response, next) {
+    // var customError = null;
 
-    if (!(request.body.emailAddress && request.body.password)) {
-      customError = new Error("Username and password are required");
+    // if (!(request.body.emailAddress && request.body.password)) {
+    //   customError = new Error("Username and password are required");
 
-      customError.httpCode = 400;
+    //   customError.httpCode = 400;
 
-      throw customError;
-    }
+    //   throw customError;
+    // }
 
-    user.findOne({ emailAddress: request.body.emailAddress })
-      .then(function (foundUser) {
-        var customError = null;
+    // user.findOne({ emailAddress: request.body.emailAddress })
+    //   .then(function (foundUser) {
+    //     var customError = null;
 
-        if (!foundUser) {
-          customError = new Error("User not found");
+    //     if (!foundUser) {
+    //       customError = new Error("User not found");
 
-          customError.httpCode = 401;
+    //       customError.httpCode = 401;
 
-          throw customError;
-        }
+    //       throw customError;
+    //     }
 
-        foundUser.password = request.body.password;
+    //     foundUser.password = request.body.password;
 
-        return foundUser.save();
-      })
-      .then(function () {
-        var returnMessage = {};
+    //     return foundUser.save();
+    //   })
+    //   .then(function () {
+    //     var returnMessage = {};
 
-        returnMessage.error = null;
-        returnMessage.body = {};
+    //     returnMessage.error = null;
+    //     returnMessage.body = {};
 
-        response.status(200).json(returnMessage);
-      })
-      .catch(function (error) {
-        next(error);
-      });
+    //     response.status(200).json(returnMessage);
+    //   })
+    //   .catch(function (error) {
+    //     next(error);
+    //   });
   });
 
   router.post("/authenticate", function (request, response, next) {
@@ -464,7 +470,9 @@ exports = module.exports = function (app, router) {
 
   router.post("/createCoach", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
     var userDetails = request.body.coachDetails,
-        newUser = new user();
+        newUser = new user(),
+        saveUser,
+        readEmailTemplate;
 
     newUser.firstName = userDetails.firstName;
     newUser.surname = userDetails.surname;
@@ -475,24 +483,32 @@ exports = module.exports = function (app, router) {
 
     newUser.modifiedBy = request.payload.userProfile.ID;
 
-    newUser.save()
-      .then(function (savedUser) {
-      //   var from_email = new emailHelper.Email('test@example.com');
-      //   var to_email = new emailHelper.Email('emmett.j.osullivan@gmail.com');
-      //   var subject = 'Hello World from the SendGrid Node.js Library!';
-      //   var content = new emailHelper.Content('text/plain', 'Hello, Email!');
-      //   var mail = new emailHelper.Mail(from_email, subject, to_email, content);
+    saveUser = newUser.save();
+    readEmailTemplate = saveUser.then(function (savedUser) {
+      return readFile('template.html');
+    });
+    
+    Promise.all([saveUser, readEmailTemplate])
+      .then(function ([savedUser, emailTemplate]) {
+        readCoaches(currentSettings, response, next);
 
-      //   var request = sendGrid.emptyRequest({
-      //     method: 'POST',
-      //     path: '/v3/mail/send',
-      //     body: mail.toJSON(),
-      //   });
+        emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname + ':' + config.port);
 
-      //   return sendGrid.API(request);
-      // })
-      // .then(function () {
-          readCoaches(currentSettings, response, next);
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+        const emailMessage = {
+          to: 'emmett.j.osullivan@gmail.com',
+          from: 'no_reply@carraigogregister.com',
+          subject: 'Welcome to Carraig Og Register. Please verify your account...',
+          html: emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret, { expiresIn: '7d'}))
+        };
+
+        sgMail.send(emailMessage, (error, result) => {
+          if (error) {
+
+            return;
+          }  
+        });
       })
       .catch(function (error) {
         next(error);
@@ -572,7 +588,7 @@ exports = module.exports = function (app, router) {
   app.use("/api", router);
 
   app.use(function (request, response) {
-    response.sendfile("./dist/index.html");
+    response.sendFile("./dist/index.html");
   });
 }
 
@@ -610,3 +626,23 @@ var readCoaches = function (currentSettings, response, next) {
       next(error);
     });
 };
+
+var readFile = function (fileName) {
+  var promise = new Promise(function (resolve, reject) {
+    fs.readFile(fileName, 'utf-8', (error, data) => {
+      try {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(data);
+      }
+      catch (error) {
+        reject(error);
+      }
+    });
+  });
+
+  return promise;
+};
+
