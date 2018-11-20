@@ -4,7 +4,7 @@ var fs = require('fs');
 
 var mongoose = require("mongoose");
 var JSONWebToken = require("jsonwebtoken");
-var sgMail = require('@sendgrid/mail');
+var nodemailer = require('nodemailer');
 
 var config = require("./config/config");
 
@@ -492,22 +492,34 @@ exports = module.exports = function (app, router) {
       .then(function ([savedUser, emailTemplate]) {
         readCoaches(currentSettings, response, next);
 
-        emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname + ':' + config.port);
+        emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname);
 
-        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        var transporter = nodemailer.createTransport({
+          host: 'smtp.gmail.com',
+          port: 465,
+          secure: true,
+          auth: {
+            type: 'oauth2',
+            user: 'carraigogregister@gmail.com',
+            clientId: process.env.GOOGLE_API_CLIENT_ID,
+            clientSecret: process.env.GOOGLE_API_CLIENT_SECRET,
+            refreshToken: process.env.GOOGLE_OUTH2_PLAYGROUND_REFRESH_TOKEN,
+            accessToken: process.env.GOOGLE_OUTH2_PLAYGROUND_ACCESS_TOKEN
+          }
+        });
 
-        const emailMessage = {
-          to: 'emmett.j.osullivan@gmail.com',
-          from: 'no_reply@carraigogregister.com',
+        const mailOptions = {
+          from: 'carraigogregister@gmail.com',
+          to: savedUser.emailAddress,
           subject: 'Welcome to Carraig Og Register. Please verify your account...',
-          html: emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret, { expiresIn: '7d'}))
+          html: emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret))
+          //html: emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret, { expiresIn: '7d'}))
         };
 
-        sgMail.send(emailMessage, (error, result) => {
+        transporter.sendMail(mailOptions, function (error, info) {
           if (error) {
-
-            return;
-          }  
+            request.logger.error(error);
+          }
         });
       })
       .catch(function (error) {
