@@ -3,7 +3,6 @@
 var JSONWebToken = require("jsonwebtoken");
 
 var config = require("./config/config");
-
 var group = require("./models/group");
 
 
@@ -24,15 +23,7 @@ exports.authenticate = function (request, response, next) {
 
             request.payload = payload;
 
-            // TODO: Why not just pass payload.userProfile to signToken???
-
-            userProfile.ID = payload.userProfile.ID;
-            userProfile.fullName = payload.userProfile.fullName;
-            userProfile.isAdministrator = payload.userProfile.isAdministrator;
-            userProfile.isManager = payload.userProfile.isManager;
-            userProfile.groups = payload.userProfile.groups.slice();
-
-            refreshedToken = signToken(userProfile);
+            refreshedToken = signToken(request.payload.userProfile);
 
             response.set("Authorization", "Bearer " + refreshedToken);
           }
