@@ -1277,7 +1277,8 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               fullName: coach.firstName + ' ' + coach.surname,
               isAdministrator: coach.isAdministrator,
               isManager: false,
-              groups: []
+              groups: [],
+              createPasswordProfile: false
             };
 
             this.groups

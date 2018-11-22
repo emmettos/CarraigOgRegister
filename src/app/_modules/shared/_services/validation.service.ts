@@ -8,7 +8,7 @@ export class ValidationService {
 
   constructor() {
     this.validationMessages = {
-      'invalidConfirmPassword': 'The new passwords do not match',
+      'invalidConfirmPassword': 'The Confirm Password does not match the Password',
       'invalidEmailAddress': 'Invalid email address',
       'minlength': 'Minimum length [requiredLength]',
       'required': 'This field is required'

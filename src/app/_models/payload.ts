@@ -13,4 +13,6 @@ export interface IUserProfile {
   isManager: boolean;
 
   groups: number[];
+
+  createPasswordProfile: boolean;  
 }

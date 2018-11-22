@@ -73,7 +73,9 @@ userSchema.pre("save", function (next) {
 
 	if (!user.isNew && user.isModified("password")) {
 		createSalt()
-			.then(createPasswordHash)
+			.then(function (salt) {
+        return createPasswordHash(salt);
+      })
 			.then(function (hash) {
 				user.password = hash;
 

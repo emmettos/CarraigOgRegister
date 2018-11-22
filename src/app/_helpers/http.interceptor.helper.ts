@@ -60,7 +60,8 @@ export class HttpInterceptorHelper implements HttpInterceptor {
             console.error('HTTP error Response received at [' + router.url + ']:', error);
 
             if (error.status === 401) {
-              if (error.url.indexOf('api/authenticate') === -1 && error.url.indexOf('api/writeLog') === -1) {
+              if (error.url.indexOf('api/authenticate') === -1 && error.url.indexOf('api/authenticate') === -1 
+                  && error.url.indexOf('api/verifyUserToken') === -1) {
                 // These conditions should never occur because they will be caught in the route gaurds.
                 // Leaving them here though just in case (IE. someone could have hacked the JSON Web Token).
                 if (this.authorizationService.getPayload) {

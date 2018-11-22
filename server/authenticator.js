@@ -23,9 +23,11 @@ exports.authenticate = function (request, response, next) {
 
             request.payload = payload;
 
-            refreshedToken = signToken(request.payload.userProfile);
+            if (!payload.userProfile.createPasswordProfile) {
+              refreshedToken = signToken(request.payload.userProfile);
 
-            response.set("Authorization", "Bearer " + refreshedToken);
+              response.set("Authorization", "Bearer " + refreshedToken);
+            }
           }
 
           next();

@@ -172,83 +172,122 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/verifyUser", function (request, response, next) {
-    // TODO: Validate the passed in token and parse the email address from the token. Return the email address
-    // and a temporary authorization token.
+  router.post("/verifyUserToken", async (request, response, next) => {
+    var verifyToken = function (userToken) {
+      var promise = new Promise(function (resolve, reject) {
+        JSONWebToken.verify(userToken, config.secret, function (error, payload) {
+          try {
+            if (error) {
+              error.message = "Invalid userToken: " + error.message;
+    
+              error.httpCode = 400;
+        
+              reject(error);
+            }
 
-    // var newUser = null;
+            resolve(payload);
+          }
+          catch (error) {
+            reject(error);
+          }
+        });
+      });
+    
+      return promise;
+    };
 
-    // if (!(request.body.emailAddress && request.body.password)) {
-    //   throw new Error("Please provide name and password.");
-    // }
+    try {
+      const payload = await verifyToken(request.body.userToken);
+      const foundUser = await user.findOne({ emailAddress: payload.emailAddress });
 
-    // newUser = new user();
+      var customError = null;
 
-    // newUser.emailAddress = request.body.emailAddress,
-    //   newUser.firstName = request.body.firstName,
-    //   newUser.surname = request.body.surname,
-    //   newUser.isAdministrator = request.body.isAdministrator,
-    //   newUser.password = request.body.password
+      if (!foundUser) {
+        customError = new Error("User not found - " + payload.emailAddress);
 
-    // newUser.modifiedBy = request.body.emailAddress;
+        customError.httpCode = 401;
 
-    // newUser.save(function (error) {
-    //   var returnMessage = {};
+        throw customError;
+      }
 
-    //   try {
-    //     if (error) {
-    //       throw error;
-    //     }
+      if (!payload.currentPassword) {
+        if (foundUser.password !== '') {
+          customError = new Error("Password has already been set for " + payload.emailAddress);
+  
+          customError.httpCode = 401;
+  
+          throw customError;  
+        }
+      }
+      else {
+        if (!foundUser.comparePassword(payload.currentPassword)) {
+          customError = new Error("Token password for " + payload.emailAddress + " does not match existing password");
+  
+          customError.httpCode = 401;
+  
+          throw customError;  
+        }  
+      }
 
-    //     returnMessage.error = null;
-    //     returnMessage.body = {};
+      var returnMessage = {};
 
-    //     response.status(200).json(returnMessage);
-    //   }
-    //   catch (error) {
-    //     next(error);
-    //   }
-    // });
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      returnMessage.body.emailAddress = payload.emailAddress;
+
+      var userProfile = {};
+
+      userProfile.ID = payload.emailAddress;
+      userProfile.createPasswordProfile = true;
+
+      response.set("Authorization", "Bearer " + JSONWebToken.sign({
+        userProfile: userProfile 
+      }, config.secret));
+
+      response.status(200).json(returnMessage);
+    }
+    catch(error) {
+      next(error);
+    }
   });
 
-  router.post("/createPassword", authorizer.authorize({ allowTemporaryToken: true }), function (request, response, next) {
-    // var customError = null;
+  router.post("/createPassword", authorizer.authorize({ isCreatingPassword: true }), async (request, response, next) => {
+    var customError = null;
 
-    // if (!(request.body.emailAddress && request.body.password)) {
-    //   customError = new Error("Username and password are required");
+    try {
+      if (!(request.body.emailAddress && request.body.password)) {
+        customError = new Error("Email address and password are required");
 
-    //   customError.httpCode = 400;
+        customError.httpCode = 400;
 
-    //   throw customError;
-    // }
+        throw customError;
+      }
 
-    // user.findOne({ emailAddress: request.body.emailAddress })
-    //   .then(function (foundUser) {
-    //     var customError = null;
+      const foundUser = await user.findOne({ emailAddress: request.body.emailAddress })
 
-    //     if (!foundUser) {
-    //       customError = new Error("User not found");
+      if (!foundUser) {
+        customError = new Error("User not found");
 
-    //       customError.httpCode = 401;
+        customError.httpCode = 400;
 
-    //       throw customError;
-    //     }
+        throw customError;
+      }
 
-    //     foundUser.password = request.body.password;
+      foundUser.password = request.body.password;
 
-    //     return foundUser.save();
-    //   })
-    //   .then(function () {
-    //     var returnMessage = {};
+      await foundUser.save();
 
-    //     returnMessage.error = null;
-    //     returnMessage.body = {};
+      var returnMessage = {};
 
-    //     response.status(200).json(returnMessage);
-    //   })
-    //   .catch(function (error) {
-    //     next(error);
-    //   });
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      response.status(200).json(returnMessage);
+    }
+    catch(error) {
+      next(error);
+    }
   });
 
   router.post("/authenticate", function (request, response, next) {
@@ -312,7 +351,7 @@ exports = module.exports = function (app, router) {
         if (!foundUser) {
           customError = new Error("User not found");
 
-          customError.code = 401;
+          customError.httpCode = 401;
 
           throw customError;
         }
@@ -492,7 +531,12 @@ exports = module.exports = function (app, router) {
       .then(function ([savedUser, emailTemplate]) {
         readCoaches(currentSettings, response, next);
 
-        emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname);
+        if (process.env.NODE_ENV === "production") {
+          emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname);
+        }
+        else {
+          emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname + ':' + config.port);
+        }
 
         var transporter = nodemailer.createTransport({
           host: 'smtp.gmail.com',
@@ -600,7 +644,7 @@ exports = module.exports = function (app, router) {
   app.use("/api", router);
 
   app.use(function (request, response) {
-    response.sendFile("./dist/index.html");
+    response.sendFile("index.html", { "root": "./dist"});
   });
 }
 

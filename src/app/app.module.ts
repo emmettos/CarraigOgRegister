@@ -20,10 +20,12 @@ import {
   ConfigurationService,
   GroupsService,
   CoachesService, 
-  PlayersService } from './_services/index';
+  PlayersService,
+  UserService } from './_services/index';
 
 import { AlertComponent } from './_components/alert/alert.component';
 import { AppComponent } from './app.component';
+import { CreatePasswordComponent } from './_components/create-password/create-password.component';
 import { ErrorComponent } from './_components/error/error.component';
 import { LoginComponent } from './_components/login/login.component';
 import { GroupsListComponent } from './_components/groups-list/groups-list.component';
@@ -36,6 +38,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
   declarations: [
     AlertComponent,
     AppComponent,
+    CreatePasswordComponent,
     ErrorComponent,
     GroupsListComponent,
     GroupThumbnailComponent,
@@ -63,6 +66,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
     PlayersService,
     ToasterService,
     CoachesService,
+    UserService,
     { 
       provide: ErrorHandler, 
       useClass: ApplicationErrorHandlerService 
