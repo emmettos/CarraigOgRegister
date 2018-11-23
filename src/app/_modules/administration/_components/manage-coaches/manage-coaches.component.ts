@@ -94,6 +94,8 @@ export class ManageCoachesComponent implements OnInit {
   onClickAddCoach() {
     const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
 
+    modalRef.componentInstance.currentCoaches = this.coaches;
+
     modalRef.result
       .then(returnObject => {
         if (returnObject) {
@@ -232,19 +234,6 @@ export class ManageCoachesComponent implements OnInit {
       if (coach.emailAddress === userProfile.ID) {
         coach.currentSessionOwner = true;
       }
-    });
-
-    this.coaches.sort((coach1: any, coach2: any) => {
-      let returnValue: number = 1;
-
-      if (coach1._id < coach2._id) {
-        returnValue = -1;
-      }
-      else if (coach1._id === coach2._id) {
-        returnValue = 0;
-      }
-      
-      return returnValue;
     });
 
     this.filteredCoaches = this.coaches.slice(0);

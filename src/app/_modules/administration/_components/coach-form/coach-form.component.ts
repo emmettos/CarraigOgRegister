@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -16,12 +16,17 @@ export class CoachFormComponent implements OnInit {
   @Input()
   coachDetails: ICoach;
 
+  @Input()
+  currentCoaches: ICoach[];
+
+  emailAddressControl: FormControl;
+    
   coachForm: FormGroup;
 
-  editingCoach: Boolean = false;
+  editingCoach: boolean = false;
   title = 'Add New Coach';
 
-  savingCoach: Boolean = false;
+  savingCoach: boolean = false;
 
   constructor(
     private activeModal: NgbActiveModal,
@@ -31,20 +36,27 @@ export class CoachFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.coachDetails) {
+      this.editingCoach = true;
+      this.title = 'Edit Coach - ' + this.coachDetails.emailAddress;
+
+      this.emailAddressControl = new FormControl(this.coachDetails.emailAddress);
+      this.emailAddressControl.disable();
+    }
+    else {
+      this.emailAddressControl = new FormControl('', { 
+        validators: [Validators.required, this.validationService.emailValidator, this.validationService.newCoachValidator(this.currentCoaches)],
+        updateOn: 'blur'
+      });
+    }
+
     this.coachForm = this.formBuilder.group({
-      'emailAddress': [{ value: this.coachDetails ? this.coachDetails.emailAddress : '', disabled: this.coachDetails }, Validators.compose([Validators.required, this.validationService.emailValidator])],
+      'emailAddress': this.emailAddressControl,
       'firstName': [this.coachDetails ? this.coachDetails.firstName : '', Validators.required],
       'surname': [this.coachDetails ? this.coachDetails.surname : '', Validators.required],
       'phoneNumber': [this.coachDetails ? this.coachDetails.phoneNumber : ''],
       'isAdministrator': [this.coachDetails ? this.coachDetails.isAdministrator : false],
     });
-
-    if (this.coachDetails) {
-      this.editingCoach = true;
-      this.title = 'Edit Coach - ' + this.coachDetails.emailAddress;
-
-      this.coachForm.controls['emailAddress'].disable();
-    }
   }
  
   onClickCancel() {
@@ -116,7 +128,7 @@ export class CoachFormComponent implements OnInit {
   }
 
   private disableControls(): void {
-    this.coachForm.controls['emailAddress'].disable();
+    this.emailAddressControl.disable();
     this.coachForm.controls['firstName'].disable();
     this.coachForm.controls['surname'].disable();
     this.coachForm.controls['phoneNumber'].disable();

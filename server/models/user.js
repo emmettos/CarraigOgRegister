@@ -18,6 +18,8 @@ var userSchema = new Schema({
 	updatedDate: { type: Date, required: true }
 });
 
+userSchema.index({ emailAddress: 1 }, { unique: true });
+
 userSchema.virtual("modifiedBy").set(function (userId) {
 	var user = this,
 		currentDate = new Date();
