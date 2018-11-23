@@ -1,6 +1,6 @@
 <!-- Most id's are used for unit testing -->
 <header class="navbar navbar-dark navbar-fixed-top navbar-expand-sm mb-3">
-  <a class="navbar-brand" routerLink="/groups" (click)="navbarCollapsed = true">Carraig Og Register</a>
+  <a class="navbar-brand" [routerLink]="authorizationService.getPayload ? '/groups' : '/login'" (click)="navbarCollapsed = true">Carraig Og Register</a>
 
   <button class="navbar-toggler navbar-toggler-right" type="button" (click)="navbarCollapsed = !navbarCollapsed">
     <span class="navbar-toggler-icon"></span>
