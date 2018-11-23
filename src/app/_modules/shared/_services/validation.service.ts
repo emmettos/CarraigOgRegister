@@ -55,6 +55,10 @@ export class ValidationService {
 
   newCoachValidator(currentCoaches: ICoach[]) {
     return (control: FormControl): {[key: string]: any} => {
+      if (!currentCoaches) {
+        return null;
+      }
+      
       let existingCoach: ICoach = currentCoaches.find(coach => {
         return coach.emailAddress === control.value;
       });

@@ -342,6 +342,7 @@ describe('ManageCoachesComponent', () => {
   it('should process returned coaches after add coach', fakeAsync(() => {
     spyOn(modalService, 'open')
       .and.returnValue({
+        componentInstance: {},
         result: Promise.resolve({
           coachDetails: {
             'emailAddress': 'siward_hansen@carraigog.com',
@@ -437,19 +438,19 @@ describe('ManageCoachesComponent', () => {
 
     expect(JSON.stringify(component.coaches)).toEqual(JSON.stringify([
       {
-        '_id': '573d088683acbba74068c0ea',
-        'firstName': 'Angel',
-        'surname': 'Klein',
-        'emailAddress': 'angel_klein@carraigog.com',
-        'phoneNumber': '086 2175716',
-        'isAdministrator': false,
+        '_id': 'b093d6d273adfb49ae33e6e1',
+        'firstName': 'Administrator',
+        'surname': '',
+        'emailAddress': 'admin@carraigog.com',
+        'phoneNumber': '086 1550344',
+        'isAdministrator': true,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': true,
-        'currentSessionOwner': false
+        'active': false,
+        'currentSessionOwner': true
       },
       {
         '_id': '6293c9a83fd22e7fa8e66d3f',
@@ -482,19 +483,19 @@ describe('ManageCoachesComponent', () => {
         'currentSessionOwner': false
       },
       {
-        '_id': 'b093d6d273adfb49ae33e6e1',
-        'firstName': 'Administrator',
-        'surname': '',
-        'emailAddress': 'admin@carraigog.com',
-        'phoneNumber': '086 1550344',
-        'isAdministrator': true,
+        '_id': '573d088683acbba74068c0ea',
+        'firstName': 'Angel',
+        'surname': 'Klein',
+        'emailAddress': 'angel_klein@carraigog.com',
+        'phoneNumber': '086 2175716',
+        'isAdministrator': false,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': false,
-        'currentSessionOwner': true
+        'active': true,
+        'currentSessionOwner': false
       },
       {
         '_id': 'f9d2e596bb0fffebad95ae6a',
@@ -511,13 +512,14 @@ describe('ManageCoachesComponent', () => {
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
-      }
+      }  
     ]));
   }));
 
   it('should display successfully added coach popup', fakeAsync(() => {
     spyOn(modalService, 'open')
       .and.returnValue({
+        componentInstance: {},
         result: Promise.resolve({
           coachDetails: {
             'emailAddress': 'siward_hansen@carraigog.com',
@@ -617,6 +619,7 @@ describe('ManageCoachesComponent', () => {
   it('should display failed adding coach popup', fakeAsync(() => {
     spyOn(modalService, 'open')
       .and.returnValue({
+        componentInstance: {},
         result: Promise.reject({
           coachDetails: {
             'emailAddress': 'siward_hansen@carraigog.com',
@@ -740,19 +743,19 @@ describe('ManageCoachesComponent', () => {
 
     expect(JSON.stringify(component.coaches)).toEqual(JSON.stringify([
       {
-        '_id': '573d088683acbba74068c0ea',
-        'firstName': 'Angel',
-        'surname': 'Klein',
-        'emailAddress': 'angel_klein@carraigog.com',
-        'phoneNumber': '086 2175716',
-        'isAdministrator': false,
+        '_id': 'b093d6d273adfb49ae33e6e1',
+        'firstName': 'Administrator',
+        'surname': '',
+        'emailAddress': 'admin@carraigog.com',
+        'phoneNumber': '086 1550344',
+        'isAdministrator': true,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': true,
-        'currentSessionOwner': false
+        'active': false,
+        'currentSessionOwner': true
       },
       {
         '_id': '6293c9a83fd22e7fa8e66d3f',
@@ -785,19 +788,19 @@ describe('ManageCoachesComponent', () => {
         'currentSessionOwner': false
       },
       {
-        '_id': 'b093d6d273adfb49ae33e6e1',
-        'firstName': 'Administrator',
-        'surname': '',
-        'emailAddress': 'admin@carraigog.com',
-        'phoneNumber': '086 1550344',
-        'isAdministrator': true,
+        '_id': '573d088683acbba74068c0ea',
+        'firstName': 'Angel',
+        'surname': 'Klein',
+        'emailAddress': 'angel_klein@carraigog.com',
+        'phoneNumber': '086 2175716',
+        'isAdministrator': false,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': false,
-        'currentSessionOwner': true
+        'active': true,
+        'currentSessionOwner': false
       }
     ]));
   }));
@@ -1058,19 +1061,19 @@ describe('ManageCoachesComponent', () => {
 
     expect(JSON.stringify(component.coaches)).toEqual(JSON.stringify([
       {
-        '_id': '573d088683acbba74068c0ea',
-        'firstName': 'Angel',
-        'surname': 'Klein',
-        'emailAddress': 'angel_klein@carraigog.com',
-        'phoneNumber': '086 2175716',
-        'isAdministrator': false,
+        '_id': 'b093d6d273adfb49ae33e6e1',
+        'firstName': 'Administrator',
+        'surname': '',
+        'emailAddress': 'admin@carraigog.com',
+        'phoneNumber': '086 1550344',
+        'isAdministrator': true,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': true,
-        'currentSessionOwner': false
+        'active': false,
+        'currentSessionOwner': true
       },
       {
         '_id': '6293c9a83fd22e7fa8e66d3f',
@@ -1088,19 +1091,19 @@ describe('ManageCoachesComponent', () => {
         'currentSessionOwner': false
       },
       {
-        '_id': 'b093d6d273adfb49ae33e6e1',
-        'firstName': 'Administrator',
-        'surname': '',
-        'emailAddress': 'admin@carraigog.com',
-        'phoneNumber': '086 1550344',
-        'isAdministrator': true,
+        '_id': '573d088683acbba74068c0ea',
+        'firstName': 'Angel',
+        'surname': 'Klein',
+        'emailAddress': 'angel_klein@carraigog.com',
+        'phoneNumber': '086 2175716',
+        'isAdministrator': false,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0,
-        'active': false,
-        'currentSessionOwner': true
+        'active': true,
+        'currentSessionOwner': false
       }
     ]));
   }));

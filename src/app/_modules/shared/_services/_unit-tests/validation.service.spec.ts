@@ -70,7 +70,7 @@ describe('ValidationService', () => {
   });
 
   it('should return invalid password match message', () => {
-    expect(service.validationMessage('invalidConfirmPassword')).toEqual('The new passwords do not match');
+    expect(service.validationMessage('invalidConfirmPassword')).toEqual('The Confirm Password does not match the Password');
   });
 
   it('should return invalid required message', () => {
