@@ -9,7 +9,7 @@ describe('UserService', () => {
 
   let service: UserService;
   
-  let createPasswordToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbEFkZHJlc3MiOiJlbW1ldHQub3N1bGxpdmFuQG50dGRhdGEuY29tIiwiaWF0IjoxNTQyODAxOTI0fQ.fj7rOyqiOzfeQutaAxnHLFOcytTrcEst3N_ft79Roa4';
+  let JWTToken: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbEFkZHJlc3MiOiJlbW1ldHQub3N1bGxpdmFuQG50dGRhdGEuY29tIiwiaWF0IjoxNTQyODAxOTI0fQ.fj7rOyqiOzfeQutaAxnHLFOcytTrcEst3N_ft79Roa4';
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -82,7 +82,7 @@ describe('UserService', () => {
   });
 
   it('should call url for verify user token', () => {
-    service.verifyUserToken(createPasswordToken)
+    service.verifyUserToken(JWTToken)
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/verifyUserToken');
@@ -93,13 +93,13 @@ describe('UserService', () => {
   });
 
   it('should pass request body for verify user token', () => {
-    service.verifyUserToken(createPasswordToken)
+    service.verifyUserToken(JWTToken)
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/verifyUserToken');
 
     expect(mockRequest.request.body).toEqual({
-      userToken: createPasswordToken
+      userToken: JWTToken
     });
 
     mockRequest.flush(null);
