@@ -19,7 +19,7 @@ import { NavComponent } from './nav.component';
 class MockComponent {
 }
 
-describe('NavComponent', () => {
+fdescribe('NavComponent', () => {
   let component: NavComponent;
   let fixture: ComponentFixture<NavComponent>;
 
@@ -70,6 +70,30 @@ describe('NavComponent', () => {
     fixture.detectChanges();
   
     expect(component).toBeTruthy();
+  });
+
+  it('should home link as /login for signed out user', () => {
+    spyOnProperty(authorizationService, 'getPayload', 'get')
+      .and.returnValue(null);
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#home-link").attributes['href'].nodeValue).toEqual('/login');
+  });
+
+  it('should display home link as /groups for signed in user', () => {
+    spyOnProperty(authorizationService, 'getPayload', 'get')
+      .and.returnValue({
+        userProfile: {
+          ID: 'xxx',
+          fullName: 'Test Coach',
+          isAdministrator: false
+        }
+      });
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#home-link").attributes['href'].nodeValue).toEqual('/groups');
   });
 
   it('should hide Signed in as... menu for signed out user', () => {
