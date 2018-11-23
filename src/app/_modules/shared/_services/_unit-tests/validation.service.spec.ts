@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { ValidationService } from '../index';
 
 
-fdescribe('ValidationService', () => {
+describe('ValidationService', () => {
   let service: ValidationService;
   let formControl = new FormControl();
 
