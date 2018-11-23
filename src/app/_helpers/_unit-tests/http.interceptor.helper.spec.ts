@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClient } from '@angular/common/http';
 import { TestBed, fakeAsync, tick } from '@angular/core/testing';
-import {HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { ToasterModule, ToasterService } from 'angular2-toaster';
@@ -160,6 +160,33 @@ describe('HttpInterceptorHelper', () => {
       .and.returnValue(null);
     
     spyOn(toasterService, 'pop');
+
+    expect(toasterService.pop).not.toHaveBeenCalled();
+  });
+
+  it('should ignore /api/verifyUser 401 response', () => {
+    spyOn(authorizationService, 'readToken')
+      .and.returnValue(null);
+
+    http.post<any>('/api/verifyUserToken', {})
+      .subscribe({
+        error: error => {
+        }
+      });
+
+    const mockRequest = httpMock.expectOne('/api/verifyUserToken');
+  
+    spyOnProperty(authorizationService, 'getPayload', 'get')
+      .and.returnValue(null);
+    
+    spyOn(toasterService, 'pop');
+
+    mockRequest.flush({
+      'error': {
+        'statusCode': 401,
+        'requestID': '6842d498-b226-45be-9a46-f446c7743d2f',
+        'message': 'User not found - test@gmail.com'
+      }}, { status: 401, statusText: '' });
 
     expect(toasterService.pop).not.toHaveBeenCalled();
   });
