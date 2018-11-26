@@ -507,127 +507,123 @@ exports = module.exports = function (app, router) {
       });
   });
 
-  router.post("/createCoach", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var userDetails = request.body.coachDetails,
+  router.post("/createCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var userDetails = request.body.coachDetails,
         newUser = new user(),
-        saveUser,
-        readEmailTemplate;
+        savedUser,
+        emailTemplate;
 
-    newUser.firstName = userDetails.firstName;
-    newUser.surname = userDetails.surname;
-    newUser.emailAddress = userDetails.emailAddress;
-    newUser.phoneNumber = userDetails.phoneNumber;
-    newUser.isAdministrator = userDetails.isAdministrator;
-    newUser.password = "";
+      newUser.firstName = userDetails.firstName;
+      newUser.surname = userDetails.surname;
+      newUser.emailAddress = userDetails.emailAddress;
+      newUser.phoneNumber = userDetails.phoneNumber;
+      newUser.isAdministrator = userDetails.isAdministrator;
+      newUser.password = "";
 
-    newUser.modifiedBy = request.payload.userProfile.ID;
+      newUser.modifiedBy = request.payload.userProfile.ID;
 
-    saveUser = newUser.save();
-    readEmailTemplate = saveUser.then(function (savedUser) {
-      return readFile('template.html');
-    });
-    
-    Promise.all([saveUser, readEmailTemplate])
-      .then(function ([savedUser, emailTemplate]) {
-        readCoaches(currentSettings, response, next);
+      savedUser = await newUser.save();
+      emailTemplate = await readFile('template.html');
 
-        if (process.env.NODE_ENV === "production") {
-          emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname);
+      readCoaches(currentSettings, response, next);
+
+      if (process.env.NODE_ENV === "production") {
+        emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname);
+      }
+      else {
+        emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname + ':' + config.port);
+      }
+
+      var transporter = nodemailer.createTransport({
+        host: 'smtp.gmail.com',
+        port: 465,
+        secure: true,
+        auth: {
+          type: 'oauth2',
+          user: 'carraigogregister@gmail.com',
+          clientId: process.env.GOOGLE_API_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_API_CLIENT_SECRET,
+          refreshToken: process.env.GOOGLE_OUTH2_PLAYGROUND_REFRESH_TOKEN,
+          accessToken: process.env.GOOGLE_OUTH2_PLAYGROUND_ACCESS_TOKEN
         }
-        else {
-          emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname + ':' + config.port);
-        }
-
-        var transporter = nodemailer.createTransport({
-          host: 'smtp.gmail.com',
-          port: 465,
-          secure: true,
-          auth: {
-            type: 'oauth2',
-            user: 'carraigogregister@gmail.com',
-            clientId: process.env.GOOGLE_API_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_API_CLIENT_SECRET,
-            refreshToken: process.env.GOOGLE_OUTH2_PLAYGROUND_REFRESH_TOKEN,
-            accessToken: process.env.GOOGLE_OUTH2_PLAYGROUND_ACCESS_TOKEN
-          }
-        });
-
-        const mailOptions = {
-          from: 'carraigogregister@gmail.com',
-          to: savedUser.emailAddress,
-          subject: 'Welcome to Carraig Og Register. Please verify your account...',
-          html: emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret))
-          //html: emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret, { expiresIn: '7d'}))
-        };
-
-        transporter.sendMail(mailOptions, function (error, info) {
-          if (error) {
-            request.logger.error(error);
-          }
-        });
-      })
-      .catch(function (error) {
-        next(error);
       });
+
+      const mailOptions = {
+        from: 'carraigogregister@gmail.com',
+        to: savedUser.emailAddress,
+        subject: 'Welcome to Carraig Og Register. Please verify your account...',
+        html: emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret))
+      };
+
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          request.logger.error(error);
+        }
+      });
+    }
+    catch(error) {
+      next(error);
+    };
   });
 
-  router.post("/updateCoach", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var userDetails = request.body.coachDetails;
+  router.post("/updateCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var userDetails = request.body.coachDetails,
+          customError = null,
+          foundUser = null;
 
-    user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
-      .then(function (foundUser) {
-        var customError = null;
+      foundUser = await user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v });
 
-        if (!foundUser) {
-          customError = new Error("User not found");
+      if (!foundUser) {
+        customError = new Error("User not found");
 
-          customError.httpCode = 409;
+        customError.httpCode = 409;
 
-          throw customError;
-        }
+        throw customError;
+      }
 
-        foundUser.firstName = Object.prototype.hasOwnProperty.call(userDetails, 'firstName') ? userDetails.firstName : foundUser.firstName;
-        foundUser.surname = Object.prototype.hasOwnProperty.call(userDetails, 'surname') ? userDetails.surname : foundUser.surname;
-        foundUser.emailAddress = Object.prototype.hasOwnProperty.call(userDetails, 'emailAddress') ? userDetails.emailAddress : foundUser.emailAddress;
-        foundUser.phoneNumber = Object.prototype.hasOwnProperty.call(userDetails, 'phoneNumber') ? userDetails.phoneNumber : foundUser.phoneNumber;
-        foundUser.isAdministrator = Object.prototype.hasOwnProperty.call(userDetails, 'isAdministrator') ? userDetails.isAdministrator : foundUser.isAdministrator;
-    
-        foundUser.modifiedBy = request.payload.userProfile.ID;
-        foundUser.increment();
+      foundUser.firstName = Object.prototype.hasOwnProperty.call(userDetails, 'firstName') ? userDetails.firstName : foundUser.firstName;
+      foundUser.surname = Object.prototype.hasOwnProperty.call(userDetails, 'surname') ? userDetails.surname : foundUser.surname;
+      foundUser.emailAddress = Object.prototype.hasOwnProperty.call(userDetails, 'emailAddress') ? userDetails.emailAddress : foundUser.emailAddress;
+      foundUser.phoneNumber = Object.prototype.hasOwnProperty.call(userDetails, 'phoneNumber') ? userDetails.phoneNumber : foundUser.phoneNumber;
+      foundUser.isAdministrator = Object.prototype.hasOwnProperty.call(userDetails, 'isAdministrator') ? userDetails.isAdministrator : foundUser.isAdministrator;
+  
+      foundUser.modifiedBy = request.payload.userProfile.ID;
+      foundUser.increment();
 
-        return foundUser.save();
-      })
-      .then(function (savedUser) {
-        readCoaches(currentSettings, response, next);
-      })
-      .catch(function (error) {
-        next(error);
-      });
+      await foundUser.save();
+
+      readCoaches(currentSettings, response, next);
+    }
+    catch(error) {
+      next(error);
+    }
   });
 
-  router.post("/deleteCoach", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var userDetails = request.body.coachDetails;
+  router.post("/deleteCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var userDetails = request.body.coachDetails,
+          customError = null,
+          foundUser = null;
 
-    user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
-      .then(function (foundUser) {
-        var customError = null;
+      foundUser = await user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
 
-        if (!foundUser) {
-          customError = new Error("User not found");
+      if (!foundUser) {
+        customError = new Error("User not found");
 
-          customError.httpCode = 409;
+        customError.httpCode = 409;
 
-          throw customError;
-        }
+        throw customError;
+      }
 
-        return user.deleteOne({ "_id": mongoose.Types.ObjectId(foundUser._id), "__v": foundUser.__v })
-      })
-      .then(function () {
-        readCoaches(currentSettings, response, next);
-      })
-      .catch(function (error) {
-        next(error);
-      });
+      await user.deleteOne({ "_id": mongoose.Types.ObjectId(foundUser._id), "__v": foundUser.__v })
+        
+      readCoaches(currentSettings, response, next);
+    }
+    catch(error) {
+      next(error);
+    }
   });
 
   router.post("/writeLog", authorizer.authorize(), function (request, response, next) {
@@ -648,43 +644,38 @@ exports = module.exports = function (app, router) {
   });
 }
 
-var readCoaches = function (currentSettings, response, next) {
-  var readUsers = user.find({}, "-password").lean().exec(),
-      readGroups = readUsers.then(function (users) {
-        return group.find({ "year": currentSettings.year }).lean().exec();
-      });
+var readCoaches = async (currentSettings, response, next) => {
+  var users = null,
+      groups = null;
+
+  users = await user.find({}, "-password").lean().exec(),
+  groups = await group.find({ "year": currentSettings.year }).lean().exec();
   
-  Promise.all([readUsers, readGroups])
-    .then(function([users, groups]) {
-      var returnMessage = {};
+  var returnMessage = {};
 
-      returnMessage.error = null;
-      returnMessage.body = {};
+  returnMessage.error = null;
+  returnMessage.body = {};
 
-      users.forEach(function (user) {
-        var group = groups.find(function (group) {
-          return group.footballManager === user.emailAddress || group.hurlingManager === user.emailAddress;
-        });
-    
-        if (group) {
-          user.active = true;
-        }
-        else {
-          user.active = false;
-        }
-      });
-
-      returnMessage.body.coaches = users;
-
-      response.status(200).json(returnMessage);
-    })
-    .catch(function (error) {
-      next(error);
+  users.forEach(function (user) {
+    var group = groups.find(function (group) {
+      return group.footballManager === user.emailAddress || group.hurlingManager === user.emailAddress;
     });
+
+    if (group) {
+      user.active = true;
+    }
+    else {
+      user.active = false;
+    }
+  });
+
+  returnMessage.body.coaches = users;
+
+  response.status(200).json(returnMessage);
 };
 
 var readFile = function (fileName) {
-  var promise = new Promise(function (resolve, reject) {
+  var promise = new Promise((resolve, reject) => {
     fs.readFile(fileName, 'utf-8', (error, data) => {
       try {
         if (error) {
