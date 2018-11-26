@@ -70,6 +70,10 @@ export class CreatePasswordComponent implements OnInit {
       .subscribe({
         next: response => {
           this.passwordCreated = true;
+
+          setTimeout(() => {
+            this.router.navigate(['/login']);
+          }, 3000);
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {
