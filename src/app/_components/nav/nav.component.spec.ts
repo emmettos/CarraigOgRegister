@@ -19,7 +19,7 @@ import { NavComponent } from './nav.component';
 class MockComponent {
 }
 
-fdescribe('NavComponent', () => {
+describe('NavComponent', () => {
   let component: NavComponent;
   let fixture: ComponentFixture<NavComponent>;
 

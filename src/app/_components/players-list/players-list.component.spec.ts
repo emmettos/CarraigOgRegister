@@ -32,7 +32,8 @@ describe('PlayersListComponent', () => {
         RouterTestingModule
       ],
       providers: [
-        { provide: ActivatedRoute,
+        { 
+          provide: ActivatedRoute,
           useValue: {
             snapshot: {
               paramMap: convertToParamMap({
