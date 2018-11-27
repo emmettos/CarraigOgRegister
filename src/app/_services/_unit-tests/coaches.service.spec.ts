@@ -181,7 +181,7 @@ describe('CoachesService', () => {
         'active': false,
         'currentSessionOwner': true
         },
-      sendGoodByeEmail: true
+      sendGoodbyeEmail: true
     });
 
     mockRequest.flush(null);

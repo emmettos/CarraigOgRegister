@@ -27,7 +27,7 @@ export class ConfirmDeleteCoachComponent implements OnInit {
 
   ngOnInit() {
     this.deleteCoachForm = this.formBuilder.group({
-      'sendGoodByeEmail': [false],
+      'sendGoodbyeEmail': [false],
     });
   }
  
@@ -36,7 +36,7 @@ export class ConfirmDeleteCoachComponent implements OnInit {
   }
 
   onSubmit(formValues: any) {
-    this.coachesService.deleteCoach(this.coachDetails, formValues.sendGoodByeEmail)
+    this.coachesService.deleteCoach(this.coachDetails, formValues.sendGoodbyeEmail)
       .subscribe({
         next: response => {
           let returnObject: any = {}
@@ -58,6 +58,6 @@ export class ConfirmDeleteCoachComponent implements OnInit {
 
     this.deletingCoach = true;
 
-    this.deleteCoachForm.controls['sendGoodByeEmail'].disable();
+    this.deleteCoachForm.controls['sendGoodbyeEmail'].disable();
   }
 }

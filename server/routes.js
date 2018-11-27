@@ -129,13 +129,18 @@ exports = module.exports = function (app, router) {
 
         response.status(200).json(returnMessage);
       })
-      .catch(function (error) {
+      .catch (function (error) {
         next(error);
       });
   });
 
-  router.get("/coaches", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    readCoaches(currentSettings, response, next);
+  router.get("/coaches", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      await readCoaches(currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
   });
 
   router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
@@ -163,7 +168,7 @@ exports = module.exports = function (app, router) {
 
           response.status(200).json(returnMessage);
         })
-        .catch(function (error) {
+        .catch (function (error) {
           next(error);
         });
     }
@@ -247,7 +252,7 @@ exports = module.exports = function (app, router) {
 
       response.status(200).json(returnMessage);
     }
-    catch(error) {
+    catch (error) {
       next(error);
     }
   });
@@ -285,7 +290,7 @@ exports = module.exports = function (app, router) {
 
       response.status(200).json(returnMessage);
     }
-    catch(error) {
+    catch (error) {
       next(error);
     }
   });
@@ -338,7 +343,7 @@ exports = module.exports = function (app, router) {
 
         response.status(200).json(returnMessage);
       })
-      .catch(function (error) {
+      .catch (function (error) {
         next(error);
       });
   });
@@ -381,7 +386,7 @@ exports = module.exports = function (app, router) {
 
         response.status(200).json(returnMessage);
       })
-      .catch(function (error) {
+      .catch (function (error) {
         next(error);
       });
   });
@@ -433,7 +438,7 @@ exports = module.exports = function (app, router) {
 
         response.status(200).json(returnMessage);
       })
-      .catch(function (error) {
+      .catch (function (error) {
         next(error);
       });
   });
@@ -502,7 +507,7 @@ exports = module.exports = function (app, router) {
 
         response.status(200).json(returnMessage);
       })
-      .catch(function (error) {
+      .catch (function (error) {
         next(error);
       });
   });
@@ -510,9 +515,9 @@ exports = module.exports = function (app, router) {
   router.post("/createCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       var userDetails = request.body.coachDetails,
-        newUser = new user(),
-        savedUser,
-        emailTemplate;
+          newUser = new user(),
+          savedUser,
+          emailTemplate;
 
       newUser.firstName = userDetails.firstName;
       newUser.surname = userDetails.surname;
@@ -524,45 +529,17 @@ exports = module.exports = function (app, router) {
       newUser.modifiedBy = request.payload.userProfile.ID;
 
       savedUser = await newUser.save();
-      emailTemplate = await readFile('template.html');
 
-      readCoaches(currentSettings, response, next);
+      emailTemplate = await readFile('email_templates/create-password-template.html');
+   
+      sendEmail(savedUser.emailAddress, 
+        'Welcome to Carraig Og Register. Please verify your account...', 
+        emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret)), 
+        request);
 
-      if (process.env.NODE_ENV === "production") {
-        emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname);
-      }
-      else {
-        emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname + ':' + config.port);
-      }
-
-      var transporter = nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true,
-        auth: {
-          type: 'oauth2',
-          user: 'carraigogregister@gmail.com',
-          clientId: process.env.GOOGLE_API_CLIENT_ID,
-          clientSecret: process.env.GOOGLE_API_CLIENT_SECRET,
-          refreshToken: process.env.GOOGLE_OUTH2_PLAYGROUND_REFRESH_TOKEN,
-          accessToken: process.env.GOOGLE_OUTH2_PLAYGROUND_ACCESS_TOKEN
-        }
-      });
-
-      const mailOptions = {
-        from: 'carraigogregister@gmail.com',
-        to: savedUser.emailAddress,
-        subject: 'Welcome to Carraig Og Register. Please verify your account...',
-        html: emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret))
-      };
-
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          request.logger.error(error);
-        }
-      });
+      await readCoaches(currentSettings, response, next);
     }
-    catch(error) {
+    catch (error) {
       next(error);
     };
   });
@@ -594,9 +571,9 @@ exports = module.exports = function (app, router) {
 
       await foundUser.save();
 
-      readCoaches(currentSettings, response, next);
+      await readCoaches(currentSettings, response, next);
     }
-    catch(error) {
+    catch (error) {
       next(error);
     }
   });
@@ -605,7 +582,8 @@ exports = module.exports = function (app, router) {
     try {
       var userDetails = request.body.coachDetails,
           customError = null,
-          foundUser = null;
+          foundUser = null,
+          emailTemplate = null;
 
       foundUser = await user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
 
@@ -619,9 +597,15 @@ exports = module.exports = function (app, router) {
 
       await user.deleteOne({ "_id": mongoose.Types.ObjectId(foundUser._id), "__v": foundUser.__v })
         
-      readCoaches(currentSettings, response, next);
+      if (request.body.sendGoodbyeEmail) {
+        emailTemplate = await readFile('email_templates/goodbye-template.html');
+    
+        sendEmail(foundUser.emailAddress, 'Goodbye from Carraig Og Register', emailTemplate, request);
+      }
+
+      await readCoaches(currentSettings, response, next);
     }
-    catch(error) {
+    catch (error) {
       next(error);
     }
   });
@@ -674,8 +658,8 @@ var readCoaches = async (currentSettings, response, next) => {
   response.status(200).json(returnMessage);
 };
 
-var readFile = function (fileName) {
-  var promise = new Promise((resolve, reject) => {
+var readFile = (fileName) => {
+  return new Promise((resolve, reject) => {
     fs.readFile(fileName, 'utf-8', (error, data) => {
       try {
         if (error) {
@@ -689,7 +673,40 @@ var readFile = function (fileName) {
       }
     });
   });
-
-  return promise;
 };
 
+var sendEmail = (emailAddress, emailSubject, emailTemplate, request) => {
+  if (process.env.NODE_ENV === "production") {
+    emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname);
+  }
+  else {
+    emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname + ':' + config.port);
+  }
+
+  var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      type: 'oauth2',
+      user: 'carraigogregister@gmail.com',
+      clientId: process.env.GOOGLE_API_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_API_CLIENT_SECRET,
+      refreshToken: process.env.GOOGLE_OUTH2_PLAYGROUND_REFRESH_TOKEN,
+      accessToken: process.env.GOOGLE_OUTH2_PLAYGROUND_ACCESS_TOKEN
+    }
+  });
+
+  const mailOptions = {
+    from: 'carraigogregister@gmail.com',
+    to: emailAddress,
+    subject: emailSubject,
+    html: emailTemplate
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      request.logger.error(error);
+    }
+  });
+}

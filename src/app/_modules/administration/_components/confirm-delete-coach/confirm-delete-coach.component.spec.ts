@@ -78,11 +78,11 @@ describe('ConfirmDeleteCoachComponent', () => {
   it('should initialize new coach send goodbye email checkbox', () => {
     fixture.detectChanges();
 
-    expect(component.deleteCoachForm.controls['sendGoodByeEmail'].value).toBeFalsy();
+    expect(component.deleteCoachForm.controls['sendGoodbyeEmail'].value).toBeFalsy();
   });
 
   it('should update form value', () => {
-    component.deleteCoachForm.controls['sendGoodByeEmail'].setValue(true);
+    component.deleteCoachForm.controls['sendGoodbyeEmail'].setValue(true);
 
     expect(component.deleteCoachForm.value).toEqual({
       sendGoodByeEmail: true
@@ -90,7 +90,7 @@ describe('ConfirmDeleteCoachComponent', () => {
   });
 
   it('should call coachesService.deleteCoach when deleting a coach', () => {
-    component.deleteCoachForm.controls['sendGoodByeEmail'].setValue(true);
+    component.deleteCoachForm.controls['sendGoodbyeEmail'].setValue(true);
 
     spyOn(coachesService, 'deleteCoach')
       .and.returnValue(of({
@@ -260,7 +260,7 @@ describe('ConfirmDeleteCoachComponent', () => {
     });
   });
 
-  it('should disable sendGoodByeEmail field after submitting a coach to be deleted', () => {
+  it('should disable sendGoodbyeEmail field after submitting a coach to be deleted', () => {
     component.onSubmit(component.deleteCoachForm.value);
 
     expect(fixture.nativeElement.querySelector('#send-goodbye-email').disabled).toBeTruthy();  
