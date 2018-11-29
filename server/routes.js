@@ -147,6 +147,48 @@ exports = module.exports = function (app, router) {
     }
   });
 
+  router.get("/coachGroups/:emailAddress", async (request, response, next) => {
+    var groups = null,
+        groupIndex = 0,
+        currentGroup = null,
+        coachGroup = null,
+        coachGroups = [],
+        returnMessage = {};
+
+    try {
+      groups = await group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec();
+
+      for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
+        currentGroup = groups[groupIndex];
+
+        coachGroup = {};
+
+        coachGroup.groupName = currentGroup.name;
+        if (currentGroup.footballManager === request.params.emailAddress) {
+          coachGroup.role = 'Football Manager';
+
+          coachGroups.push(coachGroup);
+        }
+        else if (currentGroup.hurlingManager === request.params.emailAddress) {
+          coachGroup.role = 'Hurling Manager';
+
+          coachGroups.push(coachGroup);
+        }
+      }
+
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      returnMessage.body.coachGroups = coachGroups;
+
+      response.status(200).json(returnMessage);
+
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
   router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       var filter = null,

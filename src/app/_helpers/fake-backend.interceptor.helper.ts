@@ -1535,7 +1535,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
               coachDetails = <ICoach>{};
 
-              coachDetails._id = Math.floor(Math.random() * 16777215).toString(16);
+              coachDetails._id = this.generateId();
 
               coachDetails.emailAddress = request.body.coachDetails.emailAddress;
 
@@ -1592,6 +1592,32 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
+          if (/.*\/api\/coachGroups\/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(request.url)) {
+            let coachEmailAddress: string = request.url.substring(request.url.lastIndexOf('/') + 1);
+
+            let body = {
+              coachGroups: this.groups.filter(group => {
+                  return group.footballManager === coachEmailAddress || group.hurlingManager === coachEmailAddress;
+                })
+                .map(group => {
+                  let coachGroup: any = {
+                    groupName: group.name
+                  };
+
+                  if (group.footballManager === coachEmailAddress) {
+                    coachGroup.role = 'Football Manager';
+                  }
+                  else {
+                    coachGroup.role = 'Hurling Manager';
+                  }
+
+                  return coachGroup; 
+                })
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
           if (request.url.endsWith('/writeLog')) {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200 }));
           }
@@ -1631,5 +1657,16 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
     });
 
     return coaches;
+  }
+
+  private generateId(): string {
+    const range = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var Id = '';
+  
+    for (let index = 0; index < 24; index++) {
+      Id += range.charAt(Math.floor(Math.random() * range.length));
+    }
+
+    return Id;
   }
 }

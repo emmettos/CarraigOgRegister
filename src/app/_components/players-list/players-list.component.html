@@ -45,7 +45,7 @@
   </form>
   <br />
   <div class="table-responsive">
-    <table id="players-table" class="table table-bordered table-striped table-hover player-detail select-row">
+    <table id="players-table" class="table table-bordered table-striped table-hover select-row">
       <thead>
         <tr>
           <th (click)="onClickHeader('playerState')" class="text-right"><span class="float-left mr-1">Status</span><i [ngClass]="headerSortCSSClass('playerState')"></i></th>
@@ -59,7 +59,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let currentPlayer of filteredPlayers" [class.missing]="currentPlayer.playerState === playerState.Missing" (click)="onClickRow(content, currentPlayer._id)">
+        <tr *ngFor="let currentPlayer of filteredPlayers" [class.missing]="currentPlayer.playerState === playerState.Missing" (click)="onClickRow(content, currentPlayer)">
           <td><span class="badge detail-badge" [ngClass]="playerStateCSSClass(currentPlayer)"> </span></td>
           <td>{{ currentPlayer.surname }}</td>
           <td>{{ currentPlayer.firstName }}</td>

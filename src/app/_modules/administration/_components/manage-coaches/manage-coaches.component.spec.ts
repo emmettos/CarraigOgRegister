@@ -15,7 +15,7 @@ import { ValidationService } from '../../../../_modules/shared/_services';
 import { ManageCoachesComponent } from './manage-coaches.component';
 
 
-describe('ManageCoachesComponent', () => {
+fdescribe('ManageCoachesComponent', () => {
   let component: ManageCoachesComponent;
   let fixture: ComponentFixture<ManageCoachesComponent>;
 
@@ -306,6 +306,88 @@ describe('ManageCoachesComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('#displaying-message').innerHTML).toEqual('Displaying 2 Coaches');
+  });
+
+  it('should select selected dormant coach details', () => {
+    let modalService: NgbModal;
+
+    modalService = TestBed.get(NgbModal);
+
+    spyOn(modalService, 'open');
+
+    component.onClickRow(null, {
+      '_id': '6293c9a83fd22e7fa8e66d3f',
+      'firstName': 'Erick',
+      'surname': 'Norris',
+      'emailAddress': 'erick_norris@carraigog.com',
+      'phoneNumber': '086 6095372',
+      'isAdministrator': false,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedDate': '2018-05-09T09:55:59.735Z',
+      'updatedBy': 'administrator@carraigog.com',
+      '__v': 0,
+      'active': false,
+      'currentSessionOwner': false
+    });
+
+    expect(JSON.stringify(component.selectedCoach)).toEqual(JSON.stringify({
+      '_id': '6293c9a83fd22e7fa8e66d3f',
+      'firstName': 'Erick',
+      'surname': 'Norris',
+      'emailAddress': 'erick_norris@carraigog.com',
+      'phoneNumber': '086 6095372',
+      'isAdministrator': false,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedDate': '2018-05-09T09:55:59.735Z',
+      'updatedBy': 'administrator@carraigog.com',
+      '__v': 0,
+      'active': false,
+      'currentSessionOwner': false
+    }));  
+  });
+
+  it('should select selected active coach groups', () => {
+    let modalService: NgbModal;
+
+    modalService = TestBed.get(NgbModal);
+
+    spyOn(coachesService, 'readCoachGroups')
+    .and.returnValue(of({
+      'error': null,
+      'body': {
+        'coachGroups': [
+          {
+            groupName: 'Test Group',
+            role: 'Hurling Manager'
+          }
+        ]
+      }  
+    }));
+
+    spyOn(modalService, 'open');
+
+    component.onClickRow(null, {
+      '_id': '6293c9a83fd22e7fa8e66d3f',
+      'firstName': 'Erick',
+      'surname': 'Norris',
+      'emailAddress': 'erick_norris@carraigog.com',
+      'phoneNumber': '086 6095372',
+      'isAdministrator': false,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedDate': '2018-05-09T09:55:59.735Z',
+      'updatedBy': 'administrator@carraigog.com',
+      '__v': 0,
+      'active': true,
+      'currentSessionOwner': false
+    });
+
+    expect(JSON.stringify(component.coachGroups)).toEqual(JSON.stringify([{
+      groupName: 'Test Group',
+      role: 'Hurling Manager'
+    }]));
   });
 
   it('should download CSV of current filter', () => {

@@ -27,9 +27,13 @@ export class ManageCoachesComponent implements OnInit {
   coaches: ICoach[] = null;
   filteredCoaches: ICoach[] = null;
 
+  selectedCoach: ICoach = null;
+
   totalCount: number = 0;
   activeCount: number = 0;
   dormantCount: number = 0;
+
+  coachGroups: any[] = null;
 
   constructor(
     private modalService: NgbModal,
@@ -111,6 +115,27 @@ export class ManageCoachesComponent implements OnInit {
       });
   }
 
+  onClickRow(content: any, coach: ICoach) {
+    this.selectedCoach = coach;
+
+    if (coach.active) {
+      this.coachesService.readCoachGroups(coach)
+        .subscribe({
+          next: response => {
+            this.coachGroups = response.body.coachGroups;
+
+            this.modalService.open(content);
+          },
+          // Need this handler otherwise the Angular error handling mechanism will kick in.
+          error: error => {
+          }
+        });
+    }
+    else {
+      this.modalService.open(content);
+    }
+  }
+
   onClickEditCoach(coach: ICoach) {
     const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
 
@@ -167,6 +192,27 @@ export class ManageCoachesComponent implements OnInit {
     this.coachesService.downloadCSV(csvCoaches);
   }
 
+  // This is public for the unit tests.
+  filterCoaches(formValues: any) {
+    this.filteredCoaches = this.coaches
+      .filter(coach => {
+        let nameFilter = formValues.nameFilter;
+
+        if (nameFilter === null) {
+          nameFilter = '';
+        }
+
+        if ((coach.firstName.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1 ||
+            coach.surname.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1)
+              && 
+            !(formValues.currentlyActive && !coach.active)) {
+          return true;
+        }
+      });
+    
+    this.onClickHeader(this.sortKey, false);
+  }
+
   headerSortCSSClass(keyName) {
     var CSSClass = "fa fa-sort";
 
@@ -192,24 +238,32 @@ export class ManageCoachesComponent implements OnInit {
     return CSSClass;
   }
 
-  filterCoaches(formValues: any) {
-    this.filteredCoaches = this.coaches
-      .filter(coach => {
-        let nameFilter = formValues.nameFilter;
+  coachPopupHeaderCSSClass(coach: ICoach) {
+    if (!coach) {
+      return;
+    }
 
-        if (nameFilter === null) {
-          nameFilter = '';
-        }
+    var CSSClass = 'bg-success';
 
-        if ((coach.firstName.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1 ||
-            coach.surname.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1)
-              && 
-            !(formValues.currentlyActive && !coach.active)) {
-          return true;
-        }
-      });
+    if (!coach.active) {
+      CSSClass = 'bg-warning';
+    }
+
+    return CSSClass;
+  }
+
+  coachPopupFooterCSSClass(coach: ICoach) {
+    if (!coach) {
+      return;
+    }
     
-    this.onClickHeader(this.sortKey, false);
+    var CSSClass = 'bg-success-light';
+
+    if (!coach.active) {
+      CSSClass = 'bg-warning-light';
+    }
+
+    return CSSClass;
   }
 
   private processReturnedCoaches(coaches: ICoach[]) {

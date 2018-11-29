@@ -54,7 +54,7 @@
     </div>
   </form>
   <div class="table-responsive">
-    <table id="coaches-table" class="table table-bordered table-striped table-hover coach-detail">
+    <table id="coaches-table" class="table table-bordered table-striped table-hover select-row">
       <thead>
         <tr>
           <th (click)="onClickHeader('active')" class="text-right"><span class="float-left mr-1">Status</span><i [ngClass]="headerSortCSSClass('coachState')"></i></th>
@@ -68,7 +68,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let currentCoach of filteredCoaches" [class.missing]="!currentCoach.active">
+        <tr *ngFor="let currentCoach of filteredCoaches" [class.missing]="!currentCoach.active" (click)="onClickRow(content, currentCoach)">
           <td><span class="badge detail-badge" [ngClass]="coachStateCSSClass(currentCoach)"></span></td>
           <td>{{ currentCoach.surname }}</td>
           <td>{{ currentCoach.firstName }}</td>
@@ -85,3 +85,45 @@
     </table>
   </div>
 </div>
+
+<ng-template #content>
+  <div class="modal-body">
+    <div class="card">
+      <div class="card-header" [ngClass]="coachPopupHeaderCSSClass(selectedCoach)">
+        <h5>{{ selectedCoach?.firstName + ' ' + selectedCoach?.surname }}</h5>
+        <p>{{ selectedCoach?.emailAddress }}</p>
+      </div>
+      <div class="card-body">
+        <p class="card-text"><strong>Phone Number:</strong> {{ selectedCoach?.phoneNumber }}</p>
+        <p class="card-text"><strong>Administrator:</strong> {{ selectedCoach?.isAdministrator ? 'YES' : 'NO' }}</p>
+        <p *ngIf="!selectedCoach?.active" class="card-text text-center"><strong>No Current Groups</strong></p>
+        <table *ngIf="selectedCoach?.active" class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Group</th>
+              <th>Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let currentGroup of coachGroups">
+              <td>{{ currentGroup.groupName }}</td>
+              <td>{{ currentGroup.role }}</td>
+            </tr>
+          </tbody>    
+        </table>
+      </div>
+      <div class="card-footer text-muted" [ngClass]="coachPopupFooterCSSClass(selectedCoach)">
+        <p>
+          Created Date: {{ selectedCoach?.createdDate | date : "dd/MM/yyyy h:mm a" }}
+          <br/>
+          Created By: {{ selectedCoach?.createdBy }}
+        </p>
+        <p>
+          Updated Date: {{ selectedCoach?.updatedDate | date : "dd/MM/yyyy h:mm a" }}
+          <br/>
+          Updated By: {{ selectedCoach?.updatedBy }}
+        </p>
+      </div>
+    </div>
+  </div>
+</ng-template>

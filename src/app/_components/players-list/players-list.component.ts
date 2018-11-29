@@ -86,19 +86,6 @@ export class PlayersListComponent implements OnInit {
             }
           });
 
-          this.players.sort((player1: IPlayer, player2: IPlayer) => {
-            let returnValue: number = 1;
-
-            if (player1._id < player2._id) {
-              returnValue = -1;
-            }
-            else if (player1._id === player2._id) {
-              returnValue = 0;
-            }
-            
-            return returnValue;
-          });
-    
           this.filteredPlayers = this.players.slice(0);
 
           this.onClickHeader(this.sortKey, false);
@@ -139,22 +126,8 @@ export class PlayersListComponent implements OnInit {
       });
   }
 
-  onClickRow(content: any, playerId: string) {
-    let startIndex = 0,
-        endIndex = this.players.length - 1,
-        middleIndex = Math.floor((startIndex + endIndex) / 2)
-
-    while (this.players[middleIndex]._id !== playerId && startIndex < endIndex) {
-      if (playerId < this.players[middleIndex]._id) {
-        endIndex = middleIndex - 1
-      } else {
-        startIndex = middleIndex + 1
-      }
-
-      middleIndex = Math.floor((startIndex + endIndex) / 2)
-    }
-
-    this.selectedPlayer = this.players[middleIndex];
+  onClickRow(content: any, player: IPlayer) {
+    this.selectedPlayer = player;
 
     this.modalService.open(content);
   }
@@ -185,6 +158,7 @@ export class PlayersListComponent implements OnInit {
     this.playersService.downloadCSV(csvPlayers);
   }
 
+  // This is public for the unit tests.
   filterPlayers(formValues: any) {
     this.filteredPlayers = this.players
       .filter(

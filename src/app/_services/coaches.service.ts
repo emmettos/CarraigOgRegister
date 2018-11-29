@@ -17,29 +17,33 @@ export class CoachesService {
     return this.http.get<any>('/api/coaches');
   }
 
-  updateCoach(coachDetails: ICoach): Observable<any> {
+  updateCoach(coach: ICoach): Observable<any> {
     let postData = {};
 
-    postData['coachDetails'] = coachDetails;
+    postData['coachDetails'] = coach;
    
     return this.http.post("/api/updateCoach", postData);
   }
 
-  createCoach(coachDetails: ICoach): Observable<any> {
+  createCoach(coach: ICoach): Observable<any> {
     let postData = {};
 
-    postData['coachDetails'] = coachDetails;
+    postData['coachDetails'] = coach;
 
     return this.http.post("/api/createCoach", postData);    
   }
 
-  deleteCoach(coachDetails: ICoach, sendGoodbyeEmail: Boolean): Observable<any> {
+  deleteCoach(coach: ICoach, sendGoodbyeEmail: Boolean): Observable<any> {
     let postData = {};
 
-    postData['coachDetails'] = coachDetails;
+    postData['coachDetails'] = coach;
     postData['sendGoodbyeEmail'] = sendGoodbyeEmail;
 
     return this.http.post("/api/deleteCoach", postData);    
+  }
+
+  readCoachGroups(coach: ICoach): Observable<any> {
+    return this.http.get<any>('/api/coachGroups/' + coach.emailAddress);
   }
 
   downloadCSV(csvCoaches: any[]) {
