@@ -7,9 +7,9 @@ import { of, asyncScheduler, throwError } from 'rxjs';
 
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ICoach } from '../../../../_models/index';
-import { CoachesService } from '../../../../_services';
-import { ValidationService } from '../../../../_modules/shared/_services';
+import { ICoach } from '../../../../../_models/index';
+import { CoachesService } from '../../../../../_services';
+import { ValidationService } from '../../../../../_modules/shared/_services';
 
 import { CoachFormComponent } from './coach-form.component';
 

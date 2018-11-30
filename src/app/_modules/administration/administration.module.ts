@@ -8,9 +8,10 @@ import { AdministrationRoutingModule } from './administration-routing.module';
 import { SharedModule } from '../shared/shared.module';
 
 import { ManagePlayersComponent } from "./_components/manage-players/manage-players.component";
-import { ManageCoachesComponent } from './_components/manage-coaches/manage-coaches.component';
-import { CoachFormComponent } from './_components/coach-form/coach-form.component';
-import { ConfirmDeleteCoachComponent } from './_components/confirm-delete-coach/confirm-delete-coach.component';
+import { ManageCoachesComponent } from './_components/coaches/manage-coaches/manage-coaches.component';
+import { CoachFormComponent } from './_components/coaches/coach-form/coach-form.component';
+import { ConfirmDeleteCoachComponent } from './_components/coaches/confirm-delete-coach/confirm-delete-coach.component';
+import { CoachPopupComponent } from './_components/coaches/coach-popup/coach-popup.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { ConfirmDeleteCoachComponent } from './_components/confirm-delete-coach/
     ManagePlayersComponent,
     ManageCoachesComponent,
     CoachFormComponent,
-    ConfirmDeleteCoachComponent
+    ConfirmDeleteCoachComponent,
+    CoachPopupComponent
   ],
   imports: [
     AdministrationRoutingModule,
@@ -29,7 +31,8 @@ import { ConfirmDeleteCoachComponent } from './_components/confirm-delete-coach/
   ],
   entryComponents: [
     CoachFormComponent,
-    ConfirmDeleteCoachComponent
+    ConfirmDeleteCoachComponent,
+    CoachPopupComponent
   ]
 })
 export class AdministrationModule { }

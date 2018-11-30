@@ -5,9 +5,10 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ToasterService } from 'angular2-toaster';
 
-import { ICoach, IUserProfile } from '../../../../_models/index';
-import { CoachesService, AuthorizationService } from '../../../../_services/index';
+import { ICoach, IUserProfile } from '../../../../../_models/index';
+import { CoachesService, AuthorizationService } from '../../../../../_services/index';
 import { CoachFormComponent } from '../coach-form/coach-form.component';
+import { CoachPopupComponent } from '../coach-popup/coach-popup.component';
 import { ConfirmDeleteCoachComponent } from '../confirm-delete-coach/confirm-delete-coach.component';
 
 
@@ -27,13 +28,9 @@ export class ManageCoachesComponent implements OnInit {
   coaches: ICoach[] = null;
   filteredCoaches: ICoach[] = null;
 
-  selectedCoach: ICoach = null;
-
   totalCount: number = 0;
   activeCount: number = 0;
   dormantCount: number = 0;
-
-  coachGroups: any[] = null;
 
   constructor(
     private modalService: NgbModal,
@@ -115,16 +112,17 @@ export class ManageCoachesComponent implements OnInit {
       });
   }
 
-  onClickRow(content: any, coach: ICoach) {
-    this.selectedCoach = coach;
+  onClickRow(coach: ICoach) {
+    let modalRef: NgbModalRef;
 
     if (coach.active) {
       this.coachesService.readCoachGroups(coach)
         .subscribe({
           next: response => {
-            this.coachGroups = response.body.coachGroups;
+            modalRef = this.modalService.open(CoachPopupComponent);
 
-            this.modalService.open(content);
+            modalRef.componentInstance.coachDetails = coach;  
+            modalRef.componentInstance.coachGroups = response.body.coachGroups;
           },
           // Need this handler otherwise the Angular error handling mechanism will kick in.
           error: error => {
@@ -132,11 +130,13 @@ export class ManageCoachesComponent implements OnInit {
         });
     }
     else {
-      this.modalService.open(content);
+      modalRef = this.modalService.open(CoachPopupComponent);
+
+      modalRef.componentInstance.coachDetails = coach;  
     }
   }
 
-  onClickEditCoach(coach: ICoach) {
+  onClickEditCoach(event: Event, coach: ICoach) {
     const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
 
     modalRef.componentInstance.coachDetails = coach;
@@ -152,9 +152,11 @@ export class ManageCoachesComponent implements OnInit {
       .catch(error => {
         this.toasterService.pop('error', 'Failed Updating Coach', error.coachDetails.emailAddress);
       });
+    
+    event.stopPropagation();
   }
 
-  onClickDeleteCoach(coach: ICoach) {
+  onClickDeleteCoach(event: Event, coach: ICoach) {
     const modalRef: NgbModalRef = this.modalService.open(ConfirmDeleteCoachComponent, { backdrop: 'static' });
 
     modalRef.componentInstance.coachDetails = coach;
@@ -172,6 +174,8 @@ export class ManageCoachesComponent implements OnInit {
       .catch(error => {
         this.toasterService.pop('error', 'Failed Deleting Coach', error.coachDetails.emailAddress);
       });
+
+    event.stopPropagation();
   }
 
   onClickDownloadCSV() {
@@ -233,34 +237,6 @@ export class ManageCoachesComponent implements OnInit {
 
     if (!coach.active) {
       CSSClass = 'badge-warning';
-    }
-
-    return CSSClass;
-  }
-
-  coachPopupHeaderCSSClass(coach: ICoach) {
-    if (!coach) {
-      return;
-    }
-
-    var CSSClass = 'bg-success';
-
-    if (!coach.active) {
-      CSSClass = 'bg-warning';
-    }
-
-    return CSSClass;
-  }
-
-  coachPopupFooterCSSClass(coach: ICoach) {
-    if (!coach) {
-      return;
-    }
-    
-    var CSSClass = 'bg-success-light';
-
-    if (!coach.active) {
-      CSSClass = 'bg-warning-light';
     }
 
     return CSSClass;

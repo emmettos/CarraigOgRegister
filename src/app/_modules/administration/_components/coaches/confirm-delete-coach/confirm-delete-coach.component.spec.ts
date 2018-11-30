@@ -7,9 +7,9 @@ import { of, asyncScheduler, throwError } from 'rxjs';
 
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ICoach } from '../../../../_models/index';
-import { CoachesService } from '../../../../_services';
-import { ValidationService } from '../../../../_modules/shared/_services';
+import { ICoach } from '../../../../../_models/index';
+import { CoachesService } from '../../../../../_services';
+import { ValidationService } from '../../../../../_modules/shared/_services';
 
 import { ConfirmDeleteCoachComponent } from './confirm-delete-coach.component';
 
@@ -85,7 +85,7 @@ describe('ConfirmDeleteCoachComponent', () => {
     component.deleteCoachForm.controls['sendGoodbyeEmail'].setValue(true);
 
     expect(component.deleteCoachForm.value).toEqual({
-      sendGoodByeEmail: true
+      sendGoodbyeEmail: true
     });
   });
 

@@ -3,7 +3,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AuthorizationGuard } from '../../_guards/index';
 import { ManagePlayersComponent } from "./_components/manage-players/manage-players.component";
-import { ManageCoachesComponent } from "./_components/manage-coaches/manage-coaches.component";
+import { ManageCoachesComponent } from "./_components/coaches/manage-coaches/manage-coaches.component";
 import { PageNotFoundComponent } from "../shared/_components/page-not-found/page-not-found.component";
 
 

@@ -9,13 +9,15 @@ import { NgbModule, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap'
 
 import { ToasterModule, ToasterService } from 'angular2-toaster';
 
-import { CoachesService, AuthorizationService } from '../../../../_services';
-import { ValidationService } from '../../../../_modules/shared/_services';
+import { CoachesService, AuthorizationService } from '../../../../../_services';
+import { ValidationService } from '../../../../../_modules/shared/_services';
 
+import { CoachPopupComponent } from '../coach-popup/coach-popup.component';
 import { ManageCoachesComponent } from './manage-coaches.component';
+import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 
 
-fdescribe('ManageCoachesComponent', () => {
+describe('ManageCoachesComponent', () => {
   let component: ManageCoachesComponent;
   let fixture: ComponentFixture<ManageCoachesComponent>;
 
@@ -27,7 +29,8 @@ fdescribe('ManageCoachesComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ 
-        ManageCoachesComponent 
+        ManageCoachesComponent,
+        CoachPopupComponent
       ],
       imports: [
         HttpClientTestingModule,
@@ -308,67 +311,10 @@ fdescribe('ManageCoachesComponent', () => {
     expect(fixture.nativeElement.querySelector('#displaying-message').innerHTML).toEqual('Displaying 2 Coaches');
   });
 
-  it('should select selected dormant coach details', () => {
-    let modalService: NgbModal;
-
-    modalService = TestBed.get(NgbModal);
-
+  it('should call read coaches when an active coach is selected', () => {
     spyOn(modalService, 'open');
 
-    component.onClickRow(null, {
-      '_id': '6293c9a83fd22e7fa8e66d3f',
-      'firstName': 'Erick',
-      'surname': 'Norris',
-      'emailAddress': 'erick_norris@carraigog.com',
-      'phoneNumber': '086 6095372',
-      'isAdministrator': false,
-      'createdBy': 'script',
-      'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
-      '__v': 0,
-      'active': false,
-      'currentSessionOwner': false
-    });
-
-    expect(JSON.stringify(component.selectedCoach)).toEqual(JSON.stringify({
-      '_id': '6293c9a83fd22e7fa8e66d3f',
-      'firstName': 'Erick',
-      'surname': 'Norris',
-      'emailAddress': 'erick_norris@carraigog.com',
-      'phoneNumber': '086 6095372',
-      'isAdministrator': false,
-      'createdBy': 'script',
-      'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
-      '__v': 0,
-      'active': false,
-      'currentSessionOwner': false
-    }));  
-  });
-
-  it('should select selected active coach groups', () => {
-    let modalService: NgbModal;
-
-    modalService = TestBed.get(NgbModal);
-
-    spyOn(coachesService, 'readCoachGroups')
-    .and.returnValue(of({
-      'error': null,
-      'body': {
-        'coachGroups': [
-          {
-            groupName: 'Test Group',
-            role: 'Hurling Manager'
-          }
-        ]
-      }  
-    }));
-
-    spyOn(modalService, 'open');
-
-    component.onClickRow(null, {
+    component.onClickRow({
       '_id': '6293c9a83fd22e7fa8e66d3f',
       'firstName': 'Erick',
       'surname': 'Norris',
@@ -384,10 +330,97 @@ fdescribe('ManageCoachesComponent', () => {
       'currentSessionOwner': false
     });
 
-    expect(JSON.stringify(component.coachGroups)).toEqual(JSON.stringify([{
-      groupName: 'Test Group',
-      role: 'Hurling Manager'
-    }]));
+    expect(coachesService.readCoaches).toHaveBeenCalled();
+  });
+
+  it('should not call read coaches when a dormant coach is selected', () => {
+    spyOn(coachesService, 'readCoachGroups');
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {}
+      });
+
+    component.onClickRow({
+      '_id': '77b61339ebb9c8fc7c51618a',
+      'firstName': 'Lachlan',
+      'surname': 'Johnson',
+      'emailAddress': 'lachlan_johnson@carraigog.com',
+      'phoneNumber': '086 4449465',
+      'isAdministrator': false,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedDate': '2018-05-09T09:55:59.735Z',
+      'updatedBy': 'administrator@carraigog.com',
+      '__v': 0,
+      'active': false,
+      'currentSessionOwner': false
+    });
+
+    expect(coachesService.readCoachGroups).not.toHaveBeenCalled();
+  });
+
+  it('should call NgbModal.open when an active coach is selected', fakeAsync(() => {
+    spyOn(coachesService, 'readCoachGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'coachGroups': [{
+            'groupName': 'Under 9',
+            'role': 'Hurling Manager'
+          }]
+        }
+      }, AsyncScheduler));
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {}
+      });
+
+    component.onClickRow({
+      '_id': '77b61339ebb9c8fc7c51618a',
+      'firstName': 'Lachlan',
+      'surname': 'Johnson',
+      'emailAddress': 'lachlan_johnson@carraigog.com',
+      'phoneNumber': '086 4449465',
+      'isAdministrator': false,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedDate': '2018-05-09T09:55:59.735Z',
+      'updatedBy': 'administrator@carraigog.com',
+      '__v': 0,
+      'active': false,
+      'currentSessionOwner': false
+    });
+
+    tick();
+
+    expect(modalService.open).toHaveBeenCalled();
+  }));
+
+  it('should call NgbModal.open when a dormant coach is selected', () => {
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {}
+      });
+
+    component.onClickRow({
+      '_id': '77b61339ebb9c8fc7c51618a',
+      'firstName': 'Lachlan',
+      'surname': 'Johnson',
+      'emailAddress': 'lachlan_johnson@carraigog.com',
+      'phoneNumber': '086 4449465',
+      'isAdministrator': false,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedDate': '2018-05-09T09:55:59.735Z',
+      'updatedBy': 'administrator@carraigog.com',
+      '__v': 0,
+      'active': false,
+      'currentSessionOwner': false
+    });
+
+    expect(modalService.open).toHaveBeenCalled();
   });
 
   it('should download CSV of current filter', () => {
@@ -805,7 +838,7 @@ fdescribe('ManageCoachesComponent', () => {
         })
       });
 
-    component.onClickEditCoach({
+    component.onClickEditCoach(new MouseEvent('click'), {
       '_id': '6293c9a83fd22e7fa8e66d3f',
       'firstName': 'Erick',
       'surname': 'Norris',
@@ -988,7 +1021,7 @@ fdescribe('ManageCoachesComponent', () => {
         })
       });
 
-    component.onClickEditCoach({
+    component.onClickEditCoach(new MouseEvent('click'), {
       '_id': '6293c9a83fd22e7fa8e66d3f',
       'firstName': 'Erick',
       'surname': 'Norris',
@@ -1032,7 +1065,7 @@ fdescribe('ManageCoachesComponent', () => {
         })
       });
 
-    component.onClickEditCoach({
+    component.onClickEditCoach(new MouseEvent('click'), {
       '_id': '6293c9a83fd22e7fa8e66d3f',
       'firstName': 'Erick',
       'surname': 'Norris',
@@ -1123,7 +1156,7 @@ fdescribe('ManageCoachesComponent', () => {
         })
       });
 
-    component.onClickDeleteCoach({
+    component.onClickDeleteCoach(new MouseEvent('click'), {
       '_id': '77b61339ebb9c8fc7c51618a',
       'firstName': 'Lachlan',
       'surname': 'Johnson',
@@ -1260,7 +1293,7 @@ fdescribe('ManageCoachesComponent', () => {
         })
       });
 
-    component.onClickDeleteCoach({
+    component.onClickDeleteCoach(new MouseEvent('click'), {
       '_id': '6293c9a83fd22e7fa8e66d3f',
       'firstName': 'Erick',
       'surname': 'Norris',
@@ -1304,7 +1337,7 @@ fdescribe('ManageCoachesComponent', () => {
         })
       });
 
-    component.onClickDeleteCoach({
+    component.onClickDeleteCoach(new MouseEvent('click'), {
       '_id': '6293c9a83fd22e7fa8e66d3f',
       'firstName': 'Erick',
       'surname': 'Norris',

@@ -3,9 +3,9 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ICoach } from '../../../../_models/index';
-import { CoachesService } from '../../../../_services/index';
-import { ValidationService } from '../../../shared/_services/index';
+import { ICoach } from '../../../../../_models/index';
+import { CoachesService } from '../../../../../_services/index';
+import { ValidationService } from '../../../../shared/_services/index';
 
 
 @Component({

@@ -68,16 +68,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let currentCoach of filteredCoaches" [class.missing]="!currentCoach.active" (click)="onClickRow(content, currentCoach)">
+        <tr *ngFor="let currentCoach of filteredCoaches" [class.missing]="!currentCoach.active" (click)="onClickRow(currentCoach)">
           <td><span class="badge detail-badge" [ngClass]="coachStateCSSClass(currentCoach)"></span></td>
           <td>{{ currentCoach.surname }}</td>
           <td>{{ currentCoach.firstName }}</td>
           <td>{{ currentCoach.emailAddress }}</td>
           <td>{{ currentCoach.phoneNumber }}</td>
           <td class="text-center">{{ currentCoach.isAdministrator ? 'YES' : 'NO' }}</td>
-          <td class="text-center"><a href=""><span (click)="!!onClickEditCoach(currentCoach)">Edit</span></a></td>
+          <td class="text-center"><a href=""><span (click)="!!onClickEditCoach($event, currentCoach)">Edit</span></a></td>
           <td class="text-center">
-            <a *ngIf="!currentCoach.currentSessionOwner" href=""><span (click)="!!onClickDeleteCoach(currentCoach)">Delete</span></a>
+            <a *ngIf="!currentCoach.currentSessionOwner" href=""><span (click)="!!onClickDeleteCoach($event, currentCoach)">Delete</span></a>
             <span *ngIf="currentCoach.currentSessionOwner"></span>
           </td>
         </tr>
@@ -85,45 +85,3 @@
     </table>
   </div>
 </div>
-
-<ng-template #content>
-  <div class="modal-body">
-    <div class="card">
-      <div class="card-header" [ngClass]="coachPopupHeaderCSSClass(selectedCoach)">
-        <h5>{{ selectedCoach?.firstName + ' ' + selectedCoach?.surname }}</h5>
-        <p>{{ selectedCoach?.emailAddress }}</p>
-      </div>
-      <div class="card-body">
-        <p class="card-text"><strong>Phone Number:</strong> {{ selectedCoach?.phoneNumber }}</p>
-        <p class="card-text"><strong>Administrator:</strong> {{ selectedCoach?.isAdministrator ? 'YES' : 'NO' }}</p>
-        <p *ngIf="!selectedCoach?.active" class="card-text text-center"><strong>No Current Groups</strong></p>
-        <table *ngIf="selectedCoach?.active" class="table table-bordered table-striped">
-          <thead>
-            <tr>
-              <th>Group</th>
-              <th>Role</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let currentGroup of coachGroups">
-              <td>{{ currentGroup.groupName }}</td>
-              <td>{{ currentGroup.role }}</td>
-            </tr>
-          </tbody>    
-        </table>
-      </div>
-      <div class="card-footer text-muted" [ngClass]="coachPopupFooterCSSClass(selectedCoach)">
-        <p>
-          Created Date: {{ selectedCoach?.createdDate | date : "dd/MM/yyyy h:mm a" }}
-          <br/>
-          Created By: {{ selectedCoach?.createdBy }}
-        </p>
-        <p>
-          Updated Date: {{ selectedCoach?.updatedDate | date : "dd/MM/yyyy h:mm a" }}
-          <br/>
-          Updated By: {{ selectedCoach?.updatedBy }}
-        </p>
-      </div>
-    </div>
-  </div>
-</ng-template>
