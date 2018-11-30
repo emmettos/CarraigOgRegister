@@ -1568,7 +1568,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
           if (request.url.endsWith('/deleteCoach')) {
             let coachIndex: number = this.coaches.findIndex(coach => {
-              return coach._id === request.body.coachId;
+              return coach._id === request.body.coachDetails._id;
             });
 
             if (coachIndex === -1) {
