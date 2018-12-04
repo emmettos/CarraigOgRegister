@@ -23,4 +23,17 @@ export class UserService {
       'password': password 
     });
   }
+
+  verifyUserToken(userToken: string): Observable<any> {
+    return this.http.post('/api/verifyUserToken', { 
+      'userToken': userToken
+    });
+  }
+
+  createPassword(emailAddress: string, password: string): Observable<any> {
+    return this.http.post('/api/createPassword', { 
+      'emailAddress': emailAddress, 
+      'password': password
+    });
+  }
 }

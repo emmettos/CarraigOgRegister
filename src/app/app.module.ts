@@ -19,11 +19,13 @@ import {
   AuthorizationService, 
   ConfigurationService,
   GroupsService,
-  UserService, 
-  PlayersService } from './_services/index';
+  CoachesService, 
+  PlayersService,
+  UserService } from './_services/index';
 
 import { AlertComponent } from './_components/alert/alert.component';
 import { AppComponent } from './app.component';
+import { CreatePasswordComponent } from './_components/create-password/create-password.component';
 import { ErrorComponent } from './_components/error/error.component';
 import { LoginComponent } from './_components/login/login.component';
 import { GroupsListComponent } from './_components/groups-list/groups-list.component';
@@ -36,6 +38,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
   declarations: [
     AlertComponent,
     AppComponent,
+    CreatePasswordComponent,
     ErrorComponent,
     GroupsListComponent,
     GroupThumbnailComponent,
@@ -62,6 +65,7 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
     GroupsService,
     PlayersService,
     ToasterService,
+    CoachesService,
     UserService,
     { 
       provide: ErrorHandler, 
@@ -79,11 +83,11 @@ import { PlayersListComponent } from './_components/players-list/players-list.co
       multi: true 
     },
     // Uncomment the below HTTP_INTERCEPTOR to use to the application with a fake backend.
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: FakeBackendInterceptorHelper,
-    //   multi: true
-    // }
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: FakeBackendInterceptorHelper,
+      multi: true
+    }
   ],
   bootstrap: [
     AppComponent

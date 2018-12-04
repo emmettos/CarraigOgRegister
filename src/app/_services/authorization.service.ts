@@ -7,7 +7,7 @@ const JWT_KEY = 'carraig-og-register.jwt';
 
 @Injectable()
 export class AuthorizationService {
-  // This is public so that FakeBackendInterceptorHelper can write to it (easier that faking a JWT).
+  // This is public so that FakeBackendInterceptorHelper can write to it (easier than faking a JWT).
   payload: IPayload = null;
 
   constructor() {
@@ -35,9 +35,16 @@ export class AuthorizationService {
       payload = JSON.parse(atob(base64Payload.replace('-', '+').replace('_', '/')));
 
       if (incoming) {
-        if ((new Date()).getTime() <= payload.exp * 1000) {
-          this.payload = payload;
+        if (payload.userProfile.createPasswordProfile) {
+          this.payload = null; // Just in case the user is already logged in (very unlikely!!!)
+
           localStorage.setItem(JWT_KEY, token);
+        }
+        else {
+          if ((new Date()).getTime() <= payload.exp * 1000) {
+            this.payload = payload;
+            localStorage.setItem(JWT_KEY, token);
+          }
         }
       }
       else {

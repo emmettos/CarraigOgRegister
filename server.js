@@ -6,12 +6,13 @@ var bunyan = require("bunyan");
 
 var app = express();
 
+require('dotenv').config();
+
 var config = require("./server/config/config");
 var authenticator = require("./server/authenticator");
 
 var currentSettings = require("./server/models/currentSettings");
 
-var port = process.env.PORT || 8081;
 
 var loggerOptions = {
   name: "carraigOgRegister",
@@ -74,7 +75,7 @@ mongoose.connect(config.database, { useNewUrlParser: true })
     require("./server/routes")(app, express.Router());
     require("./server/errorHandlers")(app);
 
-    app.listen(port);
+    app.listen(config.port);
   })
   .catch(function (error) {
     //TODO: Log this error.

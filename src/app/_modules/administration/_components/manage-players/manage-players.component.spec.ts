@@ -322,7 +322,7 @@ describe('ManagePlayersComponent', () => {
       month: 10,
       day: 18});
     component.managePlayersForm.controls['firstName'].setValue('Test');
-    component.managePlayersForm.controls['surname'].setValue('User');
+    component.managePlayersForm.controls['surname'].setValue('Player');
     component.managePlayersForm.controls['addressLine1'].setValue('Address Line 1');
     component.managePlayersForm.controls['addressLine2'].setValue('Address Line 2');
     component.managePlayersForm.controls['addressLine3'].setValue('Address Line 3');
@@ -338,7 +338,7 @@ describe('ManagePlayersComponent', () => {
       'dateOfBirthPicker': Object({ datePickerTextBox: Object({ year: 2010, month: 7, day: 3 }) }),
       'lastRegisteredDatePicker': Object({ datePickerTextBox: Object({ year: 2018, month: 10, day: 18 }) }),
       'firstName': 'Test',
-      'surname': 'User',
+      'surname': 'Player',
       'addressLine1': 'Address Line 1',
       'addressLine2': 'Address Line 2',
       'addressLine3': 'Address Line 3',
@@ -375,7 +375,8 @@ describe('ManagePlayersComponent', () => {
   it('should validate valid surname', () => {
     component.managePlayersForm.controls['surname'].enable();
 
-    component.managePlayersForm.controls['surname'].setValue('User');
+    component.managePlayersForm.controls['surname'].setValue('Player');
+
     expect(component.managePlayersForm.controls['surname'].invalid).toBeFalsy();
   });
 

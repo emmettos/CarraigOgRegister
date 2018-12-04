@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
+import { ICoach } from '../../../_models';
+
 
 @Injectable()
 export class ValidationService {
@@ -8,8 +10,9 @@ export class ValidationService {
 
   constructor() {
     this.validationMessages = {
-      'invalidConfirmPassword': 'The new passwords do not match',
+      'invalidConfirmPassword': 'The Confirm Password does not match the Password',
       'invalidEmailAddress': 'Invalid email address',
+      'invalidNewCoach': 'A coach with this email address already exists',
       'minlength': 'Minimum length [requiredLength]',
       'required': 'This field is required'
     };  
@@ -47,6 +50,24 @@ export class ValidationService {
       }
       
       return { 'invalidConfirmPassword': true };
+    }
+  }
+
+  newCoachValidator(currentCoaches: ICoach[]) {
+    return (control: FormControl): {[key: string]: any} => {
+      if (!currentCoaches) {
+        return null;
+      }
+      
+      let existingCoach: ICoach = currentCoaches.find(coach => {
+        return coach.emailAddress === control.value;
+      });
+
+      if (!existingCoach) {
+        return null;
+      }
+      
+      return { 'invalidNewCoach': true };
     }
   }
 

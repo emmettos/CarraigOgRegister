@@ -9,112 +9,286 @@ import {
 import { Observable, of, throwError } from 'rxjs';
 import { delay, mergeMap } from 'rxjs/operators';
 
-import { IGroup, IPlayer } from '../_models/index'; 
+import { IPlayer, ICoach } from '../_models/index'; 
 import { APP_SETTINGS } from '../_helpers/app.initializer.helper';
 import { AuthorizationService, AlertService } from '../_services/index';
 
 
 const CURRENT_SETTINGS_KEY = 'carraig-og-register.fake-backend.currentSettings';
-const USERS_KEY = 'carraig-og-register.fake-backend.users';
+const COACHES_KEY = 'carraig-og-register.fake-backend.coaches';
 const GROUPS_KEY = 'carraig-og-register.fake-backend.groups';
 const PLAYERS_KEY = 'carraig-og-register.fake-backend.players';
 
 @Injectable()
 export class FakeBackendInterceptorHelper implements HttpInterceptor {
   private currentSettings: any;
-  private users: any[];
-  private groups: IGroup[];
+  private coaches: any[];
+  private groups: any[];
   private players: IPlayer[];
 
   constructor(
       private injector: Injector,
       private authorizationService: AuthorizationService) { 
     this.currentSettings = JSON.parse(localStorage.getItem(CURRENT_SETTINGS_KEY)) || {
-      year: 2018,
-      groupYears: [2008, 2009, 2010, 2011, 2012, 2013]
+      'year': 2018,
+      'groupYears': [2008, 2009, 2010, 2011, 2012, 2013]
     };
 
-    this.users = JSON.parse(localStorage.getItem(USERS_KEY)) || [
+    this.coaches = JSON.parse(localStorage.getItem(COACHES_KEY)) || [
       {
-        emailAddress: 'administrator@carraigog.com',
-        fullName: 'Administrator',
-        isAdministrator: true,
-        isManager: false,
-        groups: [],
-        password: 'Password01#'
+        '_id': 'b093d6d273adfb49ae33e6e1',
+        'firstName': 'Administrator',
+        'surname': '',
+        'emailAddress': 'admin@carraigog.com',
+        'phoneNumber': '086 1550344',
+        'password': 'Password01#',
+        'isAdministrator': true,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
-        emailAddress: 'football2009@carraigog.com',
-        fullName: 'Football 2009',
-        isAdministrator: false,
-        isManager: true,
-        groups: [2009],
-        password: 'Password01#'
+        '_id': '6293c9a83fd22e7fa8e66d3f',
+        'firstName': 'Erick',
+        'surname': 'Norris',
+        'emailAddress': 'erick_norris@carraigog.com',
+        'phoneNumber': '086 6095372',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
-        emailAddress: 'hurling2009@carraigog.com',
-        fullName: 'Hurling 2009',
-        isAdministrator: false,
-        isManager: true,
-        groups: [2009],
-        password: 'Password01#'
+        '_id': '77b61339ebb9c8fc7c51618a',
+        'firstName': 'Lachlan',
+        'surname': 'Johnson',
+        'emailAddress': 'lachlan_johnson@carraigog.com',
+        'phoneNumber': '086 4449465',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
+      },
+      {
+        '_id': '92b996d531a4a456db9c1f37',
+        'firstName': 'Kylar',
+        'surname': 'Hart',
+        'emailAddress': 'kylar_hart@carraigog.com',
+        'phoneNumber': '087 8659075',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
+      },
+      {
+        '_id': '6a0dd3e9fb7cfd4790683ebe',
+        'firstName': 'Sherlock',
+        'surname': 'Yang',
+        'emailAddress': 'sherlock_yang@carraigog.com',
+        'phoneNumber': '086 4215202',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
+      },
+      {
+        '_id': 'f5c807364e40be179e876840',
+        'firstName': 'Winfield',
+        'surname': 'Owens',
+        'emailAddress': 'winfield_owens@carraigog.com',
+        'phoneNumber': '087 2322272',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
+      },
+      {
+        '_id': '6f7aa0a93c2d423b308f9dfa',
+        'firstName': 'Rowan',
+        'surname': 'Love',
+        'emailAddress': 'rowan_love@carraigog.com',
+        'phoneNumber': '085 2399314',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
+      },
+      {
+        '_id': 'f9d2e596bb0fffebad95ae6a',
+        'firstName': 'Siward',
+        'surname': 'Hansen',
+        'emailAddress': 'siward_hansen@carraigog.com',
+        'phoneNumber': '086 1949623',
+        'password': 'Password01#',
+        'isAdministrator': true,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
+      },
+      {
+        '_id': '21cfbcbee1da872f1b95dbbf',
+        'firstName': 'Bryok',
+        'surname': 'Moran',
+        'emailAddress': 'bryok_moran@carraigog.com',
+        'phoneNumber': '087 8108797',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
+      },
+      {
+        '_id': 'f346034eb1af16e3845a8dee',
+        'firstName': 'John',
+        'surname': 'Rees',
+        'emailAddress': 'john_rees@carraigog.com',
+        'phoneNumber': '086 1702956',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
+      },
+      {
+        '_id': 'bfb745f486e7b352f2f40924',
+        'firstName': 'Heddwyn',
+        'surname': 'Cunningham',
+        'emailAddress': 'heddwyn_cunningham@carraigog.com',
+        'phoneNumber': '086 8600913',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
+      },
+      {
+        '_id': '573d088683acbba74068c0ea',
+        'firstName': 'Angel',
+        'surname': 'Klein',
+        'emailAddress': 'angel_klein@carraigog.com',
+        'phoneNumber': '086 2175716',
+        'password': 'Password01#',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       }
     ];
 
     this.groups = JSON.parse(localStorage.getItem(GROUPS_KEY)) || [
       {
+        '_id': 'dfe674827f95ff37765ba0fc',
         'year': 2018,
         'name': 'Under 10',
         'yearOfBirth': 2008,
-        'footballManager': 'Football 2008',
-        'hurlingManager': 'Hurling 2008',
+        'footballManager': 'angel_klein@carraigog.com',
+        'hurlingManager': 'heddwyn_cunningham@carraigog.com',
         'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
-        'numberOfPlayers': 3
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-02-27T15:57:21.582Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
+        '_id': '24eef4f773a9cc7b17a539e9',
         'year': 2018,
         'name': 'Under 9',
         'yearOfBirth': 2009,
-        'footballManager': 'Football 2009',
-        'hurlingManager': 'Hurling 2009',
+        'footballManager': 'john_rees@carraigog.com',
+        'hurlingManager': 'bryok_moran@carraigog.com',
         'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
-        'numberOfPlayers': 10
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-07-26T16:29:25.372Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
+        '_id': '6cc1fec86fb94e11121dcf2a',
         'year': 2018,
         'name': 'Under 8',
         'yearOfBirth': 2010,
-        'footballManager': 'Football 2010',
-        'hurlingManager': 'Hurling 2010',
+        'footballManager': 'siward_hansen@carraigog.com',
+        'hurlingManager': 'rowan_love@carraigog.com',
         'lastUpdatedDate': '2018-02-28T11:22:24.262Z',
-        'numberOfPlayers': 4
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-02-28T11:22:24.262Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
+        '_id': '7f499865b3bbf13a60536e36',
         'year': 2018,
         'name': 'Under 7',
         'yearOfBirth': 2011,
-        'footballManager': 'Football 2011',
-        'hurlingManager': 'Hurling 2011',
+        'footballManager': 'winfield_owens@carraigog.com',
+        'hurlingManager': 'sherlock_yang@carraigog.com',
         'lastUpdatedDate': '2018-02-27T16:00:20.439Z',
-        'numberOfPlayers': 5
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-02-27T16:00:20.439Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
+        '_id': 'd387d6632a7750967c8f1b0d',
         'year': 2018,
         'name': 'Under 6',
         'yearOfBirth': 2012,
-        'footballManager': 'Football 2012',
-        'hurlingManager': 'Hurling 2012',
+        'footballManager': 'kylar_hart@carraigog.com',
+        'hurlingManager': 'lachlan_johnson@carraigog.com',
         'lastUpdatedDate': '2018-02-27T12:20:39.338Z',
-        'numberOfPlayers': 3
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-02-27T12:20:39.338Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
+        '_id': '00d7988eee11f94ad6bb5422',
         'year': 2018,
         'name': 'Under 5',
         'yearOfBirth': 2013,
-        'footballManager': 'Football 2013',
-        'hurlingManager': 'Hurling 2013',
+        'footballManager': 'erick_norris@carraigog.com',
+        'hurlingManager': 'erick_norris@carraigog.com',
         'lastUpdatedDate': '2018-02-27T12:09:40.660Z',
-        'numberOfPlayers': 4
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-02-27T12:09:40.660Z',
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       }
     ];
 
@@ -145,11 +319,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'b159d6e49a41877180ba3826',
@@ -175,11 +349,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2018-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-23T15:14:53.115Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'aaf6ddc582e9d0d86610e025',
@@ -206,11 +380,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T14:38:36.668Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '4162aaefa0842a667363b49c',
@@ -236,11 +410,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2016,
           2017
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2017-03-15T13:43:51.268Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       // 2009 players (10 current - 1 missing - 1 gone)
       {
@@ -264,11 +438,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T09:55:59.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'd081a7d3547019f961490701',
@@ -294,11 +468,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T09:57:59.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '607ee42c60e409ac1c65525f',
@@ -324,11 +498,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-20T12:12:47.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '8f9d3ffcec6738a57d4586b7',
@@ -348,15 +522,13 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
         'lastRegisteredYear': 2018,
         'registeredYears': [
-          2016,
-          2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T09:58:11.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '122e56fa9d578c7d5c5777f7',
@@ -382,11 +554,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:00:42.251Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '510239c0556e1f1c0591df47',
@@ -412,11 +584,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-13T10:02:53.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '380afa03b146e48007ebbe2e',
@@ -442,11 +614,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T13:12:02.563Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'ed8d5d4c80eb6f61479364ed',
@@ -471,11 +643,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-12T10:55:43.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '57e4879d1213f48fdcb1d713',
@@ -501,11 +673,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:11:22.989Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'b5206d7a3fa266dcd76f1182',
@@ -529,11 +701,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:15:01.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'ed39407459c1f36f79d4c533',
@@ -556,11 +728,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2016,
           2017
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2017-02-13T10:15:01.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'c836901fac13de5d9e05a330',
@@ -582,11 +754,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'registeredYears': [
           2016
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2017-03-15T13:43:51.268Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       // 2010 players (4 current - 1 missing)
       {
@@ -612,11 +784,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:17:21.332Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'e943c923036a302151ad8ecd',
@@ -640,11 +812,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:18:45.622Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '5c9370bdf1715519108e526e',
@@ -669,11 +841,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:21:40.545Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '42fc90bd782e4c0d683b014b',
@@ -698,11 +870,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:23:40.012Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '66b6d82e1e2e55a0a20cfd5a',
@@ -726,11 +898,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2016,
           2017
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2017-05-13T11:44:40.001Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       // 2011 players (5 current)
       {
@@ -755,11 +927,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-06-17T12:07:22.735Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '3df691919cee6a5e2248e349',
@@ -783,11 +955,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:30:01.222Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'b1fa15340170ce42880ddea5',
@@ -811,11 +983,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:30:33.722Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '5236fda1a40968c993b2c4e1',
@@ -839,11 +1011,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:30:11.556Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'b98e73d80dc910404a0a18ed',
@@ -865,11 +1037,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'registeredYears': [
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:45:11.013Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       // 2012 players (3 current)
       {
@@ -893,11 +1065,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T11:01:53.715Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': 'b6dbe6a9a6965f2050c43bc4',
@@ -920,11 +1092,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T11:22:20.002Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '72eadb693ea976d6ab6ef69d',
@@ -947,11 +1119,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           2017,
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T11:22:11.766Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       // 2013 players (4 current)
       {
@@ -974,11 +1146,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'registeredYears': [
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T12:10:11.002Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '4458405291e9e8d309559d03',
@@ -1000,11 +1172,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'registeredYears': [
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T12:10:10.288Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '2d2a3e07ffb28694438ce90f',
@@ -1026,11 +1198,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'registeredYears': [
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T09:34:49.734Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
       {
         '_id': '80bdda0c8e7fdde6c2345c91',
@@ -1052,11 +1224,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'registeredYears': [
           2018
         ],
-        '__v': 1,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-01T12:35:14.332Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com'
+        'updatedBy': 'administrator@carraigog.com',
+        '__v': 0
       },
     ]
   }
@@ -1074,11 +1246,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           }
 
           if (request.url.endsWith('/authenticate')) {
-            let user: any = this.users.find(user => {
-              return user.emailAddress === request.body.emailAddress;
+            let coach: any = this.coaches.find(coach => {
+              return coach.emailAddress === request.body.emailAddress;
             });
 
-            if (!user) {
+            if (!coach) {
               return throwError({ 
                 status: 401,
                 error: {
@@ -1089,7 +1261,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               });
             }
 
-            if (user.password !== request.body.password) {
+            if (coach.password !== request.body.password) {
               return throwError({ 
                 status: 401,
                 error: {
@@ -1100,16 +1272,32 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               });
             }
 
+            let userProfile = {
+              ID: coach.emailAddress,
+              fullName: coach.firstName + ' ' + coach.surname,
+              isAdministrator: coach.isAdministrator,
+              isManager: false,
+              groups: [],
+              createPasswordProfile: false
+            };
+
+            this.groups
+              .filter(group => 
+                { 
+                  return group.year === this.currentSettings.year;
+                })
+                .forEach(group => {
+                  if (group.footballManager === coach.emailAddress || group.hurlingManager === coach.emailAddress) {
+                    userProfile.isManager = true;
+      
+                    userProfile.groups.push(group.yearOfBirth);
+                  }
+                });
+  
             let issuedTime: number = Math.floor(Date.now() / 1000);
 
             this.authorizationService.payload = {
-              userProfile: {
-                ID: user.emailAddress,
-                fullName: user.fullName,
-                isAdministrator: user.isAdministrator,
-                isManager: user.isManager,
-                groups: user.groups
-              },
+              userProfile: userProfile,
               iat: issuedTime,
               exp: issuedTime + (60 * 60)
             }
@@ -1118,11 +1306,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           }
 
           if (request.url.endsWith('/changePassword')) {
-            let user: any = this.users.find(user => {
-              return user.emailAddress === request.body.emailAddress;
+            let coach: any = this.coaches.find(coach => {
+              return coach.emailAddress === request.body.emailAddress;
             });
 
-            if (!user) {
+            if (!coach) {
               return throwError({ 
                 status: 401,
                 error: {
@@ -1133,7 +1321,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               });
             }
 
-            if (user.password !== request.body.password) {
+            if (coach.password !== request.body.password) {
               return throwError({ 
                 status: 401,
                 error: {
@@ -1144,16 +1332,62 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               });
             }
 
-            user.password = request.body.newPassword;
-
-            localStorage.setItem(USERS_KEY, JSON.stringify(this.users));
+            coach.password = request.body.newPassword;
+            coach.__v++;
+            coach.updatedDate = (new Date(Date.now())).toISOString();
+            coach.updatedBy = request.body.emailAddress;
+            
+            localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: {} }));
           }
 
-          if (request.url.endsWith('/groups')) {
+          if (request.url.endsWith('/coaches')) {
+            let coaches: ICoach[] = this.createCoachesListForClient();
+
             let body = {
-              groups: this.groups
+              coaches: coaches
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
+          if (request.url.endsWith('/groups')) {
+            let groups: any[] = this.groups.filter(group => {
+              return group.year === this.currentSettings.year; 
+            });
+
+            groups.forEach(group => {
+              let hurlingManager: any = this.coaches.find(coach => {
+                return coach.emailAddress === group.hurlingManager;
+              });
+              if (hurlingManager) {
+                group.hurlingManagerFullName = hurlingManager.firstName + ' ' + hurlingManager.surname;
+              }
+              else {
+                group.hurlingManagerFullName = group.hurlingManager;
+              }
+
+              let footballManager: any = this.coaches.find(coach => {
+                return coach.emailAddress === group.footballManager;
+              });
+              if (footballManager) {
+                group.footballManagerFullName = footballManager.firstName + ' ' + footballManager.surname;
+              }
+              else {
+                group.footballManagerFullName = group.footballManager;
+              }
+
+              let groupPlayers: any = this.players.filter(player => {
+                return player.yearOfBirth === group.yearOfBirth &&
+                  player.lastRegisteredYear === this.currentSettings.year;
+              });
+
+              group.numberOfPlayers = groupPlayers.length;
+            });
+
+            let body = {
+              groups: groups
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -1191,15 +1425,17 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               playerDetails = this.players.find(player => {
                 return player._id === request.body.playerDetails._id;
               });
+
+              playerDetails.__v++;
             }
             else {
-              let existingplayerDetails: IPlayer = this.players.find(player => {
+              let existingPlayerDetails: IPlayer = this.players.find(player => {
                 return player.dateOfBirth === request.body.playerDetails.dateOfBirth &&
                   player.firstName === request.body.playerDetails.firstName &&
                   player.surname === request.body.playerDetails.surname;
               });
 
-              if (existingplayerDetails) {
+              if (existingPlayerDetails) {
                 let alertService: AlertService = this.injector.get(AlertService);
 
                 alertService.error('Fake HTTP 500 Response', 'Fake duplicate key error collection: CarraigOgRegister.players index: dateOfBirth_1_firstName_1_surname_1');
@@ -1252,12 +1488,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             playerDetails.updatedDate = lastUpdatedDate;
             playerDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
 
-            playerDetails.__v++;
-
             localStorage.setItem(PLAYERS_KEY, JSON.stringify(this.players));
 
             let group = this.groups.find(group => {
-              return group.yearOfBirth === +request.body.groupDetails.yearOfBirth;
+              return group.year === this.currentSettings.year &&
+                group.yearOfBirth === +request.body.groupDetails.yearOfBirth;
             });
 
             if (request.url.endsWith('/createPlayer')) {
@@ -1270,6 +1505,114 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
             let body = {
               player: playerDetails
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
+          if (request.url.endsWith('/updateCoach') || request.url.endsWith('/createCoach')) {
+            let coachDetails: ICoach = null;
+            
+            if (request.url.endsWith('/updateCoach')) {
+              coachDetails = this.coaches.find(coach => {
+                return coach._id === request.body.coachDetails._id;
+              });
+
+              coachDetails.__v++;
+            }
+            else {
+              let existingCoachDetails: ICoach = this.coaches.find(coach => {
+                return coach.emailAddress === request.body.coachDetails.emailAddress;
+              });
+
+              if (existingCoachDetails) {
+                let alertService: AlertService = this.injector.get(AlertService);
+
+                alertService.error('Fake HTTP 500 Response', 'Fake duplicate key error collection: CarraigOgRegister.coach index: emailAddress');
+
+                return;
+              }
+
+              coachDetails = <ICoach>{};
+
+              coachDetails._id = this.generateId();
+
+              coachDetails.emailAddress = request.body.coachDetails.emailAddress;
+
+              coachDetails.createdDate = (new Date(Date.now())).toISOString();
+              coachDetails.createdBy = this.authorizationService.payload.userProfile.ID;
+  
+              coachDetails.__v = 0;
+
+              this.coaches.push(coachDetails);
+            }
+            
+            coachDetails.firstName = request.body.coachDetails.firstName;
+            coachDetails.surname = request.body.coachDetails.surname;
+            coachDetails.phoneNumber = request.body.coachDetails.phoneNumber;
+            coachDetails.isAdministrator = request.body.coachDetails.isAdministrator;
+  
+            coachDetails.updatedDate = (new Date(Date.now())).toISOString();
+            coachDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
+
+            localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
+
+            let coaches: ICoach[] = this.createCoachesListForClient();
+
+            let body = {
+              coaches: coaches
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
+          if (request.url.endsWith('/deleteCoach')) {
+            let coachIndex: number = this.coaches.findIndex(coach => {
+              return coach._id === request.body.coachDetails._id;
+            });
+
+            if (coachIndex === -1) {
+              let alertService: AlertService = this.injector.get(AlertService);
+
+              alertService.error('Fake HTTP 500 Response', 'Fake key not found: CarraigOgRegister.coach _id');
+
+              return;
+            }
+
+            this.coaches.splice(coachIndex, 1);
+  
+            localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
+
+            let coaches: ICoach[] = this.createCoachesListForClient();
+
+            let body = {
+              coaches: coaches
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
+          if (/.*\/api\/coachGroups\/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(request.url)) {
+            let coachEmailAddress: string = request.url.substring(request.url.lastIndexOf('/') + 1);
+
+            let body = {
+              coachGroups: this.groups.filter(group => {
+                  return group.footballManager === coachEmailAddress || group.hurlingManager === coachEmailAddress;
+                })
+                .map(group => {
+                  let coachGroup: any = {
+                    groupName: group.name
+                  };
+
+                  if (group.footballManager === coachEmailAddress) {
+                    coachGroup.role = 'Football Manager';
+                  }
+                  else {
+                    coachGroup.role = 'Hurling Manager';
+                  }
+
+                  return coachGroup; 
+                })
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -1292,5 +1635,38 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         }
       }),
       delay(200));
+  }
+
+  private createCoachesListForClient(): ICoach[] { 
+    let coaches: any[] = JSON.parse(JSON.stringify(this.coaches));
+            
+    coaches.forEach(coach => {
+      delete coach.password;
+
+      let group: any = this.groups.find(group => {
+        return group.year === this.currentSettings.year &&
+          (group.footballManager === coach.emailAddress || group.hurlingManager === coach.emailAddress)
+      });
+
+      if (group) {
+        coach.active = true;
+      }
+      else {
+        coach.active = false;
+      }
+    });
+
+    return coaches;
+  }
+
+  private generateId(): string {
+    const range = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var Id = '';
+  
+    for (let index = 0; index < 24; index++) {
+      Id += range.charAt(Math.floor(Math.random() * range.length));
+    }
+
+    return Id;
   }
 }

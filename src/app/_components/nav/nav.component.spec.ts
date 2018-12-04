@@ -42,7 +42,8 @@ describe('NavComponent', () => {
         ToasterModule.forRoot()    
       ],
       providers: [
-        AuthorizationService
+        AuthorizationService,
+        ToasterService
       ]
     })
     .compileComponents();
@@ -69,6 +70,30 @@ describe('NavComponent', () => {
     fixture.detectChanges();
   
     expect(component).toBeTruthy();
+  });
+
+  it('should home link as /login for signed out user', () => {
+    spyOnProperty(authorizationService, 'getPayload', 'get')
+      .and.returnValue(null);
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#home-link").attributes['href'].nodeValue).toEqual('/login');
+  });
+
+  it('should display home link as /groups for signed in user', () => {
+    spyOnProperty(authorizationService, 'getPayload', 'get')
+      .and.returnValue({
+        userProfile: {
+          ID: 'xxx',
+          fullName: 'Test Coach',
+          isAdministrator: false
+        }
+      });
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#home-link").attributes['href'].nodeValue).toEqual('/groups');
   });
 
   it('should hide Signed in as... menu for signed out user', () => {
@@ -103,14 +128,14 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#signed-in-menu").innerHTML).toEqual('Signed in as - Test User');
+    expect(fixture.nativeElement.querySelector("#signed-in-menu").innerHTML).toEqual('Signed in as - Test Coach');
   });
 
   it('should display Sign Out menu for signed in user', () => {
@@ -118,7 +143,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -133,7 +158,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -143,12 +168,12 @@ describe('NavComponent', () => {
     expect(fixture.nativeElement.querySelector("#administration-menu").style.getPropertyValue('display')).toEqual('none');
   });
 
-  it('should display Administration menu for administrators', () => {
+  it('should display Admin menu for administrators', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: true
         }
       });
@@ -158,19 +183,34 @@ describe('NavComponent', () => {
     expect(fixture.nativeElement.querySelector("#administration-menu").style.getPropertyValue('display')).toEqual('inline');
   });
 
-  it('should include Manage Players sub menu', () => {
+  it('should include Players sub menu', () => {
     spyOnProperty(authorizationService, 'getPayload', 'get')
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: true
         }
       });
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#administration-dropdown > a").innerHTML).toEqual('Manage Players');
+    expect(fixture.nativeElement.querySelector("#administration-dropdown a:nth-child(1)").innerHTML).toEqual('Players');
+  });
+
+  it('should include Coaches sub menu', () => {
+    spyOnProperty(authorizationService, 'getPayload', 'get')
+      .and.returnValue({
+        userProfile: {
+          ID: 'xxx',
+          fullName: 'Test Coach',
+          isAdministrator: true
+        }
+      });
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector("#administration-dropdown a:nth-child(2)").innerHTML).toEqual('Coaches');
   });
 
   it('should display Successfully Signed Out when signing out of active session', () => {
@@ -178,7 +218,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -187,7 +227,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -218,7 +258,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -227,7 +267,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -246,7 +286,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });
@@ -255,7 +295,7 @@ describe('NavComponent', () => {
       .and.returnValue({
         userProfile: {
           ID: 'xxx',
-          fullName: 'Test User',
+          fullName: 'Test Coach',
           isAdministrator: false
         }
       });

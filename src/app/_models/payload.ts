@@ -7,10 +7,12 @@ export interface IPayload {
 
 export interface IUserProfile {
   ID: string;
-  fullName: string;
+  fullName?: string;
   
-  isAdministrator: boolean;
-  isManager: boolean;
+  isAdministrator?: boolean;
+  isManager?: boolean;
 
-  groups: number[];
+  groups?: number[];
+
+  createPasswordProfile?: boolean;  
 }
