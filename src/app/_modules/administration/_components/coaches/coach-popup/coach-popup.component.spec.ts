@@ -1,6 +1,8 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 
+import { SharedModule } from '../../../../shared/shared.module';
+
 import { CoachPopupComponent } from './coach-popup.component';
 
 
@@ -14,7 +16,8 @@ describe('CoachPopupComponent', () => {
         CoachPopupComponent 
       ],
       imports: [
-        HttpClientTestingModule
+        HttpClientTestingModule,
+        SharedModule
       ]
     })
     .compileComponents();
@@ -390,7 +393,7 @@ describe('CoachPopupComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#updated-date").innerHTML).toEqual('Updated Date: 09/05/2018 10:55 AM');
+    expect(fixture.nativeElement.querySelector("#updated-date").innerHTML).toEqual('Updated Date: 09/05/2018 9:55 AM');
   });
 
   it('should display updated by', () => {

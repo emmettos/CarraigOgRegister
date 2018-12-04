@@ -9,6 +9,8 @@ import { NgbModule, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap'
 
 import { ToasterModule, ToasterService } from 'angular2-toaster';
 
+import { SharedModule } from '../../../../shared/shared.module';
+
 import { CoachesService, AuthorizationService } from '../../../../../_services';
 import { ValidationService } from '../../../../../_modules/shared/_services';
 
@@ -36,7 +38,8 @@ describe('ManageCoachesComponent', () => {
         HttpClientTestingModule,
         ReactiveFormsModule,
         NgbModule.forRoot(),
-        ToasterModule.forRoot()
+        ToasterModule.forRoot(),
+        SharedModule
       ],
       providers: [
         CoachesService,

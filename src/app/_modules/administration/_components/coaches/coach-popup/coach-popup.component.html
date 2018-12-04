@@ -26,12 +26,12 @@
     </div>
     <div class="card-footer text-muted" [ngClass]="coachPopupFooterCSSClass()">
       <p>
-        <span id="created-date">Created Date: {{ coachDetails.createdDate | date : "dd/MM/yyyy h:mm a" }}</span>
+        <span id="created-date">Created Date: {{ coachDetails.createdDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
         <br/>
         <span id="created-by">Created By: {{ coachDetails.createdBy }}</span>
       </p>
       <p>
-        <span id="updated-date">Updated Date: {{ coachDetails.updatedDate | date : "dd/MM/yyyy h:mm a" }}</span>
+        <span id="updated-date">Updated Date: {{ coachDetails.updatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
         <br/>
         <span id="updated-by">Updated By: {{ coachDetails.updatedBy }}</span>
       </p>
