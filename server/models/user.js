@@ -1,7 +1,7 @@
 "use strict";
 
-var mongoose	= require("mongoose");
-var bcrypt		= require("bcrypt");
+var mongoose = require("mongoose");
+var bcrypt = require("bcrypt");
 
 var Schema = mongoose.Schema;
 
@@ -10,25 +10,27 @@ var userSchema = new Schema({
 	surname: { type: String, required: true },
 	emailAddress: { type: String, required: true, unique: true },
 	phoneNumber: { type: String },
-	password: { type: String, required: true },
+	password: { type: String },
 	isAdministrator: { type: Boolean, required: true },
-    createdBy: { type: String, required: true },
-    createdDate: { type: Date, required: true },
-    updatedBy: { type: String, required: true },
-    updatedDate: { type: Date, required: true }
+	createdBy: { type: String, required: true },
+	createdDate: { type: Date, required: true },
+	updatedBy: { type: String, required: true },
+	updatedDate: { type: Date, required: true }
 });
 
+userSchema.index({ emailAddress: 1 }, { unique: true });
+
 userSchema.virtual("modifiedBy").set(function (userId) {
-    var user = this,
-        currentDate = new Date();
+	var user = this,
+		currentDate = new Date();
 
-    if (user.isNew) {
-        user.createdBy = userId;
-        user.createdDate = user.updatedDate = currentDate;
-    }
+	if (user.isNew) {
+		user.createdBy = userId;
+		user.createdDate = currentDate;
+	}
 
-    user.updatedBy = userId;
-    user.updatedDate = currentDate;
+	user.updatedBy = userId;
+	user.updatedDate = currentDate;
 });
 
 userSchema.pre("save", function (next) {
@@ -71,9 +73,11 @@ userSchema.pre("save", function (next) {
 		return promise;
 	}
 
-	if (user.isModified("password") || user.isNew) {
+	if (!user.isNew && user.isModified("password")) {
 		createSalt()
-			.then(createPasswordHash)
+			.then(function (salt) {
+        return createPasswordHash(salt);
+      })
 			.then(function (hash) {
 				user.password = hash;
 
@@ -89,29 +93,29 @@ userSchema.pre("save", function (next) {
 });
 
 userSchema.methods.comparePassword = function (password) {
-    var user = this;
+	var user = this;
 
-    var promise = new Promise(function (resolve, reject) {
-        bcrypt.compare(password, user.password, function (error, isMatch) {
-            try {
-                if (error) {
-                    reject(error);
-                }
+	var promise = new Promise(function (resolve, reject) {
+		bcrypt.compare(password, user.password, function (error, isMatch) {
+			try {
+				if (error) {
+					reject(error);
+				}
 
-                if (isMatch) {
-                    resolve(user);
-                }
-                else {
-                    resolve(null);
-                }
-            }
-            catch (error) {
-                reject(error);
-            }
-        });
-    });
+				if (isMatch) {
+					resolve(user);
+				}
+				else {
+					resolve(null);
+				}
+			}
+			catch (error) {
+				reject(error);
+			}
+		});
+	});
 
-    return promise;
+	return promise;
 };
 
 module.exports = mongoose.model("user", userSchema);

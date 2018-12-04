@@ -2,8 +2,8 @@
 <a id="group-details-link" routerLink="../players/{{ group.name }}/{{ group.yearOfBirth }}" [class.disabled]="!group.canViewPlayers" class="card h-100">
   <h5 id="group-header" class="card-header"><strong>{{ group.name }}</strong> (Year of Birth: {{ group.yearOfBirth }})</h5>
   <div class="card-body">
-    <p id="football-manager" class="card-text"><strong>Football Manager:</strong> {{ group.footballManager }}</p>
-    <p id="hurling-manager" class="card-text"><strong>Hurling Manager:</strong> {{ group.hurlingManager }}</p>
+    <p id="football-manager" class="card-text"><strong>Football Manager:</strong> {{ group.footballManagerFullName }}</p>
+    <p id="hurling-manager" class="card-text"><strong>Hurling Manager:</strong> {{ group.hurlingManagerFullName }}</p>
     <p id="number-of-players" class="card-text">No. players currently registered: {{ group.numberOfPlayers }}</p>
   </div>
   <div id="group-footer" class="card-footer text-muted">

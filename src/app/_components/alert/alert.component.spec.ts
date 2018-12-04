@@ -1,9 +1,10 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { Subject } from 'rxjs';
 
-import { SharedModule } from '../../_modules/shared/shared.module';
 import { AlertService } from '../../_services';
 
 import { AlertComponent } from './alert.component';
@@ -22,7 +23,7 @@ describe('AlertComponent', () => {
       ],
       imports: [
         RouterTestingModule,
-        SharedModule
+        NgbModule.forRoot(),
       ],
       providers: [
         AlertService

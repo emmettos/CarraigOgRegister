@@ -11,12 +11,23 @@ exports.authorize = function (requiredProfile) {
     try {
       if (!request.payload) {
         customError = new Error("User not authenticated");
-        customError.code = 401;
+        customError.code = 403;
 
         throw customError;
       }
 
       userProfile = request.payload.userProfile;
+
+      if (requiredProfile && requiredProfile.isCreatingPassword) {
+        if (userProfile.createPasswordProfile) {
+          return next();
+        }
+
+        customError = new Error("User not authorized");
+        customError.code = 403;
+
+        throw customError;
+      }
 
       if (userProfile.isAdministrator) {
         return next();

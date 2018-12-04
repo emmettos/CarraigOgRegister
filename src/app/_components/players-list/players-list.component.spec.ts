@@ -32,7 +32,8 @@ describe('PlayersListComponent', () => {
         RouterTestingModule
       ],
       providers: [
-        { provide: ActivatedRoute,
+        { 
+          provide: ActivatedRoute,
           useValue: {
             snapshot: {
               paramMap: convertToParamMap({
@@ -168,8 +169,8 @@ describe('PlayersListComponent', () => {
     expect(playersService.readCurrentPlayers).toHaveBeenCalledWith(2008);
   });
 
-  it('should display total count', () => {
-    expect(fixture.nativeElement.querySelector('#total-count').innerHTML).toEqual('Total 2');
+  it('should display registered count', () => {
+    expect(fixture.nativeElement.querySelector('#registered-count').innerHTML).toEqual('Regd 2');
   });
 
   it('should display new count', () => {
@@ -328,14 +329,40 @@ describe('PlayersListComponent', () => {
     expect(fixture.nativeElement.querySelector('#displaying-message').innerHTML).toEqual('Displaying 2 Players');
   });
 
-  it('should display selected player details', () => {
+  it('should select selected player details', () => {
     let modalService: NgbModal;
 
     modalService = TestBed.get(NgbModal);
 
     spyOn(modalService, 'open');
 
-    component.onClickRow(null, 'b159d6e49a41877180ba3826');
+    component.onClickRow(null, {
+      '_id': 'b159d6e49a41877180ba3826',
+      'firstName': 'Thomas',
+      'surname': 'Watkins',
+      'addressLine1': '115 Evergreen Lane',
+      'addressLine2': 'Richmond',
+      'addressLine3': 'Carrigaline',
+      'dateOfBirth': '2008-05-04T00:00:00.000Z',
+      'yearOfBirth': 2008,
+      'medicalConditions': 'None',
+      'contactName': 'Finley Watkins',
+      'contactMobileNumber': '086 5882764',
+      'contactHomeNumber': '021 4834511',
+      'contactEmailAddress': 'finley_watkins@gmail.com',
+      'school': 'Scoil Mhuire Lourdes',
+      'lastRegisteredDate': '2017-02-14T00:00:00.000Z',
+      'lastRegisteredYear': 2017,
+      'registeredYears': [
+        2017
+      ],
+      '__v': 1,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedDate': '2017-03-15T13:43:51.268Z',
+      'updatedBy': 'emmett.j.osullivan@gmail.com',
+      'playerState': 1
+    });
 
     expect(JSON.stringify(component.selectedPlayer)).toEqual(JSON.stringify({
       '_id': 'b159d6e49a41877180ba3826',

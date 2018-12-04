@@ -1,6 +1,6 @@
 <!-- Most id's are used for unit testing -->
 <header class="navbar navbar-dark navbar-fixed-top navbar-expand-sm mb-3">
-  <a class="navbar-brand" routerLink="/groups" (click)="navbarCollapsed = true">Carraig Og Register</a>
+  <a id="home-link" class="navbar-brand" [routerLink]="authorizationService.getPayload ? '/groups' : '/login'" (click)="navbarCollapsed = true">Carraig Og Register</a>
 
   <button class="navbar-toggler navbar-toggler-right" type="button" (click)="navbarCollapsed = !navbarCollapsed">
     <span class="navbar-toggler-icon"></span>
@@ -9,9 +9,10 @@
   <div class="navbar-collapse" [ngbCollapse]="navbarCollapsed">
     <ul class="navbar-nav mr-auto">
       <li ngbDropdown class="nav-item dropdown">
-        <a id="administration-menu" [style.display]="authorizationService.getPayload?.userProfile.isAdministrator ? 'inline': 'none'" ngbDropdownToggle class="nav-link dropdown-toggle">Administration</a>
+        <a id="administration-menu" [style.display]="authorizationService.getPayload?.userProfile.isAdministrator ? 'inline': 'none'" ngbDropdownToggle class="nav-link dropdown-toggle">Admin</a>
         <div id="administration-dropdown" ngbDropdownMenu>
-          <a class="dropdown-item" routerLink="/administration/manage-players">Manage Players</a>
+          <a class="dropdown-item" routerLink="/administration/manage-players">Players</a>
+          <a class="dropdown-item" routerLink="/administration/manage-coaches">Coaches</a>
         </div>
       </li>
     </ul>

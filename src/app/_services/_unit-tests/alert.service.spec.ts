@@ -45,7 +45,7 @@ describe('AlertService', () => {
     service.getAlertStream.subscribe(
       alert => {
         expect(alert).toEqual({
-          type: 'error', 
+          type: 'danger', 
           title: 'Error Header', 
           text: 'Error message'
         });

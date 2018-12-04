@@ -1,0 +1,87 @@
+<!-- Most id's are used for unit testing -->
+<div>
+  <div class="row text-center">
+    <div class="col-lg-12">
+      <h2>CarraigOg Coaches</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3 col-md-2 col-lg-1">
+      <h4><span id="total-count" class="badge badge-primary">Total {{ totalCount }}</span></h4>
+    </div>
+    <div class="col-sm-3 col-md-2 col-lg-1">
+      <h4><span id="active-count" class="badge badge-success">Active {{ activeCount }}</span></h4>
+    </div>
+    <div class="col-sm-3 col-md-2 col-lg-1">
+      <h4><span id="dormant-count" class="badge badge-warning">Dormant {{ dormantCount }}</span></h4>
+    </div>
+    <div class="col-sm-3 col-md-3 col-lg-7">
+    </div>
+    <div class="col-sm-3 col-md-3 col-lg-2">
+      <button type="button" (click)="onClickDownloadCSV()" class="btn btn-info">Download CSV</button>
+    </div>
+  </div>
+  <br />  
+  <form [formGroup]="filterForm">
+    <div class="form-row align-items-center">
+      <div class="col-md-4 col-lg-3">
+        <input  type="text" 
+                formControlName="nameFilter" 
+                class="form-control" 
+                #nameFilter
+                placeholder="Name Filter">
+      </div>
+      <div class="col-md-4 col-lg-3">
+        <div class="form-check">
+          <input  type="checkbox" 
+                  formControlName="currentlyActive"
+                  class="form-check-input"> 
+          <label class="form-check-label">Currently Active Only</label>
+        </div>
+      </div>
+      <div class="col-md-4 col-lg-6 text-right">
+        <span id="displaying-message">Displaying {{ filteredCoaches?.length }} Coaches</span>
+      </div>
+    </div>
+    <div class="form-row my-2">
+      <div class="col-lg-10 offset-lg-1">
+        <input  type="button" 
+                id="add-coach" 
+                class="btn btn-info btn-block" 
+                (click)="onClickAddCoach()" 
+                value="Add New Coach">
+      </div>
+    </div>
+  </form>
+  <div class="table-responsive">
+    <table id="coaches-table" class="table table-bordered table-striped table-hover select-row">
+      <thead>
+        <tr>
+          <th (click)="onClickHeader('active')" class="text-right"><span class="float-left mr-1">Status</span><i [ngClass]="headerSortCSSClass('coachState')"></i></th>
+          <th (click)="onClickHeader('surname')" class="text-right"><span class="float-left mr-1">Surname</span><i [ngClass]="headerSortCSSClass('surname')"></i></th>
+          <th (click)="onClickHeader('firstName')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('firstName')"></i></th>
+          <th (click)="onClickHeader('emailAddress')" class="text-right"><span class="float-left mr-1">Email Address</span><i [ngClass]="headerSortCSSClass('addressLine2')"></i></th>
+          <th (click)="onClickHeader('phoneNumber')" class="text-right"><span class="float-left mr-1">Phone Number</span><i [ngClass]="headerSortCSSClass('dateOfBirth')"></i></th>
+          <th (click)="onClickHeader('isAdministrator')" class="text-right"><span class="float-left mr-1">Admin</span><i [ngClass]="headerSortCSSClass('isAdministrator')"></i></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let currentCoach of filteredCoaches" [class.missing]="!currentCoach.active" (click)="onClickRow(currentCoach)">
+          <td><span class="badge detail-badge" [ngClass]="coachStateCSSClass(currentCoach)"></span></td>
+          <td>{{ currentCoach.surname }}</td>
+          <td>{{ currentCoach.firstName }}</td>
+          <td>{{ currentCoach.emailAddress }}</td>
+          <td>{{ currentCoach.phoneNumber }}</td>
+          <td class="text-center">{{ currentCoach.isAdministrator ? 'YES' : 'NO' }}</td>
+          <td class="text-center"><a href=""><span (click)="!!onClickEditCoach($event, currentCoach)">Edit</span></a></td>
+          <td class="text-center">
+            <a *ngIf="!currentCoach.currentSessionOwner" href=""><span (click)="!!onClickDeleteCoach($event, currentCoach)">Delete</span></a>
+            <span *ngIf="currentCoach.currentSessionOwner"></span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -65,12 +65,42 @@ describe('ValidationService', () => {
     expect(service.passwordMatchValidator(formControl)(passwordMatchControl)).toEqual({ 'invalidConfirmPassword': true });
   });
 
+  it('should validate valid new coach', () => {
+    formControl.setValue('test@gmail.com');
+
+    expect(service.newCoachValidator(null)(formControl)).toBeNull();
+  });
+
+  it('should validate invalid new coach', () => {
+    formControl.setValue('erick_norris@carraigog.com');
+
+    let currentCoaches = [
+      {
+      '_id': '6293c9a83fd22e7fa8e66d3f',
+      'firstName': 'Erick',
+      'surname': 'Norris',
+      'emailAddress': 'erick_norris@carraigog.com',
+      'phoneNumber': '086 6095372',
+      'isAdministrator': true,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedDate': '2018-05-09T09:55:59.735Z',
+      'updatedBy': 'administrator@carraigog.com',
+      '__v': 0,
+      'active': true,
+      'currentSessionOwner': false
+      }
+    ];  
+
+    expect(service.newCoachValidator(currentCoaches)(formControl)).toEqual({ 'invalidNewCoach': true });
+  });
+
   it('should return invalid email message', () => {
     expect(service.validationMessage('invalidEmailAddress')).toEqual('Invalid email address');
   });
 
   it('should return invalid password match message', () => {
-    expect(service.validationMessage('invalidConfirmPassword')).toEqual('The new passwords do not match');
+    expect(service.validationMessage('invalidConfirmPassword')).toEqual('The Confirm Password does not match the Password');
   });
 
   it('should return invalid required message', () => {
@@ -79,5 +109,9 @@ describe('ValidationService', () => {
 
   it('should return invalid min length message', () => {
     expect(service.validationMessage('minlength', { requiredLength: 4 })).toEqual('Minimum length 4');
+  });
+
+  it('should return invalid new coach message', () => {
+    expect(service.validationMessage('invalidNewCoach')).toEqual('A coach with this email address already exists');
   });
 });

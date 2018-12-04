@@ -1,6 +1,12 @@
 "use strict";
 
+var fs = require('fs');
+
 var mongoose = require("mongoose");
+var JSONWebToken = require("jsonwebtoken");
+var nodemailer = require('nodemailer');
+
+var config = require("./config/config");
 
 var authenticator = require("./authenticator");
 var authorizer = require("./authorizer");
@@ -9,9 +15,9 @@ var group = require("./models/group");
 var player = require("./models/player");
 var user = require("./models/user");
 
+
 exports = module.exports = function (app, router) {
-  var currentSettings = app.currentSettings,
-      currentSavedPlayer = null;
+  var currentSettings = app.currentSettings;
 
   router.get("/currentSettings", function (request, response, next) {
     try {
@@ -29,15 +35,65 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get("/groups", authorizer.authorize(), function (request, response, next) {
-    var readGroups = function () {
-      return group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec();
+  router.get("/groups", authorizer.authorize(), async (request, response, next) => {
+    var groups = null,
+        users = null,
+        playerGroupCounts = null,
+        groupIndex = 0,
+        currentGroup = null,
+        returnMessage = {};
+
+    var readManagerFullName = function (managerEmailAddress) {
+      var lowIndex = 0,
+          highIndex = users.length - 1,
+          middleIndex = 0,
+          managerFullName = managerEmailAddress;
+
+      while (lowIndex <= highIndex) {
+        middleIndex = (lowIndex + highIndex) / 2 | 0;
+
+        if (users[middleIndex].emailAddress === managerEmailAddress) {
+          managerFullName = users[middleIndex].firstName + " " + users[middleIndex].surname;
+          lowIndex = highIndex + 1;
+        }
+        else if (users[middleIndex].emailAddress < managerEmailAddress) {
+          lowIndex = middleIndex + 1;
+        }
+        else {
+          highIndex = middleIndex - 1;
+        }
+      }
+
+      return managerFullName;
     };
-    var readUsers = function () {
-      return user.find({}).sort({ emailAddress: "ascending" }).lean().exec();
+    var readPlayerGroupCount = function (yearOfBirth) {
+      var lowIndex = 0,
+          highIndex = playerGroupCounts.length - 1,
+          middleIndex = 0,
+          playerGroupCount = 0;
+
+      while (lowIndex <= highIndex) {
+        middleIndex = (lowIndex + highIndex) / 2 | 0;
+
+        if (playerGroupCounts[middleIndex]._id === yearOfBirth) {
+          playerGroupCount = playerGroupCounts[middleIndex].total;
+          lowIndex = highIndex + 1;
+        }
+        else if (playerGroupCounts[middleIndex]._id < yearOfBirth) {
+          lowIndex = middleIndex + 1;
+        }
+        else {
+          highIndex = middleIndex - 1;
+        }
+      }
+
+      return playerGroupCount;
     };
-    var readPlayerGroupCounts = function () {
-      return player.aggregate([
+
+    try {
+      groups = await group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec();
+      users = await user.find({}).sort({ emailAddress: "ascending" }).lean().exec();
+      playerGroupCounts =  await player.aggregate([
         {
           $match: {
             $and: [
@@ -56,90 +112,88 @@ exports = module.exports = function (app, router) {
               total: { $sum: 1 }
             }
         },
-        { $sort: { "_id": 1 } }
-      ]);
-    };
-
-    Promise.all([readGroups(), readUsers(), readPlayerGroupCounts()])
-      .then(function (results) {
-        var groups = results[0],
-            users = results[1],
-            playerGroupCounts = results[2],
-            groupIndex = 0,
-            currentGroup = null,
-            returnMessage = {};
-
-        var readManagerFullName = function (managerEmailAddress) {
-          var lowIndex = 0,
-              highIndex = users.length - 1,
-              middleIndex = 0,
-              managerFullName = managerEmailAddress;
-
-          while (lowIndex <= highIndex) {
-            middleIndex = (lowIndex + highIndex) / 2 | 0;
-
-            if (users[middleIndex].emailAddress === managerEmailAddress) {
-              managerFullName = users[middleIndex].firstName + " " + users[middleIndex].surname;
-              lowIndex = highIndex + 1;
-            }
-            else if (users[middleIndex].emailAddress < managerEmailAddress) {
-              lowIndex = middleIndex + 1;
-            }
-            else {
-              highIndex = middleIndex - 1;
-            }
-          }
-
-          return managerFullName;
-        };
-        var readPlayerGroupCount = function (yearOfBirth) {
-          var lowIndex = 0,
-              highIndex = playerGroupCounts.length - 1,
-              middleIndex = 0,
-              playerGroupCount = 0;
-
-          while (lowIndex <= highIndex) {
-            middleIndex = (lowIndex + highIndex) / 2 | 0;
-
-            if (playerGroupCounts[middleIndex]._id === yearOfBirth) {
-              playerGroupCount = playerGroupCounts[middleIndex].total;
-              lowIndex = highIndex + 1;
-            }
-            else if (playerGroupCounts[middleIndex]._id < yearOfBirth) {
-              lowIndex = middleIndex + 1;
-            }
-            else {
-              highIndex = middleIndex - 1;
-            }
-          }
-
-          return playerGroupCount;
-        };
-
-        for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
-          currentGroup = groups[groupIndex];
-
-          currentGroup.footballManager = readManagerFullName(currentGroup.footballManager);
-          currentGroup.hurlingManager = readManagerFullName(currentGroup.hurlingManager);
-
-          currentGroup.numberOfPlayers = readPlayerGroupCount(currentGroup.yearOfBirth);
+        { 
+          $sort: { "_id": 1 } 
         }
+      ]);
 
-        returnMessage.error = null;
-        returnMessage.body = {};
+      for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
+        currentGroup = groups[groupIndex];
 
-        returnMessage.body.groups = groups;
+        currentGroup.footballManagerFullName = readManagerFullName(currentGroup.footballManager);
+        currentGroup.hurlingManagerFullName = readManagerFullName(currentGroup.hurlingManager);
 
-        response.status(200).json(returnMessage);
-      })
-      .catch(function (error) {
-        next(error);
-      });
+        currentGroup.numberOfPlayers = readPlayerGroupCount(currentGroup.yearOfBirth);
+      }
+
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      returnMessage.body.groups = groups;
+
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
   });
 
-  router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isGroupManager: true }), function (request, response, next) {
+  router.get("/coaches", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
-      var filter = null;
+      await readCoaches(currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.get("/coachGroups/:emailAddress", async (request, response, next) => {
+    var groups = null,
+        groupIndex = 0,
+        currentGroup = null,
+        coachGroup = null,
+        coachGroups = [],
+        returnMessage = {};
+
+    try {
+      groups = await group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec();
+
+      for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
+        currentGroup = groups[groupIndex];
+
+        coachGroup = {};
+
+        coachGroup.groupName = currentGroup.name;
+        if (currentGroup.footballManager === request.params.emailAddress) {
+          coachGroup.role = 'Football Manager';
+
+          coachGroups.push(coachGroup);
+        }
+        else if (currentGroup.hurlingManager === request.params.emailAddress) {
+          coachGroup.role = 'Hurling Manager';
+
+          coachGroups.push(coachGroup);
+        }
+      }
+
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      returnMessage.body.coachGroups = coachGroups;
+
+      response.status(200).json(returnMessage);
+
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var filter = null,
+          players = null,
+          returnMessage = {};
       
       if (request.params.allPlayers) {
         filter = { "yearOfBirth": parseInt(request.params.yearOfBirth) }
@@ -151,272 +205,312 @@ exports = module.exports = function (app, router) {
         }
       }
 
-      player.find(filter).lean().exec()
-        .then(function (players) {
-          var returnMessage = {};
+      players = await player.find(filter).lean().exec();
 
-          returnMessage.error = null;
-          returnMessage.body = {};
+      returnMessage.error = null;
+      returnMessage.body = {};
 
-          returnMessage.body.players = players;
+      returnMessage.body.players = players;
 
-          response.status(200).json(returnMessage);
-        })
-        .catch(function (error) {
-          next(error);
-        });
+      response.status(200).json(returnMessage);
     }
     catch (error) {
       next(error);
     }
   });
 
-  router.post("/register", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var newUser = null;
+  router.post("/verifyUserToken", async (request, response, next) => {
+    var verifyToken = function (userToken) {
+      var promise = new Promise(function (resolve, reject) {
+        JSONWebToken.verify(userToken, config.secret, function (error, payload) {
+          try {
+            if (error) {
+              error.message = "Invalid userToken: " + error.message;
+    
+              error.httpCode = 400;
+        
+              reject(error);
+            }
 
-    if (!(request.body.emailAddress && request.body.password)) {
-      throw new Error("Please provide name and password.");
-    }
+            resolve(payload);
+          }
+          catch (error) {
+            reject(error);
+          }
+        });
+      });
+    
+      return promise;
+    };
 
-    newUser = new user();
+    try {
+      const payload = await verifyToken(request.body.userToken);
+      const foundUser = await user.findOne({ emailAddress: payload.emailAddress });
 
-    newUser.emailAddress = request.body.emailAddress,
-      newUser.firstName = request.body.firstName,
-      newUser.surname = request.body.surname,
-      newUser.isAdministrator = request.body.isAdministrator,
-      newUser.password = request.body.password
+      var customError = null;
 
-    newUser.modifiedBy = request.body.emailAddress;
+      if (!foundUser) {
+        customError = new Error("User not found - " + payload.emailAddress);
 
-    newUser.save(function (error) {
+        customError.httpCode = 401;
+
+        throw customError;
+      }
+
+      if (!payload.currentPassword) {
+        if (foundUser.password !== '') {
+          customError = new Error("Password has already been set for " + payload.emailAddress);
+  
+          customError.httpCode = 401;
+  
+          throw customError;  
+        }
+      }
+      else {
+        if (!foundUser.comparePassword(payload.currentPassword)) {
+          customError = new Error("Token password for " + payload.emailAddress + " does not match existing password");
+  
+          customError.httpCode = 401;
+  
+          throw customError;  
+        }  
+      }
+
       var returnMessage = {};
 
-      try {
-        if (error) {
-          throw error;
-        }
+      returnMessage.error = null;
+      returnMessage.body = {};
 
-        returnMessage.error = null;
-        returnMessage.body = {};
+      returnMessage.body.emailAddress = payload.emailAddress;
 
-        response.status(200).json(returnMessage);
-      }
-      catch (error) {
-        next(error);
-      }
-    });
+      var userProfile = {};
+
+      userProfile.ID = payload.emailAddress;
+      userProfile.createPasswordProfile = true;
+
+      response.set("Authorization", "Bearer " + JSONWebToken.sign({
+        userProfile: userProfile 
+      }, config.secret));
+
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
   });
 
-  router.post("/resetPassword", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
+  router.post("/createPassword", authorizer.authorize({ isCreatingPassword: true }), async (request, response, next) => {
     var customError = null;
 
-    if (!(request.body.emailAddress && request.body.password)) {
-      customError = new Error("Username and password are required");
+    try {
+      if (!(request.body.emailAddress && request.body.password)) {
+        customError = new Error("Email address and password are required");
 
-      customError.httpCode = 400;
+        customError.httpCode = 400;
 
-      throw customError;
+        throw customError;
+      }
+
+      const foundUser = await user.findOne({ emailAddress: request.body.emailAddress })
+
+      if (!foundUser) {
+        customError = new Error("User not found");
+
+        customError.httpCode = 400;
+
+        throw customError;
+      }
+
+      foundUser.password = request.body.password;
+
+      await foundUser.save();
+
+      var returnMessage = {};
+
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      response.status(200).json(returnMessage);
     }
-
-    user.findOne({ emailAddress: request.body.emailAddress })
-      .then(function (foundUser) {
-        var customError = null;
-
-        if (!foundUser) {
-          customError = new Error("User not found");
-
-          customError.httpCode = 401;
-
-          throw customError;
-        }
-
-        foundUser.password = request.body.password;
-
-        return foundUser.save();
-      })
-      .then(function () {
-        var returnMessage = {};
-
-        returnMessage.error = null;
-        returnMessage.body = {};
-
-        response.status(200).json(returnMessage);
-      })
-      .catch(function (error) {
-        next(error);
-      });
+    catch (error) {
+      next(error);
+    }
   });
 
-  router.post("/authenticate", function (request, response, next) {
-    user.findOne({ emailAddress: request.body.emailAddress })
-      .then(function (foundUser) {
-        var customError = null;
+  router.post("/authenticate", async (request, response, next) => {
+    var foundUser = null,
+        comparedUser = null,
+        JWTToken = null,
+        customError = null,
+        returnMessage = {};
 
-        if (!foundUser) {
-          customError = new Error("User not found");
+    try {
+      foundUser = await user.findOne({ emailAddress: request.body.emailAddress })
 
-          customError.httpCode = 401;
+      if (!foundUser) {
+        customError = new Error("User not found");
 
-          throw customError;
-        }
+        customError.httpCode = 401;
 
-        return foundUser.comparePassword(request.body.password);
-      })
-      .then(function (foundUser) {
-        var customError = null;
+        throw customError;
+      }
+        
+      if (foundUser.password === "") {
+        customError = new Error("User not validated");
 
-        if (!foundUser) {
-          customError = new Error("Invalid password");
+        customError.httpCode = 401;
 
-          customError.httpCode = 401;
+        throw customError;
+      }
 
-          throw customError;
-        }
+      comparedUser = await foundUser.comparePassword(request.body.password);
 
-        return authenticator.createToken(request, foundUser)
-      })
-      .then(function (token) {
-        var returnMessage = {};
+      if (!comparedUser) {
+        customError = new Error("Invalid password");
 
-        returnMessage.error = null;
-        returnMessage.body = {};
+        customError.httpCode = 401;
 
-        request.logger.trace(token);
+        throw customError;
+      }
 
-        response.set("Authorization", "Bearer " + token);
+      JWTToken = await authenticator.createToken(request, foundUser)
 
-        response.status(200).json(returnMessage);
-      })
-      .catch(function (error) {
-        next(error);
-      });
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      response.set("Authorization", "Bearer " + JWTToken);
+
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
   });
 
-  router.post("/changePassword", function (request, response, next) {
-    user.findOne({ emailAddress: request.body.emailAddress })
-      .then(function (foundUser) {
-        var customError = null;
+  router.post("/changePassword", async (request, response, next) => {
+    var foundUser = null,
+        comparedUser = null,
+        customError = null,
+        returnMessage = {};
 
-        if (!foundUser) {
-          customError = new Error("User not found");
+    try {
+      foundUser = await user.findOne({ emailAddress: request.body.emailAddress });
 
-          customError.code = 401;
+      if (!foundUser) {
+        customError = new Error("User not found");
 
-          throw customError;
-        }
+        customError.httpCode = 401;
 
-        return foundUser.comparePassword(request.body.password);
-      })
-      .then(function (foundUser) {
-        var customError = null;
+        throw customError;
+      }
 
-        if (!foundUser) {
-          customError = new Error("Invalid password");
+      comparedUser = await foundUser.comparePassword(request.body.password);
 
-          customError.httpCode = 401;
+      if (!comparedUser) {
+        customError = new Error("Invalid password");
 
-          throw customError;
-        }
+        customError.httpCode = 401;
 
-        foundUser.password = request.body.newPassword;
+        throw customError;
+      }
 
-        return foundUser.save();
-      })
-      .then(function (token) {
-        var returnMessage = {};
+      comparedUser.password = request.body.newPassword;
 
-        returnMessage.error = null;
-        returnMessage.body = {};
+      await comparedUser.save();
 
-        response.status(200).json(returnMessage);
-      })
-      .catch(function (error) {
-        next(error);
-      });
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
   });
 
-  router.post("/createPlayer", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var groupDetails = request.body.groupDetails,
-        playerDetails = request.body.playerDetails,
-        newPlayer = new player(),
-        lastRegisteredDate = null;
+  router.post("/createPlayer", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var groupDetails = request.body.groupDetails,
+          playerDetails = request.body.playerDetails,
+          newPlayer = new player(),
+          lastRegisteredDate = null,
+          savedPlayer = null, 
+          returnMessage = {};
 
-    newPlayer.dateOfBirth = new Date(playerDetails.dateOfBirth);
-    newPlayer.yearOfBirth = newPlayer.dateOfBirth.getFullYear();
+      newPlayer.dateOfBirth = new Date(playerDetails.dateOfBirth);
+      newPlayer.yearOfBirth = newPlayer.dateOfBirth.getFullYear();
 
-    newPlayer.firstName = playerDetails.firstName;
-    newPlayer.surname = playerDetails.surname;
-    newPlayer.addressLine1 = playerDetails.addressLine1;
-    newPlayer.addressLine2 = playerDetails.addressLine2;
-    newPlayer.addressLine3 = playerDetails.addressLine3;
-    newPlayer.addressLine4 = playerDetails.addressLine4;
-    newPlayer.medicalConditions = playerDetails.medicalConditions;
-    newPlayer.contactName = playerDetails.contactName;
-    newPlayer.contactHomeNumber = playerDetails.contactHomeNumber;
-    newPlayer.contactMobileNumber = playerDetails.contactMobileNumber;
-    newPlayer.contactEmailAddress = playerDetails.contactEmailAddress;
-    newPlayer.school = playerDetails.school;
+      newPlayer.firstName = playerDetails.firstName;
+      newPlayer.surname = playerDetails.surname;
+      newPlayer.addressLine1 = playerDetails.addressLine1;
+      newPlayer.addressLine2 = playerDetails.addressLine2;
+      newPlayer.addressLine3 = playerDetails.addressLine3;
+      newPlayer.addressLine4 = playerDetails.addressLine4;
+      newPlayer.medicalConditions = playerDetails.medicalConditions;
+      newPlayer.contactName = playerDetails.contactName;
+      newPlayer.contactHomeNumber = playerDetails.contactHomeNumber;
+      newPlayer.contactMobileNumber = playerDetails.contactMobileNumber;
+      newPlayer.contactEmailAddress = playerDetails.contactEmailAddress;
+      newPlayer.school = playerDetails.school;
 
-    lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
-    newPlayer.lastRegisteredDate = lastRegisteredDate;
-    newPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
-    newPlayer.registeredYears.push(newPlayer.lastRegisteredYear);
+      lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
+      newPlayer.lastRegisteredDate = lastRegisteredDate;
+      newPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
+      newPlayer.registeredYears.push(newPlayer.lastRegisteredYear);
 
-    newPlayer.modifiedBy = request.payload.userProfile.ID;
+      newPlayer.modifiedBy = request.payload.userProfile.ID;
 
-    newPlayer.save()
-      .then(function (savedPlayer) {
-        var query = { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth },
-            update = { "lastUpdatedDate": new Date() };
+      savedPlayer = await newPlayer.save();
 
-        currentSavedPlayer = savedPlayer;
+      await group.findOneAndUpdate(
+          { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth }, 
+          { "lastUpdatedDate": new Date() });
 
-        return group.findOneAndUpdate(query, update);
-      })
-      .then(function () {
-        var returnMessage = {};
+      returnMessage.error = null;
+      returnMessage.body = {};
 
-        returnMessage.error = null;
-        returnMessage.body = {};
+      returnMessage.body.player = savedPlayer.toObject();
 
-        returnMessage.body.player = currentSavedPlayer.toObject();
-
-        response.status(200).json(returnMessage);
-      })
-      .catch(function (error) {
-        next(error);
-      });
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
   });
 
-  router.post("/updatePlayer", authorizer.authorize({ isAdministrator: true }), function (request, response, next) {
-    var groupDetails = request.body.groupDetails,
-        playerDetails = request.body.playerDetails;
-
-    player.findOne({ "_id": mongoose.Types.ObjectId(playerDetails._id), "__v": playerDetails.__v })
-      .then(function (foundPlayer) {
-        var lastRegisteredDate = null,
+  router.post("/updatePlayer", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var groupDetails = request.body.groupDetails,
+          playerDetails = request.body.playerDetails,
+          lastRegisteredDate = null,
           lastRegisteredYear = null,
-          customError = null;
+          foundPlayer = null,
+          updatedPlayer = null,
+          customError = null,
+          returnMessage = {};
 
-        if (!foundPlayer) {
-          customError = new Error("Player not found");
+      foundPlayer = await player.findOne({ "_id": mongoose.Types.ObjectId(playerDetails._id), "__v": playerDetails.__v });
 
-          customError.httpCode = 409;
+      if (!foundPlayer) {
+        customError = new Error("Player not found");
 
-          throw customError;
-        }
+        customError.httpCode = 409;
 
-        foundPlayer.addressLine1 = playerDetails.addressLine1;
-        foundPlayer.addressLine2 = playerDetails.addressLine2;
-        foundPlayer.addressLine3 = playerDetails.addressLine3;
-        foundPlayer.addressLine4 = playerDetails.addressLine4;
-        foundPlayer.medicalConditions = playerDetails.medicalConditions;
-        foundPlayer.contactName = playerDetails.contactName;
-        foundPlayer.contactHomeNumber = playerDetails.contactHomeNumber;
-        foundPlayer.contactMobileNumber = playerDetails.contactMobileNumber;
-        foundPlayer.contactEmailAddress = playerDetails.contactEmailAddress;
-        foundPlayer.school = playerDetails.school;
+        throw customError;
+      }
 
+      foundPlayer.addressLine1 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine1') ? playerDetails.addressLine1 : foundPlayer.addressLine1;
+      foundPlayer.addressLine2 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine2') ? playerDetails.addressLine2 : foundPlayer.addressLine2;
+      foundPlayer.addressLine3 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine3') ? playerDetails.addressLine3 : foundPlayer.addressLine3;
+      foundPlayer.addressLine4 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine4') ? playerDetails.addressLine4 : foundPlayer.addressLine4;
+      foundPlayer.medicalConditions = Object.prototype.hasOwnProperty.call(playerDetails, 'medicalConditions') ? playerDetails.medicalConditions : foundPlayer.medicalConditions;
+      foundPlayer.contactName = Object.prototype.hasOwnProperty.call(playerDetails, 'contactName') ? playerDetails.contactName : foundPlayer.contactName;
+      foundPlayer.contactHomeNumber = Object.prototype.hasOwnProperty.call(playerDetails, 'contactHomeNumber') ? playerDetails.contactHomeNumber : foundPlayer.contactHomeNumber;
+      foundPlayer.contactMobileNumber = Object.prototype.hasOwnProperty.call(playerDetails, 'contactMobileNumber') ? playerDetails.contactMobileNumber : foundPlayer.contactMobileNumber;
+      foundPlayer.contactEmailAddress = Object.prototype.hasOwnProperty.call(playerDetails, 'contactEmailAddress') ? playerDetails.contactEmailAddress : foundPlayer.contactEmailAddress;
+      foundPlayer.school = Object.prototype.hasOwnProperty.call(playerDetails, 'school') ? playerDetails.school : foundPlayer.school;
+
+      if (Object.prototype.hasOwnProperty.call(playerDetails, 'lastRegisteredDate')) {
         lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
         foundPlayer.lastRegisteredDate = lastRegisteredDate;
         foundPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
@@ -427,33 +521,125 @@ exports = module.exports = function (app, router) {
         if (!lastRegisteredYear) {
           foundPlayer.registeredYears.push(foundPlayer.lastRegisteredYear);
         }
+      }
 
-        foundPlayer.modifiedBy = request.payload.userProfile.ID;
-        foundPlayer.increment();
+      foundPlayer.modifiedBy = request.payload.userProfile.ID;
+      foundPlayer.increment();
 
-        return foundPlayer.save();
-      })
-      .then(function (savedPlayer) {
-        var query = { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth },
-            update = { "lastUpdatedDate": new Date() };
+      updatedPlayer = await foundPlayer.save();
 
-        currentSavedPlayer = savedPlayer;
+      await group.findOneAndUpdate(
+        { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth }, 
+        { "lastUpdatedDate": new Date() });
 
-        return group.findOneAndUpdate(query, update);
-      })
-      .then(function () {
-        var returnMessage = {};
+      returnMessage.error = null;
+      returnMessage.body = {};
 
-        returnMessage.error = null;
-        returnMessage.body = {};
+      returnMessage.body.player = updatedPlayer.toObject();
 
-        returnMessage.body.player = currentSavedPlayer.toObject();
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
 
-        response.status(200).json(returnMessage);
-      })
-      .catch(function (error) {
-        next(error);
-      });
+  router.post("/createCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var userDetails = request.body.coachDetails,
+          newUser = new user(),
+          savedUser,
+          emailTemplate;
+
+      newUser.firstName = userDetails.firstName;
+      newUser.surname = userDetails.surname;
+      newUser.emailAddress = userDetails.emailAddress;
+      newUser.phoneNumber = userDetails.phoneNumber;
+      newUser.isAdministrator = userDetails.isAdministrator;
+      newUser.password = "";
+
+      newUser.modifiedBy = request.payload.userProfile.ID;
+
+      savedUser = await newUser.save();
+
+      emailTemplate = await readFile('email_templates/create-password-template.html');
+   
+      sendEmail(savedUser.emailAddress, 
+        'Welcome to Carraig Og Register. Please verify your account...', 
+        emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret)), 
+        request);
+
+      await readCoaches(currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    };
+  });
+
+  router.post("/updateCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var userDetails = request.body.coachDetails,
+          customError = null,
+          foundUser = null;
+
+      foundUser = await user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v });
+
+      if (!foundUser) {
+        customError = new Error("User not found");
+
+        customError.httpCode = 409;
+
+        throw customError;
+      }
+
+      foundUser.firstName = Object.prototype.hasOwnProperty.call(userDetails, 'firstName') ? userDetails.firstName : foundUser.firstName;
+      foundUser.surname = Object.prototype.hasOwnProperty.call(userDetails, 'surname') ? userDetails.surname : foundUser.surname;
+      foundUser.emailAddress = Object.prototype.hasOwnProperty.call(userDetails, 'emailAddress') ? userDetails.emailAddress : foundUser.emailAddress;
+      foundUser.phoneNumber = Object.prototype.hasOwnProperty.call(userDetails, 'phoneNumber') ? userDetails.phoneNumber : foundUser.phoneNumber;
+      foundUser.isAdministrator = Object.prototype.hasOwnProperty.call(userDetails, 'isAdministrator') ? userDetails.isAdministrator : foundUser.isAdministrator;
+  
+      foundUser.modifiedBy = request.payload.userProfile.ID;
+      foundUser.increment();
+
+      await foundUser.save();
+
+      await readCoaches(currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/deleteCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var userDetails = request.body.coachDetails,
+          customError = null,
+          foundUser = null,
+          emailTemplate = null;
+
+      foundUser = await user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
+
+      if (!foundUser) {
+        customError = new Error("User not found");
+
+        customError.httpCode = 409;
+
+        throw customError;
+      }
+
+      await user.deleteOne({ "_id": mongoose.Types.ObjectId(foundUser._id), "__v": foundUser.__v })
+        
+      if (request.body.sendGoodbyeEmail) {
+        emailTemplate = await readFile('email_templates/goodbye-template.html');
+    
+        sendEmail(foundUser.emailAddress, 'Goodbye from Carraig Og Register', emailTemplate, request);
+      }
+
+      await readCoaches(currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
   });
 
   router.post("/writeLog", authorizer.authorize(), function (request, response, next) {
@@ -470,6 +656,89 @@ exports = module.exports = function (app, router) {
   app.use("/api", router);
 
   app.use(function (request, response) {
-    response.sendfile("./dist/index.html");
+    response.sendFile("index.html", { "root": "./dist"});
+  });
+}
+
+var readCoaches = async (currentSettings, response, next) => {
+  var users = null,
+      groups = null;
+
+  users = await user.find({}, "-password").lean().exec(),
+  groups = await group.find({ "year": currentSettings.year }).lean().exec();
+  
+  var returnMessage = {};
+
+  returnMessage.error = null;
+  returnMessage.body = {};
+
+  users.forEach(function (user) {
+    var group = groups.find(function (group) {
+      return group.footballManager === user.emailAddress || group.hurlingManager === user.emailAddress;
+    });
+
+    if (group) {
+      user.active = true;
+    }
+    else {
+      user.active = false;
+    }
+  });
+
+  returnMessage.body.coaches = users;
+
+  response.status(200).json(returnMessage);
+};
+
+var readFile = (fileName) => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(fileName, 'utf-8', (error, data) => {
+      try {
+        if (error) {
+          reject(error);
+        }
+
+        resolve(data);
+      }
+      catch (error) {
+        reject(error);
+      }
+    });
   });
 };
+
+var sendEmail = (emailAddress, emailSubject, emailTemplate, request) => {
+  if (process.env.NODE_ENV === "production") {
+    emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname);
+  }
+  else {
+    emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname + ':' + config.port);
+  }
+
+  var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      type: 'oauth2',
+      user: 'carraigogregister@gmail.com',
+      clientId: process.env.GOOGLE_API_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_API_CLIENT_SECRET,
+      refreshToken: process.env.GOOGLE_OUTH2_PLAYGROUND_REFRESH_TOKEN,
+      accessToken: process.env.GOOGLE_OUTH2_PLAYGROUND_ACCESS_TOKEN
+    }
+  });
+
+  const mailOptions = {
+    from: 'carraigogregister@gmail.com',
+    to: emailAddress,
+    subject: emailSubject,
+    html: emailTemplate
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      request.logger.error(error);
+    }
+  });
+}

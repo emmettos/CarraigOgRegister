@@ -45,8 +45,18 @@ table.select-row tbody tr {
   cursor: pointer;
 }
 
-table.player-detail tbody tr.missing {
+table tbody tr.missing {
   color: #ffc107;
+}
+
+.detail-badge {
+  display: inline-block;
+  height: 2em;
+  width: 5em;
+}
+
+.badge:empty {
+  display: inherit;
 }
 
 .bg-info-light {
@@ -59,4 +69,13 @@ table.player-detail tbody tr.missing {
 
 .bg-warning-light {
   background-color: #ffe8a2;
+}
+
+.modal-header {
+  background:#0480be;
+}
+
+/* By default the [hidden] attribute won't work if a container is also a flex box. This makes sure it does work. */
+[hidden] {
+  display: none !important;
 }

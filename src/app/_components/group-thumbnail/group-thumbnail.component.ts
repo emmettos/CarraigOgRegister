@@ -16,7 +16,7 @@ export class GroupThumbnailComponent implements OnInit {
   }
 
   ngOnInit() {
-    let userProfile: IUserProfile = this.authorizationService.getPayload.userProfile;
+    let userProfile: IUserProfile = this.authorizationService.getActivePayload.userProfile;
 
     this.group.canViewPlayers = false;
 

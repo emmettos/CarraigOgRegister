@@ -7,6 +7,8 @@ describe('AuthorizationService', () => {
   let JWTToken: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MzU5OTQwMzUsInVzZXJQcm9maWxlIjp7IklEIjoiZ2VhcnlrQGdtYWlsLmNvbSIsImZ1bGxOYW1lIjoiS2V2aW4gR2VhcnkiLCJpc0FkbWluaXN0cmF0b3IiOmZhbHNlLCJpc01hbmFnZXIiOnRydWUsImdyb3VwcyI6WzIwMDldfSwiaWF0IjoxNTM1OTkwNDM1fQ.M6SuNcnQ9r7rvifXBYK6CSWC-6ngLLNkmnjqZ0mUyv8';
   let newJWTToken: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MzYwNjQyMTgsInVzZXJQcm9maWxlIjp7IklEIjoiZ2VhcnlrQGdtYWlsLmNvbSIsImZ1bGxOYW1lIjoiS2V2aW4gR2VhcnkiLCJpc0FkbWluaXN0cmF0b3IiOmZhbHNlLCJpc01hbmFnZXIiOnRydWUsImdyb3VwcyI6WzIwMDldfSwiaWF0IjoxNTM2MDYwNjE4fQ.MQXPgvt-g6-7l2B9YgPC3DDi8CJh5XCZ3xDbDS9oYEc';
   
+  let createPasswordJWTToken: string = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyUHJvZmlsZSI6eyJJRCI6ImVtbWV0dC5vc3VsbGl2YW5AbnR0ZGF0YS5jb20iLCJjcmVhdGVQYXNzd29yZFByb2ZpbGUiOnRydWV9LCJpYXQiOjE1NDI5ODg0MjN9.0_jZEx1o6Izc8nDnrSXfrWEcZklUiHdktG68IoGQNxI';
+
   beforeEach(() => {
     localStorage.setItem('carraig-og-register.jwt', JWTToken);
 
@@ -46,6 +48,19 @@ describe('AuthorizationService', () => {
       iat: 1536060618,
       exp: 1536064218
     });
+
+    jasmine.clock().uninstall();
+  });
+
+  it('should write valid incoming token to local storage', () => {
+    jasmine.clock().uninstall();
+    jasmine.clock().install();
+
+    jasmine.clock().mockDate(new Date('2018-09-04T12:00:00.000Z'));
+
+    service.parseToken(newJWTToken, true);
+
+    expect(localStorage.getItem('carraig-og-register.jwt')).toEqual(newJWTToken);
 
     jasmine.clock().uninstall();
   });
@@ -101,6 +116,20 @@ describe('AuthorizationService', () => {
     expect(service.getActivePayload).toBeNull();
   });
 
+  it('should not update payload with create password token', () => {
+    service.deleteToken();
+
+    service.parseToken(createPasswordJWTToken, true);
+
+    expect(service.getPayload).toBeNull();
+  });
+
+  it('should write create password token to local storage', () => {
+    service.parseToken(createPasswordJWTToken, true);
+
+    expect(localStorage.getItem('carraig-og-register.jwt')).toEqual(createPasswordJWTToken);
+  });
+  
   it('should read token', () => {
     expect(service.readToken()).toEqual('eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE1MzU5OTQwMzUsInVzZXJQcm9maWxlIjp7IklEIjoiZ2VhcnlrQGdtYWlsLmNvbSIsImZ1bGxOYW1lIjoiS2V2aW4gR2VhcnkiLCJpc0FkbWluaXN0cmF0b3IiOmZhbHNlLCJpc01hbmFnZXIiOnRydWUsImdyb3VwcyI6WzIwMDldfSwiaWF0IjoxNTM1OTkwNDM1fQ.M6SuNcnQ9r7rvifXBYK6CSWC-6ngLLNkmnjqZ0mUyv8');
   });

@@ -3,7 +3,6 @@
 var JSONWebToken = require("jsonwebtoken");
 
 var config = require("./config/config");
-
 var group = require("./models/group");
 
 
@@ -24,15 +23,11 @@ exports.authenticate = function (request, response, next) {
 
             request.payload = payload;
 
-            userProfile.ID = payload.userProfile.ID;
-            userProfile.fullName = payload.userProfile.fullName;
-            userProfile.isAdministrator = payload.userProfile.isAdministrator;
-            userProfile.isManager = payload.userProfile.isManager;
-            userProfile.groups = payload.userProfile.groups.slice();
+            if (!payload.userProfile.createPasswordProfile) {
+              refreshedToken = signToken(request.payload.userProfile);
 
-            refreshedToken = signToken(userProfile);
-
-            response.set("Authorization", "Bearer " + refreshedToken);
+              response.set("Authorization", "Bearer " + refreshedToken);
+            }
           }
 
           next();

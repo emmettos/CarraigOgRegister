@@ -1,0 +1,40 @@
+<!-- Most id's are used for unit testing -->
+<div class="modal-body">
+  <div class="card">
+    <div class="card-header" [ngClass]="coachPopupHeaderCSSClass()">
+      <h5 id="name">{{ coachDetails.firstName + ' ' + coachDetails.surname }}</h5>
+      <p id="email-address">{{ coachDetails.emailAddress }}</p>
+    </div>
+    <div class="card-body">
+      <p id="phone-number" class="card-text"><strong>Phone Number:</strong> {{ coachDetails.phoneNumber }}</p>
+      <p id="administrator-status" class="card-text"><strong>Administrator:</strong> {{ coachDetails.isAdministrator ? 'YES' : 'NO' }}</p>
+      <p *ngIf="!coachGroups" id="no-current-groups" class="card-text text-center"><strong>No Current Groups</strong></p>
+      <table *ngIf="coachGroups" id="coach-groups-table" class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th>Group</th>
+            <th>Role</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let currentGroup of coachGroups">
+            <td>{{ currentGroup.groupName }}</td>
+            <td>{{ currentGroup.role }}</td>
+          </tr>
+        </tbody>    
+      </table>
+    </div>
+    <div class="card-footer text-muted" [ngClass]="coachPopupFooterCSSClass()">
+      <p>
+        <span id="created-date">Created Date: {{ coachDetails.createdDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
+        <br/>
+        <span id="created-by">Created By: {{ coachDetails.createdBy }}</span>
+      </p>
+      <p>
+        <span id="updated-date">Updated Date: {{ coachDetails.updatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
+        <br/>
+        <span id="updated-by">Updated By: {{ coachDetails.updatedBy }}</span>
+      </p>
+    </div>
+  </div>
+</div>

@@ -195,7 +195,7 @@
                 value="Reset">
         <input  type="submit" 
                 class="btn btn-info" 
-                [disabled]="managePlayersForm.status === 'INVALID' || !(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer)"
+                [disabled]="managePlayersForm.invalid || !(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer)"
                 value="Save">
       </div>
     </div>
