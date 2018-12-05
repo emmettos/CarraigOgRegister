@@ -35,7 +35,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get("/groups", authorizer.authorize(), async (request, response, next) => {
+  router.get("/groupSummaries", authorizer.authorize(), async (request, response, next) => {
     var groups = null,
         users = null,
         playerGroupCounts = null,
@@ -129,7 +129,7 @@ exports = module.exports = function (app, router) {
       returnMessage.error = null;
       returnMessage.body = {};
 
-      returnMessage.body.groups = groups;
+      returnMessage.body.groupSummaries = groups;
 
       response.status(200).json(returnMessage);
     }

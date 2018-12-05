@@ -6,9 +6,9 @@
     </div>
   </div>
   <br>
-  <div id="groups" class="row">
-    <div *ngFor="let group of groups" class="col-md-6 col-lg-4 mb-3">
-      <app-group-thumbnail [group]="group"></app-group-thumbnail>
+  <div id="group-summaries" class="row">
+    <div *ngFor="let groupSummary of groupSummaries" class="col-md-6 col-lg-4 mb-3">
+      <app-group-thumbnail [groupSummary]="groupSummary"></app-group-thumbnail>
     </div>
   </div>
 </div>

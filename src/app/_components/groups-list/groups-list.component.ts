@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { APP_SETTINGS } from '../../_helpers/index';
-import { IGroup } from '../../_models/index';
+import { IGroupSummary } from '../../_models/index';
 import { GroupsService } from '../../_services/index';
 
 
@@ -11,7 +11,7 @@ import { GroupsService } from '../../_services/index';
 })
 export class GroupsListComponent implements OnInit {
   currentYear: number = 0;
-  groups: IGroup[] = null;
+  groupSummaries: IGroupSummary[] = null;
 
   constructor(private groupsService: GroupsService) { 
   }
@@ -19,10 +19,10 @@ export class GroupsListComponent implements OnInit {
   ngOnInit() {
     this.currentYear = APP_SETTINGS.currentYear;
 
-    this.groupsService.readGroups()
+    this.groupsService.readGroupSummaries()
       .subscribe({
         next: response => {
-          this.groups = response.body.groups;
+          this.groupSummaries = response.body.groupSummaries;
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {

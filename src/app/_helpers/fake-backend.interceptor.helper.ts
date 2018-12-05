@@ -1352,7 +1352,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
-          if (request.url.endsWith('/groups')) {
+          if (request.url.endsWith('/groupSummaries')) {
             let groups: any[] = this.groups.filter(group => {
               return group.year === this.currentSettings.year; 
             });
@@ -1387,7 +1387,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             });
 
             let body = {
-              groups: groups
+              groupSummaries: groups
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));

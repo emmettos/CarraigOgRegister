@@ -1,12 +1,12 @@
 <!-- Most id's are used for unit testing -->
-<a id="group-details-link" routerLink="../players/{{ group.name }}/{{ group.yearOfBirth }}" [class.disabled]="!group.canViewPlayers" class="card h-100">
-  <h5 id="group-header" class="card-header"><strong>{{ group.name }}</strong> (Year of Birth: {{ group.yearOfBirth }})</h5>
+<a id="group-details-link" routerLink="../players/{{ groupSummary.name }}/{{ groupSummary.yearOfBirth }}" [class.disabled]="!groupSummary.canViewPlayers" class="card h-100">
+  <h5 id="group-header" class="card-header"><strong>{{ groupSummary.name }}</strong> (Year of Birth: {{ groupSummary.yearOfBirth }})</h5>
   <div class="card-body">
-    <p id="football-manager" class="card-text"><strong>Football Manager:</strong> {{ group.footballManagerFullName }}</p>
-    <p id="hurling-manager" class="card-text"><strong>Hurling Manager:</strong> {{ group.hurlingManagerFullName }}</p>
-    <p id="number-of-players" class="card-text">No. players currently registered: {{ group.numberOfPlayers }}</p>
+    <p id="football-manager" class="card-text"><strong>Football Manager:</strong> {{ groupSummary.footballManagerFullName }}</p>
+    <p id="hurling-manager" class="card-text"><strong>Hurling Manager:</strong> {{ groupSummary.hurlingManagerFullName }}</p>
+    <p id="number-of-players" class="card-text">No. players currently registered: {{ groupSummary.numberOfPlayers }}</p>
   </div>
   <div id="group-footer" class="card-footer text-muted">
-    Last Updated: {{ group.lastUpdatedDate | date : "dd/MM/yy h:mm a" }}
+    Last Updated: {{ groupSummary.lastUpdatedDate | date : "dd/MM/yy h:mm a" }}
   </div>
 </a>

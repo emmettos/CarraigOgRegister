@@ -1,4 +1,4 @@
-export interface IGroup {
+export interface IGroupSummary {
   canViewPlayers: boolean;
 
   name: string;

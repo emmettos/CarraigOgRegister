@@ -29,10 +29,10 @@ describe('GroupsService', () => {
   });
 
   it('should call url for read groups', () => {
-    service.readGroups()
+    service.readGroupSummaries()
       .subscribe();
 
-    const mockRequest = httpMock.expectOne('/api/groups');
+    const mockRequest = httpMock.expectOne('/api/groupSummaries');
 
     expect(mockRequest.request.method).toEqual("GET");
 

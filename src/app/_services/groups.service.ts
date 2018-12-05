@@ -9,7 +9,7 @@ export class GroupsService {
   constructor(private http: HttpClient) {
   }
 
-  readGroups(): Observable<any> {
-    return this.http.get<any>('/api/groups');
+  readGroupSummaries(): Observable<any> {
+    return this.http.get<any>('/api/groupSummaries');
   }
 }

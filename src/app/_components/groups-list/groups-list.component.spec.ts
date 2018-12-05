@@ -42,11 +42,11 @@ describe('GroupsListComponent', () => {
 
     groupsService = TestBed.get(GroupsService);
     
-    spyOn(groupsService, 'readGroups')
+    spyOn(groupsService, 'readGroupSummaries')
       .and.returnValue(of({
         'error': null,
         'body': {
-          'groups': [
+          'groupSummaries': [
             {
               'year': 2018,
               'name': 'Under 10',
@@ -113,7 +113,7 @@ describe('GroupsListComponent', () => {
   });
 
   it('should call groupsService.readGroups', () => {
-    expect(groupsService.readGroups).toHaveBeenCalled();
+    expect(groupsService.readGroupSummaries).toHaveBeenCalled();
   });
 
   it('should display header', () => {
@@ -121,10 +121,10 @@ describe('GroupsListComponent', () => {
   });
 
   it('should display first group', () => {
-    expect(fixture.nativeElement.querySelector('#groups > div:nth-child(1) > app-group-thumbnail')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('#group-summaries > div:nth-child(1) > app-group-thumbnail')).toBeTruthy();
   });
 
   it('should display last group', () => {
-    expect(fixture.nativeElement.querySelector('#groups > div:nth-child(6) > app-group-thumbnail')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('#group-summaries > div:nth-child(6) > app-group-thumbnail')).toBeTruthy();
   });
 });
