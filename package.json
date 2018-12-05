@@ -1,6 +1,6 @@
 {
   "name": "carraig-og-register",
-  "version": "2.3.0",
+  "version": "2.3.1",
   "main": "server.js",
   "engines": {
     "node": "8.9.3"
