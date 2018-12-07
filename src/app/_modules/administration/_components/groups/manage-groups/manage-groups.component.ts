@@ -8,7 +8,7 @@ import { ToasterService } from 'angular2-toaster';
 import { IGroup } from '../../../../../_models/index';
 import { GroupsService } from '../../../../../_services/index';
 // import { CoachFormComponent } from '../coach-form/coach-form.component';
-// import { CoachPopupComponent } from '../coach-popup/coach-popup.component';
+import { GroupPopupComponent } from '../group-popup/group-popup.component';
 
 
 @Component({
@@ -26,6 +26,8 @@ export class ManageGroupsComponent implements OnInit {
 
   groups: IGroup[] = null;
   filteredGroups: IGroup[] = null;
+
+  totalCount: number = 0;
 
   constructor(
     private modalService: NgbModal,
@@ -49,6 +51,8 @@ export class ManageGroupsComponent implements OnInit {
         next: response => {
           this.groups = response.body.groups;
 
+          this.totalCount = this.groups.length;
+          
           this.filteredGroups = this.groups.slice(0);
 
           this.onClickHeader(this.sortKey, false);      
@@ -90,9 +94,9 @@ export class ManageGroupsComponent implements OnInit {
   }
 
   onClickRow(group: IGroup) {
-    // let modalRef = this.modalService.open(GroupPopupComponent);
+    let modalRef = this.modalService.open(GroupPopupComponent);
 
-    // modalRef.componentInstance.groupDetails = group;  
+    modalRef.componentInstance.groupDetails = group;  
   }
 
   onClickEditGroup(event: Event, coach: IGroup) {

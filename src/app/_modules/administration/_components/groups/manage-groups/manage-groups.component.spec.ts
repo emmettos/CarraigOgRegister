@@ -14,7 +14,7 @@ import { SharedModule } from '../../../../shared/shared.module';
 import { GroupsService } from '../../../../../_services';
 import { ValidationService } from '../../../../../_modules/shared/_services';
 
-//import { CoachPopupComponent } from '../coach-popup/coach-popup.component';
+import { GroupPopupComponent } from '../group-popup/group-popup.component';
 import { ManageGroupsComponent } from './manage-groups.component';
 
 
@@ -30,7 +30,7 @@ describe('ManageGroupsComponent', () => {
     TestBed.configureTestingModule({
       declarations: [ 
         ManageGroupsComponent,
-        //CoachPopupComponent
+        GroupPopupComponent
       ],
       imports: [
         HttpClientTestingModule,
@@ -158,6 +158,10 @@ describe('ManageGroupsComponent', () => {
 
   it('should call groupsService.readGroups', () => {
     expect(groupsService.readGroups).toHaveBeenCalled();
+  });
+
+  it('should display total count', () => {
+    expect(fixture.nativeElement.querySelector('#total-count').innerHTML).toEqual('Total 6');
   });
 
   it('should display first group', () => {
@@ -292,30 +296,28 @@ describe('ManageGroupsComponent', () => {
     expect(fixture.nativeElement.querySelector('#displaying-message').innerHTML).toEqual('Displaying 1 Groups');
   });
 
-  // it('should call NgbModal.open when a group is selected', () => {
-  //   spyOn(modalService, 'open')
-  //     .and.returnValue({
-  //       componentInstance: {}
-  //     });
+  it('should call NgbModal.open when a group is selected', () => {
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {}
+      });
 
-  //   component.onClickRow({
-  //     '_id': '77b61339ebb9c8fc7c51618a',
-  //     'firstName': 'Lachlan',
-  //     'surname': 'Johnson',
-  //     'emailAddress': 'lachlan_johnson@carraigog.com',
-  //     'phoneNumber': '086 4449465',
-  //     'isAdministrator': false,
-  //     'createdBy': 'script',
-  //     'createdDate': '2017-03-15T13:43:51.268Z',
-  //     'updatedDate': '2018-05-09T09:55:59.735Z',
-  //     'updatedBy': 'administrator@carraigog.com',
-  //     '__v': 0,
-  //     'active': false,
-  //     'currentSessionOwner': false
-  //   });
+    component.onClickRow({
+      '_id': '6cc1fec86fb94e11121dcf2a',
+      'name': 'Under 8',
+      'yearOfBirth': 2010,
+      'footballManager': 'siward_hansen@carraigog.com',
+      'hurlingManager': 'rowan_love@carraigog.com',
+      'lastUpdatedDate': '2018-02-28T11:22:24.262Z',
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedDate': '2018-02-28T11:22:24.262Z',
+      'updatedBy': 'administrator@carraigog.com',
+      '__v': 0
+    });
 
-  //   expect(modalService.open).toHaveBeenCalled();
-  // });
+    expect(modalService.open).toHaveBeenCalled();
+  });
 
   // it('should download CSV of current filter', () => {
   //   spyOn(coachesService, 'downloadCSV')

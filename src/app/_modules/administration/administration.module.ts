@@ -13,6 +13,7 @@ import { CoachFormComponent } from './_components/coaches/coach-form/coach-form.
 import { ConfirmDeleteCoachComponent } from './_components/coaches/confirm-delete-coach/confirm-delete-coach.component';
 import { CoachPopupComponent } from './_components/coaches/coach-popup/coach-popup.component';
 import { ManageGroupsComponent } from './_components/groups/manage-groups/manage-groups.component';
+import { GroupPopupComponent } from './_components/groups/group-popup/group-popup.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { ManageGroupsComponent } from './_components/groups/manage-groups/manage
     CoachFormComponent,
     ConfirmDeleteCoachComponent,
     CoachPopupComponent,
-    ManageGroupsComponent
+    ManageGroupsComponent,
+    GroupPopupComponent
   ],
   imports: [
     AdministrationRoutingModule,
@@ -34,7 +36,8 @@ import { ManageGroupsComponent } from './_components/groups/manage-groups/manage
   entryComponents: [
     CoachFormComponent,
     ConfirmDeleteCoachComponent,
-    CoachPopupComponent
+    CoachPopupComponent,
+    GroupPopupComponent
   ]
 })
 export class AdministrationModule { }

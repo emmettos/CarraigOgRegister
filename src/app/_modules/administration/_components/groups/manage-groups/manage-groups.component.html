@@ -6,7 +6,10 @@
     </div>
   </div>
   <div class="row">
-    <div class="col-sm-3 col-md-3 col-lg-2 offset-sm-9 offset-md-9 offset-lg-10">
+    <div class="col-sm-3 col-md-2 col-lg-1">
+      <h4><span id="total-count" class="badge badge-primary">Total {{ totalCount }}</span></h4>
+    </div>
+    <div class="col-sm-3 col-md-3 col-lg-2 offset-sm-6 offset-md-6 offset-lg-9">
       <button type="button" (click)="onClickDownloadCSV()" class="btn btn-info">Download CSV</button>
     </div>
   </div>
@@ -32,7 +35,7 @@
           <th (click)="onClickHeader('yearOfBirth')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('yearOfBirth')"></i></th>
           <th (click)="onClickHeader('footballManager')" class="text-right"><span class="float-left mr-1">Football Manager</span><i [ngClass]="headerSortCSSClass('footballManager')"></i></th>
           <th (click)="onClickHeader('hurlingManager')" class="text-right"><span class="float-left mr-1">Hurling Manager</span><i [ngClass]="headerSortCSSClass('hurlingManager')"></i></th>
-          <th (click)="onClickHeader('lastUpdatedDate')" class="text-right"><span class="float-left mr-1">Last Updated</span><i [ngClass]="headerSortCSSClass('lastUpdatedDate')"></i></th>
+          <th (click)="onClickHeader('lastUpdatedDate')" class="text-right"><span class="float-left mr-1">Player Last Updated</span><i [ngClass]="headerSortCSSClass('lastUpdatedDate')"></i></th>
           <th></th>
         </tr>
       </thead>
