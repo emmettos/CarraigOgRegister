@@ -9,7 +9,7 @@ import {
 import { Observable, of, throwError } from 'rxjs';
 import { delay, mergeMap } from 'rxjs/operators';
 
-import { IPlayer, ICoach } from '../_models/index'; 
+import { IPlayer, ICoach, IGroup } from '../_models/index'; 
 import { APP_SETTINGS } from '../_helpers/app.initializer.helper';
 import { AuthorizationService, AlertService } from '../_services/index';
 
@@ -23,7 +23,7 @@ const PLAYERS_KEY = 'carraig-og-register.fake-backend.players';
 export class FakeBackendInterceptorHelper implements HttpInterceptor {
   private currentSettings: any;
   private coaches: any[];
-  private groups: any[];
+  private groups: IGroup[];
   private players: IPlayer[];
 
   constructor(
@@ -208,7 +208,6 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
     this.groups = JSON.parse(localStorage.getItem(GROUPS_KEY)) || [
       {
         '_id': 'dfe674827f95ff37765ba0fc',
-        'year': 2018,
         'name': 'Under 10',
         'yearOfBirth': 2008,
         'footballManager': 'angel_klein@carraigog.com',
@@ -222,7 +221,6 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
       },
       {
         '_id': '24eef4f773a9cc7b17a539e9',
-        'year': 2018,
         'name': 'Under 9',
         'yearOfBirth': 2009,
         'footballManager': 'john_rees@carraigog.com',
@@ -236,7 +234,6 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
       },
       {
         '_id': '6cc1fec86fb94e11121dcf2a',
-        'year': 2018,
         'name': 'Under 8',
         'yearOfBirth': 2010,
         'footballManager': 'siward_hansen@carraigog.com',
@@ -250,36 +247,34 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
       },
       {
         '_id': '7f499865b3bbf13a60536e36',
-        'year': 2018,
         'name': 'Under 7',
         'yearOfBirth': 2011,
         'footballManager': 'winfield_owens@carraigog.com',
         'hurlingManager': 'sherlock_yang@carraigog.com',
-        'lastUpdatedDate': '2018-02-27T16:00:20.439Z',
+        'lastUpdatedDate': '2018-01-10T16:00:20.439Z',
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-02-27T16:00:20.439Z',
+        'updatedDate': '2018-01-10T16:00:20.439Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0
       },
       {
         '_id': 'd387d6632a7750967c8f1b0d',
-        'year': 2018,
         'name': 'Under 6',
         'yearOfBirth': 2012,
         'footballManager': 'kylar_hart@carraigog.com',
         'hurlingManager': 'lachlan_johnson@carraigog.com',
-        'lastUpdatedDate': '2018-02-27T12:20:39.338Z',
+        'lastUpdatedDate': '2018-03-01T12:20:39.338Z',
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-02-27T12:20:39.338Z',
+        'updatedDate': '2018-03-01T12:20:39.338Z',
         'updatedBy': 'administrator@carraigog.com',
         '__v': 0
       },
       {
         '_id': '00d7988eee11f94ad6bb5422',
-        'year': 2018,
         'name': 'Under 5',
+        'year': 2018,
         'yearOfBirth': 2013,
         'footballManager': 'erick_norris@carraigog.com',
         'hurlingManager': 'erick_norris@carraigog.com',
@@ -1281,18 +1276,13 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               createPasswordProfile: false
             };
 
-            this.groups
-              .filter(group => 
-                { 
-                  return group.year === this.currentSettings.year;
-                })
-                .forEach(group => {
-                  if (group.footballManager === coach.emailAddress || group.hurlingManager === coach.emailAddress) {
-                    userProfile.isManager = true;
-      
-                    userProfile.groups.push(group.yearOfBirth);
-                  }
-                });
+            this.groups.forEach(group => {
+              if (group.footballManager === coach.emailAddress || group.hurlingManager === coach.emailAddress) {
+                userProfile.isManager = true;
+  
+                userProfile.groups.push(group.yearOfBirth);
+              }
+            });
   
             let issuedTime: number = Math.floor(Date.now() / 1000);
 
@@ -1342,52 +1332,9 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: {} }));
           }
 
-          if (request.url.endsWith('/coaches')) {
-            let coaches: ICoach[] = this.createCoachesListForClient();
-
-            let body = {
-              coaches: coaches
-            };
-
-            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
-          }
-
           if (request.url.endsWith('/groupSummaries')) {
-            let groups: any[] = this.groups.filter(group => {
-              return group.year === this.currentSettings.year; 
-            });
-
-            groups.forEach(group => {
-              let hurlingManager: any = this.coaches.find(coach => {
-                return coach.emailAddress === group.hurlingManager;
-              });
-              if (hurlingManager) {
-                group.hurlingManagerFullName = hurlingManager.firstName + ' ' + hurlingManager.surname;
-              }
-              else {
-                group.hurlingManagerFullName = group.hurlingManager;
-              }
-
-              let footballManager: any = this.coaches.find(coach => {
-                return coach.emailAddress === group.footballManager;
-              });
-              if (footballManager) {
-                group.footballManagerFullName = footballManager.firstName + ' ' + footballManager.surname;
-              }
-              else {
-                group.footballManagerFullName = group.footballManager;
-              }
-
-              let groupPlayers: any = this.players.filter(player => {
-                return player.yearOfBirth === group.yearOfBirth &&
-                  player.lastRegisteredYear === this.currentSettings.year;
-              });
-
-              group.numberOfPlayers = groupPlayers.length;
-            });
-
             let body = {
-              groupSummaries: groups
+              groupSummaries: this.readGroupSummaries()
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -1491,20 +1438,26 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             localStorage.setItem(PLAYERS_KEY, JSON.stringify(this.players));
 
             let group = this.groups.find(group => {
-              return group.year === this.currentSettings.year &&
-                group.yearOfBirth === +request.body.groupDetails.yearOfBirth;
+              return group.yearOfBirth === +request.body.groupDetails.yearOfBirth;
             });
 
-            if (request.url.endsWith('/createPlayer')) {
-              group.numberOfPlayers++;
-            }
-
             group.lastUpdatedDate = lastUpdatedDate;
+
+            group.updatedDate = lastUpdatedDate;
+            group.updatedBy = this.authorizationService.payload.userProfile.ID;
 
             localStorage.setItem(GROUPS_KEY, JSON.stringify(this.groups));
 
             let body = {
               player: playerDetails
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
+          if (request.url.endsWith('/coaches')) {
+            let body = {
+              coaches: this.readCoaches()
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -1557,7 +1510,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
             localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
 
-            let coaches: ICoach[] = this.createCoachesListForClient();
+            let coaches: ICoach[] = this.readCoaches();
 
             let body = {
               coaches: coaches
@@ -1583,7 +1536,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
   
             localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
 
-            let coaches: ICoach[] = this.createCoachesListForClient();
+            let coaches: ICoach[] = this.readCoaches();
 
             let body = {
               coaches: coaches
@@ -1618,6 +1571,38 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
+          if (request.url.endsWith('/groups')) {
+            let body = {
+              groups: this.groups
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));          
+          }
+
+          if (request.url.endsWith('/updateGroup')) {
+            let groupDetails: IGroup = null;
+            
+            groupDetails = this.groups.find(group => {
+              return group._id === request.body.groupDetails._id;
+            });
+
+            groupDetails.__v++;
+            
+            groupDetails.footballManager = request.body.groupDetails.footballManager;
+            groupDetails.hurlingManager = request.body.groupDetails.hurlingManager;
+
+            groupDetails.updatedDate = (new Date(Date.now())).toISOString();
+            groupDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
+
+            localStorage.setItem(GROUPS_KEY, JSON.stringify(this.groups));
+
+            let body = {
+              groupSummaries: this.readGroupSummaries()
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
+          }
+
           if (request.url.endsWith('/writeLog')) {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200 }));
           }
@@ -1637,15 +1622,49 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
       delay(200));
   }
 
-  private createCoachesListForClient(): ICoach[] { 
+  private readGroupSummaries(): any[] {
+    let groups: any[] = JSON.parse(JSON.stringify(this.groups));
+
+    groups.forEach(group => {
+      let hurlingManager: any = this.coaches.find(coach => {
+        return coach.emailAddress === group.hurlingManager;
+      });
+      if (hurlingManager) {
+        group.hurlingManagerFullName = hurlingManager.firstName + ' ' + hurlingManager.surname;
+      }
+      else {
+        group.hurlingManagerFullName = group.hurlingManager;
+      }
+
+      let footballManager: any = this.coaches.find(coach => {
+        return coach.emailAddress === group.footballManager;
+      });
+      if (footballManager) {
+        group.footballManagerFullName = footballManager.firstName + ' ' + footballManager.surname;
+      }
+      else {
+        group.footballManagerFullName = group.footballManager;
+      }
+
+      let groupPlayers: any = this.players.filter(player => {
+        return player.yearOfBirth === group.yearOfBirth &&
+          player.lastRegisteredYear === this.currentSettings.year;
+      });
+
+      group.numberOfPlayers = groupPlayers.length;
+    });
+
+    return groups;
+  }
+
+  private readCoaches(): ICoach[] { 
     let coaches: any[] = JSON.parse(JSON.stringify(this.coaches));
             
     coaches.forEach(coach => {
       delete coach.password;
 
       let group: any = this.groups.find(group => {
-        return group.year === this.currentSettings.year &&
-          (group.footballManager === coach.emailAddress || group.hurlingManager === coach.emailAddress)
+        return group.footballManager === coach.emailAddress || group.hurlingManager === coach.emailAddress;
       });
 
       if (group) {

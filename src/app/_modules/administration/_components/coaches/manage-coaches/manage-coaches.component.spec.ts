@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { of } from 'rxjs';
+import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 
 import { NgbModule, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -16,7 +17,6 @@ import { ValidationService } from '../../../../../_modules/shared/_services';
 
 import { CoachPopupComponent } from '../coach-popup/coach-popup.component';
 import { ManageCoachesComponent } from './manage-coaches.component';
-import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 
 
 describe('ManageCoachesComponent', () => {

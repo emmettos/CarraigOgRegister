@@ -1,0 +1,50 @@
+<!-- Most id's are used for unit testing -->
+<div>
+  <div class="row text-center">
+    <div class="col-lg-12">
+      <h2>CarraigOg Groups</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-3 col-md-3 col-lg-2 offset-sm-9 offset-md-9 offset-lg-10">
+      <button type="button" (click)="onClickDownloadCSV()" class="btn btn-info">Download CSV</button>
+    </div>
+  </div>
+  <br />  
+  <form [formGroup]="filterForm">
+    <div class="form-row align-items-center">
+      <div class="col-md-4 col-lg-3">
+        <input  type="text" 
+                formControlName="managerFilter" 
+                class="form-control" 
+                placeholder="Manager Filter">
+      </div>
+      <div class="col-md-4 col-lg-6 offset-md-4 offset-lg-3 text-right">
+        <span id="displaying-message">Displaying {{ filteredGroups?.length }} Groups</span>
+      </div>
+    </div>
+  </form>
+  <br/>
+  <div class="table-responsive">
+    <table id="groups-table" class="table table-bordered table-striped table-hover select-row">
+      <thead>
+        <tr>
+          <th (click)="onClickHeader('yearOfBirth')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('yearOfBirth')"></i></th>
+          <th (click)="onClickHeader('footballManager')" class="text-right"><span class="float-left mr-1">Football Manager</span><i [ngClass]="headerSortCSSClass('footballManager')"></i></th>
+          <th (click)="onClickHeader('hurlingManager')" class="text-right"><span class="float-left mr-1">Hurling Manager</span><i [ngClass]="headerSortCSSClass('hurlingManager')"></i></th>
+          <th (click)="onClickHeader('lastUpdatedDate')" class="text-right"><span class="float-left mr-1">Last Updated</span><i [ngClass]="headerSortCSSClass('lastUpdatedDate')"></i></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let currentGroup of filteredGroups" (click)="onClickRow(currentGroup)">
+          <td>{{ currentGroup.name }}</td>
+          <td>{{ currentGroup.footballManager }}</td>
+          <td>{{ currentGroup.hurlingManager }}</td>
+          <td>{{ currentGroup.lastUpdatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</td>
+          <td class="text-center"><a href=""><span (click)="!!onClickEditGroup($event, currentGroup)">Edit</span></a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
