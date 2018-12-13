@@ -1,8 +1,6 @@
 export interface IPlayer {
   _id: string;
 
-  playerState: PlayerState;
-
   firstName: string;
   surname: string;
   addressLine1: string;
@@ -26,6 +24,8 @@ export interface IPlayer {
   updatedBy: string;
 
   __v: number;
+
+  playerState?: PlayerState;
 }
 
 export enum PlayerState {

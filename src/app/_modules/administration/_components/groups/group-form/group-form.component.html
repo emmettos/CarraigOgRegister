@@ -1,0 +1,50 @@
+<!-- Most id's are used for unit testing -->
+<div class="modal-header">
+  <h4 id="title" class="modal-title">Edit Group - {{ this.groupDetails.name }}</h4>
+</div>
+<div class="modal-body">
+  <div class="container">
+    <form [formGroup]="groupForm" (ngSubmit)="onSubmit(groupForm.value)" novalidate>
+      <div class="row">
+        <div class="form-group col-md-5 offset-md-1">
+          <label class="control-label" for="footballCoach">Football Coach</label>
+          <select id="football-coach-select"
+                  formControlName="footballCoach" 
+                  class="form-control">
+            <option value="">No Coach</option>
+            <option [ngValue]="currentCoach.emailAddress" *ngFor="let currentCoach of coaches">{{ currentCoach.firstName + ' ' + currentCoach.surname }}</option>
+          </select>
+        </div>
+        <div class="form-group col-md-5">
+          <label class="control-label" for="hurlingCoach">Hurling Coach</label>
+          <select id="hurling-coach-select"
+                  formControlName="hurlingCoach" 
+                  class="form-control">
+            <option value="">No Coach</option>
+            <option [ngValue]="currentCoach.emailAddress" *ngFor="let currentCoach of coaches">{{ currentCoach.firstName + ' ' + currentCoach.surname }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="row mt-3 mb-2">
+        <div class="col-md-2 offset-md-4">
+          <input  type="button" 
+                  id="cancel" 
+                  class="btn btn-info btn-block" 
+                  (click)="onClickCancel()" 
+                  [disabled]="savingGroup"
+                  value="Cancel">
+        </div>
+        <div class="col-md-2">
+          <input  type="submit" 
+                  class="btn btn-info btn-block" 
+                  [disabled]="groupForm.invalid || savingGroup"
+                  value="Save">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!--
+<p>Form values: {{ groupForm.value | json }}</p>
+<p>Form status: {{ groupForm.status }}</p>
+-->

@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
+import { IGroup } from '../_models/index';
+
 
 @Injectable()
 export class GroupsService {
@@ -15,5 +17,13 @@ export class GroupsService {
 
   readGroups(): Observable<any> {
     return this.http.get<any>('/api/groups');
+  }
+
+  updateGroup(group: IGroup): Observable<any> {
+    let postData = {};
+
+    postData['groupDetails'] = group;
+   
+    return this.http.post("/api/updateGroup", postData);
   }
 }

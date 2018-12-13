@@ -60,7 +60,7 @@ describe('CoachFormComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
@@ -247,7 +247,7 @@ describe('CoachFormComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -397,7 +397,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -412,7 +412,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -450,7 +450,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -465,7 +465,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -503,7 +503,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -518,7 +518,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -556,7 +556,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -571,7 +571,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -603,7 +603,7 @@ describe('CoachFormComponent', () => {
           'createdBy': 'script',
           'createdDate': '2017-03-15T13:43:51.268Z',
           'updatedDate': '2018-05-09T09:55:59.735Z',
-          'updatedBy': 'administrator@carraigog.com',
+          'updatedBy': 'admin@carraigog.com',
           '__v': 0,
           'active': false,
           'currentSessionOwner': true
@@ -618,7 +618,7 @@ describe('CoachFormComponent', () => {
           'createdBy': 'script',
           'createdDate': '2017-03-15T13:43:51.268Z',
           'updatedDate': '2018-05-09T09:55:59.735Z',
-          'updatedBy': 'administrator@carraigog.com',
+          'updatedBy': 'admin@carraigog.com',
           '__v': 0,
           'active': true,
           'currentSessionOwner': false
@@ -681,7 +681,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -696,7 +696,7 @@ describe('CoachFormComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -720,7 +720,7 @@ describe('CoachFormComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -736,7 +736,7 @@ describe('CoachFormComponent', () => {
           'createdBy': 'script',
           'createdDate': '2017-03-15T13:43:51.268Z',
           'updatedDate': '2018-05-09T09:55:59.735Z',
-          'updatedBy': 'administrator@carraigog.com',
+          'updatedBy': 'admin@carraigog.com',
           '__v': 0,
           'active': false,
           'currentSessionOwner': true
@@ -751,7 +751,7 @@ describe('CoachFormComponent', () => {
           'createdBy': 'script',
           'createdDate': '2017-03-15T13:43:51.268Z',
           'updatedDate': '2018-05-09T09:55:59.735Z',
-          'updatedBy': 'administrator@carraigog.com',
+          'updatedBy': 'admin@carraigog.com',
           '__v': 0,
           'active': true,
           'currentSessionOwner': false
@@ -789,7 +789,7 @@ describe('CoachFormComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -858,7 +858,7 @@ describe('CoachFormComponent', () => {
     expect(fixture.nativeElement.querySelector('#is-administrator').disabled).toBeTruthy();  
   });
 
-  it('should disable reset button after submitting a coach to be saved', () => {
+  it('should disable cancel button after submitting a coach to be saved', () => {
     fixture.detectChanges();
 
     component.coachForm.controls['emailAddress'].setValue('test@gmail.com');

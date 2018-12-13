@@ -4,8 +4,8 @@ export interface IGroupSummary {
   name: string;
   yearOfBirth: number;
 
-  footballManagerFullName: string;
-  hurlingManagerFullName: string;
+  footballCoachFullName: string;
+  hurlingCoachFullName: string;
 
   numberOfPlayers: number;
 

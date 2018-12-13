@@ -1,12 +1,13 @@
 export interface IGroup {
   _id: string;
 
-  name: string,
-  yearOfBirth: number,
-  footballManager: string,
-  hurlingManager: string,
+  year: number;
+  name: string;
+  yearOfBirth: number;
+  footballCoach: string;
+  hurlingCoach: string;
 
-  lastUpdatedDate: string,
+  lastUpdatedDate: string;
 
   createdBy: string;
   createdDate: string;
@@ -14,4 +15,7 @@ export interface IGroup {
   updatedBy: string;
 
   __v: number;
+
+  footballCoachFullName?: string;
+  hurlingCoachFullName?: string;
 }

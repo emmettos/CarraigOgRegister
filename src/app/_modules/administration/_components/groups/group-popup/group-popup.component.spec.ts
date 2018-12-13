@@ -27,16 +27,19 @@ describe('GroupPopupComponent', () => {
 
     component.groupDetails = {
       '_id': '6cc1fec86fb94e11121dcf2a',
+      'year': 2018,
       'name': 'Under 8',
       'yearOfBirth': 2010,
-      'footballManager': 'siward_hansen@carraigog.com',
-      'hurlingManager': 'rowan_love@carraigog.com',
+      'footballCoach': 'siward_hansen@carraigog.com',
+      'hurlingCoach': 'rowan_love@carraigog.com',
       'lastUpdatedDate': '2018-02-28T11:22:24.262Z',
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-02-28T11:22:24.262Z',
-      'updatedBy': 'administrator@carraigog.com',
-      '__v': 0
+      'updatedBy': 'admin@carraigog.com',
+      '__v': 0,
+      'footballCoachFullName': 'Siward Hansen',
+      'hurlingCoachFullName': 'Rowan Love',
     };
 
     fixture.detectChanges();
@@ -54,16 +57,16 @@ describe('GroupPopupComponent', () => {
     expect(fixture.nativeElement.querySelector("#year-of-birth").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Year of Birth:</strong> 2010');
   });
 
-  it('should display football manager', () => {
-    expect(fixture.nativeElement.querySelector("#football-manager").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Football Manager:</strong> siward_hansen@carraigog.com');
+  it('should display football coach', () => {
+    expect(fixture.nativeElement.querySelector("#football-coach").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Football Coach:</strong> Siward Hansen');
   });
 
-  it('should display hurling manager', () => {
-    expect(fixture.nativeElement.querySelector("#hurling-manager").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Hurling Manager:</strong> rowan_love@carraigog.com');
+  it('should display hurling coach', () => {
+    expect(fixture.nativeElement.querySelector("#hurling-coach").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Hurling Coach:</strong> Rowan Love');
   });
 
-  it('should display last updated date', () => {
-    expect(fixture.nativeElement.querySelector("#last-updated-date").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Last Updated:</strong> 28/02/2018 11:22 AM');
+  it('should display players last updated date', () => {
+    expect(fixture.nativeElement.querySelector("#last-updated-date").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Players Last Updated:</strong> 28/02/2018 11:22 AM');
   });
 
   it('should display created date', () => {
@@ -79,6 +82,6 @@ describe('GroupPopupComponent', () => {
   });
 
   it('should display updated by', () => {
-    expect(fixture.nativeElement.querySelector("#updated-by").innerHTML).toEqual('Updated By: administrator@carraigog.com');
+    expect(fixture.nativeElement.querySelector("#updated-by").innerHTML).toEqual('Updated By: admin@carraigog.com');
   });
 });

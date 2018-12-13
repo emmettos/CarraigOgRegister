@@ -34,8 +34,8 @@ describe('GroupThumbnailComponent', () => {
     component['groupSummary'] = {
       'name': 'Test Group',
       'yearOfBirth': 2009,
-      'footballManagerFullName': 'Pat Football',
-      'hurlingManagerFullName': 'John Hurling',
+      'footballCoachFullName': 'Pat Football',
+      'hurlingCoachFullName': 'John Hurling',
       'numberOfPlayers': 51,
       'lastUpdatedDate': '2018-02-27T15:57:21.582Z'    
     } as IGroupSummary;
@@ -67,7 +67,7 @@ describe('GroupThumbnailComponent', () => {
     expect(fixture.nativeElement.querySelector("#group-header").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Test Group</strong> \\(Year of Birth: 2009\\)$');
   });
 
-  it('should display football manager', () => {
+  it('should display football coach', () => {
     spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -76,10 +76,10 @@ describe('GroupThumbnailComponent', () => {
       });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#football-manager").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Football Manager:</strong> Pat Football$');
+    expect(fixture.nativeElement.querySelector("#football-coach").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Football Coach:</strong> Pat Football$');
   });
 
-  it('should display hurling manager', () => {
+  it('should display hurling coach', () => {
     spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -88,7 +88,7 @@ describe('GroupThumbnailComponent', () => {
       });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#hurling-manager").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Hurling Manager:</strong> John Hurling$');
+    expect(fixture.nativeElement.querySelector("#hurling-coach").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Hurling Coach:</strong> John Hurling$');
   });
 
   it('should display number of players', () => {
@@ -139,7 +139,7 @@ describe('GroupThumbnailComponent', () => {
     expect(fixture.nativeElement.querySelector("#group-details-link").style.getPropertyValue('disabled')).toBeFalsy();
   });
 
-  it('should enable group link for a manager', () => {
+  it('should enable group link for a group coach', () => {
     spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {
@@ -153,7 +153,7 @@ describe('GroupThumbnailComponent', () => {
     expect(fixture.nativeElement.querySelector("#group-details-link").style.getPropertyValue('disabled')).toBeFalsy();
   });
 
-  it('should disable group link for other manager', () => {
+  it('should disable group link for other coach', () => {
     spyOnProperty(authorizationService, 'getActivePayload', 'get')
       .and.returnValue({
         userProfile: {

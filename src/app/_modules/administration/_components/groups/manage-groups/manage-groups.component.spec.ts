@@ -11,7 +11,7 @@ import { ToasterModule, ToasterService } from 'angular2-toaster';
 
 import { SharedModule } from '../../../../shared/shared.module';
 
-import { GroupsService } from '../../../../../_services';
+import { GroupsService, CoachesService } from '../../../../../_services';
 import { ValidationService } from '../../../../../_modules/shared/_services';
 
 import { GroupPopupComponent } from '../group-popup/group-popup.component';
@@ -23,6 +23,7 @@ describe('ManageGroupsComponent', () => {
   let fixture: ComponentFixture<ManageGroupsComponent>;
 
   let groupsService: GroupsService,
+      coachesService: CoachesService,
       toasterService: ToasterService,
       modalService: NgbModal;
   
@@ -41,6 +42,7 @@ describe('ManageGroupsComponent', () => {
       ],
       providers: [
         GroupsService,
+        CoachesService,
         ValidationService,
         ToasterService,
         NgbActiveModal
@@ -57,9 +59,18 @@ describe('ManageGroupsComponent', () => {
     component = fixture.componentInstance;
 
     groupsService = TestBed.get(GroupsService);
+    coachesService = TestBed.get(CoachesService);
     toasterService = TestBed.get(ToasterService);
     modalService = TestBed.get(NgbModal);
 
+    spyOn(coachesService, 'readCoaches')
+    .and.returnValue(of({
+      'error': null,
+      'body': {
+        'coaches': [
+        ]
+      }  
+    }));
     spyOn(groupsService, 'readGroups')
       .and.returnValue(of({
         'error': null,
@@ -67,81 +78,86 @@ describe('ManageGroupsComponent', () => {
           'groups': [
             {
               '_id': 'dfe674827f95ff37765ba0fc',
+              'year': 2018,
               'name': 'Under 10',
               'yearOfBirth': 2008,
-              'footballManager': 'angel_klein@carraigog.com',
-              'hurlingManager': 'heddwyn_cunningham@carraigog.com',
+              'footballCoach': 'angel_klein@carraigog.com',
+              'hurlingCoach': 'heddwyn_cunningham@carraigog.com',
               'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-02-27T15:57:21.582Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0
             },
             {
               '_id': '24eef4f773a9cc7b17a539e9',
+              'year': 2018,
               'name': 'Under 9',
               'yearOfBirth': 2009,
-              'footballManager': 'john_rees@carraigog.com',
-              'hurlingManager': 'bryok_moran@carraigog.com',
+              'footballCoach': 'john_rees@carraigog.com',
+              'hurlingCoach': 'bryok_moran@carraigog.com',
               'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-07-26T16:29:25.372Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0
             },
             {
               '_id': '6cc1fec86fb94e11121dcf2a',
+              'year': 2018,
               'name': 'Under 8',
               'yearOfBirth': 2010,
-              'footballManager': 'siward_hansen@carraigog.com',
-              'hurlingManager': 'rowan_love@carraigog.com',
+              'footballCoach': 'siward_hansen@carraigog.com',
+              'hurlingCoach': 'rowan_love@carraigog.com',
               'lastUpdatedDate': '2018-02-28T11:22:24.262Z',
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-02-28T11:22:24.262Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0
             },
             {
               '_id': '7f499865b3bbf13a60536e36',
+              'year': 2018,
               'name': 'Under 7',
               'yearOfBirth': 2011,
-              'footballManager': 'winfield_owens@carraigog.com',
-              'hurlingManager': 'sherlock_yang@carraigog.com',
+              'footballCoach': 'winfield_owens@carraigog.com',
+              'hurlingCoach': 'sherlock_yang@carraigog.com',
               'lastUpdatedDate': '2018-01-10T16:00:20.439Z',
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-01-10T16:00:20.439Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0
             },
             {
               '_id': 'd387d6632a7750967c8f1b0d',
+              'year': 2018,
               'name': 'Under 6',
               'yearOfBirth': 2012,
-              'footballManager': 'kylar_hart@carraigog.com',
-              'hurlingManager': 'lachlan_johnson@carraigog.com',
+              'footballCoach': 'kylar_hart@carraigog.com',
+              'hurlingCoach': 'lachlan_johnson@carraigog.com',
               'lastUpdatedDate': '2018-03-01T12:20:39.338Z',
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-03-01T12:20:39.338Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0
             },
             {
               '_id': '00d7988eee11f94ad6bb5422',
-              'name': 'Under 5',
               'year': 2018,
+              'name': 'Under 5',
               'yearOfBirth': 2013,
-              'footballManager': 'erick_norris@carraigog.com',
-              'hurlingManager': 'erick_norris@carraigog.com',
+              'footballCoach': 'erick_norris@carraigog.com',
+              'hurlingCoach': 'erick_norris@carraigog.com',
               'lastUpdatedDate': '2018-02-27T12:09:40.660Z',
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-02-27T12:09:40.660Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0
             }
           ]
@@ -156,9 +172,15 @@ describe('ManageGroupsComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call groupsService.readGroups', () => {
-    expect(groupsService.readGroups).toHaveBeenCalled();
+  it('should call coachesService.readCoaches', () => {
+    expect(coachesService.readCoaches).toHaveBeenCalled();
   });
+
+  it('should call groupsService.readGroups', fakeAsync(() => {
+    tick();
+
+    expect(groupsService.readGroups).toHaveBeenCalled();
+  }));
 
   it('should display total count', () => {
     expect(fixture.nativeElement.querySelector('#total-count').innerHTML).toEqual('Total 6');
@@ -176,11 +198,11 @@ describe('ManageGroupsComponent', () => {
     expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 10');
   });
 
-  it('should display football manager', () => {
+  it('should display football coach', () => {
     expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(2) > td:nth-child(2)').innerHTML).toEqual('john_rees@carraigog.com');
   });
 
-  it('should display hurling manager', () => {
+  it('should display hurling coach', () => {
     expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(3)').innerHTML).toEqual('rowan_love@carraigog.com');
   });
 
@@ -200,32 +222,32 @@ describe('ManageGroupsComponent', () => {
     expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(6) > td:nth-child(1)').innerHTML).toEqual('Under 5');
   });
 
-  it('should sort by football manager (first group)', () => {
-    component.onClickHeader('footballManager');
+  it('should sort by football coach (first group)', () => {
+    component.onClickHeader('footballCoach');
 
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('angel_klein@carraigog.com');
   });
 
-  it('should sort by football manager (last group)', () => {
-    component.onClickHeader('footballManager');
+  it('should sort by football coach (last group)', () => {
+    component.onClickHeader('footballCoach');
 
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(6) > td:nth-child(2)').innerHTML).toEqual('winfield_owens@carraigog.com');
   });
 
-  it('should sort by hurling manager (first group)', () => {
-    component.onClickHeader('hurlingManager');
+  it('should sort by hurling coach (first group)', () => {
+    component.onClickHeader('hurlingCoach');
 
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(3)').innerHTML).toEqual('bryok_moran@carraigog.com');
   });
 
-  it('should sort by hurling manager (last group)', () => {
-    component.onClickHeader('hurlingManager');
+  it('should sort by hurling coach (last group)', () => {
+    component.onClickHeader('hurlingCoach');
 
     fixture.detectChanges();
 
@@ -249,11 +271,11 @@ describe('ManageGroupsComponent', () => {
   });
 
   it('should flip existing sort (first group)', () => {
-    component.onClickHeader('hurlingManager');
+    component.onClickHeader('hurlingCoach');
 
     fixture.detectChanges();
 
-    component.onClickHeader('hurlingManager');
+    component.onClickHeader('hurlingCoach');
 
     fixture.detectChanges();
 
@@ -272,8 +294,8 @@ describe('ManageGroupsComponent', () => {
     expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(6) > td:nth-child(4)').innerHTML).toEqual('10/01/2018 4:00 PM');
   });
 
-  it('should filter on manager email address', () => {
-    component.filterForm.controls['managerFilter'].setValue('winfield');
+  it('should filter on coach email address', () => {
+    component.filterForm.controls['coachFilter'].setValue('winfield');
 
     fixture.detectChanges();
 
@@ -285,7 +307,7 @@ describe('ManageGroupsComponent', () => {
   });
 
   it('should display filter message', () => {
-    component.filterForm.controls['managerFilter'].setValue('norris');
+    component.filterForm.controls['coachFilter'].setValue('norris');
 
     fixture.detectChanges();
 
@@ -304,15 +326,16 @@ describe('ManageGroupsComponent', () => {
 
     component.onClickRow({
       '_id': '6cc1fec86fb94e11121dcf2a',
+      'year': 2018,
       'name': 'Under 8',
       'yearOfBirth': 2010,
-      'footballManager': 'siward_hansen@carraigog.com',
-      'hurlingManager': 'rowan_love@carraigog.com',
+      'footballCoach': 'siward_hansen@carraigog.com',
+      'hurlingCoach': 'rowan_love@carraigog.com',
       'lastUpdatedDate': '2018-02-28T11:22:24.262Z',
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-02-28T11:22:24.262Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0
     });
 
@@ -365,7 +388,7 @@ describe('ManageGroupsComponent', () => {
   //           'createdBy': 'script',
   //           'createdDate': '2017-03-15T13:43:51.268Z',
   //           'updatedDate': '2018-05-09T09:55:59.735Z',
-  //           'updatedBy': 'administrator@carraigog.com',
+  //           'updatedBy': 'admin@carraigog.com',
   //           '__v': 0,
   //           'active': true,
   //           'currentSessionOwner': false
@@ -381,7 +404,7 @@ describe('ManageGroupsComponent', () => {
   //             'createdBy': 'script',
   //             'createdDate': '2017-03-15T13:43:51.268Z',
   //             'updatedDate': '2018-05-09T09:55:59.735Z',
-  //             'updatedBy': 'administrator@carraigog.com',
+  //             'updatedBy': 'admin@carraigog.com',
   //             '__v': 0,
   //             'active': false,
   //             'currentSessionOwner': true
@@ -396,7 +419,7 @@ describe('ManageGroupsComponent', () => {
   //             'createdBy': 'script',
   //             'createdDate': '2017-03-15T13:43:51.268Z',
   //             'updatedDate': '2018-05-09T09:55:59.735Z',
-  //             'updatedBy': 'administrator@carraigog.com',
+  //             'updatedBy': 'admin@carraigog.com',
   //             '__v': 0,
   //             'active': true,
   //             'currentSessionOwner': false
@@ -411,7 +434,7 @@ describe('ManageGroupsComponent', () => {
   //             'createdBy': 'script',
   //             'createdDate': '2017-03-15T13:43:51.268Z',
   //             'updatedDate': '2018-05-09T09:55:59.735Z',
-  //             'updatedBy': 'administrator@carraigog.com',
+  //             'updatedBy': 'admin@carraigog.com',
   //             '__v': 0,
   //             'active': true,
   //             'currentSessionOwner': false
@@ -426,7 +449,7 @@ describe('ManageGroupsComponent', () => {
   //             'createdBy': 'script',
   //             'createdDate': '2017-03-15T13:43:51.268Z',
   //             'updatedDate': '2018-05-09T09:55:59.735Z',
-  //             'updatedBy': 'administrator@carraigog.com',
+  //             'updatedBy': 'admin@carraigog.com',
   //             '__v': 0,
   //             'active': true,
   //             'currentSessionOwner': false
@@ -445,7 +468,7 @@ describe('ManageGroupsComponent', () => {
   //     'createdBy': 'script',
   //     'createdDate': '2017-03-15T13:43:51.268Z',
   //     'updatedDate': '2018-05-09T09:55:59.735Z',
-  //     'updatedBy': 'administrator@carraigog.com',
+  //     'updatedBy': 'admin@carraigog.com',
   //     '__v': 0,
   //     'active': true,
   //     'currentSessionOwner': false
@@ -464,7 +487,7 @@ describe('ManageGroupsComponent', () => {
   //       'createdBy': 'script',
   //       'createdDate': '2017-03-15T13:43:51.268Z',
   //       'updatedDate': '2018-05-09T09:55:59.735Z',
-  //       'updatedBy': 'administrator@carraigog.com',
+  //       'updatedBy': 'admin@carraigog.com',
   //       '__v': 0,
   //       'active': false,
   //       'currentSessionOwner': true
@@ -479,7 +502,7 @@ describe('ManageGroupsComponent', () => {
   //       'createdBy': 'script',
   //       'createdDate': '2017-03-15T13:43:51.268Z',
   //       'updatedDate': '2018-05-09T09:55:59.735Z',
-  //       'updatedBy': 'administrator@carraigog.com',
+  //       'updatedBy': 'admin@carraigog.com',
   //       '__v': 0,
   //       'active': true,
   //       'currentSessionOwner': false
@@ -494,7 +517,7 @@ describe('ManageGroupsComponent', () => {
   //       'createdBy': 'script',
   //       'createdDate': '2017-03-15T13:43:51.268Z',
   //       'updatedDate': '2018-05-09T09:55:59.735Z',
-  //       'updatedBy': 'administrator@carraigog.com',
+  //       'updatedBy': 'admin@carraigog.com',
   //       '__v': 0,
   //       'active': true,
   //       'currentSessionOwner': false
@@ -509,7 +532,7 @@ describe('ManageGroupsComponent', () => {
   //       'createdBy': 'script',
   //       'createdDate': '2017-03-15T13:43:51.268Z',
   //       'updatedDate': '2018-05-09T09:55:59.735Z',
-  //       'updatedBy': 'administrator@carraigog.com',
+  //       'updatedBy': 'admin@carraigog.com',
   //       '__v': 0,
   //       'active': true,
   //       'currentSessionOwner': false
@@ -532,7 +555,7 @@ describe('ManageGroupsComponent', () => {
   //           'createdBy': 'script',
   //           'createdDate': '2017-03-15T13:43:51.268Z',
   //           'updatedDate': '2018-05-09T09:55:59.735Z',
-  //           'updatedBy': 'administrator@carraigog.com',
+  //           'updatedBy': 'admin@carraigog.com',
   //           '__v': 0,
   //           'active': true,
   //           'currentSessionOwner': false
@@ -548,7 +571,7 @@ describe('ManageGroupsComponent', () => {
   //             'createdBy': 'script',
   //             'createdDate': '2017-03-15T13:43:51.268Z',
   //             'updatedDate': '2018-05-09T09:55:59.735Z',
-  //             'updatedBy': 'administrator@carraigog.com',
+  //             'updatedBy': 'admin@carraigog.com',
   //             '__v': 0,
   //             'active': false,
   //             'currentSessionOwner': true
@@ -563,7 +586,7 @@ describe('ManageGroupsComponent', () => {
   //             'createdBy': 'script',
   //             'createdDate': '2017-03-15T13:43:51.268Z',
   //             'updatedDate': '2018-05-09T09:55:59.735Z',
-  //             'updatedBy': 'administrator@carraigog.com',
+  //             'updatedBy': 'admin@carraigog.com',
   //             '__v': 0,
   //             'active': true,
   //             'currentSessionOwner': false
@@ -578,7 +601,7 @@ describe('ManageGroupsComponent', () => {
   //             'createdBy': 'script',
   //             'createdDate': '2017-03-15T13:43:51.268Z',
   //             'updatedDate': '2018-05-09T09:55:59.735Z',
-  //             'updatedBy': 'administrator@carraigog.com',
+  //             'updatedBy': 'admin@carraigog.com',
   //             '__v': 0,
   //             'active': true,
   //             'currentSessionOwner': false
@@ -593,7 +616,7 @@ describe('ManageGroupsComponent', () => {
   //             'createdBy': 'script',
   //             'createdDate': '2017-03-15T13:43:51.268Z',
   //             'updatedDate': '2018-05-09T09:55:59.735Z',
-  //             'updatedBy': 'administrator@carraigog.com',
+  //             'updatedBy': 'admin@carraigog.com',
   //             '__v': 0,
   //             'active': true,
   //             'currentSessionOwner': false
@@ -609,7 +632,7 @@ describe('ManageGroupsComponent', () => {
   //             'createdBy': 'script',
   //             'createdDate': '2017-03-15T13:43:51.268Z',
   //             'updatedDate': '2018-05-09T09:55:59.735Z',
-  //             'updatedBy': 'administrator@carraigog.com',
+  //             'updatedBy': 'admin@carraigog.com',
   //             '__v': 0,
   //             'active': true,
   //             'currentSessionOwner': false
@@ -628,7 +651,7 @@ describe('ManageGroupsComponent', () => {
   //     'createdBy': 'script',
   //     'createdDate': '2017-03-15T13:43:51.268Z',
   //     'updatedDate': '2018-05-09T09:55:59.735Z',
-  //     'updatedBy': 'administrator@carraigog.com',
+  //     'updatedBy': 'admin@carraigog.com',
   //     '__v': 0,
   //     'active': true,
   //     'currentSessionOwner': false
@@ -654,7 +677,7 @@ describe('ManageGroupsComponent', () => {
   //           'createdBy': 'script',
   //           'createdDate': '2017-03-15T13:43:51.268Z',
   //           'updatedDate': '2018-05-09T09:55:59.735Z',
-  //           'updatedBy': 'administrator@carraigog.com',
+  //           'updatedBy': 'admin@carraigog.com',
   //           '__v': 0,
   //           'active': true,
   //           'currentSessionOwner': false
@@ -672,7 +695,7 @@ describe('ManageGroupsComponent', () => {
   //     'createdBy': 'script',
   //     'createdDate': '2017-03-15T13:43:51.268Z',
   //     'updatedDate': '2018-05-09T09:55:59.735Z',
-  //     'updatedBy': 'administrator@carraigog.com',
+  //     'updatedBy': 'admin@carraigog.com',
   //     '__v': 0,
   //     'active': true,
   //     'currentSessionOwner': false

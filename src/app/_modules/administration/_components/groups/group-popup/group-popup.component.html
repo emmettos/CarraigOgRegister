@@ -1,16 +1,16 @@
 <!-- Most id's are used for unit testing -->
 <div class="modal-body">
   <div class="card">
-    <div class="card-header bg-success">
+    <div class="card-header bg-info">
       <h5 id="name">{{ groupDetails.name }}</h5>
     </div>
     <div class="card-body">
       <p id="year-of-birth" class="card-text"><strong>Year of Birth:</strong> {{ groupDetails.yearOfBirth }}</p>
-      <p id="football-manager" class="card-text"><strong>Football Manager:</strong> {{ groupDetails.footballManager }}</p>
-      <p id="hurling-manager" class="card-text"><strong>Hurling Manager:</strong> {{ groupDetails.hurlingManager }}</p>
-      <p id="last-updated-date" class="card-text"><strong>Player Last Updated:</strong> {{ groupDetails.lastUpdatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</p>
+      <p id="football-coach" class="card-text"><strong>Football Coach:</strong> {{ groupDetails.footballCoachFullName }}</p>
+      <p id="hurling-coach" class="card-text"><strong>Hurling Coach:</strong> {{ groupDetails.hurlingCoachFullName }}</p>
+      <p id="last-updated-date" class="card-text"><strong>Players Last Updated:</strong> {{ groupDetails.lastUpdatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</p>
     </div>
-    <div class="card-footer bg-success-light text-muted">
+    <div class="card-footer bg-info-light text-muted">
       <p>
         <span id="created-date">Created Date: {{ groupDetails.createdDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
         <br/>

@@ -11,9 +11,6 @@ export class GroupPopupComponent {
   @Input()
   groupDetails: IGroup;
 
-  @Input()
-  coachGroups: any[];
-
   constructor() {
   }
 }

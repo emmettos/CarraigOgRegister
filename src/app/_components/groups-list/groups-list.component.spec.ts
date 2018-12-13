@@ -51,8 +51,8 @@ describe('GroupsListComponent', () => {
               'year': 2018,
               'name': 'Under 10',
               'yearOfBirth': 2008,
-              'footballManager': 'Football 2008',
-              'hurlingManager': 'HUrling 2008',
+              'footballCoach': 'Football 2008',
+              'hurlingCoach': 'HUrling 2008',
               'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
               'numberOfPlayers': 29
             },
@@ -60,8 +60,8 @@ describe('GroupsListComponent', () => {
               'year': 2018,
               'name': 'Under 9',
               'yearOfBirth': 2009,
-              'footballManager': 'Football 2009',
-              'hurlingManager': 'Hurling 2009',
+              'footballCoach': 'Football 2009',
+              'hurlingCoach': 'Hurling 2009',
               'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
               'numberOfPlayers': 42
             },
@@ -69,8 +69,8 @@ describe('GroupsListComponent', () => {
               'year': 2018,
               'name': 'Under 8',
               'yearOfBirth': 2010,
-              'footballManager': 'Football 2010',
-              'hurlingManager': 'Hurling 2010',
+              'footballCoach': 'Football 2010',
+              'hurlingCoach': 'Hurling 2010',
               'lastUpdatedDate': '2018-02-28T11:22:24.262Z',
               'numberOfPlayers': 29
             },
@@ -78,8 +78,8 @@ describe('GroupsListComponent', () => {
               'year': 2018,
               'name': 'Under 7',
               'yearOfBirth': 2011,
-              'footballManager': 'Football 2011',
-              'hurlingManager': 'Hurling 2011',
+              'footballCoach': 'Football 2011',
+              'hurlingCoach': 'Hurling 2011',
               'lastUpdatedDate': '2018-02-27T16:00:20.439Z',
               'numberOfPlayers': 33
             },
@@ -87,8 +87,8 @@ describe('GroupsListComponent', () => {
               'year': 2018,
               'name': 'Under 6',
               'yearOfBirth': 2012,
-              'footballManager': 'Football 2012',
-              'hurlingManager': 'Hurling 2012',
+              'footballCoach': 'Football 2012',
+              'hurlingCoach': 'Hurling 2012',
               'lastUpdatedDate': '2018-02-27T12:20:39.338Z',
               'numberOfPlayers': 42
             },
@@ -96,8 +96,8 @@ describe('GroupsListComponent', () => {
               'year': 2018,
               'name': 'Under 5',
               'yearOfBirth': 2013,
-              'footballManager': 'Football 2013',
-              'hurlingManager': 'Hurling 2013',
+              'footballCoach': 'Football 2013',
+              'hurlingCoach': 'Hurling 2013',
               'lastUpdatedDate': '2018-02-27T12:09:40.660Z',
               'numberOfPlayers': 16
             }

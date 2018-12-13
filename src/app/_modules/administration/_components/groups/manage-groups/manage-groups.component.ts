@@ -5,9 +5,9 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ToasterService } from 'angular2-toaster';
 
-import { IGroup } from '../../../../../_models/index';
-import { GroupsService } from '../../../../../_services/index';
-// import { CoachFormComponent } from '../coach-form/coach-form.component';
+import { IGroup, ICoach } from '../../../../../_models/index';
+import { GroupsService, CoachesService } from '../../../../../_services/index';
+import { GroupFormComponent } from '../group-form/group-form.component';
 import { GroupPopupComponent } from '../group-popup/group-popup.component';
 
 
@@ -29,16 +29,19 @@ export class ManageGroupsComponent implements OnInit {
 
   totalCount: number = 0;
 
+  coaches: ICoach[] = null;
+
   constructor(
     private modalService: NgbModal,
     private formBuilder: FormBuilder,
     private toasterService: ToasterService,
-    private groupsService: GroupsService) {
+    private groupsService: GroupsService,
+    private coachesService: CoachesService) {
   }
 
   ngOnInit() {
     this.filterForm = this.formBuilder.group({
-      'managerFilter': ['']
+      'coachFilter': ['']
     });
 
     this.filterForm.valueChanges
@@ -46,16 +49,32 @@ export class ManageGroupsComponent implements OnInit {
         this.filterGroups(formValues)
       });
 
-    this.groupsService.readGroups()
+    this.coachesService.readCoaches()
       .subscribe({
         next: response => {
-          this.groups = response.body.groups;
-
-          this.totalCount = this.groups.length;
-          
-          this.filteredGroups = this.groups.slice(0);
-
-          this.onClickHeader(this.sortKey, false);      
+          this.coaches = response.body.coaches
+            .sort((coach1: ICoach, coach2: ICoach) => {
+              let returnValue: number = 1;
+      
+              if (coach1.emailAddress < coach2.emailAddress) {
+                returnValue = -1;
+              }
+              else if (coach1.emailAddress === coach2.emailAddress) {
+                returnValue = 0;
+              }
+              
+              return returnValue;
+            });
+    
+          this.groupsService.readGroups()
+            .subscribe({
+              next: response => {
+                this.processReturnedGroups(response.body.groups);
+              },
+              // Need this handler otherwise the Angular error handling mechanism will kick in.
+              error: error => {
+              }
+            });
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {
@@ -96,27 +115,28 @@ export class ManageGroupsComponent implements OnInit {
   onClickRow(group: IGroup) {
     let modalRef = this.modalService.open(GroupPopupComponent);
 
-    modalRef.componentInstance.groupDetails = group;  
+    modalRef.componentInstance.groupDetails = group;
   }
 
-  onClickEditGroup(event: Event, coach: IGroup) {
-    // const modalRef: NgbModalRef = this.modalService.open(GroupFormComponent, { size: 'lg', backdrop: 'static' });
+  onClickEditGroup(event: Event, group: IGroup) {
+    const modalRef: NgbModalRef = this.modalService.open(GroupFormComponent, { size: 'lg', backdrop: 'static' });
 
-    // modalRef.componentInstance.groupDetails = group;
+    modalRef.componentInstance.groupDetails = group;
+    modalRef.componentInstance.coaches = this.coaches;
 
-    // modalRef.result
-    //   .then(returnObject => {
-    //     if (returnObject) {
-    //       this.toasterService.pop('success', 'Group Successfully Updated', returnObject.groupDetails.name);
+    modalRef.result
+      .then(returnObject => {
+        if (returnObject) {
+          this.toasterService.pop('success', 'Group Successfully Updated', returnObject.groupDetails.name);
 
-    //       this.processReturnedCoaches(returnObject.updatedCoaches);
-    //     }
-    //   })
-    //   .catch(error => {
-    //     this.toasterService.pop('error', 'Failed Updating Group', error.groupDetails.name);
-    //   });
+          this.processReturnedGroups(returnObject.updatedGroups);
+        }
+      })
+      .catch(error => {
+        this.toasterService.pop('error', 'Failed Updating Group', error.groupDetails.name);
+      });
     
-    // event.stopPropagation();
+    event.stopPropagation();
   }
 
   onClickDownloadCSV() {
@@ -141,14 +161,14 @@ export class ManageGroupsComponent implements OnInit {
   filterGroups(formValues: any) {
     this.filteredGroups = this.groups
       .filter(group => {
-        let managerFilter = formValues.managerFilter;
+        let coachFilter = formValues.coachFilter;
 
-        if (managerFilter === null) {
-          managerFilter = '';
+        if (coachFilter === null) {
+          coachFilter = '';
         }
 
-        if ((group.footballManager.toLowerCase().indexOf(managerFilter.toLowerCase()) !== -1 ||
-            group.hurlingManager.toLowerCase().indexOf(managerFilter.toLowerCase()) !== -1)) {
+        if ((group.footballCoach.toLowerCase().indexOf(coachFilter.toLowerCase()) !== -1 ||
+            group.hurlingCoach.toLowerCase().indexOf(coachFilter.toLowerCase()) !== -1)) {
           return true;
         }
       });
@@ -170,4 +190,40 @@ export class ManageGroupsComponent implements OnInit {
 
     return CSSClass;
   };
+
+  private processReturnedGroups(groups: IGroup[]) {
+    this.groups = groups;
+
+    this.totalCount = this.groups.length;
+
+    this.groups.forEach(group => {
+      group.footballCoachFullName = this.lookupCoachFullName(group.footballCoach);
+      group.hurlingCoachFullName = this.lookupCoachFullName(group.hurlingCoach);
+    });
+
+    this.filteredGroups = this.groups.slice(0);
+
+    this.onClickHeader(this.sortKey, false);
+  }
+
+  private lookupCoachFullName(emailAddress: string): string {
+    let first = 0,
+        last = this.coaches.length - 1;
+
+    while (first <= last) {
+      let middle = Math.floor((first + last) / 2)
+
+      if (this.coaches[middle].emailAddress < emailAddress) {
+        first = middle + 1;
+      }
+      else if (this.coaches[middle].emailAddress > emailAddress) {
+        last = middle - 1;
+      }
+      else {
+        return this.coaches[middle].firstName + ' ' + this.coaches[middle].surname;
+      }
+    }
+
+    return emailAddress;
+  }
 }

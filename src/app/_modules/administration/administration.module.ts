@@ -13,6 +13,7 @@ import { CoachFormComponent } from './_components/coaches/coach-form/coach-form.
 import { ConfirmDeleteCoachComponent } from './_components/coaches/confirm-delete-coach/confirm-delete-coach.component';
 import { CoachPopupComponent } from './_components/coaches/coach-popup/coach-popup.component';
 import { ManageGroupsComponent } from './_components/groups/manage-groups/manage-groups.component';
+import { GroupFormComponent } from './_components/groups/group-form/group-form.component';
 import { GroupPopupComponent } from './_components/groups/group-popup/group-popup.component';
 
 
@@ -24,6 +25,7 @@ import { GroupPopupComponent } from './_components/groups/group-popup/group-popu
     ConfirmDeleteCoachComponent,
     CoachPopupComponent,
     ManageGroupsComponent,
+    GroupFormComponent,
     GroupPopupComponent
   ],
   imports: [
@@ -37,6 +39,7 @@ import { GroupPopupComponent } from './_components/groups/group-popup/group-popu
     CoachFormComponent,
     ConfirmDeleteCoachComponent,
     CoachPopupComponent,
+    GroupFormComponent,
     GroupPopupComponent
   ]
 })
