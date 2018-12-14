@@ -28,7 +28,7 @@ describe('GroupsService', () => {
     httpMock.verify();
   });
 
-  it('should call url for read groups', () => {
+  it('should call url for read group summaries', () => {
     service.readGroupSummaries()
       .subscribe();
 
@@ -38,4 +38,6 @@ describe('GroupsService', () => {
 
     mockRequest.flush(null);
   });
+
+  //TODO: Need to figure out how to inject a mock Angular5Csv to as to unit test downloadCSV.
 });

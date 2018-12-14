@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
+import { Angular5Csv } from 'angular5-csv/Angular5-csv';
+
 import { IGroup } from '../_models/index';
 
 
@@ -24,6 +26,20 @@ export class GroupsService {
 
     postData['groupDetails'] = group;
    
-    return this.http.post("/api/updateGroup", postData);
+    return this.http.post('/api/updateGroup', postData);
+  }
+
+  downloadCSV(csvGroups: any[]) {
+    let options = { 
+      showLabels: true, 
+      headers: [
+        'Name', 
+        'Football Coach', 
+        'Hurling Coach', 
+        'Players Last Updated'
+      ]
+    };
+
+    new Angular5Csv(csvGroups, 'CarraigOgGroups', options);
   }
 }

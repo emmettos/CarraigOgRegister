@@ -5,6 +5,8 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ToasterService } from 'angular2-toaster';
 
+import * as moment from 'moment';
+
 import { IGroup, ICoach } from '../../../../../_models/index';
 import { GroupsService, CoachesService } from '../../../../../_services/index';
 import { GroupFormComponent } from '../group-form/group-form.component';
@@ -140,21 +142,20 @@ export class ManageGroupsComponent implements OnInit {
   }
 
   onClickDownloadCSV() {
-    // let csvGroups: any[] = [];
+    let csvGroups: any[] = [];
 
-    // this.filteredGroups.forEach(coach => {
-    //   let csvGroup: any = {};
+    this.filteredGroups.forEach(group => {
+      let csvGroup: any = {};
       
-    //   csvCoach.emailAddress = coach.emailAddress;
-    //   csvCoach.surname = coach.surname;
-    //   csvCoach.firstName = coach.firstName;
-    //   csvCoach.phoneNumber = coach.phoneNumber;
-    //   csvCoach.administrator = coach.isAdministrator ? 'YES' : 'NO';
+      csvGroup.Name = group.name;
+      csvGroup.footballCoach = group.footballCoachFullName;
+      csvGroup.hurlingCoach = group.hurlingCoachFullName;
+      csvGroup.lastUpdatedDate = moment.utc(group.lastUpdatedDate).format("YYYY-MM-DD");
 
-    //   csvGroups.push(csvCoach);
-    // });
+      csvGroups.push(csvGroup);
+    });
 
-    // this.groupsService.downloadCSV(csvGroups);
+    this.groupsService.downloadCSV(csvGroups);
   }
 
   // This is public for the unit tests.
