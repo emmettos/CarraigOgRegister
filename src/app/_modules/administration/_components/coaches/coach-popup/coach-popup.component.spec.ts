@@ -1,5 +1,4 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
 
 import { SharedModule } from '../../../../shared/shared.module';
 
@@ -16,7 +15,6 @@ describe('CoachPopupComponent', () => {
         CoachPopupComponent 
       ],
       imports: [
-        HttpClientTestingModule,
         SharedModule
       ]
     })
@@ -39,7 +37,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -61,14 +59,14 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
     };
     component.coachGroups = [{
       'groupName': 'Under 9',
-      'role': 'Hurling Manager'
+      'role': 'Hurling Coach'
     }]
 
     fixture.detectChanges();
@@ -87,7 +85,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -109,7 +107,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -131,7 +129,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -153,7 +151,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -175,7 +173,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -197,7 +195,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': true
@@ -219,7 +217,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -241,14 +239,14 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
     };
     component.coachGroups = [{
       'groupName': 'Under 9',
-      'role': 'Hurling Manager'
+      'role': 'Hurling Coach'
     }]
 
     fixture.detectChanges();
@@ -267,19 +265,19 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
     };
     component.coachGroups = [{
       'groupName': 'Under 9',
-      'role': 'Hurling Manager'
+      'role': 'Hurling Coach'
     }]
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#coach-groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('Hurling Manager');
+    expect(fixture.nativeElement.querySelector('#coach-groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('Hurling Coach');
   });
 
   it('should set footer style for active coach state', () => {
@@ -293,14 +291,14 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
     };
     component.coachGroups = [{
       'groupName': 'Under 9',
-      'role': 'Hurling Manager'
+      'role': 'Hurling Coach'
     }]
 
     fixture.detectChanges();
@@ -319,7 +317,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -341,7 +339,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -363,7 +361,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -385,7 +383,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -407,7 +405,7 @@ describe('CoachPopupComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -415,6 +413,6 @@ describe('CoachPopupComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#updated-by").innerHTML).toEqual('Updated By: administrator@carraigog.com');
+    expect(fixture.nativeElement.querySelector("#updated-by").innerHTML).toEqual('Updated By: admin@carraigog.com');
   });
 });

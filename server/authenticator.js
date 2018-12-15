@@ -78,7 +78,7 @@ exports.createToken = function (request, currentUser) {
           for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
             currentGroup = groups[groupIndex];
 
-            if (currentGroup.footballManager === currentUser.emailAddress || currentGroup.hurlingManager === currentUser.emailAddress) {
+            if (currentGroup.footballCoach === currentUser.emailAddress || currentGroup.hurlingCoach === currentUser.emailAddress) {
               userProfile.isManager = true;
 
               userProfile.groups.push(currentGroup.yearOfBirth);

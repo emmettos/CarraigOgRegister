@@ -14,6 +14,6 @@ export interface ICoach {
 
   __v: number;
 
-  active: boolean;
-  currentSessionOwner: boolean;  
+  active?: boolean;
+  currentSessionOwner?: boolean;  
 }

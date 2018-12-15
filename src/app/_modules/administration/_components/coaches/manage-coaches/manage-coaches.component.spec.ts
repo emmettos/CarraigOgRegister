@@ -4,6 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { of } from 'rxjs';
+import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 
 import { NgbModule, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
@@ -16,7 +17,6 @@ import { ValidationService } from '../../../../../_modules/shared/_services';
 
 import { CoachPopupComponent } from '../coach-popup/coach-popup.component';
 import { ManageCoachesComponent } from './manage-coaches.component';
-import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 
 
 describe('ManageCoachesComponent', () => {
@@ -88,7 +88,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -103,7 +103,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -118,7 +118,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -133,7 +133,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -327,7 +327,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
@@ -354,7 +354,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -370,7 +370,7 @@ describe('ManageCoachesComponent', () => {
         'body': {
           'coachGroups': [{
             'groupName': 'Under 9',
-            'role': 'Hurling Manager'
+            'role': 'Hurling Coach'
           }]
         }
       }, AsyncScheduler));
@@ -390,7 +390,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -417,7 +417,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': false,
       'currentSessionOwner': false
@@ -480,7 +480,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -495,7 +495,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -510,7 +510,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -525,7 +525,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -541,7 +541,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -565,7 +565,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': false,
         'currentSessionOwner': true
@@ -580,7 +580,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -595,7 +595,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -610,7 +610,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -626,7 +626,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -657,7 +657,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -672,7 +672,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -687,7 +687,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -702,7 +702,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -718,7 +718,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -771,7 +771,7 @@ describe('ManageCoachesComponent', () => {
             'createdBy': 'script',
             'createdDate': '2017-03-15T13:43:51.268Z',
             'updatedDate': '2018-05-09T09:55:59.735Z',
-            'updatedBy': 'administrator@carraigog.com',
+            'updatedBy': 'admin@carraigog.com',
             '__v': 0,
             'active': true,
             'currentSessionOwner': false
@@ -787,7 +787,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -802,7 +802,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -817,7 +817,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -832,7 +832,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -851,7 +851,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
@@ -870,7 +870,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': false,
         'currentSessionOwner': true
@@ -885,7 +885,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -900,7 +900,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -915,7 +915,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -938,7 +938,7 @@ describe('ManageCoachesComponent', () => {
             'createdBy': 'script',
             'createdDate': '2017-03-15T13:43:51.268Z',
             'updatedDate': '2018-05-09T09:55:59.735Z',
-            'updatedBy': 'administrator@carraigog.com',
+            'updatedBy': 'admin@carraigog.com',
             '__v': 0,
             'active': true,
             'currentSessionOwner': false
@@ -954,7 +954,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -969,7 +969,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -984,7 +984,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -999,7 +999,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -1015,7 +1015,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -1034,7 +1034,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
@@ -1060,7 +1060,7 @@ describe('ManageCoachesComponent', () => {
             'createdBy': 'script',
             'createdDate': '2017-03-15T13:43:51.268Z',
             'updatedDate': '2018-05-09T09:55:59.735Z',
-            'updatedBy': 'administrator@carraigog.com',
+            'updatedBy': 'admin@carraigog.com',
             '__v': 0,
             'active': true,
             'currentSessionOwner': false
@@ -1078,7 +1078,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
@@ -1104,7 +1104,7 @@ describe('ManageCoachesComponent', () => {
             'createdBy': 'script',
             'createdDate': '2017-03-15T13:43:51.268Z',
             'updatedDate': '2018-05-09T09:55:59.735Z',
-            'updatedBy': 'administrator@carraigog.com',
+            'updatedBy': 'admin@carraigog.com',
             '__v': 0,
             'active': true,
             'currentSessionOwner': false
@@ -1120,7 +1120,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -1135,7 +1135,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -1150,7 +1150,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -1169,7 +1169,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
@@ -1188,7 +1188,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': false,
         'currentSessionOwner': true
@@ -1203,7 +1203,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -1218,7 +1218,7 @@ describe('ManageCoachesComponent', () => {
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'administrator@carraigog.com',
+        'updatedBy': 'admin@carraigog.com',
         '__v': 0,
         'active': true,
         'currentSessionOwner': false
@@ -1241,7 +1241,7 @@ describe('ManageCoachesComponent', () => {
             'createdBy': 'script',
             'createdDate': '2017-03-15T13:43:51.268Z',
             'updatedDate': '2018-05-09T09:55:59.735Z',
-            'updatedBy': 'administrator@carraigog.com',
+            'updatedBy': 'admin@carraigog.com',
             '__v': 0,
             'active': true,
             'currentSessionOwner': false
@@ -1257,7 +1257,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': false,
               'currentSessionOwner': true
@@ -1272,7 +1272,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -1287,7 +1287,7 @@ describe('ManageCoachesComponent', () => {
               'createdBy': 'script',
               'createdDate': '2017-03-15T13:43:51.268Z',
               'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'administrator@carraigog.com',
+              'updatedBy': 'admin@carraigog.com',
               '__v': 0,
               'active': true,
               'currentSessionOwner': false
@@ -1306,7 +1306,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
@@ -1332,7 +1332,7 @@ describe('ManageCoachesComponent', () => {
             'createdBy': 'script',
             'createdDate': '2017-03-15T13:43:51.268Z',
             'updatedDate': '2018-05-09T09:55:59.735Z',
-            'updatedBy': 'administrator@carraigog.com',
+            'updatedBy': 'admin@carraigog.com',
             '__v': 0,
             'active': true,
             'currentSessionOwner': false
@@ -1350,7 +1350,7 @@ describe('ManageCoachesComponent', () => {
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'administrator@carraigog.com',
+      'updatedBy': 'admin@carraigog.com',
       '__v': 0,
       'active': true,
       'currentSessionOwner': false
