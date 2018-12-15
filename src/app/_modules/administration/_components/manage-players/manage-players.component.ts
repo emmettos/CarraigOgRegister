@@ -48,9 +48,10 @@ export class ManagePlayersComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.groupYears = JSON.parse(JSON.stringify(APP_SETTINGS.groupYears));
-    this.groupYears.unshift('Select Year');
-
+    //this.groupYears = JSON.parse(JSON.stringify(APP_SETTINGS.groupYears));
+    //this.groupYears.unshift('Select Year');
+    this.groupYears = APP_SETTINGS.groupYears;
+    
     this.managePlayersForm = this.formBuilder.group({
       'groupYear': ['Select Year', this.validationService.groupYearValidator],
       'dateOfBirthPicker': this.formBuilder.group({}),

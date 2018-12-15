@@ -4,7 +4,8 @@
     <div class="row">
       <div class="form-group col-lg-2 offset-lg-3">
         <select formControlName="groupYear" [ngClass]="{ 'is-invalid': managePlayersForm.controls['groupYear'].invalid }" class="form-control"
-          (change)="onChangeGroupYear($event.target.value)">
+            (change)="onChangeGroupYear($event.target.value)">
+          <option>Select Year</option>
           <option *ngFor="let groupYear of groupYears">{{ groupYear }}</option>
         </select>
       </div>

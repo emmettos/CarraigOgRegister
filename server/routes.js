@@ -1,25 +1,25 @@
-"use strict";
+'use strict';
 
 var fs = require('fs');
 
-var mongoose = require("mongoose");
-var JSONWebToken = require("jsonwebtoken");
+var mongoose = require('mongoose');
+var JSONWebToken = require('jsonwebtoken');
 var nodemailer = require('nodemailer');
 
-var config = require("./config/config");
+var config = require('./config/config');
 
-var authenticator = require("./authenticator");
-var authorizer = require("./authorizer");
+var authenticator = require('./authenticator');
+var authorizer = require('./authorizer');
 
-var group = require("./models/group");
-var player = require("./models/player");
-var user = require("./models/user");
+var group = require('./models/group');
+var player = require('./models/player');
+var user = require('./models/user');
 
 
 exports = module.exports = function (app, router) {
   var currentSettings = app.currentSettings;
 
-  router.get("/currentSettings", function (request, response, next) {
+  router.get('/currentSettings', function (request, response, next) {
     try {
       var returnMessage = {};
 
@@ -35,7 +35,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get("/groups", authorizer.authorize(), async (request, response, next) => {
+  router.get('/groupSummaries', authorizer.authorize(), async (request, response, next) => {
     var groups = null,
         users = null,
         playerGroupCounts = null,
@@ -53,7 +53,7 @@ exports = module.exports = function (app, router) {
         middleIndex = (lowIndex + highIndex) / 2 | 0;
 
         if (users[middleIndex].emailAddress === managerEmailAddress) {
-          managerFullName = users[middleIndex].firstName + " " + users[middleIndex].surname;
+          managerFullName = users[middleIndex].firstName + ' ' + users[middleIndex].surname;
           lowIndex = highIndex + 1;
         }
         else if (users[middleIndex].emailAddress < managerEmailAddress) {
@@ -91,8 +91,8 @@ exports = module.exports = function (app, router) {
     };
 
     try {
-      groups = await group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec();
-      users = await user.find({}).sort({ emailAddress: "ascending" }).lean().exec();
+      groups = await group.find({ 'year': currentSettings.year }, '-_id -__v').lean().exec();
+      users = await user.find({}).sort({ emailAddress: 'ascending' }).lean().exec();
       playerGroupCounts =  await player.aggregate([
         {
           $match: {
@@ -103,25 +103,25 @@ exports = module.exports = function (app, router) {
           }
         },
         {
-          $project: { year: { $year: "$dateOfBirth" } }
+          $project: { year: { $year: '$dateOfBirth' } }
         },
         {
           $group:
             {
-              _id: "$year",
+              _id: '$year',
               total: { $sum: 1 }
             }
         },
         { 
-          $sort: { "_id": 1 } 
+          $sort: { '_id': 1 } 
         }
       ]);
 
       for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
         currentGroup = groups[groupIndex];
 
-        currentGroup.footballManagerFullName = readManagerFullName(currentGroup.footballManager);
-        currentGroup.hurlingManagerFullName = readManagerFullName(currentGroup.hurlingManager);
+        currentGroup.footballCoachFullName = readManagerFullName(currentGroup.footballCoach);
+        currentGroup.hurlingCoachFullName = readManagerFullName(currentGroup.hurlingCoach);
 
         currentGroup.numberOfPlayers = readPlayerGroupCount(currentGroup.yearOfBirth);
       }
@@ -129,7 +129,7 @@ exports = module.exports = function (app, router) {
       returnMessage.error = null;
       returnMessage.body = {};
 
-      returnMessage.body.groups = groups;
+      returnMessage.body.groupSummaries = groups;
 
       response.status(200).json(returnMessage);
     }
@@ -138,7 +138,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get("/coaches", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.get('/coaches', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       await readCoaches(currentSettings, response, next);
     }
@@ -147,7 +147,16 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get("/coachGroups/:emailAddress", async (request, response, next) => {
+  router.get('/groups', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      await readGroups(currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.get('/coachGroups/:emailAddress', async (request, response, next) => {
     var groups = null,
         groupIndex = 0,
         currentGroup = null,
@@ -156,21 +165,24 @@ exports = module.exports = function (app, router) {
         returnMessage = {};
 
     try {
-      groups = await group.find({ "year": currentSettings.year }, "-_id -__v").lean().exec();
+      groups = await group.find({ 'year': currentSettings.year }, '-_id -__v').lean().exec();
 
       for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
         currentGroup = groups[groupIndex];
 
-        coachGroup = {};
+        if (currentGroup.footballCoach === request.params.emailAddress) {
+          coachGroup = {};
 
-        coachGroup.groupName = currentGroup.name;
-        if (currentGroup.footballManager === request.params.emailAddress) {
-          coachGroup.role = 'Football Manager';
+          coachGroup.groupName = currentGroup.name;
+          coachGroup.role = 'Football Coach';
 
           coachGroups.push(coachGroup);
         }
-        else if (currentGroup.hurlingManager === request.params.emailAddress) {
-          coachGroup.role = 'Hurling Manager';
+        if (currentGroup.hurlingCoach === request.params.emailAddress) {
+          coachGroup = {};
+
+          coachGroup.groupName = currentGroup.name;
+          coachGroup.role = 'Hurling Coach';
 
           coachGroups.push(coachGroup);
         }
@@ -182,26 +194,25 @@ exports = module.exports = function (app, router) {
       returnMessage.body.coachGroups = coachGroups;
 
       response.status(200).json(returnMessage);
-
     }
     catch (error) {
       next(error);
     }
   });
 
-  router.get("/playersDetail/:yearOfBirth/:allPlayers?", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.get('/playersDetail/:yearOfBirth/:allPlayers?', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       var filter = null,
           players = null,
           returnMessage = {};
       
       if (request.params.allPlayers) {
-        filter = { "yearOfBirth": parseInt(request.params.yearOfBirth) }
+        filter = { 'yearOfBirth': parseInt(request.params.yearOfBirth) }
       }
       else {
         filter = {
-          "yearOfBirth": parseInt(request.params.yearOfBirth),
-          "lastRegisteredYear": { $gte: currentSettings.year - 1 }
+          'yearOfBirth': parseInt(request.params.yearOfBirth),
+          'lastRegisteredYear': { $gte: currentSettings.year - 1 }
         }
       }
 
@@ -219,13 +230,13 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/verifyUserToken", async (request, response, next) => {
+  router.post('/verifyUserToken', async (request, response, next) => {
     var verifyToken = function (userToken) {
       var promise = new Promise(function (resolve, reject) {
         JSONWebToken.verify(userToken, config.secret, function (error, payload) {
           try {
             if (error) {
-              error.message = "Invalid userToken: " + error.message;
+              error.message = 'Invalid userToken: ' + error.message;
     
               error.httpCode = 400;
         
@@ -250,7 +261,7 @@ exports = module.exports = function (app, router) {
       var customError = null;
 
       if (!foundUser) {
-        customError = new Error("User not found - " + payload.emailAddress);
+        customError = new Error('User not found - ' + payload.emailAddress);
 
         customError.httpCode = 401;
 
@@ -259,7 +270,7 @@ exports = module.exports = function (app, router) {
 
       if (!payload.currentPassword) {
         if (foundUser.password !== '') {
-          customError = new Error("Password has already been set for " + payload.emailAddress);
+          customError = new Error('Password has already been set for ' + payload.emailAddress);
   
           customError.httpCode = 401;
   
@@ -268,7 +279,7 @@ exports = module.exports = function (app, router) {
       }
       else {
         if (!foundUser.comparePassword(payload.currentPassword)) {
-          customError = new Error("Token password for " + payload.emailAddress + " does not match existing password");
+          customError = new Error('Token password for ' + payload.emailAddress + ' does not match existing password');
   
           customError.httpCode = 401;
   
@@ -288,7 +299,7 @@ exports = module.exports = function (app, router) {
       userProfile.ID = payload.emailAddress;
       userProfile.createPasswordProfile = true;
 
-      response.set("Authorization", "Bearer " + JSONWebToken.sign({
+      response.set('Authorization', 'Bearer ' + JSONWebToken.sign({
         userProfile: userProfile 
       }, config.secret));
 
@@ -299,12 +310,12 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/createPassword", authorizer.authorize({ isCreatingPassword: true }), async (request, response, next) => {
+  router.post('/createPassword', authorizer.authorize({ isCreatingPassword: true }), async (request, response, next) => {
     var customError = null;
 
     try {
       if (!(request.body.emailAddress && request.body.password)) {
-        customError = new Error("Email address and password are required");
+        customError = new Error('Email address and password are required');
 
         customError.httpCode = 400;
 
@@ -314,7 +325,7 @@ exports = module.exports = function (app, router) {
       const foundUser = await user.findOne({ emailAddress: request.body.emailAddress })
 
       if (!foundUser) {
-        customError = new Error("User not found");
+        customError = new Error('User not found');
 
         customError.httpCode = 400;
 
@@ -337,7 +348,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/authenticate", async (request, response, next) => {
+  router.post('/authenticate', async (request, response, next) => {
     var foundUser = null,
         comparedUser = null,
         JWTToken = null,
@@ -348,15 +359,15 @@ exports = module.exports = function (app, router) {
       foundUser = await user.findOne({ emailAddress: request.body.emailAddress })
 
       if (!foundUser) {
-        customError = new Error("User not found");
+        customError = new Error('User not found');
 
         customError.httpCode = 401;
 
         throw customError;
       }
         
-      if (foundUser.password === "") {
-        customError = new Error("User not validated");
+      if (foundUser.password === '') {
+        customError = new Error('User not validated');
 
         customError.httpCode = 401;
 
@@ -366,7 +377,7 @@ exports = module.exports = function (app, router) {
       comparedUser = await foundUser.comparePassword(request.body.password);
 
       if (!comparedUser) {
-        customError = new Error("Invalid password");
+        customError = new Error('Invalid password');
 
         customError.httpCode = 401;
 
@@ -378,7 +389,7 @@ exports = module.exports = function (app, router) {
       returnMessage.error = null;
       returnMessage.body = {};
 
-      response.set("Authorization", "Bearer " + JWTToken);
+      response.set('Authorization', 'Bearer ' + JWTToken);
 
       response.status(200).json(returnMessage);
     }
@@ -387,7 +398,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/changePassword", async (request, response, next) => {
+  router.post('/changePassword', async (request, response, next) => {
     var foundUser = null,
         comparedUser = null,
         customError = null,
@@ -397,7 +408,7 @@ exports = module.exports = function (app, router) {
       foundUser = await user.findOne({ emailAddress: request.body.emailAddress });
 
       if (!foundUser) {
-        customError = new Error("User not found");
+        customError = new Error('User not found');
 
         customError.httpCode = 401;
 
@@ -407,7 +418,7 @@ exports = module.exports = function (app, router) {
       comparedUser = await foundUser.comparePassword(request.body.password);
 
       if (!comparedUser) {
-        customError = new Error("Invalid password");
+        customError = new Error('Invalid password');
 
         customError.httpCode = 401;
 
@@ -428,7 +439,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/createPlayer", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.post('/createPlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       var groupDetails = request.body.groupDetails,
           playerDetails = request.body.playerDetails,
@@ -463,8 +474,8 @@ exports = module.exports = function (app, router) {
       savedPlayer = await newPlayer.save();
 
       await group.findOneAndUpdate(
-          { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth }, 
-          { "lastUpdatedDate": new Date() });
+          { 'year': groupDetails.year, 'yearOfBirth': groupDetails.yearOfBirth }, 
+          { 'lastUpdatedDate': new Date() });
 
       returnMessage.error = null;
       returnMessage.body = {};
@@ -478,7 +489,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/updatePlayer", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.post('/updatePlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       var groupDetails = request.body.groupDetails,
           playerDetails = request.body.playerDetails,
@@ -489,10 +500,10 @@ exports = module.exports = function (app, router) {
           customError = null,
           returnMessage = {};
 
-      foundPlayer = await player.findOne({ "_id": mongoose.Types.ObjectId(playerDetails._id), "__v": playerDetails.__v });
+      foundPlayer = await player.findOne({ '_id': mongoose.Types.ObjectId(playerDetails._id), '__v': playerDetails.__v });
 
       if (!foundPlayer) {
-        customError = new Error("Player not found");
+        customError = new Error('Player not found');
 
         customError.httpCode = 409;
 
@@ -529,8 +540,8 @@ exports = module.exports = function (app, router) {
       updatedPlayer = await foundPlayer.save();
 
       await group.findOneAndUpdate(
-        { "year": groupDetails.year, "yearOfBirth": groupDetails.yearOfBirth }, 
-        { "lastUpdatedDate": new Date() });
+        { 'year': groupDetails.year, 'yearOfBirth': groupDetails.yearOfBirth }, 
+        { 'lastUpdatedDate': new Date() });
 
       returnMessage.error = null;
       returnMessage.body = {};
@@ -544,7 +555,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/createCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.post('/createCoach', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       var userDetails = request.body.coachDetails,
           newUser = new user(),
@@ -556,7 +567,7 @@ exports = module.exports = function (app, router) {
       newUser.emailAddress = userDetails.emailAddress;
       newUser.phoneNumber = userDetails.phoneNumber;
       newUser.isAdministrator = userDetails.isAdministrator;
-      newUser.password = "";
+      newUser.password = '';
 
       newUser.modifiedBy = request.payload.userProfile.ID;
 
@@ -576,16 +587,16 @@ exports = module.exports = function (app, router) {
     };
   });
 
-  router.post("/updateCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.post('/updateCoach', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       var userDetails = request.body.coachDetails,
           customError = null,
           foundUser = null;
 
-      foundUser = await user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v });
+      foundUser = await user.findOne({ '_id': mongoose.Types.ObjectId(userDetails._id), '__v': userDetails.__v });
 
       if (!foundUser) {
-        customError = new Error("User not found");
+        customError = new Error('User not found');
 
         customError.httpCode = 409;
 
@@ -610,25 +621,28 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/deleteCoach", authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.post('/deleteCoach', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       var userDetails = request.body.coachDetails,
           customError = null,
           foundUser = null,
           emailTemplate = null;
 
-      foundUser = await user.findOne({ "_id": mongoose.Types.ObjectId(userDetails._id), "__v": userDetails.__v })
+      foundUser = await user.findOne({ '_id': mongoose.Types.ObjectId(userDetails._id), '__v': userDetails.__v })
 
       if (!foundUser) {
-        customError = new Error("User not found");
+        customError = new Error('User not found');
 
         customError.httpCode = 409;
 
         throw customError;
       }
 
-      await user.deleteOne({ "_id": mongoose.Types.ObjectId(foundUser._id), "__v": foundUser.__v })
-        
+      await group.update({ 'year': currentSettings.year, 'footballCoach': foundUser.emailAddress }, { 'footballCoach': '' });
+      await group.update({ 'year': currentSettings.year, 'hurlingCoach': foundUser.emailAddress }, { 'hurlingCoach': '' });
+      
+      await user.deleteOne({ '_id': mongoose.Types.ObjectId(foundUser._id), '__v': foundUser.__v })
+ 
       if (request.body.sendGoodbyeEmail) {
         emailTemplate = await readFile('email_templates/goodbye-template.html');
     
@@ -642,7 +656,38 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post("/writeLog", authorizer.authorize(), function (request, response, next) {
+  router.post('/updateGroup', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var groupDetails = request.body.groupDetails,
+          customError = null,
+          foundGroup = null;
+
+      foundGroup = await group.findOne({ '_id': mongoose.Types.ObjectId(groupDetails._id), '__v': groupDetails.__v });
+
+      if (!foundGroup) {
+        customError = new Error('Group not found');
+
+        customError.httpCode = 409;
+
+        throw customError;
+      }
+
+      foundGroup.footballCoach = Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoach') ? groupDetails.footballCoach : foundGroup.footballCoach;
+      foundGroup.hurlingCoach = Object.prototype.hasOwnProperty.call(groupDetails, 'hurlingCoach') ? groupDetails.hurlingCoach : foundGroup.hurlingCoach;
+  
+      foundGroup.modifiedBy = request.payload.userProfile.ID;
+      foundGroup.increment();
+
+      await foundGroup.save();
+
+      await readGroups(currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.post('/writeLog', authorizer.authorize(), function (request, response, next) {
     request.logger.error({ clientError: request.body });
     
     var returnMessage = {};
@@ -653,19 +698,32 @@ exports = module.exports = function (app, router) {
     response.status(200).json(returnMessage);
   });
 
-  app.use("/api", router);
+  app.use('/api', router);
 
   app.use(function (request, response) {
-    response.sendFile("index.html", { "root": "./dist"});
+    response.sendFile('index.html', { 'root': './dist'});
   });
+}
+
+var readGroups = async (currentSettings, response, next) => {
+  var groups = await group.find({ 'year': currentSettings.year }).lean().exec();
+  
+  var returnMessage = {};
+
+  returnMessage.error = null;
+  returnMessage.body = {};
+
+  returnMessage.body.groups = groups;
+
+  response.status(200).json(returnMessage);
 }
 
 var readCoaches = async (currentSettings, response, next) => {
   var users = null,
       groups = null;
 
-  users = await user.find({}, "-password").lean().exec(),
-  groups = await group.find({ "year": currentSettings.year }).lean().exec();
+  users = await user.find({}, '-password').lean().exec(),
+  groups = await group.find({ 'year': currentSettings.year }).lean().exec();
   
   var returnMessage = {};
 
@@ -674,7 +732,7 @@ var readCoaches = async (currentSettings, response, next) => {
 
   users.forEach(function (user) {
     var group = groups.find(function (group) {
-      return group.footballManager === user.emailAddress || group.hurlingManager === user.emailAddress;
+      return group.footballCoach === user.emailAddress || group.hurlingCoach === user.emailAddress;
     });
 
     if (group) {
@@ -708,7 +766,7 @@ var readFile = (fileName) => {
 };
 
 var sendEmail = (emailAddress, emailSubject, emailTemplate, request) => {
-  if (process.env.NODE_ENV === "production") {
+  if (process.env.NODE_ENV === 'production') {
     emailTemplate = emailTemplate.replace('[[hostname]]', request.hostname);
   }
   else {

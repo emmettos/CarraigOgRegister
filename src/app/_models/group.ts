@@ -1,13 +1,21 @@
 export interface IGroup {
-  canViewPlayers: boolean;
+  _id: string;
 
+  year: number;
   name: string;
   yearOfBirth: number;
-
-  footballManagerFullName: string;
-  hurlingManagerFullName: string;
-
-  numberOfPlayers: number;
+  footballCoach: string;
+  hurlingCoach: string;
 
   lastUpdatedDate: string;
+
+  createdBy: string;
+  createdDate: string;
+  updatedDate: string;
+  updatedBy: string;
+
+  __v: number;
+
+  footballCoachFullName?: string;
+  hurlingCoachFullName?: string;
 }
