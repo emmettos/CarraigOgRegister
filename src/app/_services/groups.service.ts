@@ -13,8 +13,8 @@ export class GroupsService {
   constructor(private http: HttpClient) {
   }
 
-  readGroupSummaries(): Observable<any> {
-    return this.http.get<any>('/api/groupSummaries');
+  readGroupOverviews(): Observable<any> {
+    return this.http.get<any>('/api/groupOverviews');
   }
 
   readGroups(): Observable<any> {

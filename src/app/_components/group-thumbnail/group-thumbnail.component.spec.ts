@@ -2,7 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { AuthorizationService } from '../../_services';
-import { IGroupSummary } from '../../_models';
+import { IGroupOverview } from '../../_models';
 
 import { GroupThumbnailComponent } from './group-thumbnail.component';
 
@@ -31,14 +31,14 @@ describe('GroupThumbnailComponent', () => {
     fixture = TestBed.createComponent(GroupThumbnailComponent);
     component = fixture.componentInstance;
 
-    component['groupSummary'] = {
+    component['groupOverview'] = {
       'name': 'Test Group',
       'yearOfBirth': 2009,
       'footballCoachFullName': 'Pat Football',
       'hurlingCoachFullName': 'John Hurling',
       'numberOfPlayers': 51,
       'lastUpdatedDate': '2018-02-27T15:57:21.582Z'    
-    } as IGroupSummary;
+    } as IGroupOverview;
 
     authorizationService = TestBed.get(AuthorizationService);    
   });

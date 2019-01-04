@@ -13,8 +13,8 @@ export class PlayersService {
   constructor(private http: HttpClient) {
   }
 
-  readCurrentPlayers(yearOfBirth: number): Observable<any> {
-    return this.http.get<any>('/api/playersDetail/' + yearOfBirth);
+  readPlayerSummaries(yearOfBirth: number): Observable<any> {
+    return this.http.get<any>('/api/playerSummaries/' + yearOfBirth);
   }
 
   readAllPlayers(yearOfBirth: number): Observable<any> {

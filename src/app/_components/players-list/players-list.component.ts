@@ -7,7 +7,7 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 
 import { APP_SETTINGS } from '../../_helpers/index';
-import { IPlayer, PlayerState } from '../../_models/index';
+import { IPlayerSummary, PlayerState } from '../../_models/index';
 import { PlayersService } from '../../_services/index';
 
 
@@ -16,6 +16,7 @@ import { PlayersService } from '../../_services/index';
   styleUrls: ['./players-list.component.css']
 })
 export class PlayersListComponent implements OnInit {
+  // This is used by the html.
   playerState = PlayerState;
   
   filterForm: FormGroup;
@@ -28,10 +29,10 @@ export class PlayersListComponent implements OnInit {
   sortKey: string = "surname";
   reverse: boolean = false;
 
-  players: IPlayer[] = null;
-  filteredPlayers: IPlayer[] = null;
+  players: IPlayerSummary[] = null;
+  filteredPlayers: IPlayerSummary[] = null;
 
-  selectedPlayer: IPlayer = null;
+  selectedPlayer: IPlayerSummary = null;
 
   registeredCount: number = 0;
   newCount: number = 0;
@@ -61,27 +62,20 @@ export class PlayersListComponent implements OnInit {
 
     let yearOfBirth: number = +this.activatedRoute.snapshot.paramMap.get("yearOfBirth");
 
-    this.playersService.readCurrentPlayers(yearOfBirth)
+    this.playersService.readPlayerSummaries(yearOfBirth)
       .subscribe({
         next: response => {
           this.players = response.body.players;
 
           this.players.forEach(player => {
-            if (player.lastRegisteredYear === APP_SETTINGS.currentYear) {
+            if (player.playerState === PlayerState.Existing || player.playerState === PlayerState.New) {
               this.registeredCount++;
 
-              if (player.registeredYears.length === 1) {
-                player.playerState = PlayerState.New;
-
+              if (player.playerState === PlayerState.New) {
                 this.newCount++;
-              }
-              else {
-                player.playerState = PlayerState.Existing;
               }
             }
             else {
-              player.playerState = PlayerState.Missing;
-
               this.missingCount++;
             }
           });
@@ -108,7 +102,7 @@ export class PlayersListComponent implements OnInit {
     }
     
     this.filteredPlayers
-      .sort((player1: IPlayer, player2: IPlayer) => {
+      .sort((player1: IPlayerSummary, player2: IPlayerSummary) => {
         let returnValue: number = 1;
 
         if (player1[this.sortKey] < player2[this.sortKey]) {
@@ -126,7 +120,7 @@ export class PlayersListComponent implements OnInit {
       });
   }
 
-  onClickRow(content: any, player: IPlayer) {
+  onClickRow(content: any, player: IPlayerSummary) {
     this.selectedPlayer = player;
 
     this.modalService.open(content);
@@ -136,23 +130,23 @@ export class PlayersListComponent implements OnInit {
     let csvPlayers: any[] = [];
 
     this.filteredPlayers.forEach(player => {
-      let csvPLayer: any = {};
+      let csvPlayer: any = {};
       
-      csvPLayer.surname = player.surname;
-      csvPLayer.firstName = player.firstName;
-      csvPLayer.addressLine1 = player.addressLine1;
-      csvPLayer.addressLine2 = player.addressLine2;
-      csvPLayer.addressLine3 = player.addressLine3;
-      csvPLayer.dateOfBirth = moment.utc(player.dateOfBirth).format("YYYY-MM-DD");
-      csvPLayer.lastRegisteredDate = moment.utc(player.lastRegisteredDate).format("YYYY-MM-DD");
-      csvPLayer.medicalConditions = player.medicalConditions;
-      csvPLayer.contactName = player.contactName;
-      csvPLayer.contactEmailAddress = player.contactEmailAddress;
-      csvPLayer.contactMobileNumber = player.contactMobileNumber;
-      csvPLayer.contactHomeNumber = player.contactHomeNumber;
-      csvPLayer.school = player.school;
+      csvPlayer.surname = player.surname;
+      csvPlayer.firstName = player.firstName;
+      csvPlayer.addressLine1 = player.addressLine1;
+      csvPlayer.addressLine2 = player.addressLine2;
+      csvPlayer.addressLine3 = player.addressLine3;
+      csvPlayer.dateOfBirth = moment.utc(player.dateOfBirth).format("YYYY-MM-DD");
+      csvPlayer.lastRegisteredDate = moment.utc(player.lastRegisteredDate).format("YYYY-MM-DD");
+      csvPlayer.medicalConditions = player.medicalConditions;
+      csvPlayer.contactName = player.contactName;
+      csvPlayer.contactEmailAddress = player.contactEmailAddress;
+      csvPlayer.contactMobileNumber = player.contactMobileNumber;
+      csvPlayer.contactHomeNumber = player.contactHomeNumber;
+      csvPlayer.school = player.school;
 
-      csvPlayers.push(csvPLayer);
+      csvPlayers.push(csvPlayer);
     });
 
     this.playersService.downloadCSV(csvPlayers);
@@ -172,7 +166,7 @@ export class PlayersListComponent implements OnInit {
           if ((player.firstName.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1 ||
               player.surname.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1)
                 && 
-              !(formValues.currentlyRegistered && player.lastRegisteredYear !== APP_SETTINGS.currentYear)) {
+              !(formValues.currentlyRegistered && player.playerState === PlayerState.Missing)) {
             return true;
           }
         });
@@ -195,7 +189,7 @@ export class PlayersListComponent implements OnInit {
     return CSSClass;
   };
 
-  playerStateCSSClass(player: IPlayer) {
+  playerStateCSSClass(player: IPlayerSummary) {
     var CSSClass = 'badge-info';
 
     if (player.playerState === PlayerState.New) {
@@ -208,7 +202,7 @@ export class PlayersListComponent implements OnInit {
     return CSSClass;
   }
 
-  playerPopupHeaderCSSClass(player: IPlayer) {
+  playerPopupHeaderCSSClass(player: IPlayerSummary) {
     if (!player) {
       return;
     }
@@ -225,7 +219,7 @@ export class PlayersListComponent implements OnInit {
     return CSSClass;
   }
 
-  playerPopupFooterCSSClass(player: IPlayer) {
+  playerPopupFooterCSSClass(player: IPlayerSummary) {
     if (!player) {
       return;
     }

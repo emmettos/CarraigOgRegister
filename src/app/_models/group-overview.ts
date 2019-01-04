@@ -1,8 +1,8 @@
-export interface IGroupSummary {
-  canViewPlayers: boolean;
-
-  name: string;
+export interface IGroupOverview {
+  id: number;
+  
   yearOfBirth: number;
+  name: string;
 
   footballCoachFullName: string;
   hurlingCoachFullName: string;
@@ -10,4 +10,6 @@ export interface IGroupSummary {
   numberOfPlayers: number;
 
   lastUpdatedDate: string;
+
+  canViewPlayers: boolean;
 }

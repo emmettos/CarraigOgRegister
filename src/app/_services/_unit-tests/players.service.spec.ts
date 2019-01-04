@@ -30,10 +30,10 @@ describe('PlayersService', () => {
   });
 
   it('should call url for read current players', () => {
-    service.readCurrentPlayers(2009)
+    service.readPlayerSummaries(2009)
       .subscribe();
 
-    const mockRequest = httpMock.expectOne('/api/playersDetail/2009');
+    const mockRequest = httpMock.expectOne('/api/playerSummaries/2009');
 
     expect(mockRequest.request.method).toEqual("GET");
 

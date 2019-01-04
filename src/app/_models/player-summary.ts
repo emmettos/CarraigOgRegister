@@ -1,9 +1,5 @@
-import { PlayerState } from './index';
-
-
-export interface IPlayer {
-  _id: string;
-
+export interface IPlayerSummary {
+  id: number,
   firstName: string;
   surname: string;
   addressLine1: string;
@@ -18,15 +14,11 @@ export interface IPlayer {
   contactEmailAddress: string;
   school: string;
   lastRegisteredDate: string;
-  lastRegisteredYear: number;
-  registeredYears: number[];
+  playerState: PlayerState;
+}
 
-  createdBy: string;
-  createdDate: string;
-  updatedDate: string;
-  updatedBy: string;
-
-  __v: number;
-
-  playerState?: PlayerState;
+export enum PlayerState {
+  Existing,
+  New,
+  Missing
 }

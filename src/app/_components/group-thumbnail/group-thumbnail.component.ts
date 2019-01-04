@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { AuthorizationService } from '../../_services/authorization.service';
-import { IGroupSummary, IUserProfile } from '../../_models/index';
+import { IGroupOverview, IUserProfile } from '../../_models/index';
 
 
 @Component({
@@ -10,7 +10,7 @@ import { IGroupSummary, IUserProfile } from '../../_models/index';
   styleUrls: ['./group-thumbnail.component.css']
 })
 export class GroupThumbnailComponent implements OnInit {
-  @Input() groupSummary: IGroupSummary;
+  @Input() groupOverview: IGroupOverview;
   
   constructor(private authorizationService: AuthorizationService) { 
   }
@@ -18,18 +18,18 @@ export class GroupThumbnailComponent implements OnInit {
   ngOnInit() {
     let userProfile: IUserProfile = this.authorizationService.getActivePayload.userProfile;
 
-    this.groupSummary.canViewPlayers = false;
+    this.groupOverview.canViewPlayers = false;
 
     if (userProfile.isAdministrator) {
-      this.groupSummary.canViewPlayers = true;
+      this.groupOverview.canViewPlayers = true;
     }
     else if (userProfile.isManager) {
       let groupIndex = 0,
           groupFound = false;
 
       while (groupIndex < userProfile.groups.length && !groupFound) {
-        if (userProfile.groups[groupIndex++] === this.groupSummary.yearOfBirth) {
-          this.groupSummary.canViewPlayers = true;
+        if (userProfile.groups[groupIndex++] === this.groupOverview.id) {
+          this.groupOverview.canViewPlayers = true;
 
           groupFound = true;
         }

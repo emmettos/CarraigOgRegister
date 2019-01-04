@@ -1,12 +1,12 @@
 <!-- Most id's are used for unit testing -->
-<a id="group-details-link" routerLink="../players/{{ groupSummary.name }}/{{ groupSummary.yearOfBirth }}" [class.disabled]="!groupSummary.canViewPlayers" class="card h-100">
-  <h5 id="group-header" class="card-header"><strong>{{ groupSummary.name }}</strong> (Year of Birth: {{ groupSummary.yearOfBirth }})</h5>
+<a id="group-details-link" routerLink="../players/{{ groupOverview.name }}/{{ groupOverview.yearOfBirth }}" [class.disabled]="!groupOverview.canViewPlayers" class="card h-100">
+  <h5 id="group-header" class="card-header"><strong>{{ groupOverview.name }}</strong> (Year of Birth: {{ groupOverview.yearOfBirth }})</h5>
   <div class="card-body">
-    <p id="football-coach" class="card-text"><strong>Football Coach:</strong> {{ groupSummary.footballCoachFullName }}</p>
-    <p id="hurling-coach" class="card-text"><strong>Hurling Coach:</strong> {{ groupSummary.hurlingCoachFullName }}</p>
-    <p id="number-of-players" class="card-text">No. players currently registered: {{ groupSummary.numberOfPlayers }}</p>
+    <p id="football-coach" class="card-text"><strong>Football Coach:</strong> {{ groupOverview.footballCoachFullName }}</p>
+    <p id="hurling-coach" class="card-text"><strong>Hurling Coach:</strong> {{ groupOverview.hurlingCoachFullName }}</p>
+    <p id="number-of-players" class="card-text">No. players currently registered: {{ groupOverview.numberOfPlayers }}</p>
   </div>
   <div id="group-footer" class="card-footer text-muted">
-    Last Updated: {{ groupSummary.lastUpdatedDate | date : "dd/MM/yy h:mm a" }}
+    Last Updated: {{ groupOverview.lastUpdatedDate | date : "dd/MM/yy h:mm a" }}
   </div>
 </a>

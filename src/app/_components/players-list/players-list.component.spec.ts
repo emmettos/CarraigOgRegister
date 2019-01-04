@@ -58,13 +58,13 @@ describe('PlayersListComponent', () => {
 
     playersService = TestBed.get(PlayersService);
 
-    spyOn(playersService, 'readCurrentPlayers')
+    spyOn(playersService, 'readPlayerSummaries')
       .and.returnValue(of({
         'error': null,
         'body': {
           'players': [
             {
-              '_id': 'aaf6ddc582e9d0d86610e025',
+              'id': 1,
               'firstName': 'Joshua',
               'surname': 'Love',
               'addressLine1': '4032 Heliport Loop',
@@ -79,18 +79,10 @@ describe('PlayersListComponent', () => {
               'contactEmailAddress': 'dilan_love@hotmail.com',
               'school': 'Gaelscoil',
               'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
-              'lastRegisteredYear': 2018,
-              'registeredYears': [
-                2018
-              ],
-              '__v': 1,
-              'createdBy': 'script',
-              'createdDate': '2017-03-15T13:43:51.268Z',
-              'updatedDate': '2018-02-13T14:38:36.668Z',
-              'updatedBy': 'emmett.j.osullivan@gmail.com'
+              'playerState': 1
             },
             {
-              '_id': '58c669deb8a0ebcf9c5b93c9',
+              'id': 2,
               'firstName': 'James',
               'surname': 'Maxwell',
               'addressLine1': '485 Meadowcrest Lane',
@@ -105,23 +97,10 @@ describe('PlayersListComponent', () => {
               'contactEmailAddress': 'kevia_maxwell@gmail.com',
               'school': 'Scoil Mhuire Lourdes',
               'lastRegisteredDate': '2018-05-09T00:00:00.000Z',
-              'lastRegisteredYear': 2018,
-              'registeredYears': [
-                2013,
-                2014,
-                2015,
-                2016,
-                2017,
-                2018
-              ],
-              '__v': 1,
-              'createdBy': 'script',
-              'createdDate': '2017-03-15T13:43:51.268Z',
-              'updatedDate': '2018-05-09T09:55:59.735Z',
-              'updatedBy': 'emmett.j.osullivan@gmail.com'
+              'playerState': 0
             },
             {
-              '_id': 'b159d6e49a41877180ba3826',
+              'id': 3,
               'firstName': 'Thomas',
               'surname': 'Watkins',
               'addressLine1': '115 Evergreen Lane',
@@ -136,15 +115,7 @@ describe('PlayersListComponent', () => {
               'contactEmailAddress': 'finley_watkins@gmail.com',
               'school': 'Scoil Mhuire Lourdes',
               'lastRegisteredDate': '2017-02-14T00:00:00.000Z',
-              'lastRegisteredYear': 2017,
-              'registeredYears': [
-                2017
-              ],
-              '__v': 1,
-              'createdBy': 'script',
-              'createdDate': '2017-03-15T13:43:51.268Z',
-              'updatedDate': '2017-03-15T13:43:51.268Z',
-              'updatedBy': 'emmett.j.osullivan@gmail.com'
+              'playerState': 2
             }
           ]
         }  
@@ -161,12 +132,12 @@ describe('PlayersListComponent', () => {
     expect(component.groupName).toEqual('Under 10');
   });
 
-  it('should call playersService.readCurrentPlayers', () => {
-    expect(playersService.readCurrentPlayers).toHaveBeenCalled();
+  it('should call playersService.readPlayerSummaries', () => {
+    expect(playersService.readPlayerSummaries).toHaveBeenCalled();
   });
 
-  it('should pass yearOfBirth to playersService.readCurrentPlayers', () => {
-    expect(playersService.readCurrentPlayers).toHaveBeenCalledWith(2008);
+  it('should pass yearOfBirth to playersService.readPlayerSummaries', () => {
+    expect(playersService.readPlayerSummaries).toHaveBeenCalledWith(2008);
   });
 
   it('should display registered count', () => {
@@ -337,7 +308,7 @@ describe('PlayersListComponent', () => {
     spyOn(modalService, 'open');
 
     component.onClickRow(null, {
-      '_id': 'b159d6e49a41877180ba3826',
+      'id': 3,
       'firstName': 'Thomas',
       'surname': 'Watkins',
       'addressLine1': '115 Evergreen Lane',
@@ -352,20 +323,11 @@ describe('PlayersListComponent', () => {
       'contactEmailAddress': 'finley_watkins@gmail.com',
       'school': 'Scoil Mhuire Lourdes',
       'lastRegisteredDate': '2017-02-14T00:00:00.000Z',
-      'lastRegisteredYear': 2017,
-      'registeredYears': [
-        2017
-      ],
-      '__v': 1,
-      'createdBy': 'script',
-      'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2017-03-15T13:43:51.268Z',
-      'updatedBy': 'emmett.j.osullivan@gmail.com',
       'playerState': 1
     });
 
     expect(JSON.stringify(component.selectedPlayer)).toEqual(JSON.stringify({
-      '_id': 'b159d6e49a41877180ba3826',
+      'id': 3,
       'firstName': 'Thomas',
       'surname': 'Watkins',
       'addressLine1': '115 Evergreen Lane',
@@ -380,15 +342,6 @@ describe('PlayersListComponent', () => {
       'contactEmailAddress': 'finley_watkins@gmail.com',
       'school': 'Scoil Mhuire Lourdes',
       'lastRegisteredDate': '2017-02-14T00:00:00.000Z',
-      'lastRegisteredYear': 2017,
-      'registeredYears': [
-        2017
-      ],
-      '__v': 1,
-      'createdBy': 'script',
-      'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2017-03-15T13:43:51.268Z',
-      'updatedBy': 'emmett.j.osullivan@gmail.com',
       'playerState': 1
     }));
   });

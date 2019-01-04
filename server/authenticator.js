@@ -1,9 +1,8 @@
-"use strict";
+'use strict';
 
-var JSONWebToken = require("jsonwebtoken");
+var JSONWebToken = require('jsonwebtoken');
 
-var config = require("./config/config");
-var group = require("./models/group");
+var config = require('./config/config');
 
 
 exports.authenticate = function (request, response, next) {
@@ -14,7 +13,7 @@ exports.authenticate = function (request, response, next) {
         refreshedToken = null;
 
     if (authorizationHeader) {
-      token = authorizationHeader.replace("Bearer ", "");
+      token = authorizationHeader.replace('Bearer ', '');
 
       JSONWebToken.verify(token, config.secret, function (error, payload) {
         try {
@@ -26,7 +25,7 @@ exports.authenticate = function (request, response, next) {
             if (!payload.userProfile.createPasswordProfile) {
               refreshedToken = signToken(request.payload.userProfile);
 
-              response.set("Authorization", "Bearer " + refreshedToken);
+              response.set('Authorization', 'Bearer ' + refreshedToken);
             }
           }
 
@@ -48,7 +47,7 @@ exports.authenticate = function (request, response, next) {
 
         refreshedToken = signToken(userProfile, Math.floor(Date.now() / 1000) - 60);
 
-        response.set("Authorization", "Bearer " + refreshedToken);
+        response.set('Authorization', 'Bearer ' + refreshedToken);
       }
 
       next();
@@ -59,44 +58,31 @@ exports.authenticate = function (request, response, next) {
   }
 };
 
-exports.createToken = function (request, currentUser) {
-  var promise = new Promise(function (resolve, reject) {
-    var userProfile = {};
+exports.createToken = async (user, pool) => {
+  var userProfile = {};
 
-    userProfile.ID = currentUser.emailAddress;
-    userProfile.fullName = currentUser.firstName + ' ' + currentUser.surname;
-    userProfile.isAdministrator = currentUser.isAdministrator;
-    userProfile.isManager = false;
-    userProfile.groups = [];
+  userProfile.ID = user.email_address;
+  userProfile.fullName = user.first_name + ' ' + user.surname;
+  userProfile.isAdministrator = user.administrator;
+  userProfile.isManager = false;
+  userProfile.groups = [];
 
-    if (!currentUser.isAdministrator) {
-      group.find({}).lean().exec()
-        .then(function (groups) {
-          var currentGroup = null,
-              groupIndex = 0;
+  if (!userProfile.isAdministrator) {
+    const result = await pool.query(`
+      SELECT 
+        id
+      FROM
+        groups AS g
+      WHERE
+        g.football_coach_id = $1 OR g.hurling_coach_id = $1
+    `, [user.id]);
 
-          for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
-            currentGroup = groups[groupIndex];
+    result.rows.forEach(row => {
+      userProfile.groups.push(row.id);
+    });
+  }
 
-            if (currentGroup.footballCoach === currentUser.emailAddress || currentGroup.hurlingCoach === currentUser.emailAddress) {
-              userProfile.isManager = true;
-
-              userProfile.groups.push(currentGroup.yearOfBirth);
-            }
-          }
-
-          resolve(signToken(userProfile));
-        })
-        .catch(function (error) {
-          next(error);
-        });
-    }
-    else {
-      resolve(signToken(userProfile));
-    }
-  });
-
-  return promise;
+  return signToken(userProfile);
 };
 
 var signToken = function (userProfile, expiration) {
