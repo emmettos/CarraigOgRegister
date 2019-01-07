@@ -64,7 +64,6 @@ describe('PlayersListComponent', () => {
         'body': {
           'players': [
             {
-              'id': 1,
               'firstName': 'Joshua',
               'surname': 'Love',
               'addressLine1': '4032 Heliport Loop',
@@ -82,7 +81,6 @@ describe('PlayersListComponent', () => {
               'playerState': 1
             },
             {
-              'id': 2,
               'firstName': 'James',
               'surname': 'Maxwell',
               'addressLine1': '485 Meadowcrest Lane',
@@ -100,7 +98,6 @@ describe('PlayersListComponent', () => {
               'playerState': 0
             },
             {
-              'id': 3,
               'firstName': 'Thomas',
               'surname': 'Watkins',
               'addressLine1': '115 Evergreen Lane',
@@ -308,7 +305,6 @@ describe('PlayersListComponent', () => {
     spyOn(modalService, 'open');
 
     component.onClickRow(null, {
-      'id': 3,
       'firstName': 'Thomas',
       'surname': 'Watkins',
       'addressLine1': '115 Evergreen Lane',
@@ -327,7 +323,6 @@ describe('PlayersListComponent', () => {
     });
 
     expect(JSON.stringify(component.selectedPlayer)).toEqual(JSON.stringify({
-      'id': 3,
       'firstName': 'Thomas',
       'surname': 'Watkins',
       'addressLine1': '115 Evergreen Lane',

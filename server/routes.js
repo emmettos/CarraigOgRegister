@@ -336,114 +336,104 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get('/playerSummaries/:yearOfBirth/:allPlayers?', authorizer.authorize({ isGroupManager: true }), async (request, response, next) => {
+  router.get('/playerSummaries/:yearOfBirth', authorizer.authorize({ isGroupManager: true }), async (request, response, next) => {
     try {
-      var query = `
+      const result = await app.pool.query(`
         SELECT DISTINCT
-          p.id,
-          p.first_name,
-          p.surname,
-          p.address_line_1,
-          p.address_line_2,
-          p.address_line_3,
-          p.date_of_birth,
-          p.medical_conditions,
-          p.contact_name,
-          p.contact_mobile_number,
-          p.contact_home_number,
-          p.contact_email_address,
-          p.school,
-          (SELECT
-            MAX(gp1.registered_date)
-          FROM
-            groups_players AS gp1
-          WHERE
-            gp1.player_id = p.id) AS last_registered_date,
-          CASE
-            WHEN EXISTS
-              (SELECT
-                gp1.id
-              FROM
-                groups_players AS gp1
-              INNER JOIN groups AS g1
-                ON gp1.group_id = g1.id
-              WHERE
-                gp1.player_id = p.id AND
-                g1.year_id = 
-                  (SELECT 
-                    y2.id 
-                  FROM 
-                    years AS y2 
-                  WHERE 
-                    y2.year = $2) AND
-                EXISTS
-                  (SELECT
-                    gp2.id
-                  FROM
-                    groups_players AS gp2
-                  INNER JOIN groups AS g2
-                    ON gp2.group_id = g2.id
-                  WHERE
-                    gp2.player_id = p.id AND
-                    g2.year_id = 
-                      (SELECT 
-                        y3.id 
-                      FROM 
-                        years AS y3 
-                      WHERE 
-                        y3.year = $3)))
-            THEN 0
-            WHEN EXISTS
-              (SELECT
-                gp1.id
-              FROM
-                groups_players AS gp1
-              INNER JOIN groups AS g1
-                ON gp1.group_id = g1.id
-              WHERE
-                gp1.player_id = p.id AND
-                g1.year_id = 
-                  (SELECT 
-                    y2.id 
-                  FROM 
-                    years AS y2 
-                  WHERE 
-                    y2.year = $2))
-            THEN 1
-            ELSE 2
-          END AS player_state
+        p.first_name,
+        p.surname,
+        p.address_line_1,
+        p.address_line_2,
+        p.address_line_3,
+        p.date_of_birth,
+        p.medical_conditions,
+        p.contact_name,
+        p.contact_mobile_number,
+        p.contact_home_number,
+        p.contact_email_address,
+        p.school,
+        (SELECT
+          MAX(gp1.registered_date)
         FROM
-          players AS p
-        INNER JOIN groups_players AS gp
-          ON p.id = gp.player_id
-        INNER JOIN groups AS g
-          ON gp.group_id = g.id
+          groups_players AS gp1
         WHERE
-          g.year_of_birth = $1
-      `;
-
-      if (!request.params.allPlayers) {
-        query = query + `
-          AND
-            (g.year_id = 
-              (SELECT 
-                y1.id 
-              FROM 
-                years AS y1 
-              WHERE 
-              y1.year = $2) OR
-            g.year_id = 
-              (SELECT 
-                y1.id 
-              FROM 
-                years AS y1 
-              WHERE 
-                y1.year = $3))          
-        `;
-      }
-
-      const result = await app.pool.query(query,
-        [request.params.yearOfBirth, currentSettings.year, currentSettings.year - 1]);
+          gp1.player_id = p.id) AS last_registered_date,
+        CASE
+          WHEN EXISTS
+            (SELECT
+              gp1.id
+            FROM
+              groups_players AS gp1
+            INNER JOIN groups AS g1
+              ON gp1.group_id = g1.id
+            WHERE
+              gp1.player_id = p.id AND
+              g1.year_id = 
+                (SELECT 
+                  y2.id 
+                FROM 
+                  years AS y2 
+                WHERE 
+                  y2.year = $2) AND
+              EXISTS
+                (SELECT
+                  gp2.id
+                FROM
+                  groups_players AS gp2
+                INNER JOIN groups AS g2
+                  ON gp2.group_id = g2.id
+                WHERE
+                  gp2.player_id = p.id AND
+                  g2.year_id = 
+                    (SELECT 
+                      y3.id 
+                    FROM 
+                      years AS y3 
+                    WHERE 
+                      y3.year = $3)))
+          THEN 0
+          WHEN EXISTS
+            (SELECT
+              gp1.id
+            FROM
+              groups_players AS gp1
+            INNER JOIN groups AS g1
+              ON gp1.group_id = g1.id
+            WHERE
+              gp1.player_id = p.id AND
+              g1.year_id = 
+                (SELECT 
+                  y2.id 
+                FROM 
+                  years AS y2 
+                WHERE 
+                  y2.year = $2))
+          THEN 1
+          ELSE 2
+        END AS player_state
+      FROM
+        players AS p
+      INNER JOIN groups_players AS gp
+        ON p.id = gp.player_id
+      INNER JOIN groups AS g
+        ON gp.group_id = g.id
+      WHERE
+        g.year_of_birth = $1 AND
+        (g.year_id = 
+          (SELECT 
+            y1.id 
+          FROM 
+            years AS y1 
+          WHERE 
+          y1.year = $2) OR
+        g.year_id = 
+          (SELECT 
+            y1.id 
+          FROM 
+            years AS y1 
+          WHERE 
+            y1.year = $3))
+        `, [request.params.yearOfBirth, currentSettings.year, currentSettings.year - 1]);
   
       var returnMessage = {};
 
