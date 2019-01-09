@@ -1,4 +1,5 @@
 export interface IPlayerSummary {
+  id: number,
   firstName: string;
   surname: string;
   addressLine1: string;

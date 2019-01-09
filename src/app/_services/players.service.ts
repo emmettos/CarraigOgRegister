@@ -17,8 +17,12 @@ export class PlayersService {
     return this.http.get<any>('/api/playerSummaries/' + yearOfBirth);
   }
 
-  readAllPlayers(yearOfBirth: number): Observable<any> {
-    return this.http.get<any>('/api/playersDetail/' + yearOfBirth + '/true');    
+  searchPlayers(dateOfBirth: string): Observable<any> {
+    return this.http.get<any>('/api/searchPlayers/' + dateOfBirth);
+  }
+
+  readPlayerDetails(playerId: number): Observable<any> {
+    return this.http.get<any>('/api/playerDetails/' + playerId);
   }
 
   updatePlayer(playerDetails: IPlayer, year: number, yearOfBirth: number): Observable<any> {

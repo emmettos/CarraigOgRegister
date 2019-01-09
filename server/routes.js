@@ -3,7 +3,8 @@
 var fs = require('fs');
 
 var mongoose = require('mongoose');
-var bcrypt = require("bcrypt");
+var bcrypt = require('bcrypt');
+var moment = require('moment');
 var JSONWebToken = require('jsonwebtoken');
 var nodemailer = require('nodemailer');
 
@@ -340,99 +341,100 @@ exports = module.exports = function (app, router) {
     try {
       const result = await app.pool.query(`
         SELECT DISTINCT
-        p.first_name,
-        p.surname,
-        p.address_line_1,
-        p.address_line_2,
-        p.address_line_3,
-        p.date_of_birth,
-        p.medical_conditions,
-        p.contact_name,
-        p.contact_mobile_number,
-        p.contact_home_number,
-        p.contact_email_address,
-        p.school,
-        (SELECT
-          MAX(gp1.registered_date)
+          p.id,
+          p.first_name,
+          p.surname,
+          p.address_line_1,
+          p.address_line_2,
+          p.address_line_3,
+          p.date_of_birth,
+          p.medical_conditions,
+          p.contact_name,
+          p.contact_mobile_number,
+          p.contact_home_number,
+          p.contact_email_address,
+          p.school,
+          (SELECT
+            MAX(gp1.registered_date)
+          FROM
+            groups_players AS gp1
+          WHERE
+            gp1.player_id = p.id) AS last_registered_date,
+          CASE
+            WHEN EXISTS
+              (SELECT
+                gp1.id
+              FROM
+                groups_players AS gp1
+              INNER JOIN groups AS g1
+                ON gp1.group_id = g1.id
+              WHERE
+                gp1.player_id = p.id AND
+                g1.year_id = 
+                  (SELECT 
+                    y2.id 
+                  FROM 
+                    years AS y2 
+                  WHERE 
+                    y2.year = $2) AND
+                EXISTS
+                  (SELECT
+                    gp2.id
+                  FROM
+                    groups_players AS gp2
+                  INNER JOIN groups AS g2
+                    ON gp2.group_id = g2.id
+                  WHERE
+                    gp2.player_id = p.id AND
+                    g2.year_id = 
+                      (SELECT 
+                        y3.id 
+                      FROM 
+                        years AS y3 
+                      WHERE 
+                        y3.year = $3)))
+            THEN 0
+            WHEN EXISTS
+              (SELECT
+                gp1.id
+              FROM
+                groups_players AS gp1
+              INNER JOIN groups AS g1
+                ON gp1.group_id = g1.id
+              WHERE
+                gp1.player_id = p.id AND
+                g1.year_id = 
+                  (SELECT 
+                    y2.id 
+                  FROM 
+                    years AS y2 
+                  WHERE 
+                    y2.year = $2))
+            THEN 1
+            ELSE 2
+          END AS player_state
         FROM
-          groups_players AS gp1
+          players AS p
+        INNER JOIN groups_players AS gp
+          ON p.id = gp.player_id
+        INNER JOIN groups AS g
+          ON gp.group_id = g.id
         WHERE
-          gp1.player_id = p.id) AS last_registered_date,
-        CASE
-          WHEN EXISTS
-            (SELECT
-              gp1.id
-            FROM
-              groups_players AS gp1
-            INNER JOIN groups AS g1
-              ON gp1.group_id = g1.id
-            WHERE
-              gp1.player_id = p.id AND
-              g1.year_id = 
-                (SELECT 
-                  y2.id 
-                FROM 
-                  years AS y2 
-                WHERE 
-                  y2.year = $2) AND
-              EXISTS
-                (SELECT
-                  gp2.id
-                FROM
-                  groups_players AS gp2
-                INNER JOIN groups AS g2
-                  ON gp2.group_id = g2.id
-                WHERE
-                  gp2.player_id = p.id AND
-                  g2.year_id = 
-                    (SELECT 
-                      y3.id 
-                    FROM 
-                      years AS y3 
-                    WHERE 
-                      y3.year = $3)))
-          THEN 0
-          WHEN EXISTS
-            (SELECT
-              gp1.id
-            FROM
-              groups_players AS gp1
-            INNER JOIN groups AS g1
-              ON gp1.group_id = g1.id
-            WHERE
-              gp1.player_id = p.id AND
-              g1.year_id = 
-                (SELECT 
-                  y2.id 
-                FROM 
-                  years AS y2 
-                WHERE 
-                  y2.year = $2))
-          THEN 1
-          ELSE 2
-        END AS player_state
-      FROM
-        players AS p
-      INNER JOIN groups_players AS gp
-        ON p.id = gp.player_id
-      INNER JOIN groups AS g
-        ON gp.group_id = g.id
-      WHERE
-        g.year_of_birth = $1 AND
-        (g.year_id = 
-          (SELECT 
-            y1.id 
-          FROM 
-            years AS y1 
-          WHERE 
-          y1.year = $2) OR
-        g.year_id = 
-          (SELECT 
-            y1.id 
-          FROM 
-            years AS y1 
-          WHERE 
-            y1.year = $3))
+          g.year_of_birth = $1 AND
+          (g.year_id = 
+            (SELECT 
+              y1.id 
+            FROM 
+              years AS y1 
+            WHERE 
+            y1.year = $2) OR
+          g.year_id = 
+            (SELECT 
+              y1.id 
+            FROM 
+              years AS y1 
+            WHERE 
+              y1.year = $3))
         `, [request.params.yearOfBirth, currentSettings.year, currentSettings.year - 1]);
   
       var returnMessage = {};
@@ -440,45 +442,239 @@ exports = module.exports = function (app, router) {
       returnMessage.error = null;
       returnMessage.body = {};
 
-      returnMessage.body.players = result.rows.map(row => {
+      returnMessage.body.players = result.rows.map(row => mapPlayerSummary(row));
+
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.get('/searchPlayers/:dateOfBirthISOString', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      const result = await app.pool.query(`
+        SELECT
+          p.id,
+          p.first_name,
+          p.surname,
+          p.address_line_1,
+          p.address_line_2,
+          p.address_line_3,
+          p.date_of_birth,
+          p.medical_conditions,
+          p.contact_name,
+          p.contact_mobile_number,
+          p.contact_home_number,
+          p.contact_email_address,
+          p.school,
+          (SELECT
+            MAX(gp1.registered_date)
+          FROM
+            groups_players AS gp1
+          WHERE
+            gp1.player_id = p.id) AS last_registered_date,
+          CASE
+            WHEN EXISTS
+              (SELECT
+                gp1.id
+              FROM
+                groups_players AS gp1
+              INNER JOIN groups AS g1
+                ON gp1.group_id = g1.id
+              WHERE
+                gp1.player_id = p.id AND
+                g1.year_id = 
+                  (SELECT 
+                    y2.id 
+                  FROM 
+                    years AS y2 
+                  WHERE 
+                    y2.year = $2) AND
+                EXISTS
+                  (SELECT
+                    gp2.id
+                  FROM
+                    groups_players AS gp2
+                  INNER JOIN groups AS g2
+                    ON gp2.group_id = g2.id
+                  WHERE
+                    gp2.player_id = p.id AND
+                    g2.year_id = 
+                      (SELECT 
+                        y3.id 
+                      FROM 
+                        years AS y3 
+                      WHERE 
+                        y3.year = $3)))
+            THEN 0
+            WHEN EXISTS
+              (SELECT
+                gp1.id
+              FROM
+                groups_players AS gp1
+              INNER JOIN groups AS g1
+                ON gp1.group_id = g1.id
+              WHERE
+                gp1.player_id = p.id AND
+                g1.year_id = 
+                  (SELECT 
+                    y2.id 
+                  FROM 
+                    years AS y2 
+                  WHERE 
+                    y2.year = $2))
+            THEN 1
+            ELSE 2
+          END AS player_state          
+        FROM
+          players AS p
+        WHERE
+          p.date_of_birth = $1
+      `, [request.params.dateOfBirthISOString, currentSettings.year, currentSettings.year - 1]);
+  
+      var returnMessage = {};
+
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      returnMessage.body.players = result.rows.map(row => mapPlayerSummary(row));
+
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.get('/playerDetails/:playerId', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      const playerResult = await app.pool.query(`
+        SELECT
+          p.id,
+          p.first_name,
+          p.surname,
+          p.address_line_1,
+          p.address_line_2,
+          p.address_line_3,
+          p.date_of_birth,
+          p.medical_conditions,
+          p.contact_name,
+          p.contact_mobile_number,
+          p.contact_home_number,
+          p.contact_email_address,
+          p.school,
+          p.created_by,
+          p.created_date,
+          p.updated_by,
+          p.updated_date,
+          p.version
+        FROM
+          players AS p
+        WHERE
+          p.id = $1
+      `, [request.params.playerId]);
+  
+      const groupPlayerResult = await app.pool.query(`
+        SELECT
+          gp.id,
+          gp.group_id,
+          gp.player_id,
+          gp.registered_date,
+          gp.created_by,
+          gp.created_date,
+          gp.updated_by,
+          gp.updated_date,
+          gp.version
+        FROM
+          groups_players AS gp
+        WHERE
+          gp.player_id = $1 AND
+          gp.registered_date = 
+            (SELECT
+              MAX(gp1.registered_date)
+            FROM
+              groups_players AS gp1
+            WHERE
+              gp1.player_id = $1)
+      `, [request.params.playerId]);
+  
+      var returnMessage = {};
+
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      returnMessage.body.playerDetails = playerResult.rows.map(row => {
         Object.defineProperty(row, 'firstName', Object.getOwnPropertyDescriptor(row, 'first_name'));
         delete row['first_name'];
-
+      
         Object.defineProperty(row, 'addressLine1', Object.getOwnPropertyDescriptor(row, 'address_line_1'));
         delete row['address_line_1'];
-
+      
         Object.defineProperty(row, 'addressLine2', Object.getOwnPropertyDescriptor(row, 'address_line_2'));
         delete row['address_line_2'];
-
+      
         Object.defineProperty(row, 'addressLine3', Object.getOwnPropertyDescriptor(row, 'address_line_3'));
         delete row['address_line_3'];
-
+      
         Object.defineProperty(row, 'dateOfBirth', Object.getOwnPropertyDescriptor(row, 'date_of_birth'));
+        row['dateOfBirth'] = moment.utc(row['date_of_birth']).add(0 - row['date_of_birth'].getTimezoneOffset(), "m");
         delete row['date_of_birth'];
-
+      
         Object.defineProperty(row, 'medicalConditions', Object.getOwnPropertyDescriptor(row, 'medical_conditions'));
         delete row['medical_conditions'];
-
+      
         Object.defineProperty(row, 'contactName', Object.getOwnPropertyDescriptor(row, 'contact_name'));
         delete row['contact_name'];
-
+      
         Object.defineProperty(row, 'contactMobileNumber', Object.getOwnPropertyDescriptor(row, 'contact_mobile_number'));
         delete row['contact_mobile_number'];
-
+      
         Object.defineProperty(row, 'contactHomeNumber', Object.getOwnPropertyDescriptor(row, 'contact_home_number'));
         delete row['contact_home_number'];
-
+      
         Object.defineProperty(row, 'contactEmailAddress', Object.getOwnPropertyDescriptor(row, 'contact_email_address'));
         delete row['contact_email_address'];
-
-        Object.defineProperty(row, 'lastRegisteredDate', Object.getOwnPropertyDescriptor(row, 'last_registered_date'));
-        delete row['last_registered_date'];
-
-        Object.defineProperty(row, 'playerState', Object.getOwnPropertyDescriptor(row, 'player_state'));
-        delete row['player_state'];
+      
+        Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
+        delete row['created_by'];
+    
+        Object.defineProperty(row, 'createdDate', Object.getOwnPropertyDescriptor(row, 'created_date'));
+        delete row['created_date'];
+    
+        Object.defineProperty(row, 'updatedBy', Object.getOwnPropertyDescriptor(row, 'updated_by'));
+        delete row['updated_by'];
+    
+        Object.defineProperty(row, 'updatedDate', Object.getOwnPropertyDescriptor(row, 'updated_date'));
+        delete row['updated_date'];
 
         return row;
-      });
+      })[0];
+      returnMessage.body.groupPlayerDetails = groupPlayerResult.rows.map(row => {
+        Object.defineProperty(row, 'groupId', Object.getOwnPropertyDescriptor(row, 'group_id'));
+        delete row['group_id'];
+                
+        Object.defineProperty(row, 'playerId', Object.getOwnPropertyDescriptor(row, 'player_id'));
+        delete row['player_id'];
+                
+        Object.defineProperty(row, 'registeredDate', Object.getOwnPropertyDescriptor(row, 'registered_date'));
+        row['registeredDate'] = moment.utc(row['registered_date']).add(0 - row['registered_date'].getTimezoneOffset(), "m");
+        delete row['registered_date'];
+      
+        Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
+        delete row['created_by'];
+    
+        Object.defineProperty(row, 'createdDate', Object.getOwnPropertyDescriptor(row, 'created_date'));
+        delete row['created_date'];
+    
+        Object.defineProperty(row, 'updatedBy', Object.getOwnPropertyDescriptor(row, 'updated_by'));
+        delete row['updated_by'];
+    
+        Object.defineProperty(row, 'updatedDate', Object.getOwnPropertyDescriptor(row, 'updated_date'));
+        delete row['updated_date'];
+                
+        return row;
+      })[0];
 
       response.status(200).json(returnMessage);
     }
@@ -898,6 +1094,48 @@ var readCoaches = async (app, response, next) => {
   });
 
   response.status(200).json(returnMessage);
+};
+
+var mapPlayerSummary = (row) => {
+  Object.defineProperty(row, 'firstName', Object.getOwnPropertyDescriptor(row, 'first_name'));
+  delete row['first_name'];
+
+  Object.defineProperty(row, 'addressLine1', Object.getOwnPropertyDescriptor(row, 'address_line_1'));
+  delete row['address_line_1'];
+
+  Object.defineProperty(row, 'addressLine2', Object.getOwnPropertyDescriptor(row, 'address_line_2'));
+  delete row['address_line_2'];
+
+  Object.defineProperty(row, 'addressLine3', Object.getOwnPropertyDescriptor(row, 'address_line_3'));
+  delete row['address_line_3'];
+
+  Object.defineProperty(row, 'dateOfBirth', Object.getOwnPropertyDescriptor(row, 'date_of_birth'));
+  row['dateOfBirth'] = moment.utc(row['date_of_birth']).add(0 - row['date_of_birth'].getTimezoneOffset(), "m");
+  delete row['date_of_birth'];
+
+  Object.defineProperty(row, 'medicalConditions', Object.getOwnPropertyDescriptor(row, 'medical_conditions'));
+  delete row['medical_conditions'];
+
+  Object.defineProperty(row, 'contactName', Object.getOwnPropertyDescriptor(row, 'contact_name'));
+  delete row['contact_name'];
+
+  Object.defineProperty(row, 'contactMobileNumber', Object.getOwnPropertyDescriptor(row, 'contact_mobile_number'));
+  delete row['contact_mobile_number'];
+
+  Object.defineProperty(row, 'contactHomeNumber', Object.getOwnPropertyDescriptor(row, 'contact_home_number'));
+  delete row['contact_home_number'];
+
+  Object.defineProperty(row, 'contactEmailAddress', Object.getOwnPropertyDescriptor(row, 'contact_email_address'));
+  delete row['contact_email_address'];
+
+  Object.defineProperty(row, 'lastRegisteredDate', Object.getOwnPropertyDescriptor(row, 'last_registered_date'));
+  row['lastRegisteredDate'] = moment.utc(row['last_registered_date']).add(0 - row['last_registered_date'].getTimezoneOffset(), "m");
+  delete row['last_registered_date'];
+
+  Object.defineProperty(row, 'playerState', Object.getOwnPropertyDescriptor(row, 'player_state'));
+  delete row['player_state'];
+
+  return row;
 };
 
 var readFile = (fileName) => {
