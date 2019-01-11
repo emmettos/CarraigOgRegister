@@ -1,6 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 
-import { IPlayer, IGroupSummary, PlayerState } from '../../../../../_models/index';
+import { 
+  IPlayer, 
+  IGroupSummary, 
+  IGroupPlayer, 
+  PlayerState } from '../../../../../_models/index';
 
 
 @Component({
@@ -12,7 +16,7 @@ export class PlayerPopupComponent implements OnInit {
   playerDetails: IPlayer;
 
   @Input()
-  groupPlayerDetails: any;
+  groupPlayerDetails: IGroupPlayer;
 
   @Input()
   playerState: PlayerState;
