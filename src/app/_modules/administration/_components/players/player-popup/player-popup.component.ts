@@ -1,13 +1,13 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
-import { IPlayer, PlayerState } from '../../../../../_models/index';
+import { IPlayer, IGroupSummary, PlayerState } from '../../../../../_models/index';
 
 
 @Component({
   templateUrl: './player-popup.component.html',
   styleUrls: ['./player-popup.component.css']
 })
-export class PlayerPopupComponent {
+export class PlayerPopupComponent implements OnInit {
   @Input()
   playerDetails: IPlayer;
 
@@ -17,7 +17,21 @@ export class PlayerPopupComponent {
   @Input()
   playerState: PlayerState;
 
+  @Input()
+  group: IGroupSummary;
+
+  groupName: string;
+
   constructor() {
+  }
+
+  ngOnInit() {
+    if (this.group) {
+      this.groupName = this.group.name;
+    }
+    else {
+      this.groupName = "No current group"
+    }
   }
 
   playerPopupHeaderCSSClass() {

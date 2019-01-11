@@ -8,7 +8,10 @@
         {{ playerDetails.addressLine2 }}<br>
         {{ playerDetails.addressLine3 }}
       </p>
-      <h5>Last Registered Date: {{ groupPlayerDetails.registeredDate | date : "dd/MM/yyyy" }}</h5>
+      <p>
+        <strong>Group:</strong> {{ groupName }}<br>
+        <strong>Last Registered Date:</strong> {{ groupPlayerDetails.registeredDate | date : "dd/MM/yyyy" }}
+      </p>
     </div>
     <div class="card-body">
       <p class="card-text"><strong>Date of Birth:</strong> {{ playerDetails.dateOfBirth | date : "dd/MM/yyyy" }}</p>

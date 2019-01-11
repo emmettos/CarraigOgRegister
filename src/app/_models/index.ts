@@ -4,4 +4,5 @@ export * from './group-overview';
 export * from './player';
 export * from './player-summary';
 export * from './group';
+export * from './group-summary';
 export * from './coach';

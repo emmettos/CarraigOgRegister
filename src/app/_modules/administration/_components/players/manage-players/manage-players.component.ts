@@ -8,8 +8,8 @@ import * as moment from 'moment';
 import { NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 import { APP_SETTINGS } from '../../../../../_helpers/app.initializer.helper';
-import { IPlayer, IPlayerSummary } from '../../../../../_models/index';
-import { PlayersService } from '../../../../../_services/index';
+import { IPlayer, IPlayerSummary, IGroupSummary } from '../../../../../_models/index';
+import { PlayersService, GroupsService } from '../../../../../_services/index';
 import { ValidationService } from '../../../../shared/_services/index';
 import { PlayerPopupComponent } from '../player-popup/player-popup.component';
 
@@ -32,6 +32,8 @@ export class ManagePlayersComponent implements OnInit {
   // lastRegisteredDatePickerMaxDate: NgbDateStruct;
   // lastRegisteredDatePickerStartDate: any;
 
+  groupSummaries: IGroupSummary[] = null;
+
   matchedPlayers: IPlayerSummary[] = null;
 
   //playerDetails: IPlayer = (<IPlayer>{});
@@ -40,6 +42,7 @@ export class ManagePlayersComponent implements OnInit {
     private modalService: NgbModal,
     private formBuilder: FormBuilder,
     private playersService: PlayersService,
+    private groupsService: GroupsService,
     private validationService: ValidationService) {
   }
 
@@ -62,6 +65,16 @@ export class ManagePlayersComponent implements OnInit {
 
     //this.lastRegisteredDatePickerLabel = "Last Registered Date";
     //this.lastRegisteredDatePickerEnabled = false;
+
+    this.groupsService.readGroupSummaries()
+      .subscribe({
+        next: response => {
+          this.groupSummaries = response.body.groups;
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
+        }
+      });
   }
 
   onDateOfBirthPickerChange(dateOfBirth) {
@@ -102,7 +115,7 @@ export class ManagePlayersComponent implements OnInit {
         // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {
         }
-      });      
+      });
   }
 
   onClickAddPlayer() {
@@ -136,6 +149,10 @@ export class ManagePlayersComponent implements OnInit {
           modalRef.componentInstance.playerDetails = response.body.playerDetails;
           modalRef.componentInstance.groupPlayerDetails = response.body.groupPlayerDetails;
           modalRef.componentInstance.playerState = playerSummary.playerState;
+
+          modalRef.componentInstance.group = this.groupSummaries.find(group => { 
+            return group.id === response.body.groupPlayerDetails.groupId 
+          });
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {

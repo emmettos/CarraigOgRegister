@@ -17,6 +17,10 @@ export class GroupsService {
     return this.http.get<any>('/api/groupOverviews');
   }
 
+  readGroupSummaries(): Observable<any> {
+    return this.http.get<any>('/api/groupSummaries');
+  }
+
   readGroups(): Observable<any> {
     return this.http.get<any>('/api/groups');
   }

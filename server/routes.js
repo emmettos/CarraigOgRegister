@@ -683,6 +683,15 @@ exports = module.exports = function (app, router) {
     }
   });
 
+  router.get('/groupSummaries', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      await readGroupSummaries(app, currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
   router.get('/coaches', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       await readCoaches(app, response, next);
@@ -1011,15 +1020,63 @@ exports = module.exports = function (app, router) {
   });
 }
 
-var readGroups = async (currentSettings, response, next) => {
-  var groups = await group.find({ 'year': currentSettings.year }).lean().exec();
-  
+var readGroupSummaries = async (app, currentSettings, response, next) => {
+  const result = await app.pool.query(`
+    SELECT
+      g.id,
+      g.year_of_birth,
+      g.name,
+      (SELECT 
+        c1.first_name || ' ' || c1.surname
+      FROM
+        coaches AS c1
+      WHERE
+        g.football_coach_id = c1.id) AS football_coach_full_name,
+      (SELECT 
+        c1.first_name || ' ' || c1.surname
+      FROM
+        coaches AS c1
+      WHERE
+        g.hurling_coach_id = c1.id) AS hurling_coach_full_name,
+      (SELECT
+        MAX(p1.updated_date)
+      FROM
+        players AS p1
+      INNER JOIN groups_players gp1
+        ON p1.id = gp1.player_id
+      WHERE
+        gp1.group_id = g.id) AS last_updated_date
+    FROM
+      groups AS g
+    WHERE
+      g.year_id = 
+        (SELECT 
+          y.id 
+        FROM 
+          years AS y 
+        WHERE y.year = $1)
+  `, [currentSettings.year]);
+
   var returnMessage = {};
 
   returnMessage.error = null;
   returnMessage.body = {};
 
-  returnMessage.body.groups = groups;
+  returnMessage.body.groups = result.rows.map(row => {
+    Object.defineProperty(row, 'yearOfBirth', Object.getOwnPropertyDescriptor(row, 'year_of_birth'));
+    delete row['year_of_birth'];
+
+    Object.defineProperty(row, 'footballCoachFullName', Object.getOwnPropertyDescriptor(row, 'football_coach_full_name'));
+    delete row['football_coach_full_name'];
+
+    Object.defineProperty(row, 'hurlingCoachFullName', Object.getOwnPropertyDescriptor(row, 'hurling_coach_full_name'));
+    delete row['hurling_coach_full_name'];
+
+    Object.defineProperty(row, 'lastUpdatedDate', Object.getOwnPropertyDescriptor(row, 'last_updated_date'));
+    delete row['last_updated_date'];
+
+    return row;
+  });
 
   response.status(200).json(returnMessage);
 }
