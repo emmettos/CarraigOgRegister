@@ -156,7 +156,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get('/coachGroups/:emailAddress', async (request, response, next) => {
+  router.get('/coachGroups/:emailAddress', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     var groups = null,
         groupIndex = 0,
         currentGroup = null,
@@ -200,7 +200,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get('/playersDetail/:yearOfBirth/:allPlayers?', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.get('/playersDetail/:yearOfBirth/:allPlayers?', authorizer.authorize({ isGroupManager: true }), async (request, response, next) => {
     try {
       var filter = null,
           players = null,
