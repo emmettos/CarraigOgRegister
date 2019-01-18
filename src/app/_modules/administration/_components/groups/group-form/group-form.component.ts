@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { IGroup, ICoach } from '../../../../../_models/index';
+import { IGroup, ICoach, IGroupSummary } from '../../../../../_models/index';
 import { GroupsService } from '../../../../../_services/index';
 
 
@@ -30,10 +30,10 @@ export class GroupFormComponent implements OnInit {
 
   ngOnInit() {
     let footballCoach = this.coaches.find(coach => {
-      return coach.emailAddress === this.groupDetails.footballCoach;
+      return coach.emailAddress === this.groupDetails.footballCoachId;
     });
     let hurlingCoach = this.coaches.find(coach => {
-      return coach.emailAddress === this.groupDetails.hurlingCoach;
+      return coach.emailAddress === this.groupDetails.hurlingCoachId;
     });
  
     this.groupForm = this.formBuilder.group({
@@ -75,8 +75,8 @@ export class GroupFormComponent implements OnInit {
   }
 
   private readGroupDetailsFields(formValues: any): void {
-    this.groupDetails.footballCoach = formValues.footballCoach;
-    this.groupDetails.hurlingCoach = formValues.hurlingCoach;
+    this.groupDetails.footballCoachId = formValues.footballCoach;
+    this.groupDetails.hurlingCoachId = formValues.hurlingCoach;
   }
 
   private disableControls(): void {

@@ -1,21 +1,16 @@
 export interface IGroup {
-  _id: string;
+  id: number;
 
-  year: number;
-  name: string;
+  yearId: number;
   yearOfBirth: number;
-  footballCoach: string;
-  hurlingCoach: string;
-
-  lastUpdatedDate: string;
+  name: string;
+  footballCoachId: string;
+  hurlingCoachId: string;
 
   createdBy: string;
   createdDate: string;
   updatedDate: string;
   updatedBy: string;
 
-  __v: number;
-
-  footballCoachFullName?: string;
-  hurlingCoachFullName?: string;
+  version: number;
 }

@@ -12,6 +12,7 @@ export class ValidationService {
     this.validationMessages = {
       'invalidConfirmPassword': 'The Confirm Password does not match the Password',
       'invalidEmailAddress': 'Invalid email address',
+      'invalidGroup': 'Select a group',
       'invalidNewCoach': 'A coach with this email address already exists',
       'minlength': 'Minimum length [requiredLength]',
       'required': 'This field is required'
@@ -35,12 +36,12 @@ export class ValidationService {
     return { 'invalidEmailAddress': true };
   }
 
-  groupYearValidator(control: FormControl): {[key: string]: any} {
-    if (control.value !== 'Select Year') {
+  groupValidator(control: FormControl): {[key: string]: any} {
+    if (control.value !== 'Select Group') {
       return null;
     }
       
-    return { 'invalidGroupYear': true };
+    return { 'invalidGroup': true };
   }
 
   passwordMatchValidator(controlToMatch: FormControl) {

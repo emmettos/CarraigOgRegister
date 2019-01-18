@@ -6,7 +6,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 
 import * as moment from 'moment';
 
-import { APP_SETTINGS } from '../../_helpers/index';
 import { IPlayerSummary, PlayerState } from '../../_models/index';
 import { PlayersService } from '../../_services/index';
 

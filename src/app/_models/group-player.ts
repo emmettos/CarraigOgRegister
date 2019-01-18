@@ -1,5 +1,5 @@
 export interface IGroupPlayer {
-  id: string;
+  id: number;
 
   groupId: number;
   playerId: number;

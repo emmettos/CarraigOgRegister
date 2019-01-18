@@ -7,7 +7,7 @@ import { ToasterService } from 'angular2-toaster';
 
 import * as moment from 'moment';
 
-import { IGroup, ICoach } from '../../../../../_models/index';
+import { IGroup, ICoach, IGroupSummary } from '../../../../../_models/index';
 import { GroupsService, CoachesService } from '../../../../../_services/index';
 import { GroupFormComponent } from '../group-form/group-form.component';
 import { GroupPopupComponent } from '../group-popup/group-popup.component';
@@ -26,8 +26,8 @@ export class ManageGroupsComponent implements OnInit {
   sortKey: string = "yearOfBirth";
   reverse: boolean = false;
 
-  groups: IGroup[] = null;
-  filteredGroups: IGroup[] = null;
+  groups: IGroupSummary[] = null;
+  filteredGroups: IGroupSummary[] = null;
 
   totalCount: number = 0;
 
@@ -68,7 +68,7 @@ export class ManageGroupsComponent implements OnInit {
               return returnValue;
             });
     
-          this.groupsService.readGroups()
+          this.groupsService.readGroupSummaries()
             .subscribe({
               next: response => {
                 this.processReturnedGroups(response.body.groups);
@@ -168,8 +168,8 @@ export class ManageGroupsComponent implements OnInit {
           coachFilter = '';
         }
 
-        if ((group.footballCoach.toLowerCase().indexOf(coachFilter.toLowerCase()) !== -1 ||
-            group.hurlingCoach.toLowerCase().indexOf(coachFilter.toLowerCase()) !== -1)) {
+        if ((group.footballCoachFullName.toLowerCase().indexOf(coachFilter.toLowerCase()) !== -1 ||
+            group.hurlingCoachFullName.toLowerCase().indexOf(coachFilter.toLowerCase()) !== -1)) {
           return true;
         }
       });
@@ -192,39 +192,39 @@ export class ManageGroupsComponent implements OnInit {
     return CSSClass;
   };
 
-  private processReturnedGroups(groups: IGroup[]) {
+  private processReturnedGroups(groups: IGroupSummary[]) {
     this.groups = groups;
 
     this.totalCount = this.groups.length;
 
-    this.groups.forEach(group => {
-      group.footballCoachFullName = this.lookupCoachFullName(group.footballCoach);
-      group.hurlingCoachFullName = this.lookupCoachFullName(group.hurlingCoach);
-    });
+    // this.groups.forEach(group => {
+    //   group.footballCoachFullName = this.lookupCoachFullName(group.footballCoach);
+    //   group.hurlingCoachFullName = this.lookupCoachFullName(group.hurlingCoach);
+    // });
 
     this.filteredGroups = this.groups.slice(0);
 
     this.onClickHeader(this.sortKey, false);
   }
 
-  private lookupCoachFullName(emailAddress: string): string {
-    let first = 0,
-        last = this.coaches.length - 1;
+  // private lookupCoachFullName(emailAddress: string): string {
+  //   let first = 0,
+  //       last = this.coaches.length - 1;
 
-    while (first <= last) {
-      let middle = Math.floor((first + last) / 2)
+  //   while (first <= last) {
+  //     let middle = Math.floor((first + last) / 2)
 
-      if (this.coaches[middle].emailAddress < emailAddress) {
-        first = middle + 1;
-      }
-      else if (this.coaches[middle].emailAddress > emailAddress) {
-        last = middle - 1;
-      }
-      else {
-        return this.coaches[middle].firstName + ' ' + this.coaches[middle].surname;
-      }
-    }
+  //     if (this.coaches[middle].emailAddress < emailAddress) {
+  //       first = middle + 1;
+  //     }
+  //     else if (this.coaches[middle].emailAddress > emailAddress) {
+  //       last = middle - 1;
+  //     }
+  //     else {
+  //       return this.coaches[middle].firstName + ' ' + this.coaches[middle].surname;
+  //     }
+  //   }
 
-    return emailAddress;
-  }
+  //   return emailAddress;
+  // }
 }

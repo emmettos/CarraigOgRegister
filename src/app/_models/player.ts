@@ -1,15 +1,11 @@
-import { PlayerState } from './index';
-
-
 export interface IPlayer {
-  _id: string;
+  id: number;
 
   firstName: string;
   surname: string;
   addressLine1: string;
   addressLine2: string;
   addressLine3: string;
-  yearOfBirth: number;
   dateOfBirth: string;
   medicalConditions: string;
   contactName: string;
@@ -17,16 +13,11 @@ export interface IPlayer {
   contactHomeNumber: string;
   contactEmailAddress: string;
   school: string;
-  lastRegisteredDate: string;
-  lastRegisteredYear: number;
-  registeredYears: number[];
 
   createdBy: string;
   createdDate: string;
   updatedDate: string;
   updatedBy: string;
 
-  __v: number;
-
-  playerState?: PlayerState;
+  version: number;
 }

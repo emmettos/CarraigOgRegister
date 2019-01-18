@@ -3,14 +3,16 @@ import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/fo
 
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
+import { ToasterService } from 'angular2-toaster';
+
 import * as moment from 'moment';
 
 import { NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
 
 import { APP_SETTINGS } from '../../../../../_helpers/app.initializer.helper';
-import { IPlayer, IPlayerSummary, IGroupSummary } from '../../../../../_models/index';
+import { IPlayer, IPlayerSummary, IGroup } from '../../../../../_models/index';
 import { PlayersService, GroupsService } from '../../../../../_services/index';
-import { ValidationService } from '../../../../shared/_services/index';
+import { PlayerFormComponent } from '../player-form/player-form.component';
 import { PlayerPopupComponent } from '../player-popup/player-popup.component';
 
 
@@ -32,7 +34,7 @@ export class ManagePlayersComponent implements OnInit {
   // lastRegisteredDatePickerMaxDate: NgbDateStruct;
   // lastRegisteredDatePickerStartDate: any;
 
-  groupSummaries: IGroupSummary[] = null;
+  groups: IGroup[] = null;
 
   matchedPlayers: IPlayerSummary[] = null;
 
@@ -41,35 +43,20 @@ export class ManagePlayersComponent implements OnInit {
   constructor(
     private modalService: NgbModal,
     private formBuilder: FormBuilder,
+    private toasterService: ToasterService,
     private playersService: PlayersService,
-    private groupsService: GroupsService,
-    private validationService: ValidationService) {
+    private groupsService: GroupsService) {
   }
 
   ngOnInit() {
     this.managePlayersForm = this.formBuilder.group({
-      'dateOfBirthPicker': this.formBuilder.group({}),
-      // 'lastRegisteredDatePicker': this.formBuilder.group({}),
-      // 'firstName': [{ value: '', disabled: true }, Validators.required],
-      // 'surname': [{ value: '', disabled: true }, Validators.required],
-      // 'addressLine1': [{ value: '', disabled: true }, Validators.required],
-      // 'addressLine2': [{ value: '', disabled: true }],
-      // 'addressLine3': [{ value: '', disabled: true }],
-      // 'school': [{ value: '', disabled: true }],
-      // 'medicalConditions': [{ value: '', disabled: true }],
-      // 'contactName': [{ value: '', disabled: true }],
-      // 'contactEmailAddress': [{ value: '', disabled: true }],
-      // 'contactMobileNumber': [{ value: '', disabled: true }],
-      // 'contactHomeNumber': [{ value: '', disabled: true }]
+      'dateOfBirthPicker': this.formBuilder.group({})
     });
 
-    //this.lastRegisteredDatePickerLabel = "Last Registered Date";
-    //this.lastRegisteredDatePickerEnabled = false;
-
-    this.groupsService.readGroupSummaries()
+    this.groupsService.readGroups()
       .subscribe({
         next: response => {
-          this.groupSummaries = response.body.groups;
+          this.groups = response.body.groups;
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {
@@ -139,18 +126,16 @@ export class ManagePlayersComponent implements OnInit {
   }
 
   onClickRow(playerSummary: IPlayerSummary) {
-    let modalRef: NgbModalRef;
-
     this.playersService.readPlayerDetails(playerSummary.id)
       .subscribe({
         next: response => {
-          modalRef = this.modalService.open(PlayerPopupComponent);
+          let modalRef: NgbModalRef = this.modalService.open(PlayerPopupComponent);
 
           modalRef.componentInstance.playerDetails = response.body.playerDetails;
           modalRef.componentInstance.groupPlayerDetails = response.body.groupPlayerDetails;
           modalRef.componentInstance.playerState = playerSummary.playerState;
 
-          modalRef.componentInstance.group = this.groupSummaries.find(group => { 
+          modalRef.componentInstance.group = this.groups.find(group => { 
             return group.id === response.body.groupPlayerDetails.groupId 
           });
         },
@@ -160,22 +145,33 @@ export class ManagePlayersComponent implements OnInit {
       });
   }
   
-  onClickEditPlayer(event: Event, playerId: number) {
-    // const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
+  onClickEditPlayer(event: Event, playerSummary: IPlayerSummary) {
+    this.playersService.readPlayerDetails(playerSummary.id)
+      .subscribe({
+        next: response => {
+          const modalRef: NgbModalRef = this.modalService.open(PlayerFormComponent, { size: 'lg', backdrop: 'static' });
 
-    // modalRef.componentInstance.coachDetails = coach;
+          modalRef.componentInstance.playerDetails = response.body.playerDetails;
+          modalRef.componentInstance.groupPlayerDetails = response.body.groupPlayerDetails;
+          modalRef.componentInstance.groups = this.groups;
+          //modalRef.componentInstance.playerState = playerSummary.playerState;
 
-    // modalRef.result
-    //   .then(returnObject => {
-    //     if (returnObject) {
-    //       this.toasterService.pop('success', 'Coach Successfully Updated', returnObject.coachDetails.emailAddress);
+          modalRef.result
+            .then(returnObject => {
+              if (returnObject) {
+                this.toasterService.pop('success', 'Player Successfully Updated', returnObject.coachDetails.firstName + ' ' + returnObject.playerDetails.surname);
 
-    //       this.processReturnedCoaches(returnObject.updatedCoaches);
-    //     }
-    //   })
-    //   .catch(error => {
-    //     this.toasterService.pop('error', 'Failed Updating Coach', error.coachDetails.emailAddress);
-    //   });
+                this.processReturnedPlayers(returnObject.updatedPlayers);
+              }
+            })
+            .catch(error => {
+              this.toasterService.pop('error', 'Failed Updating Player', error.playerDetails.firstName + ' ' + error.playerDetails.surname);
+            });
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
+        }
+      });
     
     event.stopPropagation();
   }
@@ -201,12 +197,6 @@ export class ManagePlayersComponent implements OnInit {
 
     event.stopPropagation();
   }
-
-  // onReset() {
-  //   this.processEvent(FormEvent.ResetPage);
-
-  //   window.scrollTo(0, 0);
-  // }
 
   //onSubmit(formValues: any) {
     // this.readPlayerDetailsFields(formValues);
@@ -402,50 +392,33 @@ export class ManagePlayersComponent implements OnInit {
     // this.playerDetails.contactHomeNumber = formValues.contactHomeNumber;
   }
 
-  private enableDisableControls(): void {
-    // switch (this.currentState) {
-    //   case FormState.SearchForPlayer:
-    //   case FormState.SavingPlayer:
-    //     this.lastRegisteredDatePickerEnabled = false;
-    //     this.managePlayersForm.controls['firstName'].disable();
-    //     this.managePlayersForm.controls['surname'].disable();
-    //     this.managePlayersForm.controls['addressLine1'].disable();
-    //     this.managePlayersForm.controls['addressLine2'].disable();
-    //     this.managePlayersForm.controls['addressLine3'].disable();
-    //     this.managePlayersForm.controls['school'].disable();
-    //     this.managePlayersForm.controls['medicalConditions'].disable();
-    //     this.managePlayersForm.controls['contactName'].disable();
-    //     this.managePlayersForm.controls['contactEmailAddress'].disable();
-    //     this.managePlayersForm.controls['contactMobileNumber'].disable();
-    //     this.managePlayersForm.controls['contactHomeNumber'].disable();
+  private processReturnedPlayers(players: IPlayer[]) {
+    // let userProfile: IUserProfile = this.authorizationService.getActivePayload.userProfile;
 
-    //     break;
-    //   case FormState.PlayersListed:
-    //   case FormState.AddPlayer:
-    //   case FormState.EditPlayer:
-    //     this.lastRegisteredDatePickerEnabled = true;
-    //     if (this.currentState === FormState.EditPlayer) {
-    //       this.managePlayersForm.controls['firstName'].disable();
-    //       this.managePlayersForm.controls['surname'].disable();
-    //     }
-    //     else {
-    //       this.managePlayersForm.controls['firstName'].enable();
-    //       this.managePlayersForm.controls['surname'].enable();
-    //     }
-    //     this.managePlayersForm.controls['addressLine1'].enable();
-    //     this.managePlayersForm.controls['addressLine2'].enable();
-    //     this.managePlayersForm.controls['addressLine3'].enable();
-    //     this.managePlayersForm.controls['school'].enable();
-    //     this.managePlayersForm.controls['medicalConditions'].enable();
-    //     this.managePlayersForm.controls['contactName'].enable();
-    //     this.managePlayersForm.controls['contactEmailAddress'].enable();
-    //     this.managePlayersForm.controls['contactMobileNumber'].enable();
-    //     this.managePlayersForm.controls['contactHomeNumber'].enable();
+    // this.coaches = coaches;
 
-    //     break;
-    //   default:
-    //     break;
-    // }
+    // this.totalCount = 0;
+    // this.activeCount = 0;
+    // this.dormantCount = 0;
+
+    // this.coaches.forEach(coach => {
+    //   this.totalCount++;
+
+    //   if (coach.active) {
+    //     this.activeCount++;              
+    //   }
+    //   else {
+    //     this.dormantCount++;
+    //   }
+
+    //   if (coach.emailAddress === userProfile.ID) {
+    //     coach.currentSessionOwner = true;
+    //   }
+    // });
+
+    // this.filteredCoaches = this.coaches.slice(0);
+
+    // this.onClickHeader(this.sortKey, false);
   }
 }
 

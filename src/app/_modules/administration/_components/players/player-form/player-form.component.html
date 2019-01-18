@@ -1,0 +1,170 @@
+<!-- Most id's are used for unit testing -->
+<div class="modal-header">
+  <h4 id="title" class="modal-title">{{ title }}</h4>
+</div>
+<div class="modal-body">
+  <div class="container">
+    <form [formGroup]="playerForm" (ngSubmit)="onSubmit(playerForm.value)" novalidate>
+      <div class="row">
+        <div class="form-group col-md-5 offset-md-1">
+          <label class="control-label" for="firstName">First Name</label>
+          <input  type="text" 
+                  id="player-first-name"
+                  formControlName="firstName" 
+                  name="firstName" 
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': playerForm.controls.firstName.invalid && playerForm.controls.firstName.touched}"
+                  placeholder="First Name">
+          <app-validation-message [control]="playerForm.controls.firstName"></app-validation-message>
+        </div>
+        <div class="form-group col-md-5">
+          <label class="control-label" for="surname">Surname</label>
+          <input  type="text" 
+                  id="player-surname" 
+                  formControlName="surname" 
+                  name="surname" 
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': playerForm.controls.surname.invalid && playerForm.controls.surname.touched}"
+                  placeholder="Surname">
+          <app-validation-message [control]="playerForm.controls.surname"></app-validation-message>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-5 offset-md-1">
+          <label class="control-label" for="addressLine1">Address Line 1</label>
+          <input  type="text" 
+                  id="player-address-line1"
+                  formControlName="addressLine1" 
+                  name="addressLine1" 
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': playerForm.controls.addressLine1.invalid && playerForm.controls.addressLine1.touched}"
+                  placeholder="Address Line 1">
+          <app-validation-message [control]="playerForm.controls.addressLine1"></app-validation-message>
+        </div>
+        <div class="form-group col-md-5">
+          <label class="control-label" for="addressLine2">Address Line 2</label>
+          <input  type="text" 
+                  id="player-address-line2"
+                  formControlName="addressLine2" name="addressLine2" 
+                  class="form-control" 
+                  placeholder="Address Line 2">
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-5 offset-md-1">
+          <label class="control-label" for="addressLine3">Address Line 3</label>
+          <input  type="text" 
+                  id="player-address-line3"
+                  formControlName="addressLine3" 
+                  name="addressLine3" 
+                  class="form-control" 
+                  placeholder="Address Line 3">
+        </div>
+        <div class="form-group col-md-3">
+          <app-date-picker  [parentGroup]="playerForm.controls.dateOfBirthPicker" 
+                            [label]="dateOfBirthPickerLabel"
+                            [enabled]="true">
+          </app-date-picker>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-3 offset-md-1">
+          <app-date-picker  [parentGroup]="playerForm.controls.lastRegisteredDatePicker" 
+                            [label]="lastRegisteredDatePickerLabel"
+                            [enabled]="true">
+          </app-date-picker>
+        </div>
+        <div class="form-group col-md-4 offset-md-2">
+          <label class="control-label" for="playerGroup">Group</label>
+          <select id="player-group"
+                  formControlName="playerGroup" 
+                  name="playerGroup"
+                  class="form-control">
+            <option>Select Group</option>
+            <option [ngValue]="group.id" *ngFor="let group of groups">{{ group.name }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-5 offset-md-1">
+          <label class="control-label" for="medicalConditions">Medical Conditions</label>
+          <input  type="text"
+                  id="player-medical-conditions" 
+                  formControlName="medicalConditions" 
+                  name="medicalConditions" 
+                  class="form-control" 
+                  placeholder="Medical Conditions">
+        </div>
+        <div class="form-group col-md-5">
+          <label class="control-label" for="school">School</label>
+          <input  type="text" 
+                  id="player-school"
+                  formControlName="school" 
+                  name="school" 
+                  class="form-control" 
+                  placeholder="School">
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-5 offset-md-1">
+          <label class="control-label" for="contactName">Contact Name</label>
+          <input  type="text" 
+                  id="contact-name"
+                  formControlName="contactName" 
+                  name="contactName" 
+                  class="form-control" 
+                  placeholder="Contact Name">
+        </div>
+        <div class="form-group col-md-5">
+          <label class="control-label" for="contactEmailAddress">Contact Email Address</label>
+          <input  type="text" 
+                  id="contact-email-address"
+                  formControlName="contactEmailAddress" 
+                  name="contactEmailAddress" 
+                  class="form-control" 
+                  placeholder="Contact Email Address">
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-5 offset-md-1">
+          <label class="control-label" for="contactMobileNumber">Contact Mobile Number</label>
+          <input  type="text" 
+                  id="contact-mobile-number"
+                  formControlName="contactMobileNumber" 
+                  name="contactMobileNumber" 
+                  class="form-control" 
+                  placeholder="Contact Mobile Number">
+        </div>
+        <div class="form-group col-md-5">
+          <label class="control-label" for="contactHomeNumber">Contact Home Number</label>
+          <input  type="text" 
+                  id="contact-home-number"
+                  formControlName="contactHomeNumber" 
+                  name="contactHomeNumber" 
+                  class="form-control" 
+                  placeholder="Contact Home Number">
+        </div>
+      </div>
+      <div class="row mt-3 mb-2">
+        <div class="col-md-2 offset-md-4">
+          <input  type="button" 
+                  id="cancel" 
+                  class="btn btn-info btn-block" 
+                  (click)="onClickCancel()" 
+                  [disabled]="savingPlayer"
+                  value="Cancel">
+        </div>
+        <div class="col-md-2">
+          <input  type="submit" 
+                  class="btn btn-info btn-block" 
+                  [disabled]="playerForm.invalid || savingPlayer"
+                  value="Save">
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<!--
+<p>Form values: {{ playerForm.value | json }}</p>
+<p>Form status: {{ playerForm.status }}</p>
+-->

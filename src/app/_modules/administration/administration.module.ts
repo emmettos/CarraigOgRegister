@@ -16,11 +16,13 @@ import { ManageGroupsComponent } from './_components/groups/manage-groups/manage
 import { GroupFormComponent } from './_components/groups/group-form/group-form.component';
 import { GroupPopupComponent } from './_components/groups/group-popup/group-popup.component';
 import { PlayerPopupComponent } from './_components/players/player-popup/player-popup.component';
+import { PlayerFormComponent } from './_components/players/player-form/player-form.component';
 
 
 @NgModule({
   declarations: [
     ManagePlayersComponent,
+    PlayerFormComponent,
     PlayerPopupComponent,
     ManageCoachesComponent,
     CoachFormComponent,
@@ -39,6 +41,7 @@ import { PlayerPopupComponent } from './_components/players/player-popup/player-
   ],
   entryComponents: [
     PlayerPopupComponent,
+    PlayerFormComponent,
     CoachFormComponent,
     ConfirmDeleteCoachComponent,
     CoachPopupComponent,

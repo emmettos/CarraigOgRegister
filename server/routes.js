@@ -337,6 +337,83 @@ exports = module.exports = function (app, router) {
     }
   });
 
+  router.get('/groups', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      const result = await app.pool.query(`
+        SELECT 
+          id,
+          year_id,
+          year_of_birth,
+          name,
+          football_coach_id,
+          hurling_coach_id,
+          created_by,
+          created_date,
+          updated_by,
+          updated_date,
+          version
+        FROM
+          groups AS g
+        WHERE
+          g.year_id = 
+            (SELECT 
+              y.id 
+            FROM 
+              years AS y 
+            WHERE y.year = $1)
+        ORDER BY
+          g.year_of_birth DESC      
+      `, [currentSettings.year]);
+    
+      var returnMessage = {};
+    
+      returnMessage.error = null;
+      returnMessage.body = {};
+    
+      returnMessage.body.groups = result.rows.map(row => {
+        Object.defineProperty(row, 'yearId', Object.getOwnPropertyDescriptor(row, 'year_id'));
+        delete row['year_id'];
+    
+        Object.defineProperty(row, 'yearOfBirth', Object.getOwnPropertyDescriptor(row, 'year_of_birth'));
+        delete row['year_of_birth'];
+    
+        Object.defineProperty(row, 'footballCoachId', Object.getOwnPropertyDescriptor(row, 'football_coach_id'));
+        delete row['football_coach_id'];
+    
+        Object.defineProperty(row, 'hurlingCoachId', Object.getOwnPropertyDescriptor(row, 'hurling_coach_id'));
+        delete row['hurling_coach_id'];
+    
+        Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
+        delete row['created_by'];
+    
+        Object.defineProperty(row, 'createdDate', Object.getOwnPropertyDescriptor(row, 'created_date'));
+        delete row['created_date'];
+    
+        Object.defineProperty(row, 'updatedBy', Object.getOwnPropertyDescriptor(row, 'updated_by'));
+        delete row['updated_by'];
+    
+        Object.defineProperty(row, 'updatedDate', Object.getOwnPropertyDescriptor(row, 'updated_date'));
+        delete row['updated_date'];
+    
+        return row;
+      });
+
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.get('/groupSummaries', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      await readGroupSummaries(app, currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
   router.get('/playerSummaries/:yearOfBirth', authorizer.authorize({ isGroupManager: true }), async (request, response, next) => {
     try {
       const result = await app.pool.query(`
@@ -590,14 +667,19 @@ exports = module.exports = function (app, router) {
           groups_players AS gp
         WHERE
           gp.player_id = $1 AND
-          gp.registered_date = 
+          gp.group_id IN
             (SELECT
-              MAX(gp1.registered_date)
+              g1.id
             FROM
-              groups_players AS gp1
+              groups g1
             WHERE
-              gp1.player_id = $1)
-      `, [request.params.playerId]);
+              g1.year_id = 
+                (SELECT 
+                  y.id 
+                FROM 
+                  years AS y 
+                WHERE y.year = $2))
+      `, [request.params.playerId, currentSettings.year]);
   
       var returnMessage = {};
 
@@ -650,42 +732,38 @@ exports = module.exports = function (app, router) {
 
         return row;
       })[0];
-      returnMessage.body.groupPlayerDetails = groupPlayerResult.rows.map(row => {
-        Object.defineProperty(row, 'groupId', Object.getOwnPropertyDescriptor(row, 'group_id'));
-        delete row['group_id'];
-                
-        Object.defineProperty(row, 'playerId', Object.getOwnPropertyDescriptor(row, 'player_id'));
-        delete row['player_id'];
-                
-        Object.defineProperty(row, 'registeredDate', Object.getOwnPropertyDescriptor(row, 'registered_date'));
-        row['registeredDate'] = moment.utc(row['registered_date']).add(0 - row['registered_date'].getTimezoneOffset(), "m");
-        delete row['registered_date'];
+      if (groupPlayerResult.rows.length > 0) {
+        returnMessage.body.groupPlayerDetails = groupPlayerResult.rows.map(row => {
+          Object.defineProperty(row, 'groupId', Object.getOwnPropertyDescriptor(row, 'group_id'));
+          delete row['group_id'];
+                  
+          Object.defineProperty(row, 'playerId', Object.getOwnPropertyDescriptor(row, 'player_id'));
+          delete row['player_id'];
+                  
+          Object.defineProperty(row, 'registeredDate', Object.getOwnPropertyDescriptor(row, 'registered_date'));
+          row['registeredDate'] = moment.utc(row['registered_date']).add(0 - row['registered_date'].getTimezoneOffset(), "m");
+          delete row['registered_date'];
+        
+          Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
+          delete row['created_by'];
       
-        Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
-        delete row['created_by'];
-    
-        Object.defineProperty(row, 'createdDate', Object.getOwnPropertyDescriptor(row, 'created_date'));
-        delete row['created_date'];
-    
-        Object.defineProperty(row, 'updatedBy', Object.getOwnPropertyDescriptor(row, 'updated_by'));
-        delete row['updated_by'];
-    
-        Object.defineProperty(row, 'updatedDate', Object.getOwnPropertyDescriptor(row, 'updated_date'));
-        delete row['updated_date'];
-                
-        return row;
-      })[0];
+          Object.defineProperty(row, 'createdDate', Object.getOwnPropertyDescriptor(row, 'created_date'));
+          delete row['created_date'];
+      
+          Object.defineProperty(row, 'updatedBy', Object.getOwnPropertyDescriptor(row, 'updated_by'));
+          delete row['updated_by'];
+      
+          Object.defineProperty(row, 'updatedDate', Object.getOwnPropertyDescriptor(row, 'updated_date'));
+          delete row['updated_date'];
+                  
+          return row;
+        })[0];
+      }
+      else {
+        returnMessage.body.groupPlayerDetails = null;
+      }
 
       response.status(200).json(returnMessage);
-    }
-    catch (error) {
-      next(error);
-    }
-  });
-
-  router.get('/groupSummaries', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
-    try {
-      await readGroupSummaries(app, currentSettings, response, next);
     }
     catch (error) {
       next(error);
@@ -695,15 +773,6 @@ exports = module.exports = function (app, router) {
   router.get('/coaches', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       await readCoaches(app, response, next);
-    }
-    catch (error) {
-      next(error);
-    }
-  });
-
-  router.get('/groups', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
-    try {
-      await readGroups(currentSettings, response, next);
     }
     catch (error) {
       next(error);
