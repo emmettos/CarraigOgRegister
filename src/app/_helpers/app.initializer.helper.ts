@@ -3,8 +3,7 @@ import { ConfigurationService } from '../_services/index';
 
 
 export let APP_SETTINGS: IAppSettings = {
-  currentYear: 0,
-  groupYears: []
+  currentYear: 0
 };
 
 export function readConfigurationSettings(configService: ConfigurationService) {

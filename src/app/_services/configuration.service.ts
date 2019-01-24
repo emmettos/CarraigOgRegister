@@ -15,7 +15,6 @@ export class ConfigurationService {
       .toPromise()
       .then(response => {
         APP_SETTINGS.currentYear = response.body.currentSettings.year;
-        APP_SETTINGS.groupYears = response.body.currentSettings.groupYears;
       });
 
     return promise;

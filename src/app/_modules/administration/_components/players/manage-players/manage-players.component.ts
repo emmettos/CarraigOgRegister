@@ -106,23 +106,19 @@ export class ManagePlayersComponent implements OnInit {
   }
 
   onClickAddPlayer() {
-    // const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
+    const modalRef: NgbModalRef = this.modalService.open(PlayerFormComponent, { size: 'lg', backdrop: 'static' });
 
-    // modalRef.componentInstance.currentCoaches = this.coaches;
+    modalRef.result
+      .then(returnObject => {
+        if (returnObject) {
+          this.toasterService.pop('success', 'Player Successfully Added', returnObject.coachDetails.firstName + ' ' + returnObject.playerDetails.surname);
 
-    // modalRef.result
-    //   .then(returnObject => {
-    //     if (returnObject) {
-    //       this.toasterService.pop('success', 'Coach Successfully Added', returnObject.coachDetails.emailAddress);
-
-    //       this.processReturnedCoaches(returnObject.updatedCoaches);
-    //     }
-
-    //     this.nameFilterElementRef.nativeElement.focus();
-    //   })
-    //   .catch(error => {
-    //     this.toasterService.pop('error', 'Failed Adding Coach', error.coachDetails.emailAddress);
-    //   });
+          this.processReturnedPlayers(returnObject.updatedPlayers);
+        }
+      })
+      .catch(error => {
+        this.toasterService.pop('error', 'Failed Adding Player', error.playerDetails.firstName + ' ' + error.playerDetails.surname);
+      });
   }
 
   onClickRow(playerSummary: IPlayerSummary) {

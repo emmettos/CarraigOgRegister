@@ -39,8 +39,7 @@ describe('ConfigurationService', () => {
     mockRequest.flush({
       body: {
         currentSettings: {
-          year: 2018,
-          groupYears: [2008, 2009, 2010, 2011, 2012, 2013]
+          year: 2018
         }
       }
     });
@@ -54,8 +53,7 @@ describe('ConfigurationService', () => {
     mockRequest.flush({
       body: {
         currentSettings: {
-          year: 2018,
-          groupYears: [2008, 2009, 2010, 2011, 2012, 2013]
+          year: 2018
         }
       }
     });
@@ -67,13 +65,11 @@ describe('ConfigurationService', () => {
     const mockRequest = httpMock.expectOne('/api/currentSettings');
 
     APP_SETTINGS.currentYear = 0;
-    APP_SETTINGS.groupYears = [];
 
     mockRequest.flush({
       body: {
         currentSettings: {
-          year: 2018,
-          groupYears: [2008, 2009, 2010, 2011, 2012, 2013]
+          year: 2018
         }
       }
     });
@@ -81,8 +77,7 @@ describe('ConfigurationService', () => {
     tick();
 
     expect(APP_SETTINGS).toEqual({
-      currentYear: 2018,
-      groupYears: [2008, 2009, 2010, 2011, 2012, 2013]
+      currentYear: 2018
     });
   }));
 });

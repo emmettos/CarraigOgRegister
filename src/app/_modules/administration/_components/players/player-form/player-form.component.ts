@@ -1,13 +1,15 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
 
-import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import * as moment from 'moment';
 
+import { APP_SETTINGS } from '../../../../../_helpers';
 import { IPlayer, IGroup, IGroupPlayer } from '../../../../../_models/index';
 import { PlayersService } from '../../../../../_services/index';
 import { ValidationService } from '../../../../shared/_services/index';
+import { NgbPopoverWindow } from '@ng-bootstrap/ng-bootstrap/popover/popover';
 
 
 @Component({
@@ -26,8 +28,12 @@ export class PlayerFormComponent implements OnInit {
 
   playerForm: FormGroup;
 
-  lastRegisteredDatePickerLabel: string;
   dateOfBirthPickerLabel: string;
+
+  registeredDatePickerLabel: string;
+  registeredDatePickerMinDate: NgbDateStruct;
+  registeredDatePickerMaxDate: NgbDateStruct;
+  registeredDatePickerStartDate: any;
 
   editingPlayer: boolean = false;
   title = 'Add New Player';
@@ -50,36 +56,24 @@ export class PlayerFormComponent implements OnInit {
     this.playerForm = this.formBuilder.group({
       'firstName': [this.playerDetails ? this.playerDetails.firstName : '', Validators.required],
       'surname': [this.playerDetails ? this.playerDetails.surname : '', Validators.required],
-      'addressLine1': [this.playerDetails ? this.playerDetails.addressLine1 : '', Validators.required],
-      'addressLine2': [this.playerDetails ? this.playerDetails.addressLine2 : '', Validators.required],
-      'addressLine3': [this.playerDetails ? this.playerDetails.addressLine3 : '', Validators.required],
+      'addressLine1': [this.playerDetails ? this.playerDetails.addressLine1 : ''],
+      'addressLine2': [this.playerDetails ? this.playerDetails.addressLine2 : ''],
+      'addressLine3': [this.playerDetails ? this.playerDetails.addressLine3 : ''],
       'dateOfBirthPicker': this.formBuilder.group({}),
-      'lastRegisteredDatePicker': this.formBuilder.group({}),
-      'playerGroup': [this.groupPlayerDetails ? this.groups.find(group => group.id === this.groupPlayerDetails.groupId).id : 'Select Group', this.validationService.groupValidator],
-      'school': [this.playerDetails ? this.playerDetails.school : '', Validators.required],
-      'medicalConditions': [this.playerDetails ? this.playerDetails.medicalConditions : '', Validators.required],
-      'contactName': [this.playerDetails ? this.playerDetails.contactName : '', Validators.required],
-      'contactEmailAddress': [this.playerDetails ? this.playerDetails.contactEmailAddress : '', Validators.required],
-      'contactMobileNumber': [this.playerDetails ? this.playerDetails.contactMobileNumber : '', Validators.required],
-      'contactHomeNumber': [this.playerDetails ? this.playerDetails.contactHomeNumber : '', Validators.required]
+      'registeredDatePicker': this.formBuilder.group({}),
+      'playerGroup': [this.groupPlayerDetails ? this.groups.find(group => group.id === this.groupPlayerDetails.groupId).id : 'Not Registered'],
+      'school': [this.playerDetails ? this.playerDetails.school : ''],
+      'medicalConditions': [this.playerDetails ? this.playerDetails.medicalConditions : ''],
+      'contactName': [this.playerDetails ? this.playerDetails.contactName : ''],
+      'contactEmailAddress': [this.playerDetails ? this.playerDetails.contactEmailAddress : ''],
+      'contactMobileNumber': [this.playerDetails ? this.playerDetails.contactMobileNumber : ''],
+      'contactHomeNumber': [this.playerDetails ? this.playerDetails.contactHomeNumber : '']
     });
 
-    this.lastRegisteredDatePickerLabel = 'Registered Date';
     this.dateOfBirthPickerLabel = 'Date Of Birth';
+    this.registeredDatePickerLabel = 'Registered Date';
 
     setTimeout(() => {
-      if (this.groupPlayerDetails) {
-        let registeredDate = moment.utc(this.groupPlayerDetails.registeredDate)
-
-        this.playerForm.controls['lastRegisteredDatePicker'].patchValue({
-          datePickerTextBox: {
-            day: +registeredDate.format('D'),
-            month: +registeredDate.format('M'),
-            year: +registeredDate.format('YYYY')
-          }
-        });
-      }
-
       if (this.playerDetails) {
         let dateOfBirth = moment.utc(this.playerDetails.dateOfBirth)
 
@@ -90,6 +84,30 @@ export class PlayerFormComponent implements OnInit {
             year: +dateOfBirth.format('YYYY')
           }
         }); 
+      }
+
+      this.registeredDatePickerMinDate = { year: APP_SETTINGS.currentYear - 1, month: 1, day: 1 };
+      this.registeredDatePickerMaxDate = { year: APP_SETTINGS.currentYear + 1, month: 12, day: 31 };
+
+      if (APP_SETTINGS.currentYear !== (new Date()).getFullYear()) {
+        this.registeredDatePickerStartDate = { year: APP_SETTINGS.currentYear, month: 6 };      
+      }
+
+      if (this.groupPlayerDetails) {
+        let registeredDate = moment.utc(this.groupPlayerDetails.registeredDate)
+
+        this.playerForm.controls['registeredDatePicker'].patchValue({
+          datePickerTextBox: {
+            day: +registeredDate.format('D'),
+            month: +registeredDate.format('M'),
+            year: +registeredDate.format('YYYY')
+          }
+        });
+      }
+      else {
+        let registeredDatePicker: AbstractControl = this.playerForm.controls['registeredDatePicker'].get('datePickerTextBox');
+
+        registeredDatePicker.setValue('yyyy-MM-dd');
       }
     });
   }
@@ -159,12 +177,29 @@ export class PlayerFormComponent implements OnInit {
     this.playerDetails.addressLine1 = formValues.addressLine1;
     this.playerDetails.addressLine2 = formValues.addressLine2;
     this.playerDetails.addressLine3 = formValues.addressLine3;
+    
+    let dobPicker = formValues.lastRegisteredDatePicker.datePickerTextBox,
+        localeDateOfBirth = new Date(dobPicker.year, dobPicker.month - 1, dobPicker.day),
+        dateOfBirth = moment.utc(localeDateOfBirth).add(0 - localeDateOfBirth.getTimezoneOffset(), "m");
+    this.playerDetails.dateOfBirth = dateOfBirth.toISOString();
+
     this.playerDetails.school = formValues.school;
     this.playerDetails.medicalConditions = formValues.medicalConditions;
     this.playerDetails.contactName = formValues.contactName;
     this.playerDetails.contactEmailAddress = formValues.contactEmailAddress;
     this.playerDetails.contactMobileNumber = formValues.contactMobileNumber;
     this.playerDetails.contactHomeNumber = formValues.contactHomeNumber;
+
+    if (!this.groupPlayerDetails) {
+      this.groupPlayerDetails = (<IGroupPlayer>{});
+    }
+
+    this.groupPlayerDetails.groupId = formValues.playerGroup;
+
+    let rdPicker = formValues.lastRegisteredDatePicker.datePickerTextBox,
+        localeRegisteredDate = new Date(rdPicker.year, rdPicker.month - 1, rdPicker.day),
+        registeredDate = moment.utc(localeRegisteredDate).add(0 - localeRegisteredDate.getTimezoneOffset(), "m");
+    this.groupPlayerDetails.registeredDate = registeredDate.toISOString();
   }
 
   private disableControls(): void {
