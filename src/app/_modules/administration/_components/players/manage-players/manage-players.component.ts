@@ -7,9 +7,6 @@ import { ToasterService } from 'angular2-toaster';
 
 import * as moment from 'moment';
 
-import { NgbDateStruct} from '@ng-bootstrap/ng-bootstrap';
-
-import { APP_SETTINGS } from '../../../../../_helpers/app.initializer.helper';
 import { IPlayer, IPlayerSummary, IGroup } from '../../../../../_models/index';
 import { PlayersService, GroupsService } from '../../../../../_services/index';
 import { PlayerFormComponent } from '../player-form/player-form.component';
@@ -28,17 +25,9 @@ export class ManagePlayersComponent implements OnInit {
 
   currentState: FormState = FormState.SearchForPlayer;
 
-  // lastRegisteredDatePickerLabel: string;
-  // lastRegisteredDatePickerEnabled: boolean;
-  // lastRegisteredDatePickerMinDate: NgbDateStruct;
-  // lastRegisteredDatePickerMaxDate: NgbDateStruct;
-  // lastRegisteredDatePickerStartDate: any;
-
   groups: IGroup[] = null;
 
   matchedPlayers: IPlayerSummary[] = null;
-
-  //playerDetails: IPlayer = (<IPlayer>{});
 
   constructor(
     private modalService: NgbModal,
@@ -50,7 +39,7 @@ export class ManagePlayersComponent implements OnInit {
 
   ngOnInit() {
     this.managePlayersForm = this.formBuilder.group({
-      'dateOfBirthPicker': this.formBuilder.group({})
+      'dateOfBirth': ['', Validators.required]
     });
 
     this.groupsService.readGroups()
@@ -69,7 +58,7 @@ export class ManagePlayersComponent implements OnInit {
   }
 
   onSubmit(formValues: any) {
-    let dobPicker = formValues.dateOfBirthPicker.datePickerTextBox,
+    let dobPicker = formValues.dateOfBirth,
         localeDateOfBirth = new Date(dobPicker.year, dobPicker.month - 1, dobPicker.day),
         dateOfBirth = moment.utc(localeDateOfBirth).add(0 - localeDateOfBirth.getTimezoneOffset(), "m");
 
@@ -107,6 +96,9 @@ export class ManagePlayersComponent implements OnInit {
 
   onClickAddPlayer() {
     const modalRef: NgbModalRef = this.modalService.open(PlayerFormComponent, { size: 'lg', backdrop: 'static' });
+
+    modalRef.componentInstance.groups = this.groups;
+    //modalRef.componentInstance.playerState = playerSummary.playerState;
 
     modalRef.result
       .then(returnObject => {

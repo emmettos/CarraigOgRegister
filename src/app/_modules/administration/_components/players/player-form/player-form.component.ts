@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, AbstractControl } from '@angular/forms';
+import { Component, OnInit, AfterViewInit, Input, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
-import { NgbActiveModal, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbDatepicker, NgbDateStruct } from '@ng-bootstrap/ng-bootstrap';
 
 import * as moment from 'moment';
 
@@ -9,14 +9,13 @@ import { APP_SETTINGS } from '../../../../../_helpers';
 import { IPlayer, IGroup, IGroupPlayer } from '../../../../../_models/index';
 import { PlayersService } from '../../../../../_services/index';
 import { ValidationService } from '../../../../shared/_services/index';
-import { NgbPopoverWindow } from '@ng-bootstrap/ng-bootstrap/popover/popover';
 
 
 @Component({
   templateUrl: './player-form.component.html',
   styleUrls: ['./player-form.component.css']
 })
-export class PlayerFormComponent implements OnInit {
+export class PlayerFormComponent implements OnInit, AfterViewInit {
   @Input()
   playerDetails: IPlayer;
 
@@ -28,12 +27,8 @@ export class PlayerFormComponent implements OnInit {
 
   playerForm: FormGroup;
 
-  dateOfBirthPickerLabel: string;
-
-  registeredDatePickerLabel: string;
-  registeredDatePickerMinDate: NgbDateStruct;
-  registeredDatePickerMaxDate: NgbDateStruct;
-  registeredDatePickerStartDate: any;
+  @ViewChild('registeredDatePicker') 
+  registeredDatePicker: NgbDatepicker;
 
   editingPlayer: boolean = false;
   title = 'Add New Player';
@@ -59,9 +54,9 @@ export class PlayerFormComponent implements OnInit {
       'addressLine1': [this.playerDetails ? this.playerDetails.addressLine1 : ''],
       'addressLine2': [this.playerDetails ? this.playerDetails.addressLine2 : ''],
       'addressLine3': [this.playerDetails ? this.playerDetails.addressLine3 : ''],
-      'dateOfBirthPicker': this.formBuilder.group({}),
-      'registeredDatePicker': this.formBuilder.group({}),
-      'playerGroup': [this.groupPlayerDetails ? this.groups.find(group => group.id === this.groupPlayerDetails.groupId).id : 'Not Registered'],
+      'dateOfBirth': [''],
+      'registeredDate': [''],
+      'playerGroup': [this.groupPlayerDetails ? this.groups.find(group => group.id === this.groupPlayerDetails.groupId).id : 'Not Registered', this.validationService.groupValidator],
       'school': [this.playerDetails ? this.playerDetails.school : ''],
       'medicalConditions': [this.playerDetails ? this.playerDetails.medicalConditions : ''],
       'contactName': [this.playerDetails ? this.playerDetails.contactName : ''],
@@ -70,46 +65,34 @@ export class PlayerFormComponent implements OnInit {
       'contactHomeNumber': [this.playerDetails ? this.playerDetails.contactHomeNumber : '']
     });
 
-    this.dateOfBirthPickerLabel = 'Date Of Birth';
-    this.registeredDatePickerLabel = 'Registered Date';
+    if (this.playerDetails) {
+      let dateOfBirth = moment.utc(this.playerDetails.dateOfBirth)
 
-    setTimeout(() => {
-      if (this.playerDetails) {
-        let dateOfBirth = moment.utc(this.playerDetails.dateOfBirth)
+      this.playerForm.get('dateOfBirth').setValue({
+        day: +dateOfBirth.format('D'),
+        month: +dateOfBirth.format('M'),
+        year: +dateOfBirth.format('YYYY')
+      }); 
+    }
 
-        this.playerForm.controls['dateOfBirthPicker'].patchValue({
-          datePickerTextBox: {
-            day: +dateOfBirth.format('D'),
-            month: +dateOfBirth.format('M'),
-            year: +dateOfBirth.format('YYYY')
-          }
-        }); 
-      }
+    if (this.groupPlayerDetails) {
+      let registeredDate = moment.utc(this.groupPlayerDetails.registeredDate)
 
-      this.registeredDatePickerMinDate = { year: APP_SETTINGS.currentYear - 1, month: 1, day: 1 };
-      this.registeredDatePickerMaxDate = { year: APP_SETTINGS.currentYear + 1, month: 12, day: 31 };
+      this.playerForm.get('registeredDate').setValue({
+        day: +registeredDate.format('D'),
+        month: +registeredDate.format('M'),
+        year: +registeredDate.format('YYYY')
+      }); 
+    }
+  }
 
-      if (APP_SETTINGS.currentYear !== (new Date()).getFullYear()) {
-        this.registeredDatePickerStartDate = { year: APP_SETTINGS.currentYear, month: 6 };      
-      }
+  ngAfterViewInit() {
+    this.registeredDatePicker.minDate = { year: APP_SETTINGS.currentYear - 1, month: 1, day: 1 };
+    this.registeredDatePicker.maxDate = { year: APP_SETTINGS.currentYear + 1, month: 12, day: 31 };
 
-      if (this.groupPlayerDetails) {
-        let registeredDate = moment.utc(this.groupPlayerDetails.registeredDate)
-
-        this.playerForm.controls['registeredDatePicker'].patchValue({
-          datePickerTextBox: {
-            day: +registeredDate.format('D'),
-            month: +registeredDate.format('M'),
-            year: +registeredDate.format('YYYY')
-          }
-        });
-      }
-      else {
-        let registeredDatePicker: AbstractControl = this.playerForm.controls['registeredDatePicker'].get('datePickerTextBox');
-
-        registeredDatePicker.setValue('yyyy-MM-dd');
-      }
-    });
+    if (APP_SETTINGS.currentYear !== (new Date()).getFullYear()) {
+      this.registeredDatePicker.startDate = { year: APP_SETTINGS.currentYear, month: 6 };      
+    }
   }
  
   onClickCancel() {

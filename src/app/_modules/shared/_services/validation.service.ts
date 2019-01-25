@@ -12,7 +12,7 @@ export class ValidationService {
     this.validationMessages = {
       'invalidConfirmPassword': 'The Confirm Password does not match the Password',
       'invalidEmailAddress': 'Invalid email address',
-      'invalidDatePicker': 'This field is required',
+      //'invalidDatePicker': 'This field is required',
       'invalidGroup': 'Select a group',
       'invalidNewCoach': 'A coach with this email address already exists',
       'minlength': 'Minimum length [requiredLength]',

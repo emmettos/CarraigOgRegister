@@ -9,15 +9,30 @@
   <form [formGroup]="managePlayersForm" (ngSubmit)="onSubmit(managePlayersForm.value)" novalidate>
     <div class="row">
       <div class="form-group col-md-2 offset-md-4">
-        <app-date-picker  [parentGroup]="managePlayersForm.controls.dateOfBirthPicker" 
-                          [enabled]="true"
-                          (valueChange)="onDateOfBirthPickerChange($event)">
-        </app-date-picker>
+        <div class="input-group">
+          <input  type="text"
+                  id="date-of-birth" 
+                  formControlName="dateOfBirth"
+                  name="dateOfBirth"
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': managePlayersForm.controls.dateOfBirth.invalid && managePlayersForm.controls.dateOfBirth.touched}"
+                  placeholder="yyyy-MM-dd"
+                  ngbDatepicker 
+                  #dateOfBirthPicker="ngbDatepicker">
+          <div class="input-group-append">
+            <button type="button" 
+                    class="btn btn-outline-secondary" 
+                    (click)="dateOfBirthPicker.toggle()">
+              <i class="fa fa-calendar"></i>
+            </button>
+          </div>
+        </div>
+        <app-validation-message [control]="managePlayersForm.controls.dateOfBirth"></app-validation-message>
       </div>
       <div class="form-group col-md-2">
         <input  type="submit" 
                 class="btn btn-info" 
-                [disabled]="currentState !== formState.SearchForPlayer || managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').invalid"
+                [disabled]="currentState !== formState.SearchForPlayer || managePlayersForm.controls['dateOfBirth'].invalid"
                 value="Search Players">
       </div>
     </div>

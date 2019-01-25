@@ -59,41 +59,62 @@
                   placeholder="Address Line 3">
         </div>
         <div class="form-group col-md-3">
-          <input  class="form-control" 
-                  placeholder="yyyy-mm-dd"
-                  name="dp"
-                  ngbDatepicker 
-                  #d="ngbDatepicker">
-          <div class="input-group-append">
-            <button class="btn btn-outline-secondary calendar" (click)="d.toggle()" type="button"></button>
+          <label class="control-label" for="dateOfBirth">Date of Birth</label>
+          <div class="input-group">
+            <input  type="text"
+                    id="date-of-birth" 
+                    formControlName="dateOfBirth"
+                    name="dateOfBirth"
+                    class="form-control" 
+                    [ngClass]="{'is-invalid': playerForm.controls.dateOfBirth.invalid && playerForm.controls.dateOfBirth.touched}"
+                    placeholder="yyyy-MM-dd"
+                    ngbDatepicker 
+                    #dateOfBirthPicker="ngbDatepicker">
+            <div class="input-group-append">
+              <button type="button" 
+                      class="btn btn-outline-secondary" 
+                      (click)="dateOfBirthPicker.toggle()">
+                <i class="fa fa-calendar"></i>
+              </button>
+            </div>
           </div>
-<!--
-          <app-date-picker  [parentGroup]="playerForm.controls.dateOfBirthPicker" 
-                            [label]="dateOfBirthPickerLabel"
-                            [enabled]="true">
-          </app-date-picker>
--->
+          <app-validation-message [control]="playerForm.controls.dateOfBirth"></app-validation-message>
         </div>
       </div>
       <div class="row">
         <div class="form-group col-md-3 offset-md-1">
-          <app-date-picker  [parentGroup]="playerForm.controls.registeredDatePicker" 
-                            [label]="registeredDatePickerLabel"
-                            [enabled]="true"
-                            [minDate]="registeredDatePickerMinDate" 
-                            [maxDate]="registeredDatePickerMaxDate"
-                            [startDate]="registeredDatePickerStartDate">
-          </app-date-picker>
+          <label class="control-label" for="registeredDate">Date Registered</label>
+          <div class="input-group">
+            <input  type="text"
+                    id="registered-date" 
+                    formControlName="registeredDate"
+                    name="registeredDate"
+                    class="form-control" 
+                    [ngClass]="{'is-invalid': playerForm.controls.registeredDate.invalid && playerForm.controls.registeredDate.touched}"
+                    placeholder="yyyy-MM-dd"
+                    ngbDatepicker 
+                    #registeredDatePicker="ngbDatepicker">
+            <div class="input-group-append">
+              <button type="button" 
+                      class="btn btn-outline-secondary" 
+                      (click)="registeredDatePicker.toggle()">
+                <i class="fa fa-calendar"></i>
+              </button>
+            </div>
+          </div>
+          <app-validation-message [control]="playerForm.controls.registeredDate"></app-validation-message>
         </div>
         <div class="form-group col-md-4 offset-md-2">
           <label class="control-label" for="playerGroup">Group</label>
           <select id="player-group"
                   formControlName="playerGroup" 
                   name="playerGroup"
-                  class="form-control">
+                  class="form-control"
+                  [ngClass]="{'is-invalid': playerForm.controls.playerGroup.invalid && playerForm.controls.playerGroup.touched}">
             <option>Not Registered</option>
             <option [ngValue]="group.id" *ngFor="let group of groups">{{ group.name }}</option>
           </select>
+          <app-validation-message [control]="playerForm.controls.playerGroup"></app-validation-message>
         </div>
       </div>
       <div class="row">
@@ -179,3 +200,4 @@
 <p>Form values: {{ playerForm.value | json }}</p>
 <p>Form status: {{ playerForm.status }}</p>
 -->
+<p>RegisteredDate status: {{ playerForm.controls.registeredDate.invalid }}</p>
