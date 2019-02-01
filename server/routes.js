@@ -602,7 +602,24 @@ exports = module.exports = function (app, router) {
                   WHERE 
                     y2.year = $2))
             THEN 1
-            ELSE 2
+            WHEN EXISTS
+              (SELECT
+                gp1.id
+              FROM
+                groups_players AS gp1
+              INNER JOIN groups AS g1
+                ON gp1.group_id = g1.id
+              WHERE
+                gp1.player_id = p.id AND
+                g1.year_id = 
+                  (SELECT 
+                    y2.id 
+                  FROM 
+                    years AS y2 
+                  WHERE 
+                    y2.year = $3))
+            THEN 2
+            ELSE 3
           END AS player_state          
         FROM
           players AS p
@@ -732,6 +749,7 @@ exports = module.exports = function (app, router) {
 
         return row;
       })[0];
+
       if (groupPlayerResult.rows.length > 0) {
         returnMessage.body.groupPlayerDetails = groupPlayerResult.rows.map(row => {
           Object.defineProperty(row, 'groupId', Object.getOwnPropertyDescriptor(row, 'group_id'));
@@ -762,6 +780,363 @@ exports = module.exports = function (app, router) {
       else {
         returnMessage.body.groupPlayerDetails = null;
       }
+
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.post('/createPlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var playerDetails = request.body.playerDetails,
+          groupPlayerDetails = request.body.groupPlayerDetails,
+          sqlStatement = [],
+          fieldIndex = 0,
+          fieldNames = [],
+          fieldValues = [],
+          fieldPositionParams = [],
+          result = null,
+          returnMessage = {};
+
+      if (!(playerDetails && groupPlayerDetails)) {
+        throw new Error ('playerDetails and groupPlayerDetails not found in request');
+      }
+
+      const client = await app.pool.connect();
+
+      try {
+        await client.query('BEGIN')
+
+        sqlStatement.push('INSERT INTO public.players (');
+
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'firstName')) {
+          fieldNames.push('first_name');
+          fieldValues.push(playerDetails.firstName);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'surname')) {
+          fieldNames.push('surname');
+          fieldValues.push(playerDetails.surname);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine1')) {
+          fieldNames.push('address_line_1');
+          fieldValues.push(playerDetails.addressLine1);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine2')) {
+          fieldNames.push('address_line_2');
+          fieldValues.push(playerDetails.addressLine2);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine3')) {
+          fieldNames.push('address_line_3');
+          fieldValues.push(playerDetails.addressLine3);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'dateOfBirth')) {
+          fieldNames.push('date_of_birth');
+          fieldValues.push(playerDetails.dateOfBirth);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'medicalConditions')) {
+          fieldNames.push('medical_conditions');
+          fieldValues.push(playerDetails.medicalConditions);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'contactName')) {
+          fieldNames.push('contact_name');
+          fieldValues.push(playerDetails.contactName);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'contactMobileNumber')) {
+          fieldNames.push('contact_mobile_number');
+          fieldValues.push(playerDetails.contactMobileNumber);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'contactHomeNumber')) {
+          fieldNames.push('contact_home_number');
+          fieldValues.push(playerDetails.contactHomeNumber);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'contactEmailAddress')) {
+          fieldNames.push('contact_email_address');
+          fieldValues.push(playerDetails.contactEmailAddress);
+        }
+        if (Object.prototype.hasOwnProperty.call(playerDetails, 'school')) {
+          fieldNames.push('school');
+          fieldValues.push(playerDetails.school);
+        }
+
+        fieldNames.push('created_by');
+        fieldValues.push(request.payload.userProfile.ID);
+        fieldNames.push('created_date');
+        fieldValues.push(moment.utc().toISOString());
+
+        sqlStatement.push(fieldNames.join(',\n'));
+
+        sqlStatement.push(`)
+          VALUES (`);
+
+        for (fieldIndex = 1; fieldIndex <= fieldNames.length; fieldIndex++) { 
+          fieldPositionParams.push('$' + fieldIndex)  
+        }
+
+        sqlStatement.push(fieldPositionParams.join(',\n'));
+
+        sqlStatement.push(') RETURNING id');
+
+        result = await client.query(sqlStatement.join('\n'), fieldValues);
+
+        sqlStatement = [];
+        fieldIndex = 0;
+        fieldNames = [];
+        fieldValues = [];
+        fieldPositionParams = [];
+
+        sqlStatement.push('INSERT INTO public.groups_players (');
+
+        if (Object.prototype.hasOwnProperty.call(groupPlayerDetails, 'groupId')) {
+          fieldNames.push('group_id');
+          fieldValues.push(groupPlayerDetails.groupId);
+        }
+
+        fieldNames.push('player_id');
+        fieldValues.push(result.rows[0].id);
+
+        if (Object.prototype.hasOwnProperty.call(groupPlayerDetails, 'registeredDate')) {
+          fieldNames.push('registered_date');
+          fieldValues.push(groupPlayerDetails.registeredDate);
+        }
+
+        fieldNames.push('created_by');
+        fieldValues.push(request.payload.userProfile.ID);
+        fieldNames.push('created_date');
+        fieldValues.push(moment.utc().toISOString());
+
+        sqlStatement.push(fieldNames.join(',\n'));
+
+        sqlStatement.push(`)
+          VALUES (`);
+
+        for (fieldIndex = 1; fieldIndex <= fieldNames.length; fieldIndex++) { 
+          fieldPositionParams.push('$' + fieldIndex)  
+        }
+
+        sqlStatement.push(fieldPositionParams.join(',\n'));
+
+        sqlStatement.push(')');
+
+        result = await client.query(sqlStatement.join('\n'), fieldValues);
+        
+        await client.query('COMMIT')
+      } 
+      catch (error) {
+        await client.query('ROLLBACK')
+        throw error;
+      } 
+      finally {
+        client.release()
+      }
+
+      returnMessage.error = null;
+      returnMessage.body = {};
+
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.post('/updatePlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var playerDetails = request.body.playerDetails,
+          groupPlayerDetails = request.body.groupPlayerDetails,
+          sqlStatement = [],
+          setIndex = 0,
+          setStatements = [],
+          setValues = [],
+          result = null,
+          returnMessage = {};
+
+      if (!(playerDetails || groupPlayerDetails)) {
+        throw new Error ('playerDetails or groupPlayerDetails not found in request');
+      }
+
+      const client = await app.pool.connect();
+
+      try {
+        await client.query('BEGIN')
+
+        if (playerDetails) {
+          sqlStatement.push(`
+            UPDATE 
+              public.players
+            SET`);
+
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'firstName')) {
+            setStatements.push('first_name = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.firstName);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'surname')) {
+            setStatements.push('surname = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.surname);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine1')) {
+            setStatements.push('address_line_1 = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.addressLine1);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine2')) {
+            setStatements.push('address_line_2 = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.addressLine2);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine3')) {
+            setStatements.push('address_line_3 = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.addressLine3);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'dateOfBirth')) {
+            setStatements.push('date_of_birth = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.dateOfBirth);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'medicalConditions')) {
+            setStatements.push('medical_conditions = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.medicalConditions);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'contactName')) {
+            setStatements.push('contact_name = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.contactName);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'contactMobileNumber')) {
+            setStatements.push('contact_mobile_number = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.contactMobileNumber);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'contactHomeNumber')) {
+            setStatements.push('contact_home_number = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.contactHomeNumber);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'contactEmailAddress')) {
+            setStatements.push('contact_email_address = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.contactEmailAddress);
+          }
+          if (Object.prototype.hasOwnProperty.call(playerDetails, 'school')) {
+            setStatements.push('school = ($' + (++setIndex) + ')');
+            setValues.push(playerDetails.school);
+          }
+
+          setStatements.push('updated_by = ($' + (++setIndex) + ')');
+          setValues.push(request.payload.userProfile.ID);
+          setStatements.push('updated_date = ($' + (++setIndex) + ')');
+          setValues.push(moment.utc().toISOString());
+
+          sqlStatement.push(setStatements.join(',\n'));
+
+          sqlStatement.push(`
+            WHERE 
+              id = ` + playerDetails.id + ` AND
+              version = '` + playerDetails.version + `'`);
+
+          result = await client.query(sqlStatement.join('\n'), setValues);
+          
+          if (result.rowCount === 0) {
+            throw new Error('No player rows updated. Possible concurrency issue.')
+          }
+        }
+
+        if (groupPlayerDetails) {
+          if (!groupPlayerDetails.groupId) {
+            let fieldIndex = 0,
+                fieldNames = [],
+                fieldValues = [],
+                fieldPositionParams = [];
+
+            sqlStatement.push('INSERT INTO public.groups_players (');
+
+            if (Object.prototype.hasOwnProperty.call(groupPlayerDetails, 'groupId')) {
+              fieldNames.push('group_id');
+              fieldValues.push(groupPlayerDetails.groupId);
+            }
+
+            fieldNames.push('player_id');
+            fieldValues.push(result.rows[0].id);
+
+            if (Object.prototype.hasOwnProperty.call(groupPlayerDetails, 'registeredDate')) {
+              fieldNames.push('registered_date');
+              fieldValues.push(groupPlayerDetails.registeredDate);
+            }
+
+            fieldNames.push('created_by');
+            fieldValues.push(request.payload.userProfile.ID);
+            fieldNames.push('created_date');
+            fieldValues.push(moment.utc().toISOString());
+
+            sqlStatement.push(fieldNames.join(',\n'));
+
+            sqlStatement.push(`)
+              VALUES (`);
+
+            for (fieldIndex = 1; fieldIndex <= fieldNames.length; fieldIndex++) { 
+              fieldPositionParams.push('$' + fieldIndex)  
+            }
+
+            sqlStatement.push(fieldPositionParams.join(',\n'));
+
+            sqlStatement.push(')');
+          }
+          else {
+            sqlStatement = [];
+            setIndex = 0;
+            setStatements = [];
+            setValues = [];
+  
+            if (groupPlayerDetails.groupId !== -1) {
+              sqlStatement.push(`
+                UPDATE 
+                  public.groups_players
+                SET`);
+
+              if (Object.prototype.hasOwnProperty.call(groupPlayerDetails, 'groupId')) {
+                setStatements.push('group_id = ($' + (++setIndex) + ')');
+                setValues.push(groupPlayerDetails.groupId);
+              }
+              if (Object.prototype.hasOwnProperty.call(groupPlayerDetails, 'registeredDate')) {
+                setStatements.push('registered_date = ($' + (++setIndex) + ')');
+                setValues.push(groupPlayerDetails.registeredDate);
+              }
+
+              setStatements.push('updated_by = ($' + (++setIndex) + ')');
+              setValues.push(request.payload.userProfile.ID);
+              setStatements.push('updated_date = ($' + (++setIndex) + ')');
+              setValues.push(moment.utc().toISOString());
+    
+              sqlStatement.push(setStatements.join(',\n'));
+
+              sqlStatement.push(`
+                WHERE 
+                  id = ` + groupPlayerDetails.id + ` AND
+                  version = '` + groupPlayerDetails.version + `'`);
+            }
+            else {
+              sqlStatement.push(`
+                DELETE FROM 
+                  public.groups_players
+                WHERE 
+                  id = ` + groupPlayerDetails.id + ` AND
+                  version = '` + groupPlayerDetails.version + `'`);
+            }
+
+            result = await client.query(sqlStatement.join('\n'), setValues);
+            
+            if (result.rowCount === 0) {
+              throw new Error('No groups_players rows updated. Possible concurrency issue.')
+            }
+          }
+        }
+
+        await client.query('COMMIT')
+      } 
+      catch (error) {
+        await client.query('ROLLBACK')
+        throw error;
+      } 
+      finally {
+        client.release()
+      }
+
+      returnMessage.error = null;
+      returnMessage.body = {};
 
       response.status(200).json(returnMessage);
     }
@@ -815,122 +1190,6 @@ exports = module.exports = function (app, router) {
       returnMessage.body = {};
 
       returnMessage.body.coachGroups = coachGroups;
-
-      response.status(200).json(returnMessage);
-    }
-    catch (error) {
-      next(error);
-    }
-  });
-
-  router.post('/createPlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
-    try {
-      var groupDetails = request.body.groupDetails,
-          playerDetails = request.body.playerDetails,
-          newPlayer = new player(),
-          lastRegisteredDate = null,
-          savedPlayer = null, 
-          returnMessage = {};
-
-      newPlayer.dateOfBirth = new Date(playerDetails.dateOfBirth);
-      newPlayer.yearOfBirth = newPlayer.dateOfBirth.getFullYear();
-
-      newPlayer.firstName = playerDetails.firstName;
-      newPlayer.surname = playerDetails.surname;
-      newPlayer.addressLine1 = playerDetails.addressLine1;
-      newPlayer.addressLine2 = playerDetails.addressLine2;
-      newPlayer.addressLine3 = playerDetails.addressLine3;
-      newPlayer.addressLine4 = playerDetails.addressLine4;
-      newPlayer.medicalConditions = playerDetails.medicalConditions;
-      newPlayer.contactName = playerDetails.contactName;
-      newPlayer.contactHomeNumber = playerDetails.contactHomeNumber;
-      newPlayer.contactMobileNumber = playerDetails.contactMobileNumber;
-      newPlayer.contactEmailAddress = playerDetails.contactEmailAddress;
-      newPlayer.school = playerDetails.school;
-
-      lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
-      newPlayer.lastRegisteredDate = lastRegisteredDate;
-      newPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
-      newPlayer.registeredYears.push(newPlayer.lastRegisteredYear);
-
-      newPlayer.modifiedBy = request.payload.userProfile.ID;
-
-      savedPlayer = await newPlayer.save();
-
-      await group.findOneAndUpdate(
-          { 'year': groupDetails.year, 'yearOfBirth': groupDetails.yearOfBirth }, 
-          { 'lastUpdatedDate': new Date() });
-
-      returnMessage.error = null;
-      returnMessage.body = {};
-
-      returnMessage.body.player = savedPlayer.toObject();
-
-      response.status(200).json(returnMessage);
-    }
-    catch (error) {
-      next(error);
-    }
-  });
-
-  router.post('/updatePlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
-    try {
-      var groupDetails = request.body.groupDetails,
-          playerDetails = request.body.playerDetails,
-          lastRegisteredDate = null,
-          lastRegisteredYear = null,
-          foundPlayer = null,
-          updatedPlayer = null,
-          customError = null,
-          returnMessage = {};
-
-      foundPlayer = await player.findOne({ '_id': mongoose.Types.ObjectId(playerDetails._id), '__v': playerDetails.__v });
-
-      if (!foundPlayer) {
-        customError = new Error('Player not found');
-
-        customError.httpCode = 409;
-
-        throw customError;
-      }
-
-      foundPlayer.addressLine1 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine1') ? playerDetails.addressLine1 : foundPlayer.addressLine1;
-      foundPlayer.addressLine2 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine2') ? playerDetails.addressLine2 : foundPlayer.addressLine2;
-      foundPlayer.addressLine3 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine3') ? playerDetails.addressLine3 : foundPlayer.addressLine3;
-      foundPlayer.addressLine4 = Object.prototype.hasOwnProperty.call(playerDetails, 'addressLine4') ? playerDetails.addressLine4 : foundPlayer.addressLine4;
-      foundPlayer.medicalConditions = Object.prototype.hasOwnProperty.call(playerDetails, 'medicalConditions') ? playerDetails.medicalConditions : foundPlayer.medicalConditions;
-      foundPlayer.contactName = Object.prototype.hasOwnProperty.call(playerDetails, 'contactName') ? playerDetails.contactName : foundPlayer.contactName;
-      foundPlayer.contactHomeNumber = Object.prototype.hasOwnProperty.call(playerDetails, 'contactHomeNumber') ? playerDetails.contactHomeNumber : foundPlayer.contactHomeNumber;
-      foundPlayer.contactMobileNumber = Object.prototype.hasOwnProperty.call(playerDetails, 'contactMobileNumber') ? playerDetails.contactMobileNumber : foundPlayer.contactMobileNumber;
-      foundPlayer.contactEmailAddress = Object.prototype.hasOwnProperty.call(playerDetails, 'contactEmailAddress') ? playerDetails.contactEmailAddress : foundPlayer.contactEmailAddress;
-      foundPlayer.school = Object.prototype.hasOwnProperty.call(playerDetails, 'school') ? playerDetails.school : foundPlayer.school;
-
-      if (Object.prototype.hasOwnProperty.call(playerDetails, 'lastRegisteredDate')) {
-        lastRegisteredDate = new Date(playerDetails.lastRegisteredDate)
-        foundPlayer.lastRegisteredDate = lastRegisteredDate;
-        foundPlayer.lastRegisteredYear = lastRegisteredDate.getFullYear();
-
-        lastRegisteredYear = foundPlayer.registeredYears.find(function (item) {
-          return item === foundPlayer.lastRegisteredYear;
-        });
-        if (!lastRegisteredYear) {
-          foundPlayer.registeredYears.push(foundPlayer.lastRegisteredYear);
-        }
-      }
-
-      foundPlayer.modifiedBy = request.payload.userProfile.ID;
-      foundPlayer.increment();
-
-      updatedPlayer = await foundPlayer.save();
-
-      await group.findOneAndUpdate(
-        { 'year': groupDetails.year, 'yearOfBirth': groupDetails.yearOfBirth }, 
-        { 'lastUpdatedDate': new Date() });
-
-      returnMessage.error = null;
-      returnMessage.body = {};
-
-      returnMessage.body.player = updatedPlayer.toObject();
 
       response.status(200).json(returnMessage);
     }

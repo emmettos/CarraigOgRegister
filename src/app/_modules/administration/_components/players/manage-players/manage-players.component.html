@@ -18,7 +18,9 @@
                   [ngClass]="{'is-invalid': managePlayersForm.controls.dateOfBirth.invalid && managePlayersForm.controls.dateOfBirth.touched}"
                   placeholder="yyyy-MM-dd"
                   ngbDatepicker 
-                  #dateOfBirthPicker="ngbDatepicker">
+                  #dateOfBirthPicker="ngbDatepicker"
+                  (change)="onDateOfBirthChange()"
+                  (dateSelect)="onDateOfBirthPickerChange($event)">
           <div class="input-group-append">
             <button type="button" 
                     class="btn btn-outline-secondary" 
@@ -41,6 +43,7 @@
       <table id="players-table" class="table table-bordered table-striped table-hover select-row">
         <thead>
           <tr>
+            <th>Status</th>
             <th>Surname</th>
             <th>First Name</th>
             <th>Address Line 1</th>
@@ -50,7 +53,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let currentPlayer of matchedPlayers" (click)="onClickRow(currentPlayer)">
+          <tr *ngFor="let currentPlayer of matchedPlayers" [class.missing]="currentPlayer.playerState === playerState.Missing" (click)="onClickRow(currentPlayer)">
+            <td><span class="badge detail-badge" [ngClass]="playerStateCSSClass(currentPlayer)"> </span></td>
             <td>{{ currentPlayer.surname }}</td>
             <td>{{ currentPlayer.firstName }}</td>
             <td>{{ currentPlayer.addressLine1 }}</td>
@@ -79,150 +83,6 @@
       </div>
     </div>
   </form>
-<!-- 
-    <hr/>
-    <div class="row">
-      <div class="form-group col-md-2 offset-md-5">
-        <app-date-picker  [parentGroup]="managePlayersForm.controls.lastRegisteredDatePicker" 
-                          [label]="lastRegisteredDatePickerLabel"
-                          [enabled]="lastRegisteredDatePickerEnabled" 
-                          [minDate]="lastRegisteredDatePickerMinDate" 
-                          [maxDate]="lastRegisteredDatePickerMaxDate"
-                          [startDate]="lastRegisteredDatePickerStartDate">
-        </app-date-picker>
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-md-4 offset-md-2">
-        <label class="control-label" for="firstName">First Name</label>
-        <input  type="text" 
-                id="player-first-name"
-                formControlName="firstName" 
-                name="firstName" 
-                class="form-control" 
-                [ngClass]="{'is-invalid': managePlayersForm.controls.firstName.invalid && managePlayersForm.controls.firstName.touched}"
-                placeholder="First Name">
-        <app-validation-message [control]="managePlayersForm.controls.firstName"></app-validation-message>
-      </div>
-      <div class="form-group col-md-4">
-        <label class="control-label" for="surname">Surname</label>
-        <input  type="text" 
-                id="player-surname" 
-                formControlName="surname" 
-                name="surname" 
-                class="form-control" 
-                [ngClass]="{'is-invalid': managePlayersForm.controls.surname.invalid && managePlayersForm.controls.surname.touched}"
-                placeholder="Surname">
-        <app-validation-message [control]="managePlayersForm.controls.surname"></app-validation-message>
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-md-4 offset-md-2">
-        <label class="control-label" for="addressLine1">Address Line 1</label>
-        <input  type="text" 
-                id="player-address-line1"
-                formControlName="addressLine1" 
-                name="addressLine1" 
-                class="form-control" 
-                [ngClass]="{'is-invalid': managePlayersForm.controls.addressLine1.invalid && managePlayersForm.controls.addressLine1.touched}"
-                placeholder="Address Line 1">
-        <app-validation-message [control]="managePlayersForm.controls.addressLine1"></app-validation-message>
-      </div>
-      <div class="form-group col-md-4">
-        <label class="control-label" for="addressLine2">Address Line 2</label>
-        <input  type="text" 
-                id="player-address-line2"
-                formControlName="addressLine2" name="addressLine2" 
-                class="form-control" 
-                placeholder="Address Line 2">
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-md-4 offset-md-2">
-        <label class="control-label" for="addressLine3">Address Line 3</label>
-        <input  type="text" 
-                id="player-address-line3"
-                formControlName="addressLine3" 
-                name="addressLine3" 
-                class="form-control" 
-                placeholder="Address Line 3">
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-md-5 offset-md-2">
-        <label class="control-label" for="medicalConditions">Medical Conditions</label>
-        <input  type="text"
-                id="player-medical-conditions" 
-                formControlName="medicalConditions" 
-                name="medicalConditions" 
-                class="form-control" 
-                placeholder="Medical Conditions">
-      </div>
-      <div class="form-group col-md-3">
-        <label class="control-label" for="school">School</label>
-        <input  type="text" 
-                id="player-school"
-                formControlName="school" 
-                name="school" 
-                class="form-control" 
-                placeholder="School">
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-md-4 offset-md-2">
-        <label class="control-label" for="contactName">Contact Name</label>
-        <input  type="text" 
-                id="contact-name"
-                formControlName="contactName" 
-                name="contactName" 
-                class="form-control" 
-                placeholder="Contact Name">
-      </div>
-      <div class="form-group col-md-4">
-        <label class="control-label" for="contactEmailAddress">Contact Email Address</label>
-        <input  type="text" 
-                id="contact-email-address"
-                formControlName="contactEmailAddress" 
-                name="contactEmailAddress" 
-                class="form-control" 
-                placeholder="Contact Email Address">
-      </div>
-    </div>
-    <div class="row">
-      <div class="form-group col-md-4 offset-md-2">
-        <label class="control-label" for="contactMobileNumber">Contact Mobile Number</label>
-        <input  type="text" 
-                id="contact-mobile-number"
-                formControlName="contactMobileNumber" 
-                name="contactMobileNumber" 
-                class="form-control" 
-                placeholder="Contact Mobile Number">
-      </div>
-      <div class="form-group col-md-4">
-        <label class="control-label" for="contactHomeNumber">Contact Home Number</label>
-        <input  type="text" 
-                id="contact-home-number"
-                formControlName="contactHomeNumber" 
-                name="contactHomeNumber" 
-                class="form-control" 
-                placeholder="Contact Home Number">
-      </div>
-    </div>
-    <div class="row mb-3">
-      <div class="col-md-2 offset-md-5">
-        <input  type="button" 
-                id="reset" 
-                class="btn btn-info mr-3" 
-                (click)="onReset()" 
-                [disabled]="!(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer)"
-                value="Reset">
-        <input  type="submit" 
-                class="btn btn-info" 
-                [disabled]="managePlayersForm.invalid || !(currentState === formState.AddPlayer || currentState === formState.PlayersListed || currentState === formState.EditPlayer)"
-                value="Save">
-      </div>
-    </div> 
--->
 </div>
 <!--
 <p>Form values: {{ managePlayersForm.value | json }}</p>

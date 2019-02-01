@@ -141,6 +141,7 @@ describe('ManageCoachesComponent', () => {
           ]
         }  
       }));
+      
     spyOn(toasterService, 'pop');
 
     fixture.detectChanges();

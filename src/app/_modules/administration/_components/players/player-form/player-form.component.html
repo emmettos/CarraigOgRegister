@@ -1,5 +1,5 @@
 <!-- Most id's are used for unit testing -->
-<div class="modal-header">
+<div class="modal-header" [ngClass]="playerFormHeaderCSSClass()">
   <h4 id="title" class="modal-title">{{ title }}</h4>
 </div>
 <div class="modal-body">
@@ -93,7 +93,9 @@
                     [ngClass]="{'is-invalid': playerForm.controls.registeredDate.invalid && playerForm.controls.registeredDate.touched}"
                     placeholder="yyyy-MM-dd"
                     ngbDatepicker 
-                    #registeredDatePicker="ngbDatepicker">
+                    #registeredDatePicker="ngbDatepicker"
+                    (change)="onRegisteredDateChange()"
+                    (dateSelect)="onRegisteredDatePickerChange($event)">
             <div class="input-group-append">
               <button type="button" 
                       class="btn btn-outline-secondary" 
@@ -110,8 +112,9 @@
                   formControlName="playerGroup" 
                   name="playerGroup"
                   class="form-control"
-                  [ngClass]="{'is-invalid': playerForm.controls.playerGroup.invalid && playerForm.controls.playerGroup.touched}">
-            <option>Not Registered</option>
+                  [ngClass]="{'is-invalid': playerForm.controls.playerGroup.invalid && playerForm.controls.playerGroup.touched}"
+                  (change)="onGroupChange($event.target.value)">
+            <option value="0">Not Registered</option>
             <option [ngValue]="group.id" *ngFor="let group of groups">{{ group.name }}</option>
           </select>
           <app-validation-message [control]="playerForm.controls.playerGroup"></app-validation-message>
@@ -200,4 +203,3 @@
 <p>Form values: {{ playerForm.value | json }}</p>
 <p>Form status: {{ playerForm.status }}</p>
 -->
-<p>RegisteredDate status: {{ playerForm.controls.registeredDate.invalid }}</p>

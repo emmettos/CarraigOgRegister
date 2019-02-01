@@ -11,18 +11,6 @@ describe('ValidationService', () => {
     service = new ValidationService();
   });
 
-  it('should validate valid date picker', () => {
-    formControl.setValue('2018-08-31');
-
-    expect(service.datePickerValidator(formControl)).toBeNull();
-  });
-
-  it('should validate invalid date picker', () => {
-    formControl.setValue('yyyy-MM-dd');
-
-    expect(service.datePickerValidator(formControl)).toEqual({ 'invalidDatePicker': true });
-  });
-
   it('should validate valid email', () => {
     formControl.setValue('test@gmail.com');
 
@@ -35,17 +23,17 @@ describe('ValidationService', () => {
     expect(service.emailValidator(formControl)).toEqual({ 'invalidEmailAddress': true });
   });
 
-  it('should validate valid group year', () => {
-    formControl.setValue('2009');
+  // it('should validate valid group year', () => {
+  //   formControl.setValue('2009');
 
-    expect(service.groupYearValidator(formControl)).toBeNull();
-  });
+  //   expect(service.groupYearValidator(formControl)).toBeNull();
+  // });
 
-  it('should validate invalid group year', () => {
-    formControl.setValue('Select Year');
+  // it('should validate invalid group year', () => {
+  //   formControl.setValue('Select Year');
 
-    expect(service.groupYearValidator(formControl)).toEqual({ 'invalidGroupYear': true });
-  });
+  //   expect(service.groupYearValidator(formControl)).toEqual({ 'invalidGroupYear': true });
+  // });
 
   it('should validate valid password match', () => {
     let passwordMatchControl = new FormControl();

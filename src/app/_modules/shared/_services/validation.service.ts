@@ -12,20 +12,13 @@ export class ValidationService {
     this.validationMessages = {
       'invalidConfirmPassword': 'The Confirm Password does not match the Password',
       'invalidEmailAddress': 'Invalid email address',
-      //'invalidDatePicker': 'This field is required',
       'invalidGroup': 'Select a group',
       'invalidNewCoach': 'A coach with this email address already exists',
       'minlength': 'Minimum length [requiredLength]',
+      'ngbDate': 'Invalid date/Out of range',
+      'invalidDate': 'Invalid date/Out of range',
       'required': 'This field is required'
     };  
-  }
-
-  datePickerValidator(control: FormControl): {[key: string]: any} {
-    if (control.value && control.value !== 'yyyy-MM-dd') {
-      return null;
-    }
-      
-    return { 'invalidDatePicker': true };
   }
 
   emailValidator(control: FormControl): {[key: string]: any} {
@@ -37,8 +30,27 @@ export class ValidationService {
     return { 'invalidEmailAddress': true };
   }
 
+  datePickerValidator(control: FormControl): {[key: string]: any} {
+    // We allow a null date to be a valid date - the NgbInputDatepicker doesn't.
+    if (!control.value) {
+      return null;
+    }
+
+    if (typeof control.value === 'object' && control.value.constructor === Object) {
+      let controlDate: Date = new Date(control.value.year, control.value.month - 1, control.value.day);
+
+      if ((control['minDate'] && controlDate < control['minDate']) || (control['maxDate'] && controlDate > control['maxDate'])) {
+        return { 'invalidDate': true };
+      }
+
+      return null;
+    }
+
+    return { 'invalidDate': true };
+  }
+
   groupValidator(control: FormControl): {[key: string]: any} {
-    if (control.value !== 'Not Registered') {
+    if (control.value !== '0') {
       return null;
     }
       

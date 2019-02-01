@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
-import { IPlayer } from '../_models';
+import { IPlayer, IGroupPlayer } from '../_models';
 
 
 @Injectable()
@@ -25,28 +25,22 @@ export class PlayersService {
     return this.http.get<any>('/api/playerDetails/' + playerId);
   }
 
-  updatePlayer(playerDetails: IPlayer, year: number, yearOfBirth: number): Observable<any> {
+  createPlayer(playerDetails: IPlayer, groupPlayerDetails: IGroupPlayer): Observable<any> {
     let postData = {};
 
-    postData['groupDetails'] = {};
-    postData['groupDetails']['year'] = year;
-    postData['groupDetails']['yearOfBirth'] = yearOfBirth;
-    
     postData['playerDetails'] = playerDetails;
-
-    return this.http.post("/api/updatePlayer", postData);
-  }
-
-  createPlayer(playerDetails: IPlayer, year: number, yearOfBirth: number): Observable<any> {
-    let postData = {};
-
-    postData['groupDetails'] = {};
-    postData['groupDetails']['year'] = year;
-    postData['groupDetails']['yearOfBirth'] = yearOfBirth;
-    
-    postData['playerDetails'] = playerDetails;
+    postData['groupPlayerDetails'] = groupPlayerDetails;
 
     return this.http.post("/api/createPlayer", postData);    
+  }
+
+  updatePlayer(playerDetails: IPlayer, groupPlayerDetails: IGroupPlayer): Observable<any> {
+    let postData = {};
+
+    postData['playerDetails'] = playerDetails;
+    postData['groupPlayerDetails'] = groupPlayerDetails;
+
+    return this.http.post("/api/updatePlayer", postData);    
   }
 
   downloadCSV(csvPlayers: any[]) {

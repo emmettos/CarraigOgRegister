@@ -54,19 +54,6 @@ describe('AlertService', () => {
     service.error('Error Header', 'Error message');
   });
 
-  it('should fire success event', () => {
-    service.getAlertStream.subscribe(
-      alert => {
-        expect(alert).toEqual({
-          type: 'success', 
-          title: 'Success Header', 
-          text: 'Success message'
-        });
-      });
-
-    service.success('Success Header', 'Success message');
-  });
-
   it('should clear alert after navigation change', fakeAsync(() => {
     let localAlert: any = null;
 
@@ -90,7 +77,7 @@ describe('AlertService', () => {
         localAlert = alert;
       });
 
-    service.success('Success Header', 'Success message', true);
+    service.error('Error Header', 'Error message');
 
     router.navigate(['/home']);
 
@@ -109,7 +96,7 @@ describe('AlertService', () => {
         localAlert = alert;
       });
 
-    service.success('Success Header', 'Success message', true);
+    service.error('Error Header', 'Error message');
 
     router.navigate(['/home']);
     tick();

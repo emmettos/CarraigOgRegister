@@ -4,8 +4,8 @@ export interface IGroup {
   yearId: number;
   yearOfBirth: number;
   name: string;
-  footballCoachId: string;
-  hurlingCoachId: string;
+  footballCoachId: number;
+  hurlingCoachId: number;
 
   createdBy: string;
   createdDate: string;

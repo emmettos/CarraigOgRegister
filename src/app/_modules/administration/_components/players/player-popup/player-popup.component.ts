@@ -11,31 +11,20 @@ import {
   templateUrl: './player-popup.component.html',
   styleUrls: ['./player-popup.component.css']
 })
-export class PlayerPopupComponent implements OnInit {
+export class PlayerPopupComponent {
   @Input()
   playerDetails: IPlayer;
-
-  @Input()
-  groupPlayerDetails: IGroupPlayer;
 
   @Input()
   playerState: PlayerState;
 
   @Input()
-  group: IGroupSummary;
-
   groupName: string;
 
-  constructor() {
-  }
+  @Input()
+  lastRegisteredDate: string;
 
-  ngOnInit() {
-    if (this.group) {
-      this.groupName = this.group.name;
-    }
-    else {
-      this.groupName = "No current group"
-    }
+  constructor() {
   }
 
   playerPopupHeaderCSSClass() {
@@ -45,7 +34,10 @@ export class PlayerPopupComponent implements OnInit {
         CSSClass = 'bg-success';
     }
     else if (this.playerState === PlayerState.Missing) {
-        CSSClass = 'bg-warning';               
+        CSSClass = 'bg-warning';
+    }
+    else if (this.playerState === PlayerState.Gone) {
+      CSSClass = 'bg-error';
     }
 
     return CSSClass;
@@ -59,6 +51,9 @@ export class PlayerPopupComponent implements OnInit {
     }
     else if (this.playerState === PlayerState.Missing) {
         CSSClass = 'bg-warning-light';
+    }
+    else if (this.playerState === PlayerState.Gone) {
+      CSSClass = 'bg-error-light';
     }
 
     return CSSClass;

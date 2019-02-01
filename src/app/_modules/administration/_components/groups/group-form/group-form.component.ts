@@ -29,17 +29,17 @@ export class GroupFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    let footballCoach = this.coaches.find(coach => {
-      return coach.emailAddress === this.groupDetails.footballCoachId;
-    });
-    let hurlingCoach = this.coaches.find(coach => {
-      return coach.emailAddress === this.groupDetails.hurlingCoachId;
-    });
+    // let footballCoach = this.coaches.find(coach => {
+    //   return coach.emailAddress === this.groupDetails.footballCoachId;
+    // });
+    // let hurlingCoach = this.coaches.find(coach => {
+    //   return coach.emailAddress === this.groupDetails.hurlingCoachId;
+    // });
  
-    this.groupForm = this.formBuilder.group({
-      'footballCoach': [footballCoach ? footballCoach.emailAddress : ''],
-      'hurlingCoach': [hurlingCoach ? hurlingCoach.emailAddress : '']
-    });
+    // this.groupForm = this.formBuilder.group({
+    //   'footballCoach': [footballCoach ? footballCoach.emailAddress : ''],
+    //   'hurlingCoach': [hurlingCoach ? hurlingCoach.emailAddress : '']
+    // });
   }
  
   onClickCancel() {

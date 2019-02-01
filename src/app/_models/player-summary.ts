@@ -20,5 +20,6 @@ export interface IPlayerSummary {
 export enum PlayerState {
   Existing,
   New,
-  Missing
+  Missing,
+  Gone
 }
