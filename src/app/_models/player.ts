@@ -19,5 +19,5 @@ export interface IPlayer {
   updatedDate: string;
   updatedBy: string;
 
-  version: number;
+  version: string;
 }

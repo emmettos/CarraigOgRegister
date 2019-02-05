@@ -216,66 +216,6 @@ describe('PlayerFormComponent', () => {
   //   expect(component.coachForm.controls['surname'].invalid).toBeFalsy();
   // });
 
-  // it('should validate blank email', () => {
-  //   fixture.detectChanges();
-
-  //   component.coachForm.controls['emailAddress'].setValue('');
-  //   expect(component.coachForm.controls['emailAddress'].invalid).toBeTruthy();
-  // });
-
-  // it('should validate invalid email', () => {
-  //   fixture.detectChanges();
-
-  //   component.coachForm.controls['emailAddress'].setValue('badaddress');
-  //   expect(component.coachForm.controls['emailAddress'].invalid).toBeTruthy();
-  // });
-
-  // it('should validate existing coach email', () => {
-  //   component['currentCoaches'] = [
-  //     {
-  //       '_id': '6293c9a83fd22e7fa8e66d3f',
-  //       'firstName': 'Erick',
-  //       'surname': 'Norris',
-  //       'emailAddress': 'erick_norris@carraigog.com',
-  //       'phoneNumber': '086 6095372',
-  //       'isAdministrator': true,
-  //       'createdBy': 'script',
-  //       'createdDate': '2017-03-15T13:43:51.268Z',
-  //       'updatedDate': '2018-05-09T09:55:59.735Z',
-  //       'updatedBy': 'admin@carraigog.com',
-  //       '__v': 0,
-  //       'active': true,
-  //       'currentSessionOwner': false
-  //     }
-  //   ]
-
-  //   fixture.detectChanges();
-
-  //   component.coachForm.controls['emailAddress'].setValue('erick_norris@carraigog.com');
-  //   expect(component.coachForm.controls['emailAddress'].invalid).toBeTruthy();
-  // });
-
-  // it('should validate valid email', () => {
-  //   fixture.detectChanges();
-
-  //   component.coachForm.controls['emailAddress'].setValue('user@test.com');
-  //   expect(component.coachForm.controls['emailAddress'].invalid).toBeFalsy();
-  // });
-
-  // it('should initialize email address group to be visible', () => {
-  //   fixture.detectChanges();
-
-  //   expect(fixture.nativeElement.querySelector('#email-address-group').hidden).toBeFalsy();  
-  // });
-
-  // it('should initialize email address group to be hidden', () => {
-  //   component['coachDetails'] = coachDetails;
-
-  //   fixture.detectChanges();
-
-  //   expect(fixture.nativeElement.querySelector('#email-address-group').hidden).toBeTruthy();  
-  // });
-
   // it('should disable submit button for invalid form', () => {
   //   fixture.detectChanges();
 

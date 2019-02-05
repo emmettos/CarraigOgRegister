@@ -64,20 +64,17 @@ describe('GroupsService', () => {
 
   it('should pass request body for update group', () => {
     let group: IGroup = {
-      '_id': 'dfe674827f95ff37765ba0fc',
-      'year': 2018,
+      'id': 1,
+      'yearId': 1,
       'name': 'Under 10',
       'yearOfBirth': 2008,
-      'footballCoach': 'angel_klein@carraigog.com',
-      'hurlingCoach': 'heddwyn_cunningham@carraigog.com',
-      'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
+      'footballCoachId': 1,
+      'hurlingCoachId': 2,
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-02-27T15:57:21.582Z',
       'updatedBy': 'admin@carraigog.com',
-      '__v': 0,
-      'footballCoachFullName': 'Angel Klein',
-      'hurlingCoachFullName': 'Heddwyn Cunningham'
+      'version': '2018-02-27T15:57:21.582Z'
     };
 
     service.updateGroup(group)
@@ -87,21 +84,18 @@ describe('GroupsService', () => {
 
     expect(mockRequest.request.body).toEqual({
       groupDetails: {
-        '_id': 'dfe674827f95ff37765ba0fc',
-        'year': 2018,
+        'id': 1,
+        'yearId': 1,
         'name': 'Under 10',
         'yearOfBirth': 2008,
-        'footballCoach': 'angel_klein@carraigog.com',
-        'hurlingCoach': 'heddwyn_cunningham@carraigog.com',
-        'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
+        'footballCoachId': 1,
+        'hurlingCoachId': 2,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-27T15:57:21.582Z',
         'updatedBy': 'admin@carraigog.com',
-        '__v': 0,
-        'footballCoachFullName': 'Angel Klein',
-        'hurlingCoachFullName': 'Heddwyn Cunningham'
-        }
+        'version': '2018-02-27T15:57:21.582Z'
+      }
     });
 
     mockRequest.flush(null);

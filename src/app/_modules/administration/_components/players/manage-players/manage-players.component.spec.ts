@@ -3,7 +3,11 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+
 import { of, asyncScheduler } from 'rxjs';
+
+import { ToasterModule, ToasterService } from 'angular2-toaster';
 
 import { IPlayer, IPlayerSummary, IGroup } from '../../../../../_models/index';
 import { PlayersService, GroupsService } from '../../../../../_services';
@@ -12,12 +16,15 @@ import { ValidationService } from '../../../../../_modules/shared/_services';
 import { ManagePlayersComponent } from './manage-players.component';
 
 
-describe('ManagePlayersComponent', () => {
+fdescribe('ManagePlayersComponent', () => {
   let component: ManagePlayersComponent;
   let fixture: ComponentFixture<ManagePlayersComponent>;
 
   let playersService: PlayersService,
-      groupsService: GroupsService;
+      groupsService: GroupsService,
+      toasterService: ToasterService;
+
+  let groups: IGroup[];
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -26,12 +33,15 @@ describe('ManagePlayersComponent', () => {
       ],
       imports: [
         HttpClientTestingModule,
-        ReactiveFormsModule
+        ReactiveFormsModule,
+        NgbModule.forRoot(),
+        ToasterModule.forRoot()
       ],
       providers: [
         PlayersService,
         GroupsService,
-        ValidationService
+        ValidationService,
+        ToasterService
       ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
@@ -44,12 +54,63 @@ describe('ManagePlayersComponent', () => {
 
     playersService = TestBed.get(PlayersService);
     groupsService = TestBed.get(GroupsService);
+    toasterService = TestBed.get(ToasterService);
+
+    groups = [
+      {
+        'id': 3,
+        'yearId': 1,
+        'name': 'Under 8',
+        'yearOfBirth': 2010,
+        'footballCoachId': 5,
+        'hurlingCoachId': 6,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-02-27T15:57:21.582Z',
+        'updatedBy': 'admin@carraigog.com',
+        'version': '2018-02-27T15:57:21.582Z'
+      },
+      {
+        'id': 2,
+        'yearId': 1,
+        'name': 'Under 9',
+        'yearOfBirth': 2009,
+        'footballCoachId': 3,
+        'hurlingCoachId': 4,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-02-27T15:57:21.582Z',
+        'updatedBy': 'admin@carraigog.com',
+        'version': '2018-02-27T15:57:21.582Z'
+      },
+      {
+        'id': 1,
+        'yearId': 1,
+        'name': 'Under 10',
+        'yearOfBirth': 2008,
+        'footballCoachId': 1,
+        'hurlingCoachId': 2,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedDate': '2018-02-27T15:57:21.582Z',
+        'updatedBy': 'admin@carraigog.com',
+        'version': '2018-02-27T15:57:21.582Z'
+      },
+    ];
+
+    spyOn(toasterService, 'pop');
   });
 
   it('should create', () => {
     fixture.detectChanges();
 
     expect(component).toBeTruthy();
+  });
+
+  it('should initialize date of birth field', () => {
+    fixture.detectChanges();
+
+    expect(component.managePlayersForm.controls['dateOfBirth'].value).toEqual('');
   });
 
   it('should call groupsService.readGroups', () => {
@@ -66,75 +127,171 @@ describe('ManagePlayersComponent', () => {
     expect(groupsService.readGroups).toHaveBeenCalled();
   });
 
-  // it('should initialize date of birth field', () => {
-  //   //   expect(component.coachForm.controls['phoneNumber'].value).toEqual('');
-  // });
+  it('should display no groups warning popup', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': []
+        }
+      }));
 
-  // it('should initialize submit button', () => {
-  //   expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();
-  // });
+    fixture.detectChanges();
 
-  // it('should initialize search results panel', () => {
-  //   expect(fixture.nativeElement.querySelector('#message-panel > p').hidden).toBeFalsy();  
-  // });
+    expect(toasterService.pop).toHaveBeenCalledWith('warning', 'No Groups Found', 'Please add some groups');
+  });
 
-  // it('should update form value', () => {
-  //   component.dateOfBirthPickerEnabled = true;
-  //   fixture.detectChanges();
+  it('should disable date of birth field for no groups', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': []
+        }
+      }));
+      
+    fixture.detectChanges();
 
-  //   component.managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').setValue({
-  //     year: 2010,
-  //     month: 7,
-  //     day: 3});
+    expect(component.managePlayersForm.controls['dateOfBirth'].disabled).toBeTruthy();
+  });
 
-  //   component.lastRegisteredDatePickerEnabled = true;
-  //   fixture.detectChanges();
+  it('should set date of birth picker min date', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
 
-  //   component.managePlayersForm.controls['firstName'].enable()
-  //   component.managePlayersForm.controls['surname'].enable();
-  //   component.managePlayersForm.controls['addressLine1'].enable();
-  //   component.managePlayersForm.controls['addressLine2'].enable();
-  //   component.managePlayersForm.controls['addressLine3'].enable();
-  //   component.managePlayersForm.controls['medicalConditions'].enable();
-  //   component.managePlayersForm.controls['school'].enable();
-  //   component.managePlayersForm.controls['contactName'].enable();
-  //   component.managePlayersForm.controls['contactEmailAddress'].enable();
-  //   component.managePlayersForm.controls['contactMobileNumber'].enable();
-  //   component.managePlayersForm.controls['contactHomeNumber'].enable()
+    fixture.detectChanges();
 
-  //   component.managePlayersForm.controls['lastRegisteredDatePicker'].get('datePickerTextBox').setValue({
-  //     year: 2018,
-  //     month: 10,
-  //     day: 18});
-  //   component.managePlayersForm.controls['firstName'].setValue('Test');
-  //   component.managePlayersForm.controls['surname'].setValue('Player');
-  //   component.managePlayersForm.controls['addressLine1'].setValue('Address Line 1');
-  //   component.managePlayersForm.controls['addressLine2'].setValue('Address Line 2');
-  //   component.managePlayersForm.controls['addressLine3'].setValue('Address Line 3');
-  //   component.managePlayersForm.controls['medicalConditions'].setValue('None');
-  //   component.managePlayersForm.controls['school'].setValue('Test School');
-  //   component.managePlayersForm.controls['contactName'].setValue('Test Parent');
-  //   component.managePlayersForm.controls['contactEmailAddress'].setValue('parent@test.com');
-  //   component.managePlayersForm.controls['contactMobileNumber'].setValue('08712345678');
-  //   component.managePlayersForm.controls['contactHomeNumber'].setValue('02187654321');
+    expect(component.dateOfBirthPicker.minDate).toEqual({ year: 2007, month: 1, day: 1 });
+  });
 
-  //   expect(component.managePlayersForm.value).toEqual({
-  //     'groupYear': 'Select Year',
-  //     'dateOfBirthPicker': Object({ datePickerTextBox: Object({ year: 2010, month: 7, day: 3 }) }),
-  //     'lastRegisteredDatePicker': Object({ datePickerTextBox: Object({ year: 2018, month: 10, day: 18 }) }),
-  //     'firstName': 'Test',
-  //     'surname': 'Player',
-  //     'addressLine1': 'Address Line 1',
-  //     'addressLine2': 'Address Line 2',
-  //     'addressLine3': 'Address Line 3',
-  //     'school': 'Test School',
-  //     'medicalConditions': 'None',
-  //     'contactName': 'Test Parent',
-  //     'contactEmailAddress': 'parent@test.com',
-  //     'contactMobileNumber': '08712345678',
-  //     'contactHomeNumber': '02187654321' 
-  //   });
-  // });
+  it('should set date of birth picker max date', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    expect(component.dateOfBirthPicker.maxDate).toEqual({ year: 2010, month: 12, day: 31 });
+  });
+
+  it('should set date of birth picker start date', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    expect(component.dateOfBirthPicker.startDate).toEqual({ year: 2009, month: 6 });
+  });
+
+  it('should initialize submit button', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();
+  });
+
+  it('should initialize search results panel', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#message-panel > p').hidden).toBeFalsy();  
+  });
+
+  it('should update form value', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    component.managePlayersForm.controls['dateOfBirth'].setValue({ year: 2010, month: 7, day: 3});
+
+    fixture.detectChanges();
+
+    expect(component.managePlayersForm.value).toEqual({
+      'dateOfBirth': Object({ year: 2010, month: 7, day: 3 })
+    });
+  });
+
+  it('should validate invalid date of birth', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    component.managePlayersForm.controls['dateOfBirth'].setValue('ddd');
+
+    expect(component.managePlayersForm.controls['dateOfBirth'].invalid).toBeTruthy();
+  });
+
+  it('should validate empty date of birth', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    component.managePlayersForm.controls['dateOfBirth'].setValue('');
+
+    expect(component.managePlayersForm.controls['dateOfBirth'].invalid).toBeTruthy();
+  });
+
+  it('should validate valid date of birth', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    component.managePlayersForm.controls['dateOfBirth'].setValue({ year: 2010, month: 7, day: 3});
+
+    expect(component.managePlayersForm.controls['dateOfBirth'].invalid).toBeFalsy();
+  });
 
   // it('should disable search players button for invalid date of birth', () => {
   //   component.onChangeGroupYear('2009');
@@ -288,115 +445,6 @@ describe('ManagePlayersComponent', () => {
 
   //   expect(component.playerDetails._id).toEqual('6e748e8723733e96603618cb');  
   // });
-
-  // it('should display editing player message after selecting a player to edit', () => {
-  //   component.onChangeGroupYear('2009');
-
-  //   component.managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').setValue({
-  //     year: 2009,
-  //     month: 9,
-  //     day: 1});
-
-  //   fixture.detectChanges();
-
-  //   component.onSearchPlayers();
-
-  //   fixture.detectChanges();
-
-  //   component.onClickRow('6e748e8723733e96603618cb');
-
-  //   fixture.detectChanges();
-
-  //   expect(fixture.nativeElement.querySelector('#message-panel > :nth-child(4)').innerHTML).toEqual('Editing Joseph Gray')
-  // });
-
-  // it('should move into edit player mode after selecting a player to edit', () => {
-  //   component.onChangeGroupYear('2009');
-
-  //   component.managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').setValue({
-  //     year: 2009,
-  //     month: 9,
-  //     day: 1});
-
-  //   fixture.detectChanges();
-
-  //   component.onSearchPlayers();
-
-  //   fixture.detectChanges();
-
-  //   component.onClickRow('6e748e8723733e96603618cb');
-
-  //   fixture.detectChanges();
-
-  //   expect(component.currentState).toEqual(component.formState.EditPlayer);
-  // });
-
-  // it('should read date of birth when saving a new player', () => {
-  //   component.managePlayersForm.controls['groupYear'].setValue('2010');
-
-  //   fixture.detectChanges();
-
-  //   component.onChangeGroupYear('2010');
-
-  //   component.managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').setValue({
-  //     year: 2010,
-  //     month: 2,
-  //     day: 1});
-
-  //   fixture.detectChanges();
-
-  //   component.onSearchPlayers();
-
-  //   fixture.detectChanges();
-
-  //   component.managePlayersForm.controls['firstName'].setValue('Test');
-  //   component.managePlayersForm.controls['surname'].setValue('Name');
-  //   component.managePlayersForm.controls['addressLine1'].setValue('Address Line');
-
-  //   fixture.detectChanges();
-
-  //   component.onSubmit(component.managePlayersForm.value);
-
-  //   expect(component.playerDetails.dateOfBirth).toEqual('2010-02-01T00:00:00.000Z');
-  // });
-
-  // it('should read last registered date when saving a player', () => {
-  //   component.managePlayersForm.controls['groupYear'].setValue('2010');
-
-  //   fixture.detectChanges();
-
-  //   component.onChangeGroupYear('2010');
-
-  //   component.managePlayersForm.controls['dateOfBirthPicker'].get('datePickerTextBox').setValue({
-  //     year: 2010,
-  //     month: 2,
-  //     day: 1});
-
-  //   fixture.detectChanges();
-
-  //   component.onSearchPlayers();
-
-  //   fixture.detectChanges();
-
-  //   component.managePlayersForm.controls['lastRegisteredDatePicker'].get('datePickerTextBox').setValue({
-  //     year: 2018,
-  //     month: 8,
-  //     day: 14
-  //   });
-
-  //   component.managePlayersForm.controls['firstName'].setValue('Test');
-  //   component.managePlayersForm.controls['surname'].setValue('Name');
-  //   component.managePlayersForm.controls['addressLine1'].setValue('Address Line');
-
-  //   fixture.detectChanges();
-
-  //   component.onSubmit(component.managePlayersForm.value);
-
-  //   fixture.detectChanges();
-
-  //   expect(component.playerDetails.lastRegisteredDate).toEqual('2018-08-14T00:00:00.000Z');
-  // });
-
 
   // it('should display player saved message after a player is saved', fakeAsync(() => {
   //   component.managePlayersForm.controls['groupYear'].setValue('2010');

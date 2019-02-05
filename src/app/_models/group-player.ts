@@ -11,5 +11,5 @@ export interface IGroupPlayer {
   updatedDate: string;
   updatedBy: string;
 
-  version: number;
+  version: string;
 }

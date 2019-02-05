@@ -153,7 +153,7 @@ describe('PlayersService', () => {
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-02-13T10:17:21.332Z',
       'updatedBy': 'emmett.j.osullivan@gmail.com',
-      'version': 0
+      'version': '2018-02-13T10:17:21.332Z'
     }
     let groupPlayer: IGroupPlayer = {
       'id': 1,
@@ -164,7 +164,7 @@ describe('PlayersService', () => {
       'createdDate': '2017-03-15T13:43:51.268Z',
       'updatedDate': '2018-02-13T10:17:21.332Z',
       'updatedBy': 'emmett.j.osullivan@gmail.com',
-      'version': 0
+      'version': '2018-02-13T10:17:21.332Z'
     };
 
     service.updatePlayer(player, null)
@@ -191,7 +191,7 @@ describe('PlayersService', () => {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:17:21.332Z',
         'updatedBy': 'emmett.j.osullivan@gmail.com',
-        'version': 0
+        'version': '2018-02-13T10:17:21.332Z'
       },
       groupPlayerDetails: {
         'id': 1,
@@ -202,7 +202,7 @@ describe('PlayersService', () => {
         'createdDate': '2017-03-15T13:43:51.268Z',
         'updatedDate': '2018-02-13T10:17:21.332Z',
         'updatedBy': 'emmett.j.osullivan@gmail.com',
-        'version': 0  
+        'version': '2018-02-13T10:17:21.332Z'
       }
     });
 

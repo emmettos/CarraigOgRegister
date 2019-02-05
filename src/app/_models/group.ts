@@ -12,5 +12,5 @@ export interface IGroup {
   updatedDate: string;
   updatedBy: string;
 
-  version: number;
+  version: string;
 }

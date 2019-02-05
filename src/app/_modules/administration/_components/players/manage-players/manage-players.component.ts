@@ -7,7 +7,7 @@ import { ToasterService } from 'angular2-toaster';
 
 import * as moment from 'moment';
 
-import { IPlayer, IPlayerSummary, PlayerState, IGroup } from '../../../../../_models/index';
+import { IPlayerSummary, PlayerState, IGroup } from '../../../../../_models/index';
 import { PlayersService, GroupsService } from '../../../../../_services/index';
 import { PlayerFormComponent } from '../player-form/player-form.component';
 import { PlayerPopupComponent } from '../player-popup/player-popup.component';
