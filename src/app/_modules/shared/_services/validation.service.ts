@@ -12,10 +12,10 @@ export class ValidationService {
     this.validationMessages = {
       'invalidConfirmPassword': 'The Confirm Password does not match the Password',
       'invalidEmailAddress': 'Invalid email address',
-      'invalidGroup': 'Select a group',
+      'selectGroup': 'Select a group',
       'invalidNewCoach': 'A coach with this email address already exists',
       'minlength': 'Minimum length [requiredLength]',
-      'ngbDate': 'Invalid date/Out of range',
+      'ngbDate': 'ZZZInvalid date/Out of range',
       'invalidDate': 'Invalid date/Out of range',
       'required': 'This field is required'
     };  
@@ -30,23 +30,28 @@ export class ValidationService {
     return { 'invalidEmailAddress': true };
   }
 
-  datePickerValidator(control: FormControl): {[key: string]: any} {
-    // We allow a null date to be a valid date - the NgbInputDatepicker doesn't.
-    if (!control.value) {
-      return null;
-    }
-
-    if (typeof control.value === 'object' && control.value.constructor === Object) {
-      let controlDate: Date = new Date(control.value.year, control.value.month - 1, control.value.day);
-
-      if ((control['minDate'] && controlDate < control['minDate']) || (control['maxDate'] && controlDate > control['maxDate'])) {
-        return { 'invalidDate': true };
+  registeredDateValidator(controlToMatch: FormControl) {
+    return (control: FormControl): {[key: string]: any} => {
+      if (!control.value) {
+        if (controlToMatch.value === '0') {
+          return null;
+        }
+          
+        return { 'required': true };
       }
 
-      return null;
-    }
+      if (typeof control.value === 'object' && control.value.constructor === Object) {
+        let controlDate: Date = new Date(control.value.year, control.value.month - 1, control.value.day);
 
-    return { 'invalidDate': true };
+        if ((control['minDate'] && controlDate < control['minDate']) || (control['maxDate'] && controlDate > control['maxDate'])) {
+          return { 'invalidDate': true };
+        }
+
+        return null;
+      }
+
+      return { 'invalidDate': true };
+    }
   }
 
   groupValidator(control: FormControl): {[key: string]: any} {
@@ -54,7 +59,7 @@ export class ValidationService {
       return null;
     }
       
-    return { 'invalidGroup': true };
+    return { 'selectGroup': true };
   }
 
   passwordMatchValidator(controlToMatch: FormControl) {

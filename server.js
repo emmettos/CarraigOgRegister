@@ -1,6 +1,7 @@
 'use strict';
 
 var express = require('express');
+var pg = require('pg')
 var { Pool } = require('pg')
 var bodyParser = require('body-parser');
 var methodOverride = require('method-override');
@@ -54,6 +55,10 @@ const pool = new Pool()
 
 pool.query('SELECT MAX(y.year) AS year FROM years AS y')
   .then(result => {
+    // Turn of node-postgres date and timestamp parsing. Just treat all as strings.
+    pg.types.setTypeParser(1082, stringValue => stringValue);
+    pg.types.setTypeParser(1114, stringValue => stringValue);
+
     app.currentSettings = result.rows[0];    
     app.pool = pool;
     

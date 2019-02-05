@@ -75,6 +75,8 @@ export class ManagePlayersComponent implements OnInit {
   }
 
   onDateOfBirthChange() {
+    this.dateOfBirthPicker.startDate = null;
+
     this.currentState = FormState.SearchForPlayer;
   }
 
@@ -90,7 +92,7 @@ export class ManagePlayersComponent implements OnInit {
 
     this.dateOfBirth = moment.utc(localeDateOfBirth).add(0 - localeDateOfBirth.getTimezoneOffset(), "m");
 
-    this.playersService.searchPlayers(this.dateOfBirth.toISOString())
+    this.playersService.searchPlayers(this.dateOfBirth.format("YYYY-MM-DD"))
       .subscribe({
         next: response => {
           this.matchedPlayers = response.body.players;
@@ -227,7 +229,7 @@ export class ManagePlayersComponent implements OnInit {
         CSSClass = 'badge-warning';
     }
     else if (player.playerState === PlayerState.Gone) {
-      CSSClass = 'badge-error';
+      CSSClass = 'badge-danger';
     }
 
     return CSSClass;

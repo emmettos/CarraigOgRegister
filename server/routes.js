@@ -337,6 +337,15 @@ exports = module.exports = function (app, router) {
     }
   });
 
+  router.get('/groupSummaries', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      await readGroupSummaries(app, currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
   router.get('/groups', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       const result = await app.pool.query(`
@@ -405,9 +414,61 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get('/groupSummaries', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.get('/groupDetails/:groupId', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
-      await readGroupSummaries(app, currentSettings, response, next);
+      const result = await app.pool.query(`
+        SELECT 
+          id,
+          year_id,
+          year_of_birth,
+          name,
+          football_coach_id,
+          hurling_coach_id,
+          created_by,
+          created_date,
+          updated_by,
+          updated_date,
+          version
+        FROM
+          groups AS g
+        WHERE
+          g.id = $1      
+      `, [request.body.groupId]);
+    
+      var returnMessage = {};
+    
+      returnMessage.error = null;
+      returnMessage.body = {};
+    
+      returnMessage.body.groupDetails = result.rows.map(row => {
+        Object.defineProperty(row, 'yearId', Object.getOwnPropertyDescriptor(row, 'year_id'));
+        delete row['year_id'];
+    
+        Object.defineProperty(row, 'yearOfBirth', Object.getOwnPropertyDescriptor(row, 'year_of_birth'));
+        delete row['year_of_birth'];
+    
+        Object.defineProperty(row, 'footballCoachId', Object.getOwnPropertyDescriptor(row, 'football_coach_id'));
+        delete row['football_coach_id'];
+    
+        Object.defineProperty(row, 'hurlingCoachId', Object.getOwnPropertyDescriptor(row, 'hurling_coach_id'));
+        delete row['hurling_coach_id'];
+    
+        Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
+        delete row['created_by'];
+    
+        Object.defineProperty(row, 'createdDate', Object.getOwnPropertyDescriptor(row, 'created_date'));
+        delete row['created_date'];
+    
+        Object.defineProperty(row, 'updatedBy', Object.getOwnPropertyDescriptor(row, 'updated_by'));
+        delete row['updated_by'];
+    
+        Object.defineProperty(row, 'updatedDate', Object.getOwnPropertyDescriptor(row, 'updated_date'));
+        delete row['updated_date'];
+    
+        return row;
+      })[0];
+
+      response.status(200).json(returnMessage);
     }
     catch (error) {
       next(error);
@@ -528,7 +589,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get('/searchPlayers/:dateOfBirthISOString', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.get('/searchPlayers/:dateOfBirth', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
       const result = await app.pool.query(`
         SELECT
@@ -625,7 +686,7 @@ exports = module.exports = function (app, router) {
           players AS p
         WHERE
           p.date_of_birth = $1
-      `, [request.params.dateOfBirthISOString, currentSettings.year, currentSettings.year - 1]);
+      `, [request.params.dateOfBirth, currentSettings.year, currentSettings.year - 1]);
   
       var returnMessage = {};
 
@@ -717,7 +778,6 @@ exports = module.exports = function (app, router) {
         delete row['address_line_3'];
       
         Object.defineProperty(row, 'dateOfBirth', Object.getOwnPropertyDescriptor(row, 'date_of_birth'));
-        row['dateOfBirth'] = moment.utc(row['date_of_birth']).add(0 - row['date_of_birth'].getTimezoneOffset(), "m");
         delete row['date_of_birth'];
       
         Object.defineProperty(row, 'medicalConditions', Object.getOwnPropertyDescriptor(row, 'medical_conditions'));
@@ -759,7 +819,6 @@ exports = module.exports = function (app, router) {
           delete row['player_id'];
                   
           Object.defineProperty(row, 'registeredDate', Object.getOwnPropertyDescriptor(row, 'registered_date'));
-          row['registeredDate'] = moment.utc(row['registered_date']).add(0 - row['registered_date'].getTimezoneOffset(), "m");
           delete row['registered_date'];
         
           Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
@@ -1028,6 +1087,8 @@ exports = module.exports = function (app, router) {
               id = ` + playerDetails.id + ` AND
               version = '` + playerDetails.version + `'`);
 
+          console.log(sqlStatement.join('\n'));
+
           result = await client.query(sqlStatement.join('\n'), setValues);
           
           if (result.rowCount === 0) {
@@ -1036,11 +1097,13 @@ exports = module.exports = function (app, router) {
         }
 
         if (groupPlayerDetails) {
-          if (!groupPlayerDetails.groupId) {
+          if (!groupPlayerDetails.id) {
             let fieldIndex = 0,
                 fieldNames = [],
                 fieldValues = [],
                 fieldPositionParams = [];
+
+            sqlStatement = [];
 
             sqlStatement.push('INSERT INTO public.groups_players (');
 
@@ -1050,7 +1113,7 @@ exports = module.exports = function (app, router) {
             }
 
             fieldNames.push('player_id');
-            fieldValues.push(result.rows[0].id);
+            fieldValues.push(playerDetails.id);
 
             if (Object.prototype.hasOwnProperty.call(groupPlayerDetails, 'registeredDate')) {
               fieldNames.push('registered_date');
@@ -1074,6 +1137,8 @@ exports = module.exports = function (app, router) {
             sqlStatement.push(fieldPositionParams.join(',\n'));
 
             sqlStatement.push(')');
+
+            result = await client.query(sqlStatement.join('\n'), fieldValues);
           }
           else {
             sqlStatement = [];
@@ -1495,7 +1560,6 @@ var mapPlayerSummary = (row) => {
   delete row['address_line_3'];
 
   Object.defineProperty(row, 'dateOfBirth', Object.getOwnPropertyDescriptor(row, 'date_of_birth'));
-  row['dateOfBirth'] = moment.utc(row['date_of_birth']).add(0 - row['date_of_birth'].getTimezoneOffset(), "m");
   delete row['date_of_birth'];
 
   Object.defineProperty(row, 'medicalConditions', Object.getOwnPropertyDescriptor(row, 'medical_conditions'));
@@ -1514,7 +1578,6 @@ var mapPlayerSummary = (row) => {
   delete row['contact_email_address'];
 
   Object.defineProperty(row, 'lastRegisteredDate', Object.getOwnPropertyDescriptor(row, 'last_registered_date'));
-  row['lastRegisteredDate'] = moment.utc(row['last_registered_date']).add(0 - row['last_registered_date'].getTimezoneOffset(), "m");
   delete row['last_registered_date'];
 
   Object.defineProperty(row, 'playerState', Object.getOwnPropertyDescriptor(row, 'player_state'));

@@ -39,6 +39,9 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
   editingPlayer: boolean = false;
   title = 'Add New Player';
 
+  registeredDateControl: FormControl = null;
+  playerGroupControl: FormControl = null;
+
   savingPlayer: boolean = false;
 
   constructor(
@@ -53,26 +56,24 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
       this.editingPlayer = true;
       this.title = 'Edit Player - ' + this.playerDetails.firstName + ' ' + this.playerDetails.surname;
     }
-    let registeredDate: FormControl = null,
-        playerGroup: FormControl = null;
 
     if (this.playerDetails) {
-      registeredDate = new FormControl('');
+      this.registeredDateControl = new FormControl('');
 
       if (this.groupPlayerDetails) {
-        playerGroup = new FormControl(this.groups.find(group => group.id === this.groupPlayerDetails.groupId).id);
+        this.playerGroupControl = new FormControl(this.groups.find(group => group.id === this.groupPlayerDetails.groupId).id);
       }
       else {
         // This is initialized using a string intentionally. 
-        playerGroup = new FormControl('0');
+        this.playerGroupControl = new FormControl('0');
       }
     }
     else {
       // The NgbInputDatepicker directive also validates for required but sets the same validator name
       //  (ngbDate) for both an invalid date and an empty date. Adding the validators.required overrides 
-      //  the ngbDate validator name for an empty date to be 'required'.
-      registeredDate = new FormControl('', Validators.required);
-      playerGroup = new FormControl('0', this.validationService.groupValidator);
+      //  the validator name, for an empty date, of 'ngbDate' date to be 'required'.
+      this.registeredDateControl = new FormControl('', Validators.required);
+      this.playerGroupControl = new FormControl('0', this.validationService.groupValidator);
     }
 
     this.playerForm = this.formBuilder.group({
@@ -82,8 +83,8 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
       'addressLine2': [this.playerDetails ? this.playerDetails.addressLine2 : ''],
       'addressLine3': [this.playerDetails ? this.playerDetails.addressLine3 : ''],
       'dateOfBirth': ['', Validators.required],
-      'registeredDate': registeredDate,
-      'playerGroup': playerGroup,
+      'registeredDate': this.registeredDateControl,
+      'playerGroup': this.playerGroupControl,
       'school': [this.playerDetails ? this.playerDetails.school : ''],
       'medicalConditions': [this.playerDetails ? this.playerDetails.medicalConditions : ''],
       'contactName': [this.playerDetails ? this.playerDetails.contactName : ''],
@@ -112,7 +113,7 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
     if (this.groupPlayerDetails) {
       let registeredDate = moment.utc(this.groupPlayerDetails.registeredDate)
 
-      this.playerForm.controls['registeredDate'].setValue({
+      this.registeredDateControl.setValue({
         day: +registeredDate.format('D'),
         month: +registeredDate.format('M'),
         year: +registeredDate.format('YYYY')
@@ -125,14 +126,19 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
     this.registeredDatePicker.maxDate = { year: APP_SETTINGS.currentYear + 1, month: 12, day: 31 };  
 
     if (this.playerDetails) {
-      this.playerForm.controls['registeredDate'].setValidators(this.validationService.datePickerValidator);
+      this.registeredDateControl.setValidators(this.validationService.registeredDateValidator(this.playerGroupControl));
 
-      this.playerForm.controls['registeredDate']['minDate'] = new Date(APP_SETTINGS.currentYear - 1, 0, 1);
-      this.playerForm.controls['registeredDate']['maxDate'] = new Date(APP_SETTINGS.currentYear + 1, 11, 31);  
+      this.registeredDateControl['minDate'] = new Date(APP_SETTINGS.currentYear - 1, 0, 1);
+      this.registeredDateControl['maxDate'] = new Date(APP_SETTINGS.currentYear + 1, 11, 31);  
     }
 
     if (!this.groupPlayerDetails) {
       this.registeredDatePicker.startDate = { year: APP_SETTINGS.currentYear, month: 6 };
+
+      // For some reason, without this code, the registeredDate control doesn't pickup the new validator.
+      setTimeout(() => {
+        this.playerForm.controls['registeredDate'].setValue(null);
+      });
     }
   }
 
@@ -145,13 +151,21 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
   }
 
   onGroupChange(value: any) {
+    if (!this.playerDetails) {
+      return;
+    }
+
     if (value === '0') {
-      this.playerForm.controls['registeredDate'].setValue(null);
+      this.registeredDateControl.setValue(null);
 
       this.registeredDatePicker.startDate = { year: APP_SETTINGS.currentYear, month: 6 };
 
-      this.playerForm.controls['playerGroup'].clearValidators();
-      this.playerForm.controls['playerGroup'].updateValueAndValidity();
+      this.playerGroupControl.clearValidators();
+      this.playerGroupControl.updateValueAndValidity();
+    }
+    else {
+      this.registeredDateControl.markAsTouched();
+      this.registeredDateControl.updateValueAndValidity();
     }
   }
 
@@ -203,26 +217,25 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
       return;
     }
     
-    let registeredDateControl: AbstractControl = this.playerForm.controls['registeredDate'],
-        playerGroupControl: AbstractControl = this.playerForm.controls['playerGroup'];
-
-    if (registeredDateControl.value === null) {
-      playerGroupControl.setValue('0');
+    if (this.registeredDateControl.value === null) {
+      this.playerGroupControl.setValue('0');
 
       if (this.groupPlayerDetails) {
         this.registeredDatePicker.startDate = { year: APP_SETTINGS.currentYear, month: 6 };
       }
     }
 
-    if (registeredDateControl.valid && registeredDateControl.value !== null) {
-      playerGroupControl.setValidators(this.validationService.groupValidator);
+    if (this.registeredDateControl.valid && this.registeredDateControl.value !== null) {
+      this.playerGroupControl.setValidators(this.validationService.groupValidator);
     }
     else {
-      playerGroupControl.clearValidators();
+      this.playerGroupControl.clearValidators();
     }
 
-    playerGroupControl.markAsTouched();
-    playerGroupControl.updateValueAndValidity();
+    this.registeredDateControl.updateValueAndValidity();
+
+    this.playerGroupControl.markAsTouched();
+    this.playerGroupControl.updateValueAndValidity();
   }
 
   private readPlayerDetailsFields(formValues: any): void {
@@ -239,7 +252,7 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
     let dobPicker = formValues.dateOfBirth,
         localeDateOfBirth = new Date(dobPicker.year, dobPicker.month - 1, dobPicker.day),
         dateOfBirth = moment.utc(localeDateOfBirth).add(0 - localeDateOfBirth.getTimezoneOffset(), "m");
-    this.playerDetails.dateOfBirth = dateOfBirth.toISOString();
+    this.playerDetails.dateOfBirth = dateOfBirth.format("YYYY-MM-DD")
 
     this.playerDetails.school = formValues.school;
     this.playerDetails.medicalConditions = formValues.medicalConditions;
@@ -264,9 +277,9 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
 
       let rdPicker = formValues.registeredDate,
           localeRegisteredDate = new Date(rdPicker.year, rdPicker.month - 1, rdPicker.day),
-          registeredDate = moment.utc(localeRegisteredDate).add(0 - localeRegisteredDate.getTimezoneOffset(), "m");
+          registeredDate = moment.utc(localeRegisteredDate).add(0 - localeRegisteredDate.getTimezoneOffset(), "m");      
+      this.groupPlayerDetails.registeredDate = registeredDate.format("YYYY-MM-DD");
       
-      this.groupPlayerDetails.registeredDate = registeredDate.toISOString();
       this.groupPlayerDetails.groupId = formValues.playerGroup;
     }
   }
@@ -278,8 +291,8 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
     this.playerForm.controls['addressLine2'].disable();
     this.playerForm.controls['addressLine3'].disable();
     this.playerForm.controls['dateOfBirth'].disable();
-    this.playerForm.controls['registeredDate'].disable();
-    this.playerForm.controls['playerGroup'].disable();
+    this.registeredDateControl.disable();
+    this.playerGroupControl.disable();
     this.playerForm.controls['school'].disable();
     this.playerForm.controls['medicalConditions'].disable();
     this.playerForm.controls['contactName'].disable();
@@ -298,7 +311,7 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
         CSSClass = 'bg-warning';
     }
     else if (this.playerState === PlayerState.Gone) {
-      CSSClass = 'bg-error';
+      CSSClass = 'bg-danger';
     }
 
     return CSSClass;
