@@ -15,9 +15,10 @@ import { ValidationService } from '../../../../../_modules/shared/_services';
 
 import { ManagePlayersComponent } from './manage-players.component';
 import { PlayerPopupComponent } from '../player-popup/player-popup.component';
+import { PlayerFormComponent } from '../player-form/player-form.component';
 
 
-fdescribe('ManagePlayersComponent', () => {
+describe('ManagePlayersComponent', () => {
   let component: ManagePlayersComponent;
   let fixture: ComponentFixture<ManagePlayersComponent>;
 
@@ -897,10 +898,73 @@ fdescribe('ManagePlayersComponent', () => {
     expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeFalsy();
   });
 
-  it('should call playersService.readPlayerDetails when a player is selected', fakeAsync(() => {
-  }));
+  it('should call playersService.readPlayerDetails when a player is selected', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
 
-  it('should call NgbModal.open when a player is selected', fakeAsync(() => {
+    fixture.detectChanges();
+
+    spyOn(playersService, 'readPlayerDetails')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'playerDetails': {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        }
+      }));
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {}
+      });
+
+    component.onClickRow({
+      'id': 2,
+      'firstName': 'Matthew',
+      'surname': 'Moss',
+      'addressLine1': '179 Payne Street',
+      'addressLine2': 'Clear Mount',
+      'addressLine3': 'Carrigaline',
+      'yearOfBirth': 2010,
+      'dateOfBirth': '2010-03-03T00:00:00.000Z',
+      'medicalConditions': '',
+      'contactName': 'Wilder Moss',
+      'contactMobileNumber': '087 6186779',
+      'contactHomeNumber': '',
+      'contactEmailAddress': 'wilder_moss@gmail.com',
+      'school': '',
+      'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
+      'playerState': 0
+    });
+
+    expect(playersService.readPlayerDetails).toHaveBeenCalledWith(2);
+  });
+
+  it('should call NgbModal.open when a player is selected', () => {
     spyOn(groupsService, 'readGroups')
       .and.returnValue(of({
         'error': null,
@@ -963,23 +1027,603 @@ fdescribe('ManagePlayersComponent', () => {
       'playerState': 0
     });
 
+    expect(modalService.open).toHaveBeenCalledWith(PlayerPopupComponent);
+  });
+
+  it('should call NgbModal.open when add player is selected', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          playerDetails: {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        })
+      });
+
+    component.onClickAddPlayer();
+
+    expect(modalService.open).toHaveBeenCalledWith(PlayerFormComponent, { size: 'lg', backdrop: 'static' });
+  });
+
+  it('should display successfully added player popup', fakeAsync(() => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          playerDetails: {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        })
+      });
+
+    component.onClickAddPlayer();
+
     tick();
 
-    expect(modalService.open).toHaveBeenCalledWith(PlayerPopupComponent);
+    expect(toasterService.pop).toHaveBeenCalledWith('success', 'Player Successfully Added', 'Matthew Moss');
   }));
 
-  it('should pass player details to PlayerPopupComponent when a player is selected', fakeAsync(() => {
+  it('should disable search players button after successfully adding a player', fakeAsync(() => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          playerDetails: {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        })
+      });
+
+    component.onClickAddPlayer();
+
+    tick();
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();
   }));
 
-  it('should pass player state to PlayerPopupComponent when a player is selected', fakeAsync(() => {
+  it('should disable search players button after failing adding a player', fakeAsync(() => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.reject()
+      });
+
+    component.onClickAddPlayer();
+
+    tick();
+
+    fixture.detectChanges();
+    
+    expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();
   }));
 
-  it('should pass group name to PlayerPopupComponent when a player is selected', fakeAsync(() => {
+  it('should call playersService.readPlayerDetails when edit player is selected', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    spyOn(playersService, 'readPlayerDetails')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'playerDetails': {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        }
+      }));
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          playerDetails: {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        })
+      });
+
+    component.onClickEditPlayer(new MouseEvent('click'), {
+      'id': 2,
+      'firstName': 'Matthew',
+      'surname': 'Moss',
+      'addressLine1': '179 Payne Street',
+      'addressLine2': 'Clear Mount',
+      'addressLine3': 'Carrigaline',
+      'yearOfBirth': 2010,
+      'dateOfBirth': '2010-03-03T00:00:00.000Z',
+      'medicalConditions': '',
+      'contactName': 'Wilder Moss',
+      'contactMobileNumber': '087 6186779',
+      'contactHomeNumber': '',
+      'contactEmailAddress': 'wilder_moss@gmail.com',
+      'school': '',
+      'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
+      'playerState': 0
+    });
+
+    expect(playersService.readPlayerDetails).toHaveBeenCalledWith(2);
+  });
+
+  it('should call NgbModal.open when edit player is selected', () => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    spyOn(playersService, 'readPlayerDetails')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'playerDetails': {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        }
+      }));
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          playerDetails: {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        })
+      });
+
+    component.onClickEditPlayer(new MouseEvent('click'), {
+      'id': 2,
+      'firstName': 'Matthew',
+      'surname': 'Moss',
+      'addressLine1': '179 Payne Street',
+      'addressLine2': 'Clear Mount',
+      'addressLine3': 'Carrigaline',
+      'yearOfBirth': 2010,
+      'dateOfBirth': '2010-03-03T00:00:00.000Z',
+      'medicalConditions': '',
+      'contactName': 'Wilder Moss',
+      'contactMobileNumber': '087 6186779',
+      'contactHomeNumber': '',
+      'contactEmailAddress': 'wilder_moss@gmail.com',
+      'school': '',
+      'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
+      'playerState': 0
+    });
+
+    expect(modalService.open).toHaveBeenCalledWith(PlayerFormComponent, { size: 'lg', backdrop: 'static' });
+  });
+
+  it('should display successfully updated player popup', fakeAsync(() => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    spyOn(playersService, 'readPlayerDetails')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'playerDetails': {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        }
+      }));
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          playerDetails: {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        })
+      });
+
+    component.onClickEditPlayer(new MouseEvent('click'), {
+      'id': 2,
+      'firstName': 'Matthew',
+      'surname': 'Moss',
+      'addressLine1': '179 Payne Street',
+      'addressLine2': 'Clear Mount',
+      'addressLine3': 'Carrigaline',
+      'yearOfBirth': 2010,
+      'dateOfBirth': '2010-03-03T00:00:00.000Z',
+      'medicalConditions': '',
+      'contactName': 'Wilder Moss',
+      'contactMobileNumber': '087 6186779',
+      'contactHomeNumber': '',
+      'contactEmailAddress': 'wilder_moss@gmail.com',
+      'school': '',
+      'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
+      'playerState': 0
+    });
+  
+    tick();
+
+    expect(toasterService.pop).toHaveBeenCalledWith('success', 'Player Successfully Updated', 'Matthew Moss');
   }));
 
-  it('should pass [No current group] to PlayerPopupComponent when a player is selected', fakeAsync(() => {
+  it('should disable search players button after successfully editing a player', fakeAsync(() => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    spyOn(playersService, 'readPlayerDetails')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'playerDetails': {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        }
+      }));
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          playerDetails: {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        })
+      });
+
+    component.onClickEditPlayer(new MouseEvent('click'), {
+      'id': 2,
+      'firstName': 'Matthew',
+      'surname': 'Moss',
+      'addressLine1': '179 Payne Street',
+      'addressLine2': 'Clear Mount',
+      'addressLine3': 'Carrigaline',
+      'yearOfBirth': 2010,
+      'dateOfBirth': '2010-03-03T00:00:00.000Z',
+      'medicalConditions': '',
+      'contactName': 'Wilder Moss',
+      'contactMobileNumber': '087 6186779',
+      'contactHomeNumber': '',
+      'contactEmailAddress': 'wilder_moss@gmail.com',
+      'school': '',
+      'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
+      'playerState': 0
+    });
+  
+    tick();
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();
   }));
 
-  it('should pass last registered date to PlayerPopupComponent when a player is selected', fakeAsync(() => {
+  it('should disable search players button after failing editing a player', fakeAsync(() => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    spyOn(playersService, 'readPlayerDetails')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'playerDetails': {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'yearOfBirth': 2010,
+            'dateOfBirth': '2010-03-03T00:00:00.000Z',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        }
+      }));
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.reject()
+      });
+
+    component.onClickEditPlayer(new MouseEvent('click'), {
+      'id': 2,
+      'firstName': 'Matthew',
+      'surname': 'Moss',
+      'addressLine1': '179 Payne Street',
+      'addressLine2': 'Clear Mount',
+      'addressLine3': 'Carrigaline',
+      'yearOfBirth': 2010,
+      'dateOfBirth': '2010-03-03T00:00:00.000Z',
+      'medicalConditions': '',
+      'contactName': 'Wilder Moss',
+      'contactMobileNumber': '087 6186779',
+      'contactHomeNumber': '',
+      'contactEmailAddress': 'wilder_moss@gmail.com',
+      'school': '',
+      'lastRegisteredDate': '2018-02-04T00:00:00.000Z',
+      'playerState': 0
+    });
+  
+    tick();
+
+    fixture.detectChanges();
+    
+    expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();
   }));
 });
