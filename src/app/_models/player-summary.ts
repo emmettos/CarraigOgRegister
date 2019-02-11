@@ -13,6 +13,7 @@ export interface IPlayerSummary {
   contactHomeNumber: string;
   contactEmailAddress: string;
   school: string;
+  version: string; 
   lastRegisteredDate: string;
   playerState: PlayerState;
 }

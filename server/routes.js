@@ -591,111 +591,7 @@ exports = module.exports = function (app, router) {
 
   router.get('/searchPlayers/:dateOfBirth', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
-      const result = await app.pool.query(`
-        SELECT
-          p.id,
-          p.first_name,
-          p.surname,
-          p.address_line_1,
-          p.address_line_2,
-          p.address_line_3,
-          p.date_of_birth,
-          p.medical_conditions,
-          p.contact_name,
-          p.contact_mobile_number,
-          p.contact_home_number,
-          p.contact_email_address,
-          p.school,
-          (SELECT
-            MAX(gp1.registered_date)
-          FROM
-            groups_players AS gp1
-          WHERE
-            gp1.player_id = p.id) AS last_registered_date,
-          CASE
-            WHEN EXISTS
-              (SELECT
-                gp1.id
-              FROM
-                groups_players AS gp1
-              INNER JOIN groups AS g1
-                ON gp1.group_id = g1.id
-              WHERE
-                gp1.player_id = p.id AND
-                g1.year_id = 
-                  (SELECT 
-                    y2.id 
-                  FROM 
-                    years AS y2 
-                  WHERE 
-                    y2.year = $2) AND
-                EXISTS
-                  (SELECT
-                    gp2.id
-                  FROM
-                    groups_players AS gp2
-                  INNER JOIN groups AS g2
-                    ON gp2.group_id = g2.id
-                  WHERE
-                    gp2.player_id = p.id AND
-                    g2.year_id = 
-                      (SELECT 
-                        y3.id 
-                      FROM 
-                        years AS y3 
-                      WHERE 
-                        y3.year = $3)))
-            THEN 0
-            WHEN EXISTS
-              (SELECT
-                gp1.id
-              FROM
-                groups_players AS gp1
-              INNER JOIN groups AS g1
-                ON gp1.group_id = g1.id
-              WHERE
-                gp1.player_id = p.id AND
-                g1.year_id = 
-                  (SELECT 
-                    y2.id 
-                  FROM 
-                    years AS y2 
-                  WHERE 
-                    y2.year = $2))
-            THEN 1
-            WHEN EXISTS
-              (SELECT
-                gp1.id
-              FROM
-                groups_players AS gp1
-              INNER JOIN groups AS g1
-                ON gp1.group_id = g1.id
-              WHERE
-                gp1.player_id = p.id AND
-                g1.year_id = 
-                  (SELECT 
-                    y2.id 
-                  FROM 
-                    years AS y2 
-                  WHERE 
-                    y2.year = $3))
-            THEN 2
-            ELSE 3
-          END AS player_state          
-        FROM
-          players AS p
-        WHERE
-          p.date_of_birth = $1
-      `, [request.params.dateOfBirth, currentSettings.year, currentSettings.year - 1]);
-  
-      var returnMessage = {};
-
-      returnMessage.error = null;
-      returnMessage.body = {};
-
-      returnMessage.body.players = result.rows.map(row => mapPlayerSummary(row));
-
-      response.status(200).json(returnMessage);
+      await searchPlayers(app.pool, request.params.dateOfBirth, currentSettings, response, next);
     }
     catch (error) {
       next(error);
@@ -856,8 +752,7 @@ exports = module.exports = function (app, router) {
           fieldNames = [],
           fieldValues = [],
           fieldPositionParams = [],
-          result = null,
-          returnMessage = {};
+          result = null;
 
       if (!(playerDetails && groupPlayerDetails)) {
         throw new Error ('playerDetails and groupPlayerDetails not found in request');
@@ -986,19 +881,16 @@ exports = module.exports = function (app, router) {
         await client.query('ROLLBACK')
         throw error;
       } 
-      finally {
-        client.release()
-      }
 
-      returnMessage.error = null;
-      returnMessage.body = {};
-
-      response.status(200).json(returnMessage);
+      await searchPlayers(client, playerDetails.dateOfBirth, currentSettings, response, next);
     }
     catch (error) {
       next(error);
     }
-  });
+    finally {
+      client.release()
+    }
+});
 
   router.post('/updatePlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
@@ -1008,8 +900,7 @@ exports = module.exports = function (app, router) {
           setIndex = 0,
           setStatements = [],
           setValues = [],
-          result = null,
-          returnMessage = {};
+          result = null;
 
       if (!(playerDetails || groupPlayerDetails)) {
         throw new Error ('playerDetails or groupPlayerDetails not found in request');
@@ -1086,8 +977,6 @@ exports = module.exports = function (app, router) {
             WHERE 
               id = ` + playerDetails.id + ` AND
               version = '` + playerDetails.version + `'`);
-
-          console.log(sqlStatement.join('\n'));
 
           result = await client.query(sqlStatement.join('\n'), setValues);
           
@@ -1196,19 +1085,65 @@ exports = module.exports = function (app, router) {
         await client.query('ROLLBACK')
         throw error;
       } 
-      finally {
-        client.release()
-      }
 
-      returnMessage.error = null;
-      returnMessage.body = {};
-
-      response.status(200).json(returnMessage);
+      await searchPlayers(client, playerDetails.dateOfBirth, currentSettings, response, next);
     }
     catch (error) {
       next(error);
     }
-  });
+    finally {
+      client.release()
+    }
+});
+
+  router.post('/deletePlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var result = null;
+
+      if (!(request.body.playerSummary)) {
+        throw new Error ('playerSummary not found in request');
+      }
+
+      const client = await app.pool.connect();
+
+      try {
+        await client.query('BEGIN')
+
+        result = await client.query(`
+          DELETE FROM 
+            public.groups_players
+          WHERE 
+            player_id = $1
+        `, [request.body.playerSummary.id]);
+          
+        result = await client.query(`
+          DELETE FROM 
+            public.players
+          WHERE 
+            id = $1 AND
+            version = $2
+        `, [request.body.playerSummary.id, request.body.playerSummary.version]);
+          
+        if (result.rowCount === 0) {
+          throw new Error('No player deleted. Possible concurrency issue.')
+        }
+
+        await client.query('COMMIT');
+      } 
+      catch (error) {
+        await client.query('ROLLBACK')
+        throw error;
+      } 
+
+      await searchPlayers(client, request.body.playerSummary.dateOfBirth, currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+    finally {
+      client.release()
+    }
+});
 
   router.get('/coaches', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
@@ -1470,6 +1405,115 @@ var readGroupSummaries = async (app, currentSettings, response, next) => {
 
     return row;
   });
+
+  response.status(200).json(returnMessage);
+}
+
+var searchPlayers = async (connection, dateOfBirth, currentSettings, response, next) => {
+  const result = await connection.query(`
+    SELECT
+      p.id,
+      p.first_name,
+      p.surname,
+      p.address_line_1,
+      p.address_line_2,
+      p.address_line_3,
+      p.date_of_birth,
+      p.medical_conditions,
+      p.contact_name,
+      p.contact_mobile_number,
+      p.contact_home_number,
+      p.contact_email_address,
+      p.school,
+      p.version,
+      (SELECT
+        MAX(gp1.registered_date)
+      FROM
+        groups_players AS gp1
+      WHERE
+        gp1.player_id = p.id) AS last_registered_date,
+      CASE
+        WHEN EXISTS
+          (SELECT
+            gp1.id
+          FROM
+            groups_players AS gp1
+          INNER JOIN groups AS g1
+            ON gp1.group_id = g1.id
+          WHERE
+            gp1.player_id = p.id AND
+            g1.year_id = 
+              (SELECT 
+                y2.id 
+              FROM 
+                years AS y2 
+              WHERE 
+                y2.year = $2) AND
+            EXISTS
+              (SELECT
+                gp2.id
+              FROM
+                groups_players AS gp2
+              INNER JOIN groups AS g2
+                ON gp2.group_id = g2.id
+              WHERE
+                gp2.player_id = p.id AND
+                g2.year_id = 
+                  (SELECT 
+                    y3.id 
+                  FROM 
+                    years AS y3 
+                  WHERE 
+                    y3.year = $3)))
+        THEN 0
+        WHEN EXISTS
+          (SELECT
+            gp1.id
+          FROM
+            groups_players AS gp1
+          INNER JOIN groups AS g1
+            ON gp1.group_id = g1.id
+          WHERE
+            gp1.player_id = p.id AND
+            g1.year_id = 
+              (SELECT 
+                y2.id 
+              FROM 
+                years AS y2 
+              WHERE 
+                y2.year = $2))
+        THEN 1
+        WHEN EXISTS
+          (SELECT
+            gp1.id
+          FROM
+            groups_players AS gp1
+          INNER JOIN groups AS g1
+            ON gp1.group_id = g1.id
+          WHERE
+            gp1.player_id = p.id AND
+            g1.year_id = 
+              (SELECT 
+                y2.id 
+              FROM 
+                years AS y2 
+              WHERE 
+                y2.year = $3))
+        THEN 2
+        ELSE 3
+      END AS player_state          
+    FROM
+      players AS p
+    WHERE
+      p.date_of_birth = $1
+  `, [dateOfBirth, currentSettings.year, currentSettings.year - 1]);
+
+  var returnMessage = {};
+
+  returnMessage.error = null;
+  returnMessage.body = {};
+
+  returnMessage.body.players = result.rows.map(row => mapPlayerSummary(row));
 
   response.status(200).json(returnMessage);
 }

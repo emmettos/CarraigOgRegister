@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { IPlayer, IGroupPlayer } from '../../_models';
+import { IPlayer, IGroupPlayer, IPlayerSummary } from '../../_models';
 import { PlayersService } from '../index';
 
 
@@ -167,7 +167,7 @@ describe('PlayersService', () => {
       'version': '2018-02-13T10:17:21.332Z'
     };
 
-    service.updatePlayer(player, null)
+    service.updatePlayer(player, groupPlayer)
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/updatePlayer');
@@ -204,6 +204,68 @@ describe('PlayersService', () => {
         'updatedBy': 'emmett.j.osullivan@gmail.com',
         'version': '2018-02-13T10:17:21.332Z'
       }
+    });
+
+    mockRequest.flush(null);
+  });
+
+  it('should call url for delete player', () => {
+    service.deletePlayer(null)
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/deletePlayer');
+
+    expect(mockRequest.request.method).toEqual("POST");
+
+    mockRequest.flush(null);
+  });
+
+  it('should pass request body for delete player', () => {
+    let playerSummary: IPlayerSummary = {
+      'id': 2,
+      'firstName': 'Matthew',
+      'surname': 'Moss',
+      'addressLine1': '179 Payne Street',
+      'addressLine2': 'Clear Mount',
+      'addressLine3': 'Carrigaline',
+      'yearOfBirth': 2010,
+      'dateOfBirth': '2010-03-03',
+      'medicalConditions': '',
+      'contactName': 'Wilder Moss',
+      'contactMobileNumber': '087 6186779',
+      'contactHomeNumber': '',
+      'contactEmailAddress': 'wilder_moss@gmail.com',
+      'school': '',
+      'version': '2018-02-04T15:13:00.000Z',
+      'lastRegisteredDate': '2018-02-04',
+      'playerState': 0
+    }
+
+    service.deletePlayer(playerSummary)
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/deletePlayer');
+
+    expect(mockRequest.request.body).toEqual({
+      playerSummary: {
+        'id': 2,
+        'firstName': 'Matthew',
+        'surname': 'Moss',
+        'addressLine1': '179 Payne Street',
+        'addressLine2': 'Clear Mount',
+        'addressLine3': 'Carrigaline',
+        'yearOfBirth': 2010,
+        'dateOfBirth': '2010-03-03',
+        'medicalConditions': '',
+        'contactName': 'Wilder Moss',
+        'contactMobileNumber': '087 6186779',
+        'contactHomeNumber': '',
+        'contactEmailAddress': 'wilder_moss@gmail.com',
+        'school': '',
+        'version': '2018-02-04T15:13:00.000Z',
+        'lastRegisteredDate': '2018-02-04',
+        'playerState': 0
+        }
     });
 
     mockRequest.flush(null);

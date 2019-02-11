@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
-import { IPlayer, IGroupPlayer } from '../_models';
+import { IPlayer, IGroupPlayer, IPlayerSummary } from '../_models';
 
 
 @Injectable()
@@ -41,6 +41,14 @@ export class PlayersService {
     postData['groupPlayerDetails'] = groupPlayerDetails;
 
     return this.http.post("/api/updatePlayer", postData);    
+  }
+
+  deletePlayer(playerSummary: IPlayerSummary): Observable<any> {
+    let postData = {};
+
+    postData['playerSummary'] = playerSummary;
+
+    return this.http.post("/api/deletePlayer", postData);
   }
 
   downloadCSV(csvPlayers: any[]) {

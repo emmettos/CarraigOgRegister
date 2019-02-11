@@ -183,6 +183,7 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
             let returnObject: any = {}
 
             returnObject.playerDetails = this.playerDetails;
+            returnObject.matchedPlayers = response.body.players;
 
             this.activeModal.close(returnObject);
           },
@@ -198,6 +199,7 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
             let returnObject: any = {}
 
             returnObject.playerDetails = this.playerDetails;
+            returnObject.matchedPlayers = response.body.players;
 
             this.activeModal.close(returnObject);
           },

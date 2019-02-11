@@ -11,6 +11,7 @@ import { IPlayerSummary, PlayerState, IGroup } from '../../../../../_models/inde
 import { PlayersService, GroupsService } from '../../../../../_services/index';
 import { PlayerFormComponent } from '../player-form/player-form.component';
 import { PlayerPopupComponent } from '../player-popup/player-popup.component';
+import { ConfirmDeletePlayerComponent } from '../confirm-delete-player/confirm-delete-player.component';
 
 
 @Component({
@@ -97,26 +98,7 @@ export class ManagePlayersComponent implements OnInit {
         next: response => {
           this.matchedPlayers = response.body.players;
 
-          this.matchedPlayers.sort(
-            (player1: IPlayerSummary, player2: IPlayerSummary) => {
-              let returnValue: number = 1;
-
-              if (player1.surname < player2.surname) {
-                returnValue = -1;
-              }
-              else if (player1.surname === player2.surname) {
-                returnValue = 0;
-              }
-              
-              return returnValue;
-            });
-
-          if (this.matchedPlayers.length > 0) {
-            this.currentState = FormState.PlayersFound;
-          }
-          else {
-            this.currentState = FormState.NoPlayersFound;
-          }
+          this.processMatchedPlayers();
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {
@@ -132,10 +114,10 @@ export class ManagePlayersComponent implements OnInit {
 
     modalRef.result
       .then(returnObject => {
-        if (returnObject) {
-          this.toasterService.pop('success', 'Player Successfully Added', returnObject.playerDetails.firstName + ' ' + returnObject.playerDetails.surname);
-          this.currentState = FormState.SearchForPlayer;
-        }
+        this.toasterService.pop('success', 'Player Successfully Added', returnObject.playerDetails.firstName + ' ' + returnObject.playerDetails.surname);
+        
+        this.matchedPlayers = returnObject.matchedPlayers;
+        this.processMatchedPlayers();
       })
       .catch(error => {
         this.currentState = FormState.SearchForPlayer;
@@ -155,12 +137,13 @@ export class ManagePlayersComponent implements OnInit {
 
           modalRef.result
             .then(returnObject => {
-              if (returnObject) {
-                this.toasterService.pop('success', 'Player Successfully Updated', returnObject.playerDetails.firstName + ' ' + returnObject.playerDetails.surname);
-                this.currentState = FormState.SearchForPlayer;
-              }
+              this.toasterService.pop('success', 'Player Successfully Updated', returnObject.playerDetails.firstName + ' ' + returnObject.playerDetails.surname);
+              
+              this.matchedPlayers = returnObject.matchedPlayers;
+              this.processMatchedPlayers();
             })
             .catch(error => {
+              console.log('Error');
               this.currentState = FormState.SearchForPlayer;
             });
         },
@@ -172,24 +155,21 @@ export class ManagePlayersComponent implements OnInit {
     event.stopPropagation();
   }
 
-  onClickDeletePlayer(event: Event, playerId: number) {
-    // const modalRef: NgbModalRef = this.modalService.open(ConfirmDeleteCoachComponent, { backdrop: 'static' });
+  onClickDeletePlayer(event: Event, playerSummary: IPlayerSummary) {
+    const modalRef: NgbModalRef = this.modalService.open(ConfirmDeletePlayerComponent, { backdrop: 'static' });
 
-    // modalRef.componentInstance.coachDetails = coach;
+    modalRef.componentInstance.playerSummary = playerSummary;
 
-    // modalRef.result
-    //   .then(returnObject => {
-    //     if (returnObject) {
-    //       this.toasterService.pop('success', 'Coach Successfully Deleted', returnObject.coachDetails.emailAddress);
+    modalRef.result
+      .then(returnObject => {
+        this.toasterService.pop('success', 'Player Successfully Deleted', playerSummary.firstName + ' ' + playerSummary.surname);
 
-    //       this.processReturnedCoaches(returnObject.updatedCoaches);
-    //     }
-
-    //     this.nameFilterElementRef.nativeElement.focus();
-    //   })
-    //   .catch(error => {
-    //     this.toasterService.pop('error', 'Failed Deleting Coach', error.coachDetails.emailAddress);
-    //   });
+        this.matchedPlayers = returnObject.matchedPlayers;
+        this.processMatchedPlayers();
+      })
+      .catch(error => {
+        this.currentState = FormState.SearchForPlayer;
+      });
 
     event.stopPropagation();
   }
@@ -233,6 +213,29 @@ export class ManagePlayersComponent implements OnInit {
     }
 
     return CSSClass;
+  }
+
+  private processMatchedPlayers() {
+    this.matchedPlayers.sort(
+      (player1: IPlayerSummary, player2: IPlayerSummary) => {
+        let returnValue: number = 1;
+
+        if (player1.surname < player2.surname) {
+          returnValue = -1;
+        }
+        else if (player1.surname === player2.surname) {
+          returnValue = 0;
+        }
+        
+        return returnValue;
+      });
+
+    if (this.matchedPlayers.length > 0) {
+      this.currentState = FormState.PlayersFound;
+    }
+    else {
+      this.currentState = FormState.NoPlayersFound;
+    }
   }
 }
 

@@ -322,6 +322,7 @@ describe('PlayersListComponent', () => {
       'contactHomeNumber': '021 4834511',
       'contactEmailAddress': 'finley_watkins@gmail.com',
       'school': 'Scoil Mhuire Lourdes',
+      'version': '2018-02-04T15:13:00.000Z',
       'lastRegisteredDate': '2017-02-14T00:00:00.000Z',
       'playerState': 1
     });
