@@ -66,7 +66,7 @@ export class ManagePlayersComponent implements OnInit {
             let startYear: number = this.groups[this.groups.length - 1].yearOfBirth 
                                       + Math.floor((this.groups[0].yearOfBirth - this.groups[this.groups.length - 1].yearOfBirth) / 2);
             
-            this.dateOfBirthPicker.startDate = { year: startYear, month: 6 };
+            this.dateOfBirthPicker.startDate = { year: startYear, month: 6, day: 1 };
           }
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.

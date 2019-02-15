@@ -5,7 +5,6 @@ export interface IPlayerSummary {
   addressLine1: string;
   addressLine2: string;
   addressLine3: string;
-  yearOfBirth: number;
   dateOfBirth: string;
   medicalConditions: string;
   contactName: string;

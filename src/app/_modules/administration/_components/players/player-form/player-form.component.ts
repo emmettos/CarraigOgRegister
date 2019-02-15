@@ -33,6 +33,9 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
 
   playerForm: FormGroup;
 
+  @ViewChild('dateOfBirthPicker') 
+  dateOfBirthPicker: NgbDatepicker;
+
   @ViewChild('registeredDatePicker') 
   registeredDatePicker: NgbDatepicker;
 
@@ -55,9 +58,7 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
     if (this.playerDetails) {
       this.editingPlayer = true;
       this.title = 'Edit Player - ' + this.playerDetails.firstName + ' ' + this.playerDetails.surname;
-    }
 
-    if (this.playerDetails) {
       this.registeredDateControl = new FormControl('');
 
       if (this.groupPlayerDetails) {
@@ -69,6 +70,8 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
       }
     }
     else {
+      this.playerState = PlayerState.New;
+      
       // The NgbInputDatepicker directive also validates for required but sets the same validator name
       //  (ngbDate) for both an invalid date and an empty date. Adding the validators.required overrides 
       //  the validator name, for an empty date, of 'ngbDate' date to be 'required'.
@@ -122,6 +125,9 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    this.dateOfBirthPicker.minDate = { year: this.groups[this.groups.length - 1].yearOfBirth - 1, month: 1, day: 1 };
+    this.dateOfBirthPicker.maxDate = { year: this.groups[0].yearOfBirth, month: 12, day: 31 };
+
     this.registeredDatePicker.minDate = { year: APP_SETTINGS.currentYear - 1, month: 1, day: 1 };
     this.registeredDatePicker.maxDate = { year: APP_SETTINGS.currentYear + 1, month: 12, day: 31 };  
 
@@ -292,8 +298,8 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
     this.playerForm.controls['addressLine1'].disable();
     this.playerForm.controls['addressLine2'].disable();
     this.playerForm.controls['addressLine3'].disable();
-    this.playerForm.controls['dateOfBirth'].disable();
-    this.registeredDateControl.disable();
+    this.dateOfBirthPicker.setDisabledState(true);
+    this.registeredDatePicker.setDisabledState(true);
     this.playerGroupControl.disable();
     this.playerForm.controls['school'].disable();
     this.playerForm.controls['medicalConditions'].disable();
