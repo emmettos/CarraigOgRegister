@@ -2,25 +2,25 @@
 <div class="modal-body">
   <div class="card">
     <div class="card-header" [ngClass]="playerPopupHeaderCSSClass()">
-      <h5>{{ playerDetails.firstName + ' ' + playerDetails.surname }}</h5>
+      <h5 id="name">{{ playerDetails.firstName + ' ' + playerDetails.surname }}</h5>
       <p>
-        {{ playerDetails.addressLine1 }}<br>
-        {{ playerDetails.addressLine2 }}<br>
-        {{ playerDetails.addressLine3 }}
+        <span id="address-line1">{{ playerDetails.addressLine1 }}</span><br>
+        <span id="address-line2">{{ playerDetails.addressLine2 }}</span><br>
+        <span id="address-line3">{{ playerDetails.addressLine3 }}</span>
       </p>
       <p>
-        <strong>Group:</strong> {{ groupName }}<br>
-        <strong>Last Registered Date:</strong> {{ lastRegisteredDate | date : "dd/MM/yyyy" }}
+        <span id="group-name"><strong>Group:</strong> {{ groupName }}</span><br>
+        <span id="last-registered-date"><strong>Last Registered Date:</strong> {{ lastRegisteredDate | date : "dd/MM/yyyy" }}</span>
       </p>
     </div>
     <div class="card-body">
-      <p class="card-text"><strong>Date of Birth:</strong> {{ playerDetails.dateOfBirth | date : "dd/MM/yyyy" }}</p>
-      <p class="card-text"><strong>Medical Conditions:</strong> {{ playerDetails.medicalConditions }}</p>
-      <p class="card-text"><strong>Contact Name:</strong> {{ playerDetails.contactName }}</p>
-      <p class="card-text"><strong>Contact Email:</strong> {{ playerDetails.contactEmailAddress }}</p>
-      <p class="card-text"><strong>Contact Mobile:</strong> {{ playerDetails.contactMobileNumber }}</p>
-      <p class="card-text"><strong>Contact Phone:</strong> {{ playerDetails.contactHomeNumber }}</p>
-      <p class="card-text"><strong>School:</strong> {{ playerDetails.school }}</p>
+      <p id="date-of-birth" class="card-text"><strong>Date of Birth:</strong> {{ playerDetails.dateOfBirth | date : "dd/MM/yyyy" }}</p>
+      <p id="medical-conditions" class="card-text"><strong>Medical Conditions:</strong> {{ playerDetails.medicalConditions }}</p>
+      <p id="contact-name" class="card-text"><strong>Contact Name:</strong> {{ playerDetails.contactName }}</p>
+      <p id="contact-email-address" class="card-text"><strong>Contact Email:</strong> {{ playerDetails.contactEmailAddress }}</p>
+      <p id="contact-mobile-number" class="card-text"><strong>Contact Mobile:</strong> {{ playerDetails.contactMobileNumber }}</p>
+      <p id="contact-home-number" class="card-text"><strong>Contact Phone:</strong> {{ playerDetails.contactHomeNumber }}</p>
+      <p id="school" class="card-text"><strong>School:</strong> {{ playerDetails.school }}</p>
     </div>
     <div class="card-footer text-muted" [ngClass]="playerPopupFooterCSSClass()">
       <p>

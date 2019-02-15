@@ -10,14 +10,14 @@ import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 
 import { APP_SETTINGS } from '../../../../../_helpers/index';
-import { IPlayer, PlayerState, IGroupPlayer, IGroup } from '../../../../../_models/index';
+import { IPlayer, PlayerState, IGroupPlayer } from '../../../../../_models/index';
 import { PlayersService } from '../../../../../_services';
 import { ValidationService } from '../../../../../_modules/shared/_services';
 
 import { PlayerFormComponent } from './player-form.component';
 
 
-fdescribe('PlayerFormComponent', () => {
+describe('PlayerFormComponent', () => {
   let component: PlayerFormComponent;
   let fixture: ComponentFixture<PlayerFormComponent>;
 
@@ -27,9 +27,7 @@ fdescribe('PlayerFormComponent', () => {
       activeModal: NgbActiveModal;
 
   let playerDetails: IPlayer,
-      groupPlayerDetails: IGroupPlayer,
-      dateOfBirth: moment.Moment,
-      groups: IGroup[];
+      groupPlayerDetails: IGroupPlayer;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -76,8 +74,8 @@ fdescribe('PlayerFormComponent', () => {
       'school': 'Scoil Mhuire Lourdes',
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-02-13T10:21:40.545Z',
       'updatedBy': 'admin@carraigog.com',
+      'updatedDate': '2018-02-13T10:21:40.545Z',
       'version': '2018-02-13T10:21:40.545Z'
     };
 
@@ -88,8 +86,8 @@ fdescribe('PlayerFormComponent', () => {
       'registeredDate': '2019-01-31 00:00:00',
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-02-13T10:17:21.332Z',
       'updatedBy': 'emmett.j.osullivan@gmail.com',
+      'updatedDate': '2018-02-13T10:17:21.332Z',
       'version': '2018-02-13T10:17:21.332Z'
     };
 
@@ -103,8 +101,8 @@ fdescribe('PlayerFormComponent', () => {
         'hurlingCoachId': 6,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-02-27T15:57:21.582Z',
         'updatedBy': 'admin@carraigog.com',
+        'updatedDate': '2018-02-27T15:57:21.582Z',
         'version': '2018-02-27T15:57:21.582Z'
       },
       {
@@ -116,8 +114,8 @@ fdescribe('PlayerFormComponent', () => {
         'hurlingCoachId': 4,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-02-27T15:57:21.582Z',
         'updatedBy': 'admin@carraigog.com',
+        'updatedDate': '2018-02-27T15:57:21.582Z',
         'version': '2018-02-27T15:57:21.582Z'
       },
       {
@@ -129,8 +127,8 @@ fdescribe('PlayerFormComponent', () => {
         'hurlingCoachId': 2,
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-02-27T15:57:21.582Z',
         'updatedBy': 'admin@carraigog.com',
+        'updatedDate': '2018-02-27T15:57:21.582Z',
         'version': '2018-02-27T15:57:21.582Z'
       },
     ];
@@ -1585,8 +1583,8 @@ fdescribe('PlayerFormComponent', () => {
         'school': 'Scoil Mhuire Lourdes',
         'createdBy': 'script',
         'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-02-13T10:21:40.545Z',
         'updatedBy': 'admin@carraigog.com',
+        'updatedDate': '2018-02-13T10:21:40.545Z',
         'version': '2018-02-13T10:21:40.545Z'
         },
       matchedPlayers: [
