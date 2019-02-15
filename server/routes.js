@@ -14,7 +14,6 @@ var authenticator = require('./authenticator');
 var authorizer = require('./authorizer');
 
 var group = require('./models/group');
-var player = require('./models/player');
 var user = require('./models/user');
 
 
@@ -172,7 +171,7 @@ exports = module.exports = function (app, router) {
           administrator,
           password
         FROM
-          coaches AS c
+          public.coaches AS c
         WHERE
           c.email_address = $1
       `, [request.body.emailAddress]);
@@ -270,37 +269,37 @@ exports = module.exports = function (app, router) {
           (SELECT 
             c1.first_name || ' ' || c1.surname
           FROM
-            coaches AS c1
+            public.coaches AS c1
           WHERE
             g.football_coach_id = c1.id) AS football_coach_full_name,
           (SELECT 
             c1.first_name || ' ' || c1.surname
           FROM
-            coaches AS c1
+            public.coaches AS c1
           WHERE
             g.hurling_coach_id = c1.id) AS hurling_coach_full_name,
           (SELECT
             COUNT(*)
           FROM
-            groups_players AS gp1
+            public.groups_players AS gp1
           WHERE
             gp1.group_id = g.id) AS number_of_players,
           (SELECT
             MAX(p1.updated_date)
           FROM
-            players AS p1
-          INNER JOIN groups_players gp1
+            public.players AS p1
+          INNER JOIN public.groups_players gp1
             ON p1.id = gp1.player_id
           WHERE
             gp1.group_id = g.id) AS last_updated_date
         FROM
-          groups AS g
+          public.groups AS g
         WHERE
           g.year_id = 
             (SELECT 
               y.id 
             FROM 
-              years AS y 
+              public.years AS y 
             WHERE y.year = $1)
         ORDER BY
           g.year_of_birth ASC      
@@ -362,13 +361,13 @@ exports = module.exports = function (app, router) {
           updated_date,
           version
         FROM
-          groups AS g
+          public.groups AS g
         WHERE
           g.year_id = 
             (SELECT 
               y.id 
             FROM 
-              years AS y 
+              public.years AS y 
             WHERE y.year = $1)
         ORDER BY
           g.year_of_birth DESC      
@@ -430,10 +429,10 @@ exports = module.exports = function (app, router) {
           updated_date,
           version
         FROM
-          groups AS g
+          public.groups AS g
         WHERE
           g.id = $1      
-      `, [request.body.groupId]);
+      `, [request.params.groupId]);
     
       var returnMessage = {};
     
@@ -475,6 +474,73 @@ exports = module.exports = function (app, router) {
     }
   });
 
+  router.post('/createGroup', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var groupDetails = request.body.groupDetails,
+          sqlStatement = [],
+          fieldIndex = 0,
+          fieldNames = [],
+          fieldValues = [],
+          fieldPositionParams = [];
+
+      if (!groupDetails) {
+        throw new Error ('groupDetails not found in request');
+      }
+
+      try {
+        sqlStatement.push('INSERT INTO public.groups (');
+
+        fieldNames.push('year_id');
+        fieldValues.push(currentSettings.year_id);
+
+        if (Object.prototype.hasOwnProperty.call(groupDetails, 'yearOfBirth')) {
+          fieldNames.push('year_of_birth');
+          fieldValues.push(groupDetails.yearOfBirth);
+        }
+        if (Object.prototype.hasOwnProperty.call(groupDetails, 'name')) {
+          fieldNames.push('name');
+          fieldValues.push(groupDetails.name);
+        }
+        if (Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoachId')) {
+          fieldNames.push('football_coach_id');
+          fieldValues.push(groupDetails.footballCoachId);
+        }
+        if (Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoachId')) {
+          fieldNames.push('hurling_coach_id');
+          fieldValues.push(groupDetails.hurlingCoachId);
+        }
+
+        fieldNames.push('created_by');
+        fieldValues.push(request.payload.userProfile.ID);
+        fieldNames.push('created_date');
+        fieldValues.push(moment.utc().toISOString());
+
+        sqlStatement.push(fieldNames.join(',\n'));
+
+        sqlStatement.push(`)
+          VALUES (`);
+
+        for (fieldIndex = 1; fieldIndex <= fieldNames.length; fieldIndex++) { 
+          fieldPositionParams.push('$' + fieldIndex)  
+        }
+
+        sqlStatement.push(fieldPositionParams.join(',\n'));
+
+        sqlStatement.push(')');
+
+        await client.query(sqlStatement.join('\n'), fieldValues);
+      } 
+      catch (error) {
+        throw error;
+      } 
+
+      await readGroupSummaries(app, currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
   router.get('/playerSummaries/:yearOfBirth', authorizer.authorize({ isGroupManager: true }), async (request, response, next) => {
     try {
       const result = await app.pool.query(`
@@ -495,7 +561,7 @@ exports = module.exports = function (app, router) {
           (SELECT
             MAX(gp1.registered_date)
           FROM
-            groups_players AS gp1
+            public.groups_players AS gp1
           WHERE
             gp1.player_id = p.id) AS last_registered_date,
           CASE
@@ -503,8 +569,8 @@ exports = module.exports = function (app, router) {
               (SELECT
                 gp1.id
               FROM
-                groups_players AS gp1
-              INNER JOIN groups AS g1
+                public.groups_players AS gp1
+              INNER JOIN public.groups AS g1
                 ON gp1.group_id = g1.id
               WHERE
                 gp1.player_id = p.id AND
@@ -512,15 +578,15 @@ exports = module.exports = function (app, router) {
                   (SELECT 
                     y2.id 
                   FROM 
-                    years AS y2 
+                    public.years AS y2 
                   WHERE 
                     y2.year = $2) AND
                 EXISTS
                   (SELECT
                     gp2.id
                   FROM
-                    groups_players AS gp2
-                  INNER JOIN groups AS g2
+                    public.groups_players AS gp2
+                  INNER JOIN public.groups AS g2
                     ON gp2.group_id = g2.id
                   WHERE
                     gp2.player_id = p.id AND
@@ -528,7 +594,7 @@ exports = module.exports = function (app, router) {
                       (SELECT 
                         y3.id 
                       FROM 
-                        years AS y3 
+                        public.years AS y3 
                       WHERE 
                         y3.year = $3)))
             THEN 0
@@ -536,8 +602,8 @@ exports = module.exports = function (app, router) {
               (SELECT
                 gp1.id
               FROM
-                groups_players AS gp1
-              INNER JOIN groups AS g1
+                public.groups_players AS gp1
+              INNER JOIN public.groups AS g1
                 ON gp1.group_id = g1.id
               WHERE
                 gp1.player_id = p.id AND
@@ -545,17 +611,17 @@ exports = module.exports = function (app, router) {
                   (SELECT 
                     y2.id 
                   FROM 
-                    years AS y2 
+                    public.years AS y2 
                   WHERE 
                     y2.year = $2))
             THEN 1
             ELSE 2
           END AS player_state
         FROM
-          players AS p
-        INNER JOIN groups_players AS gp
+          public.players AS p
+        INNER JOIN public.groups_players AS gp
           ON p.id = gp.player_id
-        INNER JOIN groups AS g
+        INNER JOIN public.groups AS g
           ON gp.group_id = g.id
         WHERE
           g.year_of_birth = $1 AND
@@ -563,14 +629,14 @@ exports = module.exports = function (app, router) {
             (SELECT 
               y1.id 
             FROM 
-              years AS y1 
+              public.years AS y1 
             WHERE 
             y1.year = $2) OR
           g.year_id = 
             (SELECT 
               y1.id 
             FROM 
-              years AS y1 
+              public.years AS y1 
             WHERE 
               y1.year = $3))
         `, [request.params.yearOfBirth, currentSettings.year, currentSettings.year - 1]);
@@ -621,7 +687,7 @@ exports = module.exports = function (app, router) {
           p.updated_date,
           p.version
         FROM
-          players AS p
+          public.players AS p
         WHERE
           p.id = $1
       `, [request.params.playerId]);
@@ -638,20 +704,20 @@ exports = module.exports = function (app, router) {
           gp.updated_date,
           gp.version
         FROM
-          groups_players AS gp
+          public.groups_players AS gp
         WHERE
           gp.player_id = $1 AND
           gp.group_id IN
             (SELECT
               g1.id
             FROM
-              groups g1
+              public.groups g1
             WHERE
               g1.year_id = 
                 (SELECT 
                   y.id 
                 FROM 
-                  years AS y 
+                  public.years AS y 
                 WHERE y.year = $2))
       `, [request.params.playerId, currentSettings.year]);
   
@@ -890,7 +956,7 @@ exports = module.exports = function (app, router) {
     finally {
       client.release()
     }
-});
+  });
 
   router.post('/updatePlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
@@ -1094,7 +1160,7 @@ exports = module.exports = function (app, router) {
     finally {
       client.release()
     }
-});
+  });
 
   router.post('/deletePlayer', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
@@ -1143,7 +1209,7 @@ exports = module.exports = function (app, router) {
     finally {
       client.release()
     }
-});
+  });
 
   router.get('/coaches', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
@@ -1357,32 +1423,34 @@ var readGroupSummaries = async (app, currentSettings, response, next) => {
       (SELECT 
         c1.first_name || ' ' || c1.surname
       FROM
-        coaches AS c1
+        public.coaches AS c1
       WHERE
         g.football_coach_id = c1.id) AS football_coach_full_name,
       (SELECT 
         c1.first_name || ' ' || c1.surname
       FROM
-        coaches AS c1
+        public.coaches AS c1
       WHERE
         g.hurling_coach_id = c1.id) AS hurling_coach_full_name,
       (SELECT
         MAX(p1.updated_date)
       FROM
-        players AS p1
-      INNER JOIN groups_players gp1
+        public.players AS p1
+      INNER JOIN public.groups_players gp1
         ON p1.id = gp1.player_id
       WHERE
         gp1.group_id = g.id) AS last_updated_date
     FROM
-      groups AS g
+      public.groups AS g
     WHERE
       g.year_id = 
         (SELECT 
           y.id 
         FROM 
-          years AS y 
+          public.years AS y 
         WHERE y.year = $1)
+    ORDER BY
+      g.year_of_birth ASC
   `, [currentSettings.year]);
 
   var returnMessage = {};
@@ -1429,7 +1497,7 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
       (SELECT
         MAX(gp1.registered_date)
       FROM
-        groups_players AS gp1
+        public.groups_players AS gp1
       WHERE
         gp1.player_id = p.id) AS last_registered_date,
       CASE
@@ -1437,8 +1505,8 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
           (SELECT
             gp1.id
           FROM
-            groups_players AS gp1
-          INNER JOIN groups AS g1
+            public.groups_players AS gp1
+          INNER JOIN public.groups AS g1
             ON gp1.group_id = g1.id
           WHERE
             gp1.player_id = p.id AND
@@ -1446,15 +1514,15 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
               (SELECT 
                 y2.id 
               FROM 
-                years AS y2 
+                public.years AS y2 
               WHERE 
                 y2.year = $2) AND
             EXISTS
               (SELECT
                 gp2.id
               FROM
-                groups_players AS gp2
-              INNER JOIN groups AS g2
+                public.groups_players AS gp2
+              INNER JOIN public.groups AS g2
                 ON gp2.group_id = g2.id
               WHERE
                 gp2.player_id = p.id AND
@@ -1462,7 +1530,7 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
                   (SELECT 
                     y3.id 
                   FROM 
-                    years AS y3 
+                    public.years AS y3 
                   WHERE 
                     y3.year = $3)))
         THEN 0
@@ -1470,8 +1538,8 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
           (SELECT
             gp1.id
           FROM
-            groups_players AS gp1
-          INNER JOIN groups AS g1
+            public.groups_players AS gp1
+          INNER JOIN public.groups AS g1
             ON gp1.group_id = g1.id
           WHERE
             gp1.player_id = p.id AND
@@ -1479,7 +1547,7 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
               (SELECT 
                 y2.id 
               FROM 
-                years AS y2 
+                public.years AS y2 
               WHERE 
                 y2.year = $2))
         THEN 1
@@ -1487,8 +1555,8 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
           (SELECT
             gp1.id
           FROM
-            groups_players AS gp1
-          INNER JOIN groups AS g1
+            public.groups_players AS gp1
+          INNER JOIN public.groups AS g1
             ON gp1.group_id = g1.id
           WHERE
             gp1.player_id = p.id AND
@@ -1496,14 +1564,14 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
               (SELECT 
                 y2.id 
               FROM 
-                years AS y2 
+                public.years AS y2 
               WHERE 
                 y2.year = $3))
         THEN 2
         ELSE 3
       END AS player_state          
     FROM
-      players AS p
+      public.players AS p
     WHERE
       p.date_of_birth = $1
   `, [dateOfBirth, currentSettings.year, currentSettings.year - 1]);
@@ -1537,24 +1605,24 @@ var readCoaches = async (app, response, next) => {
           (SELECT
             g1.id
           FROM
-            groups AS g1
+            public.groups AS g1
           WHERE
             g1.year_id = 
               (SELECT 
                 y2.id 
               FROM 
-                years AS y2 
+                public.years AS y2 
               WHERE y2.year = 
                 (SELECT 
                   MAX(y3.year) 
                 FROM 
-                  years AS y3)) AND
+                  public.years AS y3)) AND
             ((g1.football_coach_id = c.id) OR (g1.hurling_coach_id = c.id))) 
 		    THEN true
 		    ELSE false
 	    END AS active
     FROM
-      coaches AS c
+      public.coaches AS c
   `);
   
   var returnMessage = {};

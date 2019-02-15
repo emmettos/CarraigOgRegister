@@ -14,8 +14,6 @@ require('dotenv').config();
 var config = require('./server/config/config');
 var authenticator = require('./server/authenticator');
 
-//var currentSettings = require("./server/models/currentSettings");
-
 
 var loggerOptions = {
   name: 'carraigOgRegister',
@@ -53,9 +51,23 @@ app.use(authenticator.authenticate);
 
 const pool = new Pool()
 
-pool.query('SELECT MAX(y.year) AS year FROM years AS y')
+const sql = `
+  SELECT
+    y.id AS year_id,
+    y.year
+  FROM
+    public.years AS y
+  WHERE
+    y.year =
+      (SELECT
+        MAX(y1.year)
+      FROM
+        public.years AS y1)
+`;
+
+pool.query(sql)
   .then(result => {
-    // Turn of node-postgres date and timestamp parsing. Just treat all as strings.
+    // Turn off node-postgres date and timestamp parsing. Just treat all as strings.
     pg.types.setTypeParser(1082, stringValue => stringValue);
     pg.types.setTypeParser(1114, stringValue => stringValue);
 

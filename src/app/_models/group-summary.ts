@@ -1,11 +1,11 @@
 export interface IGroupSummary {
-  id: string;
+  id: number;
 
-  year: number;
   name: string;
   yearOfBirth: number;
   footballCoachFullName: string;
   hurlingCoachFullName: string;
 
+  version: string; 
   lastUpdatedDate: string;
 }

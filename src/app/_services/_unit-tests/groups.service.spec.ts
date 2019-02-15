@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { IGroup } from '../../_models';
+import { IGroup, IGroupSummary } from '../../_models';
 import { GroupsService } from '../index';
 
 
@@ -51,6 +51,49 @@ describe('GroupsService', () => {
     mockRequest.flush(null);
   });
 
+  it('should call url for group details', () => {
+    service.readGroupDetails(1)
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/groupDetails/1');
+
+    expect(mockRequest.request.method).toEqual("GET");
+
+    mockRequest.flush(null);
+  });
+
+  it('should call url for create group', () => {
+    service.createGroup(null)
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/createGroup');
+
+    expect(mockRequest.request.method).toEqual("POST");
+
+    mockRequest.flush(null);
+  });
+
+  it('should pass request body for create group', () => {
+    let group: any = {
+      'yearId': 1,
+      'name': 'Under 10',
+      'yearOfBirth': 2008,
+      'footballCoachId': 1,
+      'hurlingCoachId': 2
+    };
+
+    service.createGroup(group)
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/createGroup');
+
+    expect(mockRequest.request.body).toEqual({
+      groupDetails: group
+    });
+
+    mockRequest.flush(null);
+  });
+
   it('should call url for update group', () => {
     service.updateGroup(null)
       .subscribe();
@@ -83,19 +126,41 @@ describe('GroupsService', () => {
     const mockRequest = httpMock.expectOne('/api/updateGroup');
 
     expect(mockRequest.request.body).toEqual({
-      groupDetails: {
-        'id': 1,
-        'yearId': 1,
-        'name': 'Under 10',
-        'yearOfBirth': 2008,
-        'footballCoachId': 1,
-        'hurlingCoachId': 2,
-        'createdBy': 'script',
-        'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-02-27T15:57:21.582Z',
-        'updatedBy': 'admin@carraigog.com',
-        'version': '2018-02-27T15:57:21.582Z'
-      }
+      groupDetails: group
+    });
+
+    mockRequest.flush(null);
+  });
+
+  it('should call url for delete group', () => {
+    service.deleteGroup(null)
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/deleteGroup');
+
+    expect(mockRequest.request.method).toEqual("POST");
+
+    mockRequest.flush(null);
+  });
+
+  it('should pass request body for delete group', () => {
+    let groupSummary: IGroupSummary = {
+      'id': 1,
+      'name': 'Under 10',
+      'yearOfBirth': 2008,
+      'footballCoachFullName': 'Angel Klein',
+      'hurlingCoachFullName': 'Heddwyn Cunningham',
+      'version': '2018-02-04T15:13:00.000Z',
+      'lastUpdatedDate': '2018-02-27T15:57:21.582Z'
+    }
+
+    service.deleteGroup(groupSummary)
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/deleteGroup');
+
+    expect(mockRequest.request.body).toEqual({
+      groupSummary: groupSummary
     });
 
     mockRequest.flush(null);

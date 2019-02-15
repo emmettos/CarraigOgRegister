@@ -43,7 +43,7 @@ export class ManageGroupsComponent implements OnInit {
 
   ngOnInit() {
     this.filterForm = this.formBuilder.group({
-      'coachFilter': ['']
+      'groupFilter': ['']
     });
 
     this.filterForm.valueChanges
@@ -114,10 +114,24 @@ export class ManageGroupsComponent implements OnInit {
       });
   }
 
-  onClickRow(group: IGroup) {
-    let modalRef = this.modalService.open(GroupPopupComponent);
+  onClickAddGroup() {
+    const modalRef: NgbModalRef = this.modalService.open(GroupFormComponent, { size: 'lg', backdrop: 'static' });
 
-    modalRef.componentInstance.groupDetails = group;
+    modalRef.componentInstance.coaches = this.coaches;
+
+    modalRef.result
+      .then(returnObject => {
+        if (returnObject) {
+          this.toasterService.pop('success', 'Group Successfully Added', returnObject.groupDetails.name);
+
+          this.processReturnedGroups(returnObject.groups);
+        }
+
+        this.nameFilterElementRef.nativeElement.focus();
+      })
+      // Need this handler otherwise the Angular error handling mechanism will kick in.
+      .catch(error => {
+      });
   }
 
   onClickEditGroup(event: Event, group: IGroup) {
@@ -134,11 +148,50 @@ export class ManageGroupsComponent implements OnInit {
           this.processReturnedGroups(returnObject.updatedGroups);
         }
       })
+      // Need this handler otherwise the Angular error handling mechanism will kick in.
       .catch(error => {
-        this.toasterService.pop('error', 'Failed Updating Group', error.groupDetails.name);
       });
     
     event.stopPropagation();
+  }
+
+  onClickDeleteGroup(event: Event, group: IGroup) {
+    // const modalRef: NgbModalRef = this.modalService.open(GroupFormComponent, { size: 'lg', backdrop: 'static' });
+
+    // modalRef.componentInstance.groupDetails = group;
+    // modalRef.componentInstance.coaches = this.coaches;
+
+    // modalRef.result
+    //   .then(returnObject => {
+    //     if (returnObject) {
+    //       this.toasterService.pop('success', 'Group Successfully Updated', returnObject.groupDetails.name);
+
+    //       this.processReturnedGroups(returnObject.updatedGroups);
+    //     }
+    //   })
+    //   // Need this handler otherwise the Angular error handling mechanism will kick in.
+    //   .catch(error => {
+    //   });
+    
+    event.stopPropagation();
+  }
+
+  onClickRow(groupSummary: IGroupSummary) {
+    this.groupsService.readGroupDetails(groupSummary.id)
+      .subscribe({
+        next: response => {
+          let modalRef: NgbModalRef = this.modalService.open(GroupPopupComponent);
+
+          modalRef.componentInstance.groupDetails = response.body.groupDetails;
+
+          modalRef.componentInstance.footballCoachFullName = groupSummary.footballCoachFullName;
+          modalRef.componentInstance.hurlingCoachFullName = groupSummary.hurlingCoachFullName;
+          modalRef.componentInstance.lastUpdatedDate = groupSummary.lastUpdatedDate;
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
+        }
+      });
   }
 
   onClickDownloadCSV() {
@@ -147,7 +200,8 @@ export class ManageGroupsComponent implements OnInit {
     this.filteredGroups.forEach(group => {
       let csvGroup: any = {};
       
-      csvGroup.Name = group.name;
+      csvGroup.name = group.name;
+      csvGroup.yearOfBirth = group.yearOfBirth;
       csvGroup.footballCoach = group.footballCoachFullName;
       csvGroup.hurlingCoach = group.hurlingCoachFullName;
       csvGroup.lastUpdatedDate = moment.utc(group.lastUpdatedDate).format("YYYY-MM-DD");
@@ -162,18 +216,27 @@ export class ManageGroupsComponent implements OnInit {
   filterGroups(formValues: any) {
     this.filteredGroups = this.groups
       .filter(group => {
-        let coachFilter = formValues.coachFilter;
+        let groupFilter = formValues.groupFilter;
 
-        if (coachFilter === null) {
-          coachFilter = '';
+        if (groupFilter === null) {
+          groupFilter = '';
         }
 
-        if ((group.footballCoachFullName.toLowerCase().indexOf(coachFilter.toLowerCase()) !== -1 ||
-            group.hurlingCoachFullName.toLowerCase().indexOf(coachFilter.toLowerCase()) !== -1)) {
+        if (group.name.toLowerCase().indexOf(groupFilter.toLowerCase()) !== -1) {
           return true;
         }
       });
     
+    this.onClickHeader(this.sortKey, false);
+  }
+
+  private processReturnedGroups(groups: IGroupSummary[]) {
+    this.groups = groups;
+
+    this.totalCount = this.groups.length;
+
+    this.filteredGroups = this.groups.slice(0);
+
     this.onClickHeader(this.sortKey, false);
   }
 
@@ -191,40 +254,4 @@ export class ManageGroupsComponent implements OnInit {
 
     return CSSClass;
   };
-
-  private processReturnedGroups(groups: IGroupSummary[]) {
-    this.groups = groups;
-
-    this.totalCount = this.groups.length;
-
-    // this.groups.forEach(group => {
-    //   group.footballCoachFullName = this.lookupCoachFullName(group.footballCoach);
-    //   group.hurlingCoachFullName = this.lookupCoachFullName(group.hurlingCoach);
-    // });
-
-    this.filteredGroups = this.groups.slice(0);
-
-    this.onClickHeader(this.sortKey, false);
-  }
-
-  // private lookupCoachFullName(emailAddress: string): string {
-  //   let first = 0,
-  //       last = this.coaches.length - 1;
-
-  //   while (first <= last) {
-  //     let middle = Math.floor((first + last) / 2)
-
-  //     if (this.coaches[middle].emailAddress < emailAddress) {
-  //       first = middle + 1;
-  //     }
-  //     else if (this.coaches[middle].emailAddress > emailAddress) {
-  //       last = middle - 1;
-  //     }
-  //     else {
-  //       return this.coaches[middle].firstName + ' ' + this.coaches[middle].surname;
-  //     }
-  //   }
-
-  //   return emailAddress;
-  // }
 }

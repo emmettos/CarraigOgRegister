@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
-import { IGroup } from '../_models/index';
+import { IGroup, IGroupSummary } from '../_models/index';
 
 
 @Injectable()
@@ -25,12 +25,32 @@ export class GroupsService {
     return this.http.get<any>('/api/groups');
   }
 
+  readGroupDetails(groupId: number): Observable<any> {
+    return this.http.get<any>('/api/groupDetails/' + groupId);
+  }
+
+  createGroup(groupDetails: IGroup): Observable<any> {
+    let postData = {};
+
+    postData['groupDetails'] = groupDetails;
+
+    return this.http.post("/api/createGroup", postData);
+  }
+
   updateGroup(group: IGroup): Observable<any> {
     let postData = {};
 
     postData['groupDetails'] = group;
    
     return this.http.post('/api/updateGroup', postData);
+  }
+
+  deleteGroup(groupSummary: IGroupSummary): Observable<any> {
+    let postData = {};
+
+    postData['groupSummary'] = groupSummary;
+
+    return this.http.post("/api/deleteGroup", postData);
   }
 
   downloadCSV(csvGroups: any[]) {

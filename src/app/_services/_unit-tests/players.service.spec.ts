@@ -99,25 +99,8 @@ describe('PlayersService', () => {
     const mockRequest = httpMock.expectOne('/api/createPlayer');
 
     expect(mockRequest.request.body).toEqual({
-      playerDetails: {
-        'firstName': 'James',
-        'surname': 'Maxwell',
-        'addressLine1': '485 Meadowcrest Lane',
-        'addressLine2': 'Capitol',
-        'addressLine3': 'Carrigaline',
-        'dateOfBirth': '2008-10-10T00:00:00.000Z',
-        'yearOfBirth': 2008,
-        'medicalConditions': 'Heart Murmur',
-        'contactName': 'Kevia Maxwell',
-        'contactMobileNumber': '087 3514954',
-        'contactHomeNumber': '',
-        'contactEmailAddress': 'kevia_maxwell@gmail.com',
-        'school': 'Scoil Mhuire Lourdes'
-      },
-      groupPlayerDetails: {
-        'groupId': 1,
-        'dateRegistered': '2019-01-31 00:00:00'  
-      }
+      playerDetails: player,
+      groupPlayerDetails: groupPlayer
     });
 
     mockRequest.flush(null);
@@ -151,8 +134,8 @@ describe('PlayersService', () => {
       'school': 'Gaelscoil',
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-02-13T10:17:21.332Z',
       'updatedBy': 'emmett.j.osullivan@gmail.com',
+      'updatedDate': '2018-02-13T10:17:21.332Z',
       'version': '2018-02-13T10:17:21.332Z'
     }
     let groupPlayer: IGroupPlayer = {
@@ -162,8 +145,8 @@ describe('PlayersService', () => {
       'registeredDate': '2019-01-31 00:00:00',
       'createdBy': 'script',
       'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-02-13T10:17:21.332Z',
       'updatedBy': 'emmett.j.osullivan@gmail.com',
+      'updatedDate': '2018-02-13T10:17:21.332Z',
       'version': '2018-02-13T10:17:21.332Z'
     };
 
@@ -173,37 +156,8 @@ describe('PlayersService', () => {
     const mockRequest = httpMock.expectOne('/api/updatePlayer');
 
     expect(mockRequest.request.body).toEqual({
-      playerDetails: {
-        'id': 1,
-        'firstName': 'Luke',
-        'surname': 'Stewart',
-        'addressLine1': '1035 Harley Brook Lane',
-        'addressLine2': 'Carrigaline',
-        'addressLine3': '',
-        'dateOfBirth': '2010-07-02T00:00:00.000Z',
-        'medicalConditions': '',
-        'contactName': 'Danelle Stewart',
-        'contactMobileNumber': '087 9733637',
-        'contactHomeNumber': '',
-        'contactEmailAddress': 'danelle_stewart@gmail.com',
-        'school': 'Gaelscoil',
-        'createdBy': 'script',
-        'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-02-13T10:17:21.332Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com',
-        'version': '2018-02-13T10:17:21.332Z'
-      },
-      groupPlayerDetails: {
-        'id': 1,
-        'groupId': 1,
-        'playerId': 1,
-        'registeredDate': '2019-01-31 00:00:00',
-        'createdBy': 'script',
-        'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-02-13T10:17:21.332Z',
-        'updatedBy': 'emmett.j.osullivan@gmail.com',
-        'version': '2018-02-13T10:17:21.332Z'
-      }
+      playerDetails: player,
+      groupPlayerDetails: groupPlayer
     });
 
     mockRequest.flush(null);
@@ -246,24 +200,7 @@ describe('PlayersService', () => {
     const mockRequest = httpMock.expectOne('/api/deletePlayer');
 
     expect(mockRequest.request.body).toEqual({
-      playerSummary: {
-        'id': 2,
-        'firstName': 'Matthew',
-        'surname': 'Moss',
-        'addressLine1': '179 Payne Street',
-        'addressLine2': 'Clear Mount',
-        'addressLine3': 'Carrigaline',
-        'dateOfBirth': '2010-03-03',
-        'medicalConditions': '',
-        'contactName': 'Wilder Moss',
-        'contactMobileNumber': '087 6186779',
-        'contactHomeNumber': '',
-        'contactEmailAddress': 'wilder_moss@gmail.com',
-        'school': '',
-        'version': '2018-02-04T15:13:00.000Z',
-        'lastRegisteredDate': '2018-02-04',
-        'playerState': 0
-        }
+      playerSummary: playerSummary
     });
 
     mockRequest.flush(null);

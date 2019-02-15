@@ -57,7 +57,7 @@ export class ManagePlayersComponent implements OnInit {
           if (this.groups.length === 0) {
             this.toasterService.pop('warning', 'No Groups Found', 'Please add some groups');
 
-            this.managePlayersForm.controls['dateOfBirth'].disable();
+            this.dateOfBirthPicker.setDisabledState(true);
           }
           else {
             this.dateOfBirthPicker.minDate = { year: this.groups[this.groups.length - 1].yearOfBirth - 1, month: 1, day: 1 };
@@ -147,8 +147,8 @@ export class ManagePlayersComponent implements OnInit {
               this.currentState = FormState.SearchForPlayer;
             });
         },
-        // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {
+          this.currentState = FormState.SearchForPlayer;
         }
       });
     

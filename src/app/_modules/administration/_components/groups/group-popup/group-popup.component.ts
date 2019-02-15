@@ -11,6 +11,15 @@ export class GroupPopupComponent {
   @Input()
   groupDetails: IGroup;
 
+  @Input()
+  footballCoachFullName: string;
+
+  @Input()
+  hurlingCoachFullName: string;
+
+  @Input()
+  lastUpdatedDate: string;
+
   constructor() {
   }
 }

@@ -1,5 +1,6 @@
 export interface IPlayerSummary {
   id: number,
+
   firstName: string;
   surname: string;
   addressLine1: string;
@@ -12,6 +13,7 @@ export interface IPlayerSummary {
   contactHomeNumber: string;
   contactEmailAddress: string;
   school: string;
+  
   version: string; 
   lastRegisteredDate: string;
   playerState: PlayerState;
