@@ -96,9 +96,9 @@ export class ManagePlayersComponent implements OnInit {
     this.playersService.searchPlayers(this.dateOfBirth.format("YYYY-MM-DD"))
       .subscribe({
         next: response => {
-          this.matchedPlayers = response.body.players;
+          //this.matchedPlayers = response.body.players;
 
-          this.processMatchedPlayers();
+          this.processMatchedPlayers(response.body.players);
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {
@@ -114,10 +114,11 @@ export class ManagePlayersComponent implements OnInit {
 
     modalRef.result
       .then(returnObject => {
-        this.toasterService.pop('success', 'Player Successfully Added', returnObject.playerDetails.firstName + ' ' + returnObject.playerDetails.surname);
-        
-        this.matchedPlayers = returnObject.matchedPlayers;
-        this.processMatchedPlayers();
+        if (returnObject) {
+          this.toasterService.pop('success', 'Player Successfully Added', returnObject.playerDetails.firstName + ' ' + returnObject.playerDetails.surname);
+          
+          this.processMatchedPlayers(returnObject.matchedPlayers);
+        }
       })
       .catch(error => {
         this.currentState = FormState.SearchForPlayer;
@@ -137,13 +138,13 @@ export class ManagePlayersComponent implements OnInit {
 
           modalRef.result
             .then(returnObject => {
-              this.toasterService.pop('success', 'Player Successfully Updated', returnObject.playerDetails.firstName + ' ' + returnObject.playerDetails.surname);
+              if (returnObject) {
+                this.toasterService.pop('success', 'Player Successfully Updated', returnObject.playerDetails.firstName + ' ' + returnObject.playerDetails.surname);
               
-              this.matchedPlayers = returnObject.matchedPlayers;
-              this.processMatchedPlayers();
+                this.processMatchedPlayers(returnObject.matchedPlayers);
+              }
             })
             .catch(error => {
-              console.log('Error');
               this.currentState = FormState.SearchForPlayer;
             });
         },
@@ -162,10 +163,11 @@ export class ManagePlayersComponent implements OnInit {
 
     modalRef.result
       .then(returnObject => {
-        this.toasterService.pop('success', 'Player Successfully Deleted', playerSummary.firstName + ' ' + playerSummary.surname);
+        if (returnObject) {
+          this.toasterService.pop('success', 'Player Successfully Deleted', playerSummary.firstName + ' ' + playerSummary.surname);
 
-        this.matchedPlayers = returnObject.matchedPlayers;
-        this.processMatchedPlayers();
+          this.processMatchedPlayers(returnObject.matchedPlayers);
+        }
       })
       .catch(error => {
         this.currentState = FormState.SearchForPlayer;
@@ -215,7 +217,9 @@ export class ManagePlayersComponent implements OnInit {
     return CSSClass;
   }
 
-  private processMatchedPlayers() {
+  private processMatchedPlayers(matchedPlayers: IPlayerSummary[]) {
+    this.matchedPlayers = matchedPlayers;
+
     this.matchedPlayers.sort(
       (player1: IPlayerSummary, player2: IPlayerSummary) => {
         let returnValue: number = 1;

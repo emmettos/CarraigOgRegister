@@ -42,11 +42,11 @@ describe('GroupsListComponent', () => {
 
     groupsService = TestBed.get(GroupsService);
     
-    spyOn(groupsService, 'readGroupOverviews')
+    spyOn(groupsService, 'readGroupSummaries')
       .and.returnValue(of({
         'error': null,
         'body': {
-          'groupOverviews': [
+          'groups': [
             {
               'year': 2018,
               'name': 'Under 10',
@@ -112,8 +112,8 @@ describe('GroupsListComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should call groupsService.readGroupOverviews', () => {
-    expect(groupsService.readGroupOverviews).toHaveBeenCalled();
+  it('should call groupsService.readGroupSummaries', () => {
+    expect(groupsService.readGroupSummaries).toHaveBeenCalled();
   });
 
   it('should display header', () => {

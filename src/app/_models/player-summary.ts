@@ -12,9 +12,9 @@ export interface IPlayerSummary {
   contactMobileNumber: string;
   contactHomeNumber: string;
   contactEmailAddress: string;
-  school: string;
-  
-  version: string; 
+  school: string;  
+  version: string;
+   
   lastRegisteredDate: string;
   playerState: PlayerState;
 }

@@ -68,8 +68,11 @@ const sql = `
 pool.query(sql)
   .then(result => {
     // Turn off node-postgres date and timestamp parsing. Just treat all as strings.
-    pg.types.setTypeParser(1082, stringValue => stringValue);
-    pg.types.setTypeParser(1114, stringValue => stringValue);
+    pg.types.setTypeParser(1082, value => value);
+    pg.types.setTypeParser(1114, value => value);
+
+    // Convert bigints (IE. returned from COUNT(*)) to integers so that they won't be returned as strings.
+    pg.types.setTypeParser(20, value => parseInt(value));
 
     app.currentSettings = result.rows[0];    
     app.pool = pool;

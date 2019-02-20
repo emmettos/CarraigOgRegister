@@ -4,21 +4,16 @@
 </div>
 <div class="modal-body">
   <div class="container">
-    <form [formGroup]="deletePlayerForm" (ngSubmit)="onSubmit(deletePlayerForm.value)" novalidate>
+    <form [formGroup]="deleteGroupForm" (ngSubmit)="onSubmit(deleteGroupForm.value)" novalidate>
       <div class="row">
         <div class="col-md-12">
-          <h5 class="text-center text-warning">Warning - this will delete all records of the player...</h5>
+          <h5 class="text-center">Are you sure you want to delete the group...</h5>
         </div>
       </div>
       <div class="row">
           <div class="col-md-12">
-            <h5 id="player-name" class="text-center">{{ playerSummary.firstName }} {{ playerSummary.surname }}</h5>
+            <h5 id="group-name" class="text-center">{{ groupSummary.name }}</h5>
           </div>
-      </div>
-      <div class="row">
-        <div class="col-md-12">
-          <h5 class="text-center">Are you sure you want to continue?</h5>
-        </div>
       </div>
       <div class="row mt-4 mb-2">
         <div class="col-md-4 offset-md-2">
@@ -26,13 +21,13 @@
                   id="cancel" 
                   class="btn btn-info btn-block" 
                   (click)="onClickCancel()" 
-                  [disabled]="deletingPlayer"
+                  [disabled]="deletingGroup"
                   value="Cancel">
         </div>
         <div class="col-md-4">
           <input  type="submit" 
                   class="btn btn-info btn-block" 
-                  [disabled]="deletePlayerForm.status === 'INVALID' || deletingPlayer"
+                  [disabled]="deleteGroupForm.status === 'INVALID' || deletingGroup"
                   value="Ok">
         </div>
       </div>
@@ -40,6 +35,6 @@
   </div>
 </div>
 <!--
-<p>Form values: {{ deletePlayerForm.value | json }}</p>
-<p>Form status: {{ deletePlayerForm.status }}</p>
+<p>Form values: {{ deleteGroupForm.value | json }}</p>
+<p>Form status: {{ deleteGroupForm.status }}</p>
 -->

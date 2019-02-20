@@ -205,6 +205,14 @@ describe('ConfirmDeletePlayerComponent', () => {
   });
 
   it('should disable cancel button after submitting a player to be deleted', () => {
+    spyOn(playersService, 'deletePlayer')
+      .and.returnValue(of({
+        "error": null,
+        "body": {
+          matchedPlayers: []
+        }
+      }, asyncScheduler));
+
     component.onSubmit(component.deletePlayerForm.value);
 
     fixture.detectChanges();
@@ -213,6 +221,14 @@ describe('ConfirmDeletePlayerComponent', () => {
   });
 
   it('should disable Ok button after submitting a player to be deleted', () => {
+    spyOn(playersService, 'deletePlayer')
+      .and.returnValue(of({
+        "error": null,
+        "body": {
+          matchedPlayers: []
+        }
+      }, asyncScheduler));
+
     component.onSubmit(component.deletePlayerForm.value);
 
     fixture.detectChanges();

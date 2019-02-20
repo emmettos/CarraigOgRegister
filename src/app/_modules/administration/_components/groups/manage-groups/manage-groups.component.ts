@@ -7,10 +7,11 @@ import { ToasterService } from 'angular2-toaster';
 
 import * as moment from 'moment';
 
-import { IGroup, ICoach, IGroupSummary } from '../../../../../_models/index';
+import { ICoach, IGroupSummary } from '../../../../../_models/index';
 import { GroupsService, CoachesService } from '../../../../../_services/index';
 import { GroupFormComponent } from '../group-form/group-form.component';
 import { GroupPopupComponent } from '../group-popup/group-popup.component';
+import { ConfirmDeleteGroupComponent } from '../confirm-delete-group/confirm-delete-group.component';
 
 
 @Component({
@@ -30,6 +31,8 @@ export class ManageGroupsComponent implements OnInit {
   filteredGroups: IGroupSummary[] = null;
 
   totalCount: number = 0;
+
+  deletableGroups: boolean = false;
 
   coaches: ICoach[] = null;
 
@@ -124,7 +127,7 @@ export class ManageGroupsComponent implements OnInit {
         if (returnObject) {
           this.toasterService.pop('success', 'Group Successfully Added', returnObject.groupDetails.name);
 
-          this.processReturnedGroups(returnObject.groups);
+          this.processReturnedGroups(returnObject.updatedGroups);
         }
 
         this.nameFilterElementRef.nativeElement.focus();
@@ -134,16 +137,43 @@ export class ManageGroupsComponent implements OnInit {
       });
   }
 
-  onClickEditGroup(event: Event, group: IGroup) {
-    const modalRef: NgbModalRef = this.modalService.open(GroupFormComponent, { size: 'lg', backdrop: 'static' });
+  onClickEditGroup(event: Event, groupSummary: IGroupSummary) {
+    this.groupsService.readGroupDetails(groupSummary.id)
+      .subscribe({
+        next: response => {
+          const modalRef: NgbModalRef = this.modalService.open(GroupFormComponent, { size: 'lg', backdrop: 'static' });
 
-    modalRef.componentInstance.groupDetails = group;
-    modalRef.componentInstance.coaches = this.coaches;
+          modalRef.componentInstance.groupDetails = response.body.groupDetails;
+          modalRef.componentInstance.coaches = this.coaches;
+      
+          modalRef.result
+            .then(returnObject => {
+              if (returnObject) {
+                this.toasterService.pop('success', 'Group Successfully Updated', returnObject.groupDetails.name);
+
+                this.processReturnedGroups(returnObject.updatedGroups);
+              }
+            })
+            .catch(error => {
+            });
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
+        }
+      });
+    
+    event.stopPropagation();
+  }
+
+  onClickDeleteGroup(event: Event, groupSummary: IGroupSummary) {
+    const modalRef: NgbModalRef = this.modalService.open(ConfirmDeleteGroupComponent, { backdrop: 'static' });
+
+    modalRef.componentInstance.groupSummary = groupSummary;
 
     modalRef.result
       .then(returnObject => {
         if (returnObject) {
-          this.toasterService.pop('success', 'Group Successfully Updated', returnObject.groupDetails.name);
+          this.toasterService.pop('success', 'Group Successfully Deleted', groupSummary.name);
 
           this.processReturnedGroups(returnObject.updatedGroups);
         }
@@ -151,28 +181,7 @@ export class ManageGroupsComponent implements OnInit {
       // Need this handler otherwise the Angular error handling mechanism will kick in.
       .catch(error => {
       });
-    
-    event.stopPropagation();
-  }
 
-  onClickDeleteGroup(event: Event, group: IGroup) {
-    // const modalRef: NgbModalRef = this.modalService.open(GroupFormComponent, { size: 'lg', backdrop: 'static' });
-
-    // modalRef.componentInstance.groupDetails = group;
-    // modalRef.componentInstance.coaches = this.coaches;
-
-    // modalRef.result
-    //   .then(returnObject => {
-    //     if (returnObject) {
-    //       this.toasterService.pop('success', 'Group Successfully Updated', returnObject.groupDetails.name);
-
-    //       this.processReturnedGroups(returnObject.updatedGroups);
-    //     }
-    //   })
-    //   // Need this handler otherwise the Angular error handling mechanism will kick in.
-    //   .catch(error => {
-    //   });
-    
     event.stopPropagation();
   }
 
@@ -234,6 +243,14 @@ export class ManageGroupsComponent implements OnInit {
     this.groups = groups;
 
     this.totalCount = this.groups.length;
+
+    this.deletableGroups = false;
+
+    this.groups.forEach(group => {
+      if (group.numberOfPlayers === 0) {
+        this.deletableGroups = true;
+      }
+    });
 
     this.filteredGroups = this.groups.slice(0);
 

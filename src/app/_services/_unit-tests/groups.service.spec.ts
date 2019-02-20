@@ -29,11 +29,11 @@ describe('GroupsService', () => {
     httpMock.verify();
   });
 
-  it('should call url for read group overviews', () => {
-    service.readGroupOverviews()
+  it('should call url for read group summaries', () => {
+    service.readGroupSummaries()
       .subscribe();
 
-    const mockRequest = httpMock.expectOne('/api/groupOverviews');
+    const mockRequest = httpMock.expectOne('/api/groupSummaries');
 
     expect(mockRequest.request.method).toEqual("GET");
 
@@ -150,9 +150,10 @@ describe('GroupsService', () => {
       'yearOfBirth': 2008,
       'footballCoachFullName': 'Angel Klein',
       'hurlingCoachFullName': 'Heddwyn Cunningham',
+      'numberOfPlayers': 0,
       'version': '2018-02-04T15:13:00.000Z',
       'lastUpdatedDate': '2018-02-27T15:57:21.582Z'
-    }
+    } as IGroupSummary;
 
     service.deleteGroup(groupSummary)
       .subscribe();

@@ -3,10 +3,18 @@ a.disabled {
   cursor: not-allowed;
 }
 
-.card-header {
+.card-header.bg-thumbnail-info {
   background-color: #8bd1db;
 }
 
-.card-footer {
+.card-header.bg-thumbnail-warning {
+  background-color: #ffc15f;
+}
+
+.card-footer.bg-thumbnail-info {
   background-color: #c5e8ed;
-} 
+}
+
+.card-footer.bg-thumbnail-warning {
+  background-color: #f9e3c1;
+}

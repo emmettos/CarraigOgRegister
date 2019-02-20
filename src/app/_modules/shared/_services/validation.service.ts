@@ -13,6 +13,7 @@ export class ValidationService {
       'invalidConfirmPassword': 'The Confirm Password does not match the Password',
       'invalidEmailAddress': 'Invalid email address',
       'selectGroup': 'Select a group',
+      'selectYearOfBirth': 'Select a year',
       'invalidNewCoach': 'A coach with this email address already exists',
       'minlength': 'Minimum length [requiredLength]',
       'ngbDate': 'ZZZInvalid date/Out of range',
@@ -60,6 +61,14 @@ export class ValidationService {
     }
       
     return { 'selectGroup': true };
+  }
+
+  yearOfBirthValidator(control: FormControl): {[key: string]: any} {
+    if (control.value !== '0') {
+      return null;
+    }
+      
+    return { 'selectYearOfBirth': true };
   }
 
   passwordMatchValidator(controlToMatch: FormControl) {

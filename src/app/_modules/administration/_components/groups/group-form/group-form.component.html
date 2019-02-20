@@ -1,18 +1,41 @@
 <!-- Most id's are used for unit testing -->
-<div class="modal-header">
-  <h4 id="title" class="modal-title">Edit Group - {{ this.groupDetails.name }}</h4>
+<div class="modal-header" [ngClass]="groupFormHeaderCSSClass()">
+  <h4 id="title" class="modal-title">{{ title }}</h4>
 </div>
 <div class="modal-body">
   <div class="container">
     <form [formGroup]="groupForm" (ngSubmit)="onSubmit(groupForm.value)" novalidate>
       <div class="row">
         <div class="form-group col-md-5 offset-md-1">
+          <label class="control-label" for="name">Name</label>
+          <input  type="text" 
+                  id="name"
+                  formControlName="name" 
+                  name="name" 
+                  class="form-control" 
+                  [ngClass]="{'is-invalid': groupForm.controls.name.invalid && groupForm.controls.name.touched}"
+                  placeholder="Name">
+          <app-validation-message [control]="groupForm.controls.name"></app-validation-message>
+        </div>
+        <div class="form-group col-md-5">
+          <label class="control-label" for="yearOfBirth">Year of Birth</label>
+          <select id="year-of-birth-select"
+                  formControlName="yearOfBirth" 
+                  class="form-control">
+            <option value="0">Select Year</option>
+            <option [ngValue]="year" *ngFor="let year of yearsOfBirth">{{ year }}</option>
+          </select>
+          <app-validation-message [control]="groupForm.controls.yearOfBirth"></app-validation-message>
+        </div>
+      </div>
+      <div class="row">
+        <div class="form-group col-md-5 offset-md-1">
           <label class="control-label" for="footballCoach">Football Coach</label>
           <select id="football-coach-select"
                   formControlName="footballCoach" 
                   class="form-control">
-            <option value="">No Coach</option>
-            <option [ngValue]="currentCoach.emailAddress" *ngFor="let currentCoach of coaches">{{ currentCoach.firstName + ' ' + currentCoach.surname }}</option>
+            <option value="0">Select Coach</option>
+            <option [ngValue]="coach.id" *ngFor="let coach of coaches">{{ coach.firstName + ' ' + coach.surname }}</option>
           </select>
         </div>
         <div class="form-group col-md-5">
@@ -20,8 +43,8 @@
           <select id="hurling-coach-select"
                   formControlName="hurlingCoach" 
                   class="form-control">
-            <option value="">No Coach</option>
-            <option [ngValue]="currentCoach.emailAddress" *ngFor="let currentCoach of coaches">{{ currentCoach.firstName + ' ' + currentCoach.surname }}</option>
+            <option value="0">Select Coach</option>
+            <option [ngValue]="coach.id" *ngFor="let coach of coaches">{{ coach.firstName + ' ' + coach.surname }}</option>
           </select>
         </div>
       </div>

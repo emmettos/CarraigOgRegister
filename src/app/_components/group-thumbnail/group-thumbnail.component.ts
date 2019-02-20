@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 import { AuthorizationService } from '../../_services/authorization.service';
-import { IGroupOverview, IUserProfile } from '../../_models/index';
+import { IGroupSummary, IUserProfile } from '../../_models/index';
 
 
 @Component({
@@ -10,7 +10,8 @@ import { IGroupOverview, IUserProfile } from '../../_models/index';
   styleUrls: ['./group-thumbnail.component.css']
 })
 export class GroupThumbnailComponent implements OnInit {
-  @Input() groupOverview: IGroupOverview;
+  @Input() 
+  groupSummary: IGroupSummary;
   
   constructor(private authorizationService: AuthorizationService) { 
   }
@@ -18,22 +19,32 @@ export class GroupThumbnailComponent implements OnInit {
   ngOnInit() {
     let userProfile: IUserProfile = this.authorizationService.getActivePayload.userProfile;
 
-    this.groupOverview.canViewPlayers = false;
+    this.groupSummary.canViewPlayers = false;
 
     if (userProfile.isAdministrator) {
-      this.groupOverview.canViewPlayers = true;
+      this.groupSummary.canViewPlayers = true;
     }
     else if (userProfile.isManager) {
       let groupIndex = 0,
           groupFound = false;
 
       while (groupIndex < userProfile.groups.length && !groupFound) {
-        if (userProfile.groups[groupIndex++] === this.groupOverview.id) {
-          this.groupOverview.canViewPlayers = true;
+        if (userProfile.groups[groupIndex++] === this.groupSummary.id) {
+          this.groupSummary.canViewPlayers = true;
 
           groupFound = true;
         }
       }
     }
+  }
+
+  groupThumbnailCSSClass(group: IGroupSummary) {
+    var CSSClass = 'bg-thumbnail-info';
+
+    if (group.numberOfPlayers === 0) {
+      CSSClass = 'bg-thumbnail-warning';
+    }
+
+    return CSSClass;
   }
 }

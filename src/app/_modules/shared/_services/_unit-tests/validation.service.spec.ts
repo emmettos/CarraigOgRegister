@@ -23,17 +23,29 @@ describe('ValidationService', () => {
     expect(service.emailValidator(formControl)).toEqual({ 'invalidEmailAddress': true });
   });
 
-  // it('should validate valid group year', () => {
-  //   formControl.setValue('2009');
+  it('should validate valid group year', () => {
+    formControl.setValue('2009');
 
-  //   expect(service.groupYearValidator(formControl)).toBeNull();
-  // });
+    expect(service.groupValidator(formControl)).toBeNull();
+  });
 
-  // it('should validate invalid group year', () => {
-  //   formControl.setValue('Select Year');
+  it('should validate invalid group year', () => {
+    formControl.setValue('0');
 
-  //   expect(service.groupYearValidator(formControl)).toEqual({ 'invalidGroupYear': true });
-  // });
+    expect(service.groupValidator(formControl)).toEqual({ 'selectGroup': true });
+  });
+
+  it('should validate valid year of birth', () => {
+    formControl.setValue('2009');
+
+    expect(service.yearOfBirthValidator(formControl)).toBeNull();
+  });
+
+  it('should validate invalid year of birth', () => {
+    formControl.setValue('0');
+
+    expect(service.yearOfBirthValidator(formControl)).toEqual({ 'selectYearOfBirth': true });
+  });
 
   it('should validate valid password match', () => {
     let passwordMatchControl = new FormControl();

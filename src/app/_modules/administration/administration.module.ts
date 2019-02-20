@@ -18,6 +18,7 @@ import { CoachPopupComponent } from './_components/coaches/coach-popup/coach-pop
 import { ManageGroupsComponent } from './_components/groups/manage-groups/manage-groups.component';
 import { GroupFormComponent } from './_components/groups/group-form/group-form.component';
 import { GroupPopupComponent } from './_components/groups/group-popup/group-popup.component';
+import { ConfirmDeleteGroupComponent } from './_components/groups/confirm-delete-group/confirm-delete-group.component';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { GroupPopupComponent } from './_components/groups/group-popup/group-popu
     CoachPopupComponent,
     ManageGroupsComponent,
     GroupFormComponent,
-    GroupPopupComponent
+    GroupPopupComponent,
+    ConfirmDeleteGroupComponent
   ],
   imports: [
     AdministrationRoutingModule,
@@ -49,7 +51,8 @@ import { GroupPopupComponent } from './_components/groups/group-popup/group-popu
     ConfirmDeleteCoachComponent,
     CoachPopupComponent,
     GroupFormComponent,
-    GroupPopupComponent
+    GroupPopupComponent,
+    ConfirmDeleteGroupComponent
   ]
 })
 export class AdministrationModule { }

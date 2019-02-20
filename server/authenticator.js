@@ -58,7 +58,7 @@ exports.authenticate = function (request, response, next) {
   }
 };
 
-exports.createToken = async (user, pool) => {
+exports.createToken = async (user, currentSettings, pool) => {
   var userProfile = {};
 
   userProfile.ID = user.email_address;
@@ -70,12 +70,20 @@ exports.createToken = async (user, pool) => {
   if (!userProfile.isAdministrator) {
     const result = await pool.query(`
       SELECT 
-        id
+        g.id
       FROM
         groups AS g
       WHERE
-        g.football_coach_id = $1 OR g.hurling_coach_id = $1
-    `, [user.id]);
+        (g.football_coach_id = $1 OR g.hurling_coach_id = $1) AND
+        g.year_id = 
+          (SELECT 
+            y1.id 
+          FROM 
+            public.years AS y1 
+          WHERE y1.year = $2)
+      ORDER BY
+        g.id
+    `, [user.id, currentSettings.year]);
 
     result.rows.forEach(row => {
       userProfile.groups.push(row.id);

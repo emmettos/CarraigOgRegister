@@ -15,6 +15,10 @@ export class ConfigurationService {
       .toPromise()
       .then(response => {
         APP_SETTINGS.currentYear = response.body.currentSettings.year;
+
+        for (let index = APP_SETTINGS.currentYear - 5; index > APP_SETTINGS.currentYear - 20; index--) {
+          APP_SETTINGS.yearsOfBirth.push(index);
+        }
       });
 
     return promise;

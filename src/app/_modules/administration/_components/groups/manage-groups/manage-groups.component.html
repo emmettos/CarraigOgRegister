@@ -43,23 +43,28 @@
         <tr>
           <th (click)="onClickHeader('name')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('yearOfBirth')"></i></th>
           <th (click)="onClickHeader('yearOfBirth')" class="text-right"><span class="float-left mr-1">Year of Birth</span><i [ngClass]="headerSortCSSClass('yearOfBirth')"></i></th>
-          <th (click)="onClickHeader('footballCoach')" class="text-right"><span class="float-left mr-1">Football Coach</span><i [ngClass]="headerSortCSSClass('footballCoach')"></i></th>
-          <th (click)="onClickHeader('hurlingCoach')" class="text-right"><span class="float-left mr-1">Hurling Coach</span><i [ngClass]="headerSortCSSClass('hurlingCoach')"></i></th>
+          <th (click)="onClickHeader('footballCoachFullName')" class="text-right"><span class="float-left mr-1">Football Coach</span><i [ngClass]="headerSortCSSClass('footballCoach')"></i></th>
+          <th (click)="onClickHeader('hurlingCoachFullName')" class="text-right"><span class="float-left mr-1">Hurling Coach</span><i [ngClass]="headerSortCSSClass('hurlingCoach')"></i></th>
+          <th (click)="onClickHeader('numberOfPlayers')" class="text-right"><span class="float-left mr-1">No. Players</span><i [ngClass]="headerSortCSSClass('numberOfPlayers')"></i></th>
           <th (click)="onClickHeader('lastUpdatedDate')" class="text-right"><span class="float-left mr-1">Players Last Updated</span><i [ngClass]="headerSortCSSClass('lastUpdatedDate')"></i></th>
           <th></th>
-          <th></th>
+          <th *ngIf="deletableGroups"></th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let currentGroup of filteredGroups" (click)="onClickRow(currentGroup)">
+        <tr *ngFor="let currentGroup of filteredGroups" [class.missing]="currentGroup.numberOfPlayers === 0" (click)="onClickRow(currentGroup)">
           <td>{{ currentGroup.name }}</td>
           <td>{{ currentGroup.yearOfBirth }}</td>
           <td>{{ currentGroup.footballCoachFullName }}</td>
           <td>{{ currentGroup.hurlingCoachFullName }}</td>
+          <td>{{ currentGroup.numberOfPlayers }}</td>
           <td>{{ currentGroup.lastUpdatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</td>
           <td class="text-center"><a href=""><span (click)="!!onClickEditGroup($event, currentGroup)">Edit</span></a></td>
-          <td class="text-center"><a href=""><span (click)="!!onClickDeleteGroup($event, currentGroup)">Delete</span></a></td>
-        </tr>
+          <td *ngIf="deletableGroups" class="text-center">
+            <a *ngIf="currentGroup.numberOfPlayers === 0" href=""><span (click)="!!onClickDeleteGroup($event, currentGroup)">Delete</span></a>
+            <span *ngIf="currentGroup.numberOfPlayers > 0"></span>
+          </td>
+      </tr>
       </tbody>
     </table>
   </div>

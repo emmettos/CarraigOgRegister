@@ -204,7 +204,7 @@ exports = module.exports = function (app, router) {
         throw customError;
       }
 
-      jwtToken = await authenticator.createToken(foundUser, app.pool)
+      jwtToken = await authenticator.createToken(foundUser, currentSettings, app.pool)
 
       returnMessage.error = null;
       returnMessage.body = {};
@@ -259,84 +259,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get('/groupOverviews', authorizer.authorize(), async (request, response, next) => {
-    try {
-      const result = await app.pool.query(`
-        SELECT
-          g.id,
-          g.year_of_birth,
-          g.name,
-          (SELECT 
-            c1.first_name || ' ' || c1.surname
-          FROM
-            public.coaches AS c1
-          WHERE
-            g.football_coach_id = c1.id) AS football_coach_full_name,
-          (SELECT 
-            c1.first_name || ' ' || c1.surname
-          FROM
-            public.coaches AS c1
-          WHERE
-            g.hurling_coach_id = c1.id) AS hurling_coach_full_name,
-          (SELECT
-            COUNT(*)
-          FROM
-            public.groups_players AS gp1
-          WHERE
-            gp1.group_id = g.id) AS number_of_players,
-          (SELECT
-            MAX(p1.updated_date)
-          FROM
-            public.players AS p1
-          INNER JOIN public.groups_players gp1
-            ON p1.id = gp1.player_id
-          WHERE
-            gp1.group_id = g.id) AS last_updated_date
-        FROM
-          public.groups AS g
-        WHERE
-          g.year_id = 
-            (SELECT 
-              y.id 
-            FROM 
-              public.years AS y 
-            WHERE y.year = $1)
-        ORDER BY
-          g.year_of_birth ASC      
-      `, [currentSettings.year]);
-  
-      var returnMessage = {};
-
-      returnMessage.error = null;
-      returnMessage.body = {};
-
-      returnMessage.body.groupOverviews = result.rows.map(row => {
-        Object.defineProperty(row, 'yearOfBirth', Object.getOwnPropertyDescriptor(row, 'year_of_birth'));
-        delete row['year_of_birth'];
-
-        Object.defineProperty(row, 'footballCoachFullName', Object.getOwnPropertyDescriptor(row, 'football_coach_full_name'));
-        delete row['football_coach_full_name'];
-
-        Object.defineProperty(row, 'hurlingCoachFullName', Object.getOwnPropertyDescriptor(row, 'hurling_coach_full_name'));
-        delete row['hurling_coach_full_name'];
-
-        Object.defineProperty(row, 'numberOfPlayers', Object.getOwnPropertyDescriptor(row, 'number_of_players'));
-        delete row['number_of_players'];
-
-        Object.defineProperty(row, 'lastUpdatedDate', Object.getOwnPropertyDescriptor(row, 'last_updated_date'));
-        delete row['last_updated_date'];
-
-        return row;
-      });
-
-      response.status(200).json(returnMessage);
-    }
-    catch (error) {
-      next(error);
-    }
-  });
-
-  router.get('/groupSummaries', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.get('/groupSummaries', authorizer.authorize(), async (request, response, next) => {
     try {
       await readGroupSummaries(app, currentSettings, response, next);
     }
@@ -528,7 +451,7 @@ exports = module.exports = function (app, router) {
 
         sqlStatement.push(')');
 
-        await client.query(sqlStatement.join('\n'), fieldValues);
+        await app.pool.query(sqlStatement.join('\n'), fieldValues);
       } 
       catch (error) {
         throw error;
@@ -538,6 +461,106 @@ exports = module.exports = function (app, router) {
     }
     catch (error) {
       next(error);
+    }
+  });
+
+  router.post('/updateGroup', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var groupDetails = request.body.groupDetails,
+          sqlStatement = [],
+          setIndex = 0,
+          setStatements = [],
+          setValues = [],
+          result = null;
+
+      if (!groupDetails) {
+        throw new Error ('groupDetails not found in request');
+      }
+
+      try {
+        sqlStatement.push(`
+          UPDATE 
+            public.groups
+          SET`);
+
+        if (Object.prototype.hasOwnProperty.call(groupDetails, 'yearOfBirth')) {
+          setStatements.push('year_of_birth = ($' + (++setIndex) + ')');
+          setValues.push(groupDetails.yearOfBirth);
+        }
+        if (Object.prototype.hasOwnProperty.call(groupDetails, 'name')) {
+          setStatements.push('name = ($' + (++setIndex) + ')');
+          setValues.push(groupDetails.name);
+        }
+        if (Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoachId')) {
+          setStatements.push('football_coach_id = ($' + (++setIndex) + ')');
+          setValues.push(groupDetails.footballCoachId);
+        }
+        if (Object.prototype.hasOwnProperty.call(groupDetails, 'hurlingCoachId')) {
+          setStatements.push('hurling_coach_id = ($' + (++setIndex) + ')');
+          setValues.push(groupDetails.hurlingCoachId);
+        }
+
+        setStatements.push('updated_by = ($' + (++setIndex) + ')');
+        setValues.push(request.payload.userProfile.ID);
+        setStatements.push('updated_date = ($' + (++setIndex) + ')');
+        setValues.push(moment.utc().toISOString());
+
+        sqlStatement.push(setStatements.join(',\n'));
+
+        sqlStatement.push(`
+          WHERE 
+            id = ` + groupDetails.id + ` AND
+            version = '` + groupDetails.version + `'`);
+
+        result = await app.pool.query(sqlStatement.join('\n'), setValues);
+        
+        if (result.rowCount === 0) {
+          throw new Error('No group rows updated. Possible concurrency issue.')
+        }
+      } 
+      catch (error) {
+        throw error;
+      } 
+
+      await readGroupSummaries(app, currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
+
+  router.post('/deleteGroup', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var result = null;
+
+      if (!request.body.groupSummary) {
+        throw new Error ('groupSummary not found in request');
+      }
+
+      try {
+        result = await app.pool.query(`
+          DELETE FROM 
+            public.groups
+          WHERE 
+            id = $1 AND
+            version = $2
+        `, [request.body.groupSummary.id, request.body.groupSummary.version]);
+          
+        if (result.rowCount === 0) {
+          throw new Error('No group deleted. Possible concurrency issue.')
+        }
+      } 
+      catch (error) {
+        throw error;
+      } 
+
+      await readGroupSummaries(app, currentSettings, response, next);
+    }
+    catch (error) {
+      next(error);
+    }
+    finally {
+      client.release()
     }
   });
 
@@ -1166,7 +1189,7 @@ exports = module.exports = function (app, router) {
     try {
       var result = null;
 
-      if (!(request.body.playerSummary)) {
+      if (!request.body.playerSummary) {
         throw new Error ('playerSummary not found in request');
       }
 
@@ -1420,6 +1443,7 @@ var readGroupSummaries = async (app, currentSettings, response, next) => {
       g.id,
       g.year_of_birth,
       g.name,
+      g.version,
       (SELECT 
         c1.first_name || ' ' || c1.surname
       FROM
@@ -1432,6 +1456,12 @@ var readGroupSummaries = async (app, currentSettings, response, next) => {
         public.coaches AS c1
       WHERE
         g.hurling_coach_id = c1.id) AS hurling_coach_full_name,
+      (SELECT
+        COUNT(*)
+      FROM
+        public.groups_players AS gp1
+      WHERE
+        gp1.group_id = g.id) AS number_of_players,
       (SELECT
         MAX(p1.updated_date)
       FROM
@@ -1467,6 +1497,9 @@ var readGroupSummaries = async (app, currentSettings, response, next) => {
 
     Object.defineProperty(row, 'hurlingCoachFullName', Object.getOwnPropertyDescriptor(row, 'hurling_coach_full_name'));
     delete row['hurling_coach_full_name'];
+
+    Object.defineProperty(row, 'numberOfPlayers', Object.getOwnPropertyDescriptor(row, 'number_of_players'));
+    delete row['number_of_players'];
 
     Object.defineProperty(row, 'lastUpdatedDate', Object.getOwnPropertyDescriptor(row, 'last_updated_date'));
     delete row['last_updated_date'];

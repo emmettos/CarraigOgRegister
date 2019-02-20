@@ -59,7 +59,7 @@ describe('ConfigurationService', () => {
     });
   });
 
-  it('should initialize APP_SETTINGS from read configuration settings', fakeAsync(() => {
+  it('should initialize APP_SETTINGS.currentYear from read configuration settings', fakeAsync(() => {
     service.readConfigurationSettings();
 
     const mockRequest = httpMock.expectOne('/api/currentSettings');
@@ -76,8 +76,26 @@ describe('ConfigurationService', () => {
 
     tick();
 
-    expect(APP_SETTINGS).toEqual({
-      currentYear: 2018
+    expect(APP_SETTINGS.currentYear).toEqual(2018);
+  }));
+
+  it('should initialize APP_SETTINGS.yearsOfBirth from read configuration settings', fakeAsync(() => {
+    service.readConfigurationSettings();
+
+    const mockRequest = httpMock.expectOne('/api/currentSettings');
+
+    APP_SETTINGS.currentYear = 0;
+
+    mockRequest.flush({
+      body: {
+        currentSettings: {
+          year: 2018
+        }
+      }
     });
+
+    tick();
+
+    expect(APP_SETTINGS.yearsOfBirth[3]).toEqual(2010);
   }));
 });
