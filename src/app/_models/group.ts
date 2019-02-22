@@ -9,8 +9,8 @@ export interface IGroup {
 
   createdBy: string;
   createdDate: string;
-  updatedDate: string;
   updatedBy: string;
+  updatedDate: string;
 
   version: string;
 }

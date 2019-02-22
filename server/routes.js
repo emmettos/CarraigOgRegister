@@ -1388,37 +1388,6 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.post('/updateGroup', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
-    try {
-      var groupDetails = request.body.groupDetails,
-          customError = null,
-          foundGroup = null;
-
-      foundGroup = await group.findOne({ '_id': mongoose.Types.ObjectId(groupDetails._id), '__v': groupDetails.__v });
-
-      if (!foundGroup) {
-        customError = new Error('Group not found');
-
-        customError.httpCode = 409;
-
-        throw customError;
-      }
-
-      foundGroup.footballCoach = Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoach') ? groupDetails.footballCoach : foundGroup.footballCoach;
-      foundGroup.hurlingCoach = Object.prototype.hasOwnProperty.call(groupDetails, 'hurlingCoach') ? groupDetails.hurlingCoach : foundGroup.hurlingCoach;
-  
-      foundGroup.modifiedBy = request.payload.userProfile.ID;
-      foundGroup.increment();
-
-      await foundGroup.save();
-
-      await readGroups(currentSettings, response, next);
-    }
-    catch (error) {
-      next(error);
-    }
-  });
-
   router.post('/writeLog', authorizer.authorize(), function (request, response, next) {
     request.logger.error({ clientError: request.body });
     

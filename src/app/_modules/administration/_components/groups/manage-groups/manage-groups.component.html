@@ -18,9 +18,9 @@
     <div class="form-row align-items-center">
       <div class="col-md-4 col-lg-3">
         <input  type="text" 
-                formControlName="groupFilter" 
+                formControlName="nameFilter" 
                 class="form-control" 
-                placeholder="Group Filter">
+                placeholder="Name Filter">
       </div>
       <div class="col-md-4 col-lg-6 offset-md-4 offset-lg-3 text-right">
         <span id="displaying-message">Displaying {{ filteredGroups?.length }} Groups</span>
@@ -41,7 +41,7 @@
     <table id="groups-table" class="table table-bordered table-striped table-hover select-row">
       <thead>
         <tr>
-          <th (click)="onClickHeader('name')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('yearOfBirth')"></i></th>
+          <th (click)="onClickHeader('name')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('name')"></i></th>
           <th (click)="onClickHeader('yearOfBirth')" class="text-right"><span class="float-left mr-1">Year of Birth</span><i [ngClass]="headerSortCSSClass('yearOfBirth')"></i></th>
           <th (click)="onClickHeader('footballCoachFullName')" class="text-right"><span class="float-left mr-1">Football Coach</span><i [ngClass]="headerSortCSSClass('footballCoach')"></i></th>
           <th (click)="onClickHeader('hurlingCoachFullName')" class="text-right"><span class="float-left mr-1">Hurling Coach</span><i [ngClass]="headerSortCSSClass('hurlingCoach')"></i></th>

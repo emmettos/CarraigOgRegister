@@ -368,7 +368,6 @@ describe('ManagePlayersComponent', () => {
     expect(component.managePlayersForm.controls['dateOfBirth'].invalid).toBeTruthy();
   });
 
-
   it('should validate valid date of birth', () => {
     spyOn(groupsService, 'readGroups')
       .and.returnValue(of({

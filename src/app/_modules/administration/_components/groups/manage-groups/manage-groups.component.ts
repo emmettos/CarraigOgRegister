@@ -46,7 +46,7 @@ export class ManageGroupsComponent implements OnInit {
 
   ngOnInit() {
     this.filterForm = this.formBuilder.group({
-      'groupFilter': ['']
+      'nameFilter': ['']
     });
 
     this.filterForm.valueChanges
@@ -213,6 +213,7 @@ export class ManageGroupsComponent implements OnInit {
       csvGroup.yearOfBirth = group.yearOfBirth;
       csvGroup.footballCoach = group.footballCoachFullName;
       csvGroup.hurlingCoach = group.hurlingCoachFullName;
+      csvGroup.numberOfPlayers = group.numberOfPlayers;
       csvGroup.lastUpdatedDate = moment.utc(group.lastUpdatedDate).format("YYYY-MM-DD");
 
       csvGroups.push(csvGroup);
@@ -225,13 +226,13 @@ export class ManageGroupsComponent implements OnInit {
   filterGroups(formValues: any) {
     this.filteredGroups = this.groups
       .filter(group => {
-        let groupFilter = formValues.groupFilter;
+        let nameFilter = formValues.nameFilter;
 
-        if (groupFilter === null) {
-          groupFilter = '';
+        if (nameFilter === null) {
+          nameFilter = '';
         }
 
-        if (group.name.toLowerCase().indexOf(groupFilter.toLowerCase()) !== -1) {
+        if (group.name.toLowerCase().indexOf(nameFilter.toLowerCase()) !== -1) {
           return true;
         }
       });
