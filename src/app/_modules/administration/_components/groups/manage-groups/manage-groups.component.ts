@@ -195,6 +195,8 @@ export class ManageGroupsComponent implements OnInit {
 
           modalRef.componentInstance.footballCoachFullName = groupSummary.footballCoachFullName;
           modalRef.componentInstance.hurlingCoachFullName = groupSummary.hurlingCoachFullName;
+          modalRef.componentInstance.numberOfPlayers = groupSummary.numberOfPlayers;
+          
           modalRef.componentInstance.lastUpdatedDate = groupSummary.lastUpdatedDate;
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.

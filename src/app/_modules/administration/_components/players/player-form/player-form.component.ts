@@ -57,7 +57,7 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     if (this.playerDetails) {
       this.editingPlayer = true;
-      this.title = 'Edit Player - ' + this.playerDetails.firstName + ' ' + this.playerDetails.surname;
+      this.title = 'Edit Player';
 
       this.registeredDateControl = new FormControl('');
 

@@ -41,7 +41,7 @@ export class GroupFormComponent implements OnInit {
 
     if (this.groupDetails) {
       this.editingGroup = true;
-      this.title = 'Edit Group - ' + this.groupDetails.name;
+      this.title = 'Edit Group';
     }
 
     this.groupForm = this.formBuilder.group({

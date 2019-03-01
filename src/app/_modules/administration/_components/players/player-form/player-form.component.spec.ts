@@ -155,7 +155,7 @@ describe('PlayerFormComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#title").innerHTML).toEqual('Edit Player - Matthew Moss');
+    expect(fixture.nativeElement.querySelector("#title").innerHTML).toEqual('Edit Player');
   });
 
   it('should set header style for existing player state', () => {

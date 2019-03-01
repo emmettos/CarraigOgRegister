@@ -18,6 +18,9 @@ export class GroupPopupComponent {
   hurlingCoachFullName: string;
 
   @Input()
+  numberOfPlayers: number;
+
+  @Input()
   lastUpdatedDate: string;
 
   constructor() {

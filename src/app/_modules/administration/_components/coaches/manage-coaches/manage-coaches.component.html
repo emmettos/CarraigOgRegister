@@ -62,7 +62,7 @@
           <th (click)="onClickHeader('firstName')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('firstName')"></i></th>
           <th (click)="onClickHeader('emailAddress')" class="text-right"><span class="float-left mr-1">Email Address</span><i [ngClass]="headerSortCSSClass('addressLine2')"></i></th>
           <th (click)="onClickHeader('phoneNumber')" class="text-right"><span class="float-left mr-1">Phone Number</span><i [ngClass]="headerSortCSSClass('dateOfBirth')"></i></th>
-          <th (click)="onClickHeader('isAdministrator')" class="text-right"><span class="float-left mr-1">Admin</span><i [ngClass]="headerSortCSSClass('isAdministrator')"></i></th>
+          <th (click)="onClickHeader('administrator')" class="text-right"><span class="float-left mr-1">Admin</span><i [ngClass]="headerSortCSSClass('administrator')"></i></th>
           <th></th>
           <th></th>
         </tr>
@@ -74,7 +74,7 @@
           <td>{{ currentCoach.firstName }}</td>
           <td>{{ currentCoach.emailAddress }}</td>
           <td>{{ currentCoach.phoneNumber }}</td>
-          <td class="text-center">{{ currentCoach.isAdministrator ? 'YES' : 'NO' }}</td>
+          <td class="text-center">{{ currentCoach.administrator ? 'YES' : 'NO' }}</td>
           <td class="text-center"><a href=""><span (click)="!!onClickEditCoach($event, currentCoach)">Edit</span></a></td>
           <td class="text-center">
             <a *ngIf="!currentCoach.currentSessionOwner" href=""><span (click)="!!onClickDeleteCoach($event, currentCoach)">Delete</span></a>

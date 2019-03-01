@@ -1,19 +1,21 @@
 export interface ICoach {
-  _id: string;
+  id: number;
 
 	firstName: string;
 	surname: string;
 	emailAddress: string;
 	phoneNumber: string;
-	isAdministrator: boolean;
+	administrator: boolean;
 
   createdBy: string;
   createdDate: string;
-  updatedDate: string;
   updatedBy: string;
+  updatedDate: string;
 
-  __v: number;
+  version: string;
+}
 
-  active?: boolean;
-  currentSessionOwner?: boolean;  
+export interface ICoachRole {
+  groupName: string;
+  role: string;
 }

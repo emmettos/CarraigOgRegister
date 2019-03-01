@@ -1,461 +1,2053 @@
-// import { NO_ERRORS_SCHEMA } from '@angular/core';
-// import { HttpClientTestingModule } from '@angular/common/http/testing';
-// import { ReactiveFormsModule } from '@angular/forms';
-// import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ReactiveFormsModule } from '@angular/forms';
+import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
-// import { of, asyncScheduler, throwError } from 'rxjs';
+import { of, asyncScheduler, throwError } from 'rxjs';
 
-// import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-// import { IGroup } from '../../../../../_models/index';
-// import { GroupsService } from '../../../../../_services';
-// import { ValidationService } from '../../../../../_modules/shared/_services';
+import * as moment from 'moment';
 
-// import { GroupFormComponent } from './group-form.component';
+import { APP_SETTINGS } from '../../../../../_helpers/index';
+import { IGroup, PlayerState, IGroupPlayer } from '../../../../../_models/index';
+import { GroupsService } from '../../../../../_services';
+import { ValidationService } from '../../../../../_modules/shared/_services';
+
+import { GroupFormComponent } from './group-form.component';
 
 
-// describe('GroupFormComponent', () => {
-//   let component: GroupFormComponent;
-//   let fixture: ComponentFixture<GroupFormComponent>;
+describe('GroupFormComponent', () => {
+  let component: GroupFormComponent;
+  let fixture: ComponentFixture<GroupFormComponent>;
 
-//   let groupsService: GroupsService,
-//       activeModal: NgbActiveModal;
+  let groupsService: GroupsService,
+      activeModal: NgbActiveModal;
 
-//   let groupDetails: IGroup;
+  let groupDetails: IGroup;
 
-//   beforeEach(async(() => {
-//     TestBed.configureTestingModule({
-//       declarations: [ 
-//         GroupFormComponent 
-//       ],
-//       imports: [
-//         HttpClientTestingModule,
-//         ReactiveFormsModule,
-//         NgbModule.forRoot()
-//       ],
-//       providers: [
-//         GroupsService,
-//         ValidationService,
-//         NgbActiveModal
-//       ],
-//       schemas: [ NO_ERRORS_SCHEMA ]
-//     })
-//     .compileComponents();
-//   }));
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ 
+        GroupFormComponent 
+      ],
+      imports: [
+        HttpClientTestingModule,
+        ReactiveFormsModule,
+        NgbModule.forRoot()
+      ],
+      providers: [
+        GroupsService,
+        ValidationService,
+        NgbActiveModal
+      ],
+      schemas: [ 
+        NO_ERRORS_SCHEMA 
+      ]
+    })
+    .compileComponents();
+  }));
 
-//   beforeEach(() => {
-//     fixture = TestBed.createComponent(GroupFormComponent);
-//     component = fixture.componentInstance;
+  beforeEach(() => {
+    fixture = TestBed.createComponent(GroupFormComponent);
+    component = fixture.componentInstance;
 
-//     groupsService = TestBed.get(GroupsService);
-//     activeModal = TestBed.get(NgbActiveModal);
+    groupsService = TestBed.get(GroupsService);
+    activeModal = TestBed.get(NgbActiveModal);
 
-//     component.groupDetails = {
-//       'id': 1,
-//       'yearId': 1,
-//       'yearOfBirth': 2009,
-//       'name': 'Under 9',
-//       'footballCoachId': 1,
-//       'hurlingCoachId': 2,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-07-26T16:29:25.372Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       'version': 0
-//     };
+    groupDetails = {
+      'id': 2,
+      'yearId': 2,
+      'yearOfBirth': 2010,      
+      'name': 'Under 6',
+      'footballCoachId': 1,
+      'hurlingCoachId': 2,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedBy': 'admin@carraigog.com',
+      'updatedDate': '2018-02-13T10:21:40.545Z',
+      'version': '2018-03-04T10:20:00.000Z',
+    };
 
-//     component.coaches = [
-//       {
-//         '_id': 'b093d6d273adfb49ae33e6e1',
-//         'firstName': 'Administrator',
-//         'surname': '',
-//         'emailAddress': 'admin@carraigog.com',
-//         'phoneNumber': '086 1550344',
-//         'isAdministrator': true,
-//         'createdBy': 'script',
-//         'createdDate': '2017-03-15T13:43:51.268Z',
-//         'updatedDate': '2018-05-09T09:55:59.735Z',
-//         'updatedBy': 'admin@carraigog.com',
-//         '__v': 0
-//       },
-//       {
-//         '_id': '21cfbcbee1da872f1b95dbbf',
-//         'firstName': 'Bryok',
-//         'surname': 'Moran',
-//         'emailAddress': 'bryok_moran@carraigog.com',
-//         'phoneNumber': '087 8108797',
-//         'isAdministrator': false,
-//         'createdBy': 'script',
-//         'createdDate': '2017-03-15T13:43:51.268Z',
-//         'updatedDate': '2018-05-09T09:55:59.735Z',
-//         'updatedBy': 'admin@carraigog.com',
-//         '__v': 0
-//       },
-//       {
-//         '_id': '6293c9a83fd22e7fa8e66d3f',
-//         'firstName': 'Erick',
-//         'surname': 'Norris',
-//         'emailAddress': 'erick_norris@carraigog.com',
-//         'phoneNumber': '086 6095372',
-//         'isAdministrator': false,
-//         'createdBy': 'script',
-//         'createdDate': '2017-03-15T13:43:51.268Z',
-//         'updatedDate': '2018-05-09T09:55:59.735Z',
-//         'updatedBy': 'admin@carraigog.com',
-//         '__v': 0
-//       },
-//       {
-//         '_id': 'f346034eb1af16e3845a8dee',
-//         'firstName': 'John',
-//         'surname': 'Rees',
-//         'emailAddress': 'john_rees@carraigog.com',
-//         'phoneNumber': '086 1702956',
-//         'isAdministrator': false,
-//         'createdBy': 'script',
-//         'createdDate': '2017-03-15T13:43:51.268Z',
-//         'updatedDate': '2018-05-09T09:55:59.735Z',
-//         'updatedBy': 'admin@carraigog.com',
-//         '__v': 0
-//       }
-//     ];
+    component['coaches'] = [
+      {
+        'id': 1,
+        'firstName': 'Administrator',
+        'surname': '',
+        'emailAddress': 'admin@carraigog.com',
+        'phoneNumber': '086 1550344',
+        'administrator': true,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedBy': 'admin@carraigog.com',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'version': '2018-05-09T09:55:59.735Z'
+      },
+      {
+        'id': 2,
+        'firstName': 'Erick',
+        'surname': 'Norris',
+        'emailAddress': 'erick_norris@carraigog.com',
+        'phoneNumber': '086 6095372',
+        'administrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedBy': 'admin@carraigog.com',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'version': '2018-05-09T09:55:59.735Z'
+      },
+      {
+        'id': 3,
+        'firstName': 'Lachlan',
+        'surname': 'Johnson',
+        'emailAddress': 'lachlan_johnson@carraigog.com',
+        'phoneNumber': '086 4449465',
+        'administrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedBy': 'admin@carraigog.com',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'version': '2018-05-09T09:55:59.735Z'
+      }
+    ];
+  });
+
+  it('should create', () => {
+    fixture.detectChanges();
+
+    expect(component).toBeTruthy();
+  });
+
+//   it('should initialize add new player title', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
 
 //     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector("#title").innerHTML).toEqual('Add New Player');
 //   });
 
-//   it('should create', () => {
-//     expect(component).toBeTruthy();
+//   it('should initialize edit player title', () => {
+//     component['playerDetails'] = playerDetails;
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector("#title").innerHTML).toEqual('Edit Player');
 //   });
 
-//   it('should initialize title', () => {
-//     expect(fixture.nativeElement.querySelector('#title').innerHTML).toEqual('Edit Group - Under 9');
+//   it('should set header style for existing player state', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('.modal-header').style.getPropertyValue('bg-info')).toEqual('');
 //   });
 
-//   it('should initialize football coach field', () => {
-//     expect(component.groupForm.controls['footballCoach'].value).toEqual('john_rees@carraigog.com');
+//   it('should set header style for new player state', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('.modal-header').style.getPropertyValue('bg-success')).toEqual('');
 //   });
 
-//   it('should initialize football coach option 1', () => {
-//     expect(fixture.nativeElement.querySelector('#football-coach-select').options[0].text).toEqual('No Coach');  
+//   it('should set header style for missing player state', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['playerState'] = PlayerState.Missing;
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('.modal-header').style.getPropertyValue('bg-warning')).toEqual('');
+//   });
+
+//   it('should set header style for gone player state', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['playerState'] = PlayerState.Gone;
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('.modal-header').style.getPropertyValue('bg-danger')).toEqual('');
+//   });
+
+//   it('should set date of birth picker min date', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.dateOfBirthPicker.minDate).toEqual({ year: 2007, month: 1, day: 1 });
+//   });
+
+//   it('should set date of birth picker max date', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.dateOfBirthPicker.maxDate).toEqual({ year: 2010, month: 12, day: 31 });
+//   });
+
+//   it('should set registered date picker min date', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.registeredDatePicker.minDate).toEqual({ year: 2018, month: 1, day: 1 });
+//   });
+
+//   it('should set registered date picker max date', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.registeredDatePicker.maxDate).toEqual({ year: 2020, month: 12, day: 31 });
+//   });
+
+//   it('should set unregistered player registered date picker start date', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.registeredDatePicker.startDate).toEqual({ year: 2019, month: 6 });
+//   });
+
+//   it('should initialize groups option 1', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+    
+//     expect(fixture.nativeElement.querySelector('#group-select').options[0].text).toEqual('Not Registered');  
 //   });
 
 //   it('should initialize football coach value option 1', () => {
-//     expect(fixture.nativeElement.querySelector('#football-coach-select').options[0].value).toEqual('');  
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('#group-select').options[0].value).toEqual('0');  
 //   });
 
-//   it('should initialize football coach option 3', () => {
-//     expect(fixture.nativeElement.querySelector('#football-coach-select').options[2].text).toEqual('Bryok Moran');  
+//   it('should initialize groups option 3', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('#group-select').options[2].text).toEqual('Under 9');  
 //   });
 
-//   it('should initialize football coach value option 2', () => {
-//     expect(fixture.nativeElement.querySelector('#football-coach-select').options[1].value).toEqual('1: admin@carraigog.com');  
+//   it('should initialize groups value option 2', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('#group-select').options[1].value).toEqual('1: 3');  
 //   });
 
-//   it('should initialize hurling coach field', () => {
-//     expect(component.groupForm.controls['hurlingCoach'].value).toEqual('bryok_moran@carraigog.com');
+//   it('should initialize new player first name field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['firstName'].value).toEqual('');
 //   });
 
-//   it('should initialize hurling coach option 1', () => {
-//     expect(fixture.nativeElement.querySelector('#hurling-coach-select').options[0].text).toEqual('No Coach');  
+//   it('should initialize edit player first name field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['firstName'].value).toEqual('Matthew');
 //   });
 
-//   it('should initialize hurling coach value option 1', () => {
-//     expect(fixture.nativeElement.querySelector('#hurling-coach-select').options[0].value).toEqual('');  
+//   it('should initialize new player surname field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['surname'].value).toEqual('');
 //   });
 
-//   it('should initialize hurling coach option 4', () => {
-//     expect(fixture.nativeElement.querySelector('#hurling-coach-select').options[3].text).toEqual('Erick Norris');  
+//   it('should initialize edit player surname field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['surname'].value).toEqual('Moss');
 //   });
 
-//   it('should initialize hurling coach value option 5', () => {
-//     expect(fixture.nativeElement.querySelector('#hurling-coach-select').options[4].value).toEqual('4: john_rees@carraigog.com');  
+//   it('should initialize new player address line 1 field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['addressLine1'].value).toEqual('');
 //   });
 
-//   it('should update form value', () => {
-//     component.groupForm.controls['footballCoach'].setValue('erick_norris@carraigog.com');
-//     component.groupForm.controls['hurlingCoach'].setValue('john_rees@carraigog.com');
+//   it('should initialize edit player addres line 1 field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
 
-//     expect(component.groupForm.value).toEqual({
-//       footballCoach: 'erick_norris@carraigog.com',
-//       hurlingCoach: 'john_rees@carraigog.com'
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['addressLine1'].value).toEqual('179 Payne Street');
+//   });
+
+//   it('should initialize new player address line 2 field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['addressLine2'].value).toEqual('');
+//   });
+
+//   it('should initialize edit player addres line 2 field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['addressLine2'].value).toEqual('Clear Mount');
+//   });
+
+//   it('should initialize new player address line 3 field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['addressLine3'].value).toEqual('');
+//   });
+
+//   it('should initialize edit player addres line 3 field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['addressLine3'].value).toEqual('Carrigaline');
+//   });
+
+//   it('should initialize new player medical conditions field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['medicalConditions'].value).toEqual('');
+//   });
+
+//   it('should initialize edit player medical conditions field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['medicalConditions'].value).toEqual('');
+//   });
+
+//   it('should initialize new player date of birth field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['dateOfBirth'].value).toEqual({ year: 2009, month: 10, day: 13 });
+//   });
+
+//   it('should initialize edit player date of birth field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['dateOfBirth'].value).toEqual({ year: 2010, month: 3, day: 3 });
+//   });
+
+//   it('should initialize new player registered date field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['registeredDate'].value).toEqual('');
+//   });
+
+//   it('should initialize edit player registered date field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['registeredDate'].value).toEqual({ year: 2019, month: 1, day: 31 });
+//   });
+
+//   it('should initialize new player group field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('#group-select').value).toEqual('0');  
+//   });
+
+//   it('should initialize edit player group field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('#group-select').value).toEqual('3: 1');  
+//   });
+
+//   it('should initialize new player school field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['school'].value).toEqual('');
+//   });
+
+//   it('should initialize edit player school field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['school'].value).toEqual('Scoil Mhuire Lourdes');
+//   });
+
+//   it('should initialize new player contact name field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['contactName'].value).toEqual('');
+//   });
+
+//   it('should initialize edit player contact name field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['contactName'].value).toEqual('Wilder Moss');
+//   });
+
+//   it('should initialize new player contact email address field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['contactEmailAddress'].value).toEqual('');
+//   });
+
+//   it('should initialize edit player contact email address field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['contactEmailAddress'].value).toEqual('wilder_moss@gmail.com');
+//   });
+
+//   it('should initialize new player contact mobile number field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['contactMobileNumber'].value).toEqual('');
+//   });
+
+//   it('should initialize edit player contact mobile number field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['contactMobileNumber'].value).toEqual('087 6186779');
+//   });
+
+//   it('should initialize new player contact home number field', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['contactHomeNumber'].value).toEqual('');
+//   });
+
+//   it('should initialize edit player contact home number field', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['contactHomeNumber'].value).toEqual('029 400 1122');
+//   });
+
+//   it('should update form value in new player mode', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['addressLine1'].setValue('Address Line 1');
+//     component.playerForm.controls['addressLine2'].setValue('Address Line 2');
+//     component.playerForm.controls['addressLine3'].setValue('Address Line 3');
+//     component.playerForm.controls['medicalConditions'].setValue('Asthma');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['school'].setValue('Scoil Mhuire Lourdes');
+//     component.playerForm.controls['contactName'].setValue('Test Contact');
+//     component.playerForm.controls['contactEmailAddress'].setValue('test_contact@gmail.com');
+//     component.playerForm.controls['contactMobileNumber'].setValue('087 1234567');
+//     component.playerForm.controls['contactHomeNumber'].setValue('021 7654321');
+
+//     expect(component.playerForm.value).toEqual({
+//       firstName: 'Test',
+//       surname: 'User',
+//       addressLine1: 'Address Line 1',
+//       addressLine2: 'Address Line 2',
+//       addressLine3: 'Address Line 3',
+//       medicalConditions: 'Asthma',
+//       dateOfBirth: { year: 2009, month: 10, day: 13 },
+//       registeredDate: { year: 2019, month: 2, day: 13 },
+//       playerGroup: 2,
+//       school: 'Scoil Mhuire Lourdes',
+//       contactName: 'Test Contact',
+//       contactEmailAddress: 'test_contact@gmail.com',
+//       contactMobileNumber: '087 1234567',
+//       contactHomeNumber: '021 7654321'
 //     });
 //   });
 
-//   it('should read football coach when saving a group', () => {
-//     component.groupForm.controls['footballCoach'].setValue('erick_norris@carraigog.com');
+//   it('should update form value in edit player mode', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
 
 //     fixture.detectChanges();
 
-//     component.onSubmit(component.groupForm.value);
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['addressLine1'].setValue('Address Line 1');
+//     component.playerForm.controls['addressLine2'].setValue('Address Line 2');
+//     component.playerForm.controls['addressLine3'].setValue('Address Line 3');
+//     component.playerForm.controls['medicalConditions'].setValue('Asthma');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['school'].setValue('Scoil Mhuire Lourdes');
+//     component.playerForm.controls['contactName'].setValue('Test Contact');
+//     component.playerForm.controls['contactEmailAddress'].setValue('test_contact@gmail.com');
+//     component.playerForm.controls['contactMobileNumber'].setValue('087 1234567');
+//     component.playerForm.controls['contactHomeNumber'].setValue('021 7654321');
 
-//     expect(component.groupDetails.footballCoach).toEqual('erick_norris@carraigog.com');
+//     expect(component.playerForm.value).toEqual({
+//       firstName: 'Test',
+//       surname: 'User',
+//       addressLine1: 'Address Line 1',
+//       addressLine2: 'Address Line 2',
+//       addressLine3: 'Address Line 3',
+//       medicalConditions: 'Asthma',
+//       dateOfBirth: { year: 2009, month: 10, day: 13 },
+//       registeredDate: { year: 2019, month: 2, day: 13 },
+//       playerGroup: 2,
+//       school: 'Scoil Mhuire Lourdes',
+//       contactName: 'Test Contact',
+//       contactEmailAddress: 'test_contact@gmail.com',
+//       contactMobileNumber: '087 1234567',
+//       contactHomeNumber: '021 7654321'
+//     });
 //   });
 
-//   it('should read hurling coach when saving a group', () => {
-//     component.groupForm.controls['hurlingCoach'].setValue('john_rees@carraigog.com');
+//   it('should validate invalid first name', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
 
 //     fixture.detectChanges();
 
-//     component.onSubmit(component.groupForm.value);
-
-//     expect(component.groupDetails.hurlingCoach).toEqual('john_rees@carraigog.com');
+//     component.playerForm.controls['firstName'].setValue('');
+    
+//     expect(component.playerForm.controls['firstName'].invalid).toBeTruthy();
 //   });
 
-//   it('should call groupsService.updateGroup when updating a group', () => {
-//     component.groupForm.controls['hurlingCoach'].setValue('john_rees@carraigog.com');
+//   it('should validate valid first name', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
 
 //     fixture.detectChanges();
 
-//     spyOn(groupsService, 'updateGroup')
+//     component.playerForm.controls['firstName'].setValue('Test');
+    
+//     expect(component.playerForm.controls['firstName'].invalid).toBeFalsy();
+//   });
+
+//   it('should validate invalid surname', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['surname'].setValue('');
+    
+//     expect(component.playerForm.controls['surname'].invalid).toBeTruthy();
+//   });
+
+//   it('should validate valid surname', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['surname'].setValue('Player');
+    
+//     expect(component.playerForm.controls['surname'].invalid).toBeFalsy();
+//   });
+
+//   it('should validate empty date of birth', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['dateOfBirth'].setValue('');
+
+//     expect(component.playerForm.controls['dateOfBirth'].invalid).toBeTruthy();
+//   });
+
+//   it('should validate invalid date of birth', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['dateOfBirth'].setValue('ddd');
+
+//     expect(component.playerForm.controls['dateOfBirth'].invalid).toBeTruthy();
+//   });
+
+//   it('should validate valid date of birth', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+
+//     expect(component.playerForm.controls['dateOfBirth'].invalid).toBeFalsy();
+//   });
+
+//   it('should validate new player empty registered date', () => {
+//     component['dateOfBirth'] = moment.utc('2019-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['registeredDate'].setValue(null);
+
+//     component.onRegisteredDateChange();
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeTruthy();
+//   });
+
+//   it('should validate new player invalid registered date', () => {
+//     component['dateOfBirth'] = moment.utc('2019-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['registeredDate'].setValue('ddd');
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeTruthy();
+//   });
+
+//   it('should validate new player outside range registered date', () => {
+//     component['dateOfBirth'] = moment.utc('2019-10-13');
+
+//     fixture.detectChanges();
+    
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2015, month: 2, day: 13 });
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeTruthy();
+//   });
+
+//   it('should validate new player valid registered date', () => {
+//     component['dateOfBirth'] = moment.utc('2019-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeFalsy();
+//   });
+
+//   it('should validate existing player empty registered date', fakeAsync(() => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     tick();
+    
+//     component.playerForm.controls['registeredDate'].setValue(null);
+
+//     component.onRegisteredDateChange();
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeFalsy();
+//   }));
+
+//   it('should validate existing player empty registered date after selecting group', fakeAsync(() => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     tick();
+    
+//     component.playerForm.controls['registeredDate'].setValue(null);
+
+//     component.onRegisteredDateChange();
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['playerGroup'].setValue(1);
+
+//     component.onGroupChange(1);
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeTruthy();
+//   }));
+
+//   it('should validate existing player empty registered date after selecting no group', fakeAsync(() => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     tick();
+    
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     component.onRegisteredDateChange();
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['playerGroup'].setValue('0');
+
+//     component.onGroupChange('0');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeFalsy();
+//   }));
+
+//   it('should validate existing player invalid registered date', fakeAsync(() => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     tick();
+    
+//     component.playerForm.controls['registeredDate'].setValue('ddd');
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeTruthy();
+//   }));
+
+//   it('should validate existing player outside range registered date', fakeAsync(() => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     tick();
+    
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2015, month: 2, day: 13 });
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeTruthy();
+//   }));
+
+//   it('should validate existing player valid registered date', fakeAsync(() => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     tick();
+
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeFalsy();
+//   }));
+
+//   it('should validate existing player empty registered date', fakeAsync(() => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     tick();
+    
+//     component.playerForm.controls['registeredDate'].setValue(null);
+
+//     component.onRegisteredDateChange();
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeFalsy();
+//   }));
+
+//   it('should validate existing player empty registered date after selecting group', fakeAsync(() => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     tick();
+    
+//     component.playerForm.controls['registeredDate'].setValue(null);
+
+//     component.onRegisteredDateChange();
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['playerGroup'].setValue(1);
+
+//     component.onGroupChange(1);
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeTruthy();
+//   }));
+
+//   it('should validate existing player empty registered date after selecting no group', fakeAsync(() => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     tick();
+    
+//     component.playerForm.controls['registeredDate'].setValue(null);
+
+//     component.onRegisteredDateChange();
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['playerGroup'].setValue('0');
+
+//     component.onGroupChange('0');
+
+//     fixture.detectChanges();
+
+//     expect(component.playerForm.controls['registeredDate'].invalid).toBeFalsy();
+//   }));
+
+//   it('should validate invalid group', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['playerGroup'].setValue('0');
+    
+//     expect(component.playerForm.controls['playerGroup'].invalid).toBeTruthy();
+//   });
+
+//   it('should validate valid group', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['playerGroup'].setValue(2);
+    
+//     expect(component.playerForm.controls['playerGroup'].invalid).toBeFalsy();
+//   });
+
+//   it('should disable submit button for invalid form', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();  
+//   });
+
+//   it('should enable submit button for valid form', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeFalsy()  
+//   });
+
+//   it('should read first name when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
 //       .and.returnValue(of({
 //         "error": null,
 //         "body": {
-//           'groups': [
-//             {
-//               '_id': 'dfe674827f95ff37765ba0fc',
-//               'year': 2018,
-//               'name': 'Under 10',
-//               'yearOfBirth': 2008,
-//               'footballCoach': 'angel_klein@carraigog.com',
-//               'hurlingCoach': 'heddwyn_cunningham@carraigog.com',
-//               'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
-//               'createdBy': 'script',
-//               'createdDate': '2017-03-15T13:43:51.268Z',
-//               'updatedDate': '2018-02-27T15:57:21.582Z',
-//               'updatedBy': 'admin@carraigog.com',
-//               '__v': 0
-//             },
-//             {
-//               '_id': '24eef4f773a9cc7b17a539e9',
-//               'year': 2018,
-//               'name': 'Under 9',
-//               'yearOfBirth': 2009,
-//               'footballCoach': 'john_rees@carraigog.com',
-//               'hurlingCoach': 'john_rees@carraigog.com',
-//               'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
-//               'createdBy': 'script',
-//               'createdDate': '2017-03-15T13:43:51.268Z',
-//               'updatedDate': '2018-07-26T16:29:25.372Z',
-//               'updatedBy': 'admin@carraigog.com',
-//               '__v': 0
-//             }
-//           ]
+//           players: []
 //         }
 //       }));
 
-//     component.onSubmit(component.groupForm.value);
+//     component.onSubmit(component.playerForm.value);
 
-//     expect(groupsService.updateGroup).toHaveBeenCalled();
+//     expect(component.playerDetails.firstName).toEqual('Test');
 //   });
 
-//   it('should set savingGroup to true after submitting a group to be saved', () => {
-//     component.groupForm.controls['hurlingCoach'].setValue('john_rees@carraigog.com');
+//   it('should read surname when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
 
 //     fixture.detectChanges();
 
-//     spyOn(groupsService, 'updateGroup')
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
 //       .and.returnValue(of({
 //         "error": null,
 //         "body": {
-//           'groups': [
-//             {
-//               '_id': 'dfe674827f95ff37765ba0fc',
-//               'year': 2018,
-//               'name': 'Under 10',
-//               'yearOfBirth': 2008,
-//               'footballCoach': 'angel_klein@carraigog.com',
-//               'hurlingCoach': 'heddwyn_cunningham@carraigog.com',
-//               'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
-//               'createdBy': 'script',
-//               'createdDate': '2017-03-15T13:43:51.268Z',
-//               'updatedDate': '2018-02-27T15:57:21.582Z',
-//               'updatedBy': 'admin@carraigog.com',
-//               '__v': 0
-//             },
-//             {
-//               '_id': '24eef4f773a9cc7b17a539e9',
-//               'year': 2018,
-//               'name': 'Under 9',
-//               'yearOfBirth': 2009,
-//               'footballCoach': 'john_rees@carraigog.com',
-//               'hurlingCoach': 'john_rees@carraigog.com',
-//               'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
-//               'createdBy': 'script',
-//               'createdDate': '2017-03-15T13:43:51.268Z',
-//               'updatedDate': '2018-07-26T16:29:25.372Z',
-//               'updatedBy': 'admin@carraigog.com',
-//               '__v': 0
-//             }
-//           ]
+//           players: []
 //         }
 //       }));
 
-//     component.onSubmit(component.groupForm.value);
+//     component.onSubmit(component.playerForm.value);
 
-//     expect(component.savingGroup).toBeTruthy();
+//     expect(component.playerDetails.surname).toEqual('User');
 //   });
 
-//   it('should call activeModal.close after successfully editing a group', () => {
-//     component.groupForm.controls['hurlingCoach'].setValue('john_rees@carraigog.com');
+//   it('should read address line 1 when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
 
 //     fixture.detectChanges();
 
-//     spyOn(groupsService, 'updateGroup')
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['addressLine1'].setValue('Address Line 1');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
 //       .and.returnValue(of({
-//         'error': null,
-//         'body': {
-//           'groups': [
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.addressLine1).toEqual('Address Line 1');
+//   });
+
+//   it('should read address line 2 when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['addressLine2'].setValue('Address Line 2');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.addressLine2).toEqual('Address Line 2');
+//   });
+
+//   it('should read address line 3 when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['addressLine3'].setValue('Address Line 3');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.addressLine3).toEqual('Address Line 3');
+//   });
+
+//   it('should read date of birth when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.dateOfBirth).toEqual('2009-10-13');
+//   });
+
+//   it('should read registered date when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.groupPlayerDetails.registeredDate).toEqual('2019-02-13');
+//   });
+
+//   it('should read group when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.groupPlayerDetails.groupId).toEqual(2);
+//   });
+
+//   it('should read medical conditions when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+//     component.playerForm.controls['medicalConditions'].setValue('Asthma');
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.medicalConditions).toEqual('Asthma');
+//   });
+
+//   it('should read school when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+//     component.playerForm.controls['school'].setValue('Scoil Mhuire Lourdes');
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.school).toEqual('Scoil Mhuire Lourdes');
+//   });
+
+//   it('should read contact name when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+//     component.playerForm.controls['contactName'].setValue('Contact');
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.contactName).toEqual('Contact');
+//   });
+
+//   it('should read contact email address when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+//     component.playerForm.controls['contactEmailAddress'].setValue('contact_name@gmail.com');
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.contactEmailAddress).toEqual('contact_name@gmail.com');
+//   });
+
+//   it('should read contact mobile number when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+//     component.playerForm.controls['contactMobileNumber'].setValue('087 1234567');
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.contactMobileNumber).toEqual('087 1234567');
+//   });
+
+//   it('should read contact home number when saving a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+//     component.playerForm.controls['contactHomeNumber'].setValue('021 7654321');
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(component.playerDetails.contactHomeNumber).toEqual('021 7654321');
+//   });
+
+//   it('should call playersService.updatePlayer when updating a player', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'updatePlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(playersService.updatePlayer).toHaveBeenCalledWith(playerDetails, groupPlayerDetails);
+//   });
+
+//   it('should call playersService.createPlayer when creating a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(playersService.createPlayer).toHaveBeenCalledWith({
+//       'firstName': 'Test',
+//       'surname': 'User',
+//       'addressLine1': '',
+//       'addressLine2': '',
+//       'addressLine3': '',
+//       'dateOfBirth': '2009-10-13',
+//       'school': '',
+//       'medicalConditions': '',
+//       'contactName': '',
+//       'contactEmailAddress': '',
+//       'contactMobileNumber': '',
+//       'contactHomeNumber': ''
+//     }, {
+//       'registeredDate': '2019-02-13',
+//       'groupId': 2
+//     });
+//   });
+
+//   it('should call activeModal.close after successfully creating a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: [
 //             {
-//               '_id': 'dfe674827f95ff37765ba0fc',
-//               'year': 2018,
-//               'name': 'Under 10',
-//               'yearOfBirth': 2008,
-//               'footballCoach': 'angel_klein@carraigog.com',
-//               'hurlingCoach': 'heddwyn_cunningham@carraigog.com',
-//               'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
-//               'createdBy': 'script',
-//               'createdDate': '2017-03-15T13:43:51.268Z',
-//               'updatedDate': '2018-02-27T15:57:21.582Z',
-//               'updatedBy': 'admin@carraigog.com',
-//               '__v': 0
+//               'id': 1,
+//               'firstName': 'Michael',
+//               'surname': 'Wolfe',
+//               'addressLine1': '830 Green Gate Lane',
+//               'addressLine2': 'Carrigaline',
+//               'addressLine3': '',
+//               'dateOfBirth': '2010-03-03',
+//               'medicalConditions': 'Asthma',
+//               'contactName': 'Moss Wolfe',
+//               'contactMobileNumber': '087 7128560',
+//               'contactHomeNumber': '021 9292476',
+//               'contactEmailAddress': 'moss_wolfe@gmail.com',
+//               'school': 'Scoil Mhuire Lourdes',
+//               'version': '2018-02-04T15:13:00.000Z',
+//               'lastRegisteredDate': '2018-02-04',
+//               'playerState': 1
 //             },
 //             {
-//               '_id': '24eef4f773a9cc7b17a539e9',
-//               'year': 2018,
-//               'name': 'Under 9',
-//               'yearOfBirth': 2009,
-//               'footballCoach': 'john_rees@carraigog.com',
-//               'hurlingCoach': 'john_rees@carraigog.com',
-//               'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
-//               'createdBy': 'script',
-//               'createdDate': '2017-03-15T13:43:51.268Z',
-//               'updatedDate': '2018-07-26T16:29:25.372Z',
-//               'updatedBy': 'admin@carraigog.com',
-//               '__v': 0
+//               'id': 2,
+//               'firstName': 'Matthew',
+//               'surname': 'Moss',
+//               'addressLine1': '179 Payne Street',
+//               'addressLine2': 'Clear Mount',
+//               'addressLine3': 'Carrigaline',
+//               'dateOfBirth': '2010-03-03',
+//               'medicalConditions': '',
+//               'contactName': 'Wilder Moss',
+//               'contactMobileNumber': '087 6186779',
+//               'contactHomeNumber': '',
+//               'contactEmailAddress': 'wilder_moss@gmail.com',
+//               'school': '',
+//               'version': '2018-02-04T15:13:00.000Z',
+//               'lastRegisteredDate': '2018-02-04',
+//               'playerState': 0
 //             }
 //           ]
 //         }
 //       }));
-
-//     component.onSubmit(component.groupForm.value);
 
 //     spyOn(activeModal, 'close');
 
-//     component.onSubmit(component.groupForm.value);
+//     component.onSubmit(component.playerForm.value);
 
 //     expect(activeModal.close).toHaveBeenCalledWith({
-//       groupDetails: { 
-//         '_id': '24eef4f773a9cc7b17a539e9',
-//         'year': 2018,
-//         'name': 'Under 9',
-//         'yearOfBirth': 2009,
-//         'footballCoach': 'john_rees@carraigog.com',
-//         'hurlingCoach': 'john_rees@carraigog.com',
-//         'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
-//         'createdBy': 'script',
-//         'createdDate': '2017-03-15T13:43:51.268Z',
-//         'updatedDate': '2018-07-26T16:29:25.372Z',
-//         'updatedBy': 'admin@carraigog.com',
-//         '__v': 0
+//       playerDetails: { 
+//         'firstName': 'Test',
+//         'surname': 'User',
+//         'addressLine1': '',
+//         'addressLine2': '',
+//         'addressLine3': '',
+//         'dateOfBirth': '2009-10-13',
+//         'school': '',
+//         'medicalConditions': '',
+//         'contactName': '',
+//         'contactEmailAddress': '',
+//         'contactMobileNumber': '',
+//         'contactHomeNumber': ''
 //       },
-//       updatedGroups: [
+//       matchedPlayers: [
 //         {
-//           '_id': 'dfe674827f95ff37765ba0fc',
-//           'year': 2018,
-//           'name': 'Under 10',
-//           'yearOfBirth': 2008,
-//           'footballCoach': 'angel_klein@carraigog.com',
-//           'hurlingCoach': 'heddwyn_cunningham@carraigog.com',
-//           'lastUpdatedDate': '2018-02-27T15:57:21.582Z',
-//           'createdBy': 'script',
-//           'createdDate': '2017-03-15T13:43:51.268Z',
-//           'updatedDate': '2018-02-27T15:57:21.582Z',
-//           'updatedBy': 'admin@carraigog.com',
-//           '__v': 0
+//           'id': 1,
+//           'firstName': 'Michael',
+//           'surname': 'Wolfe',
+//           'addressLine1': '830 Green Gate Lane',
+//           'addressLine2': 'Carrigaline',
+//           'addressLine3': '',
+//           'dateOfBirth': '2010-03-03',
+//           'medicalConditions': 'Asthma',
+//           'contactName': 'Moss Wolfe',
+//           'contactMobileNumber': '087 7128560',
+//           'contactHomeNumber': '021 9292476',
+//           'contactEmailAddress': 'moss_wolfe@gmail.com',
+//           'school': 'Scoil Mhuire Lourdes',
+//           'version': '2018-02-04T15:13:00.000Z',
+//           'lastRegisteredDate': '2018-02-04',
+//           'playerState': 1
 //         },
 //         {
-//           '_id': '24eef4f773a9cc7b17a539e9',
-//           'year': 2018,
-//           'name': 'Under 9',
-//           'yearOfBirth': 2009,
-//           'footballCoach': 'john_rees@carraigog.com',
-//           'hurlingCoach': 'john_rees@carraigog.com',
-//           'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
-//           'createdBy': 'script',
-//           'createdDate': '2017-03-15T13:43:51.268Z',
-//           'updatedDate': '2018-07-26T16:29:25.372Z',
-//           'updatedBy': 'admin@carraigog.com',
-//           '__v': 0
+//           'id': 2,
+//           'firstName': 'Matthew',
+//           'surname': 'Moss',
+//           'addressLine1': '179 Payne Street',
+//           'addressLine2': 'Clear Mount',
+//           'addressLine3': 'Carrigaline',
+//           'dateOfBirth': '2010-03-03',
+//           'medicalConditions': '',
+//           'contactName': 'Wilder Moss',
+//           'contactMobileNumber': '087 6186779',
+//           'contactHomeNumber': '',
+//           'contactEmailAddress': 'wilder_moss@gmail.com',
+//           'school': '',
+//           'version': '2018-02-04T15:13:00.000Z',
+//           'lastRegisteredDate': '2018-02-04',
+//           'playerState': 0
+//         }
+//       ]
+//     });
+//   });
+
+//   it('should call activeModal.dismiss after failing to create a player', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService , 'createPlayer')
+//       .and.callFake(() => {
+//         return throwError(new Error('Fake error'));
+//       });
+
+//     spyOn(activeModal, 'dismiss');
+  
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(activeModal.dismiss).toHaveBeenCalled();
+//   });
+
+//   it('should call activeModal.close after successfully editing a player', () => {
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('XXX');
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'updatePlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: [
+//             {
+//               'id': 1,
+//               'firstName': 'Michael',
+//               'surname': 'Wolfe',
+//               'addressLine1': '830 Green Gate Lane',
+//               'addressLine2': 'Carrigaline',
+//               'addressLine3': '',
+//               'dateOfBirth': '2010-03-03',
+//               'medicalConditions': 'Asthma',
+//               'contactName': 'Moss Wolfe',
+//               'contactMobileNumber': '087 7128560',
+//               'contactHomeNumber': '021 9292476',
+//               'contactEmailAddress': 'moss_wolfe@gmail.com',
+//               'school': 'Scoil Mhuire Lourdes',
+//               'version': '2018-02-04T15:13:00.000Z',
+//               'lastRegisteredDate': '2018-02-04',
+//               'playerState': 1
+//             },
+//             {
+//               'id': 2,
+//               'firstName': 'Matthew',
+//               'surname': 'Moss',
+//               'addressLine1': '179 Payne Street',
+//               'addressLine2': 'Clear Mount',
+//               'addressLine3': 'Carrigaline',
+//               'dateOfBirth': '2010-03-03',
+//               'medicalConditions': '',
+//               'contactName': 'Wilder Moss',
+//               'contactMobileNumber': '087 6186779',
+//               'contactHomeNumber': '',
+//               'contactEmailAddress': 'wilder_moss@gmail.com',
+//               'school': '',
+//               'version': '2018-02-04T15:13:00.000Z',
+//               'lastRegisteredDate': '2018-02-04',
+//               'playerState': 0
+//             }
+//           ]
+//         }
+//       }));
+
+//     spyOn(activeModal, 'close');
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(activeModal.close).toHaveBeenCalledWith({
+//       playerDetails: { 
+//         'id': 2,
+//         'firstName': 'XXX',
+//         'surname': 'Moss',
+//         'addressLine1': '179 Payne Street',
+//         'addressLine2': 'Clear Mount',
+//         'addressLine3': 'Carrigaline',
+//         'dateOfBirth': '2010-03-03',
+//         'medicalConditions': '',
+//         'contactName': 'Wilder Moss',
+//         'contactMobileNumber': '087 6186779',
+//         'contactHomeNumber': '029 400 1122',
+//         'contactEmailAddress': 'wilder_moss@gmail.com',
+//         'school': 'Scoil Mhuire Lourdes',
+//         'createdBy': 'script',
+//         'createdDate': '2017-03-15T13:43:51.268Z',
+//         'updatedBy': 'admin@carraigog.com',
+//         'updatedDate': '2018-02-13T10:21:40.545Z',
+//         'version': '2018-02-13T10:21:40.545Z'
+//         },
+//       matchedPlayers: [
+//         {
+//           'id': 1,
+//           'firstName': 'Michael',
+//           'surname': 'Wolfe',
+//           'addressLine1': '830 Green Gate Lane',
+//           'addressLine2': 'Carrigaline',
+//           'addressLine3': '',
+//           'dateOfBirth': '2010-03-03',
+//           'medicalConditions': 'Asthma',
+//           'contactName': 'Moss Wolfe',
+//           'contactMobileNumber': '087 7128560',
+//           'contactHomeNumber': '021 9292476',
+//           'contactEmailAddress': 'moss_wolfe@gmail.com',
+//           'school': 'Scoil Mhuire Lourdes',
+//           'version': '2018-02-04T15:13:00.000Z',
+//           'lastRegisteredDate': '2018-02-04',
+//           'playerState': 1
+//         },
+//         {
+//           'id': 2,
+//           'firstName': 'Matthew',
+//           'surname': 'Moss',
+//           'addressLine1': '179 Payne Street',
+//           'addressLine2': 'Clear Mount',
+//           'addressLine3': 'Carrigaline',
+//           'dateOfBirth': '2010-03-03',
+//           'medicalConditions': '',
+//           'contactName': 'Wilder Moss',
+//           'contactMobileNumber': '087 6186779',
+//           'contactHomeNumber': '',
+//           'contactEmailAddress': 'wilder_moss@gmail.com',
+//           'school': '',
+//           'version': '2018-02-04T15:13:00.000Z',
+//           'lastRegisteredDate': '2018-02-04',
+//           'playerState': 0
 //         }
 //       ]
 //     });
 //   });
 
 //   it('should call activeModal.dismiss after failing to edit a coach', () => {
-//     component.groupForm.controls['hurlingCoach'].setValue('john_rees@carraigog.com');
+//     component['playerDetails'] = playerDetails;
+//     component['groupPlayerDetails'] = groupPlayerDetails;
+//     component['playerState'] = PlayerState.Existing;
 
 //     fixture.detectChanges();
 
-//     spyOn(groupsService , 'updateGroup')
+//     component.playerForm.controls['firstName'].setValue('XXX');
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService , 'updatePlayer')
 //       .and.callFake(() => {
 //         return throwError(new Error('Fake error'));
 //       });
 
 //     spyOn(activeModal, 'dismiss');
 
-//     component.onSubmit(component.groupForm.value);
+//     component.onSubmit(component.playerForm.value);
 
-//     expect(activeModal.dismiss).toHaveBeenCalledWith({
-//       groupDetails: { 
-//         '_id': '24eef4f773a9cc7b17a539e9',
-//         'year': 2018,
-//         'name': 'Under 9',
-//         'yearOfBirth': 2009,
-//         'footballCoach': 'john_rees@carraigog.com',
-//         'hurlingCoach': 'john_rees@carraigog.com',
-//         'lastUpdatedDate': '2018-07-26T16:29:25.372Z',
-//         'createdBy': 'script',
-//         'createdDate': '2017-03-15T13:43:51.268Z',
-//         'updatedDate': '2018-07-26T16:29:25.372Z',
-//         'updatedBy': 'admin@carraigog.com',
-//         '__v': 0
-//       },
-//       error: 'Fake error'
-//     })
+//     expect(activeModal.dismiss).toHaveBeenCalled();
 //   });
 
-//   it('should disable football coach field after submitting a group to be saved', () => {
-//     component.groupForm.controls['footballCoach'].setValue('john_rees@carraigog.com');
-    
-//     component.onSubmit(component.groupForm.value);
+//   it('should disable first name field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
 
-//     expect(fixture.nativeElement.querySelector('#football-coach-select').disabled).toBeTruthy();  
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#first-name').disabled).toBeTruthy();  
 //   });
 
-//   it('should disable hurling coach field after submitting a group to be saved', () => {
-//     component.groupForm.controls['hurlingCoach'].setValue('john_rees@carraigog.com');
-    
-//     component.onSubmit(component.groupForm.value);
+//   it('should disable surname field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
 
-//     expect(fixture.nativeElement.querySelector('#hurling-coach-select').disabled).toBeTruthy();  
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#surname').disabled).toBeTruthy();  
 //   });
 
-//   it('should disable cancel button after submitting a group to be saved', () => {
-//     component.groupForm.controls['footballCoach'].setValue('john_rees@carraigog.com');
+//   it('should disable address line 1 field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
     
-//     component.onSubmit(component.groupForm.value);
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#address-line1').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable address line 2 field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#address-line2').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable address line 3 field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#address-line3').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable date of birth field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('#date-of-birth').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable registered date field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     fixture.detectChanges();
+
+//     expect(fixture.nativeElement.querySelector('#registered-date').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable player group field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#group-select').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable medical conditions field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#medical-conditions').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable school field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#school').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable contact name field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#contact-name').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable contact email address field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#contact-email-address').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable contact mobile number field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#contact-mobile-number').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable contact home number field after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+    
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
+
+//     expect(fixture.nativeElement.querySelector('#contact-home-number').disabled).toBeTruthy();  
+//   });
+
+//   it('should disable cancel button after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
 
 //     fixture.detectChanges();
 
 //     expect(fixture.nativeElement.querySelector('#cancel').disabled).toBeTruthy();  
 //   });
 
-//   it('should disable save button after submitting a group to be saved', () => {
-//     component.groupForm.controls['footballCoach'].setValue('john_rees@carraigog.com');
-    
-//     component.onSubmit(component.groupForm.value);
+//   it('should disable save player button after submitting a player to be saved', () => {
+//     component['dateOfBirth'] = moment.utc('2009-10-13');
+
+//     fixture.detectChanges();
+
+//     component.playerForm.controls['firstName'].setValue('Test');
+//     component.playerForm.controls['surname'].setValue('User');
+//     component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
+//     component.playerForm.controls['playerGroup'].setValue(2);
+//     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
+
+//     fixture.detectChanges();
+
+//     spyOn(playersService, 'createPlayer')
+//       .and.returnValue(of({
+//         "error": null,
+//         "body": {
+//           players: []
+//         }
+//       }, asyncScheduler));
+
+//     component.onSubmit(component.playerForm.value);
 
 //     fixture.detectChanges();
 
 //     expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();  
 //   });
-// });
+});

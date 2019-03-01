@@ -7,7 +7,7 @@
     </div>
     <div class="card-body">
       <p id="phone-number" class="card-text"><strong>Phone Number:</strong> {{ coachDetails.phoneNumber }}</p>
-      <p id="administrator-status" class="card-text"><strong>Administrator:</strong> {{ coachDetails.isAdministrator ? 'YES' : 'NO' }}</p>
+      <p id="administrator-status" class="card-text"><strong>Administrator:</strong> {{ coachDetails.administrator ? 'YES' : 'NO' }}</p>
       <p *ngIf="!coachGroups" id="no-current-groups" class="card-text text-center"><strong>No Current Groups</strong></p>
       <table *ngIf="coachGroups" id="coach-groups-table" class="table table-bordered table-striped">
         <thead>
@@ -26,14 +26,14 @@
     </div>
     <div class="card-footer text-muted" [ngClass]="coachPopupFooterCSSClass()">
       <p>
-        <span id="created-date">Created Date: {{ coachDetails.createdDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
-        <br/>
         <span id="created-by">Created By: {{ coachDetails.createdBy }}</span>
+        <br/>
+        <span id="created-date">Created Date: {{ coachDetails.createdDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
       </p>
       <p>
-        <span id="updated-date">Updated Date: {{ coachDetails.updatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
-        <br/>
         <span id="updated-by">Updated By: {{ coachDetails.updatedBy }}</span>
+        <br/>
+        <span id="updated-date">Updated Date: {{ coachDetails.updatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
       </p>
     </div>
   </div>

@@ -410,52 +410,47 @@ exports = module.exports = function (app, router) {
         throw new Error ('groupDetails not found in request');
       }
 
-      try {
-        sqlStatement.push('INSERT INTO public.groups (');
+      sqlStatement.push('INSERT INTO public.groups (');
 
-        fieldNames.push('year_id');
-        fieldValues.push(currentSettings.year_id);
+      fieldNames.push('year_id');
+      fieldValues.push(currentSettings.year_id);
 
-        if (Object.prototype.hasOwnProperty.call(groupDetails, 'yearOfBirth')) {
-          fieldNames.push('year_of_birth');
-          fieldValues.push(groupDetails.yearOfBirth);
-        }
-        if (Object.prototype.hasOwnProperty.call(groupDetails, 'name')) {
-          fieldNames.push('name');
-          fieldValues.push(groupDetails.name);
-        }
-        if (Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoachId')) {
-          fieldNames.push('football_coach_id');
-          fieldValues.push(groupDetails.footballCoachId);
-        }
-        if (Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoachId')) {
-          fieldNames.push('hurling_coach_id');
-          fieldValues.push(groupDetails.hurlingCoachId);
-        }
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'yearOfBirth')) {
+        fieldNames.push('year_of_birth');
+        fieldValues.push(groupDetails.yearOfBirth);
+      }
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'name')) {
+        fieldNames.push('name');
+        fieldValues.push(groupDetails.name);
+      }
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoachId')) {
+        fieldNames.push('football_coach_id');
+        fieldValues.push(groupDetails.footballCoachId);
+      }
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoachId')) {
+        fieldNames.push('hurling_coach_id');
+        fieldValues.push(groupDetails.hurlingCoachId);
+      }
 
-        fieldNames.push('created_by');
-        fieldValues.push(request.payload.userProfile.ID);
-        fieldNames.push('created_date');
-        fieldValues.push(moment.utc().toISOString());
+      fieldNames.push('created_by');
+      fieldValues.push(request.payload.userProfile.ID);
+      fieldNames.push('created_date');
+      fieldValues.push(moment.utc().toISOString());
 
-        sqlStatement.push(fieldNames.join(',\n'));
+      sqlStatement.push(fieldNames.join(',\n'));
 
-        sqlStatement.push(`)
-          VALUES (`);
+      sqlStatement.push(`)
+        VALUES (`);
 
-        for (fieldIndex = 1; fieldIndex <= fieldNames.length; fieldIndex++) { 
-          fieldPositionParams.push('$' + fieldIndex)  
-        }
+      for (fieldIndex = 1; fieldIndex <= fieldNames.length; fieldIndex++) { 
+        fieldPositionParams.push('$' + fieldIndex)  
+      }
 
-        sqlStatement.push(fieldPositionParams.join(',\n'));
+      sqlStatement.push(fieldPositionParams.join(',\n'));
 
-        sqlStatement.push(')');
+      sqlStatement.push(')');
 
-        await app.pool.query(sqlStatement.join('\n'), fieldValues);
-      } 
-      catch (error) {
-        throw error;
-      } 
+      await app.pool.query(sqlStatement.join('\n'), fieldValues);
 
       await readGroupSummaries(app, currentSettings, response, next);
     }
@@ -477,50 +472,45 @@ exports = module.exports = function (app, router) {
         throw new Error ('groupDetails not found in request');
       }
 
-      try {
-        sqlStatement.push(`
-          UPDATE 
-            public.groups
-          SET`);
+      sqlStatement.push(`
+        UPDATE 
+          public.groups
+        SET`);
 
-        if (Object.prototype.hasOwnProperty.call(groupDetails, 'yearOfBirth')) {
-          setStatements.push('year_of_birth = ($' + (++setIndex) + ')');
-          setValues.push(groupDetails.yearOfBirth);
-        }
-        if (Object.prototype.hasOwnProperty.call(groupDetails, 'name')) {
-          setStatements.push('name = ($' + (++setIndex) + ')');
-          setValues.push(groupDetails.name);
-        }
-        if (Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoachId')) {
-          setStatements.push('football_coach_id = ($' + (++setIndex) + ')');
-          setValues.push(groupDetails.footballCoachId);
-        }
-        if (Object.prototype.hasOwnProperty.call(groupDetails, 'hurlingCoachId')) {
-          setStatements.push('hurling_coach_id = ($' + (++setIndex) + ')');
-          setValues.push(groupDetails.hurlingCoachId);
-        }
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'yearOfBirth')) {
+        setStatements.push('year_of_birth = ($' + (++setIndex) + ')');
+        setValues.push(groupDetails.yearOfBirth);
+      }
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'name')) {
+        setStatements.push('name = ($' + (++setIndex) + ')');
+        setValues.push(groupDetails.name);
+      }
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'footballCoachId')) {
+        setStatements.push('football_coach_id = ($' + (++setIndex) + ')');
+        setValues.push(groupDetails.footballCoachId);
+      }
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'hurlingCoachId')) {
+        setStatements.push('hurling_coach_id = ($' + (++setIndex) + ')');
+        setValues.push(groupDetails.hurlingCoachId);
+      }
 
-        setStatements.push('updated_by = ($' + (++setIndex) + ')');
-        setValues.push(request.payload.userProfile.ID);
-        setStatements.push('updated_date = ($' + (++setIndex) + ')');
-        setValues.push(moment.utc().toISOString());
+      setStatements.push('updated_by = ($' + (++setIndex) + ')');
+      setValues.push(request.payload.userProfile.ID);
+      setStatements.push('updated_date = ($' + (++setIndex) + ')');
+      setValues.push(moment.utc().toISOString());
 
-        sqlStatement.push(setStatements.join(',\n'));
+      sqlStatement.push(setStatements.join(',\n'));
 
-        sqlStatement.push(`
-          WHERE 
-            id = ` + groupDetails.id + ` AND
-            version = '` + groupDetails.version + `'`);
+      sqlStatement.push(`
+        WHERE 
+          id = ` + groupDetails.id + ` AND
+          version = '` + groupDetails.version + `'`);
 
-        result = await app.pool.query(sqlStatement.join('\n'), setValues);
-        
-        if (result.rowCount === 0) {
-          throw new Error('No group rows updated. Possible concurrency issue.')
-        }
-      } 
-      catch (error) {
-        throw error;
-      } 
+      result = await app.pool.query(sqlStatement.join('\n'), setValues);
+      
+      if (result.rowCount === 0) {
+        throw new Error('No group rows updated. Possible concurrency issue.')
+      }
 
       await readGroupSummaries(app, currentSettings, response, next);
     }
@@ -537,30 +527,22 @@ exports = module.exports = function (app, router) {
         throw new Error ('groupSummary not found in request');
       }
 
-      try {
-        result = await app.pool.query(`
-          DELETE FROM 
-            public.groups
-          WHERE 
-            id = $1 AND
-            version = $2
-        `, [request.body.groupSummary.id, request.body.groupSummary.version]);
-          
-        if (result.rowCount === 0) {
-          throw new Error('No group deleted. Possible concurrency issue.')
-        }
-      } 
-      catch (error) {
-        throw error;
-      } 
+      result = await app.pool.query(`
+        DELETE FROM 
+          public.groups
+        WHERE 
+          id = $1 AND
+          version = $2
+      `, [request.body.groupSummary.id, request.body.groupSummary.version]);
+        
+      if (result.rowCount === 0) {
+        throw new Error('No group deleted. Possible concurrency issue.')
+      }
 
       await readGroupSummaries(app, currentSettings, response, next);
     }
     catch (error) {
       next(error);
-    }
-    finally {
-      client.release()
     }
   });
 
@@ -1234,51 +1216,161 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get('/coaches', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+  router.get('/coachSummaries', authorizer.authorize(), async (request, response, next) => {
     try {
-      await readCoaches(app, response, next);
+      await readCoachSummaries(app, response, next);
     }
     catch (error) {
       next(error);
     }
   });
 
-  router.get('/coachGroups/:emailAddress', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
-    var groups = null,
-        groupIndex = 0,
-        currentGroup = null,
-        coachGroup = null,
-        coachGroups = [],
-        returnMessage = {};
-
+  router.get('/coaches', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
-      groups = await group.find({ 'year': currentSettings.year }, '-_id -__v').lean().exec();
-
-      for (groupIndex = 0; groupIndex < groups.length; groupIndex++) {
-        currentGroup = groups[groupIndex];
-
-        if (currentGroup.footballCoach === request.params.emailAddress) {
-          coachGroup = {};
-
-          coachGroup.groupName = currentGroup.name;
-          coachGroup.role = 'Football Coach';
-
-          coachGroups.push(coachGroup);
-        }
-        if (currentGroup.hurlingCoach === request.params.emailAddress) {
-          coachGroup = {};
-
-          coachGroup.groupName = currentGroup.name;
-          coachGroup.role = 'Hurling Coach';
-
-          coachGroups.push(coachGroup);
-        }
-      }
-
+      const result = await app.pool.query(`
+        SELECT 
+          id,
+          first_name,
+          surname,
+          email_address,
+          phone_number,
+          administrator,
+          created_by,
+          created_date,
+          updated_by,
+          updated_date,
+          version
+        FROM
+          public.coaches AS c
+      `);
+    
+      var returnMessage = {};
+  
       returnMessage.error = null;
       returnMessage.body = {};
+    
+      returnMessage.body.coaches = result.rows.map(row => {
+        Object.defineProperty(row, 'firstName', Object.getOwnPropertyDescriptor(row, 'first_name'));
+        delete row['first_name'];
+    
+        Object.defineProperty(row, 'emailAddress', Object.getOwnPropertyDescriptor(row, 'email_address'));
+        delete row['email_address'];
+    
+        Object.defineProperty(row, 'phoneNumber', Object.getOwnPropertyDescriptor(row, 'phone_number'));
+        delete row['phone_number'];
+    
+        Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
+        delete row['created_by'];
+    
+        Object.defineProperty(row, 'createdDate', Object.getOwnPropertyDescriptor(row, 'created_date'));
+        delete row['created_date'];
+    
+        Object.defineProperty(row, 'updatedBy', Object.getOwnPropertyDescriptor(row, 'updated_by'));
+        delete row['updated_by'];
+    
+        Object.defineProperty(row, 'updatedDate', Object.getOwnPropertyDescriptor(row, 'updated_date'));
+        delete row['updated_date'];
+    
+        return row;
+      });
+  
+      response.status(200).json(returnMessage);
+    }
+    catch (error) {
+      next(error);
+    }
+  });
 
-      returnMessage.body.coachGroups = coachGroups;
+  router.get('/coachDetails/:coachId', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
+    try {
+      var result = await app.pool.query(`
+        SELECT 
+          id,
+          first_name,
+          surname,
+          email_address,
+          phone_number,
+          administrator,
+          created_by,
+          created_date,
+          updated_by,
+          updated_date,
+          version
+        FROM
+          public.coaches AS c
+        WHERE
+          c.id = $1      
+      `, [request.params.coachId]);
+    
+      var returnMessage = {};
+    
+      returnMessage.error = null;
+      returnMessage.body = {};
+    
+      returnMessage.body.coachDetails = result.rows.map(row => {
+        Object.defineProperty(row, 'firstName', Object.getOwnPropertyDescriptor(row, 'first_name'));
+        delete row['first_name'];
+    
+        Object.defineProperty(row, 'emailAddress', Object.getOwnPropertyDescriptor(row, 'email_address'));
+        delete row['email_address'];
+    
+        Object.defineProperty(row, 'phoneNumber', Object.getOwnPropertyDescriptor(row, 'phone_number'));
+        delete row['phone_number'];
+    
+        Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
+        delete row['created_by'];
+    
+        Object.defineProperty(row, 'createdDate', Object.getOwnPropertyDescriptor(row, 'created_date'));
+        delete row['created_date'];
+    
+        Object.defineProperty(row, 'updatedBy', Object.getOwnPropertyDescriptor(row, 'updated_by'));
+        delete row['updated_by'];
+    
+        Object.defineProperty(row, 'updatedDate', Object.getOwnPropertyDescriptor(row, 'updated_date'));
+        delete row['updated_date'];
+    
+        return row;
+      })[0];
+
+      const football_coach_roles = await app.pool.query(`
+        SELECT 
+          g.name AS group_name,
+          'Football Coach' AS role
+        FROM
+          public.groups AS g
+        WHERE
+          g.football_coach_id = $1
+      `, [request.params.coachId]);
+
+      const hurling_coach_roles = await app.pool.query(`
+        SELECT 
+          g.name AS group_name,
+          'Hurling Coach' AS role
+        FROM
+          public.groups AS g
+        WHERE
+          g.hurling_coach_id = $1
+      `, [request.params.coachId]);
+
+      returnMessage.body.coachRoles = football_coach_roles.rows.concat(hurling_coach_roles.rows);
+
+      returnMessage.body.coachRoles.sort((a, b) => {
+        if (a.group_name > b.group_name) {
+          return -1;
+        }
+        if (a.group_name < b.group_name) {
+          return 1;
+        }
+        
+        return 0;
+      });
+
+      returnMessage.body.coachRoles = returnMessage.body.coachRoles.map(row => {
+        Object.defineProperty(row, 'groupName', Object.getOwnPropertyDescriptor(row, 'group_name'));
+        delete row['group_name'];
+
+        return row;
+      });
 
       response.status(200).json(returnMessage);
     }
@@ -1289,30 +1381,68 @@ exports = module.exports = function (app, router) {
 
   router.post('/createCoach', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
-      var userDetails = request.body.coachDetails,
-          newUser = new user(),
-          savedUser,
-          emailTemplate;
+      var coachDetails = request.body.coachDetails,
+          sqlStatement = [],
+          fieldIndex = 0,
+          fieldNames = [],
+          fieldValues = [],
+          fieldPositionParams = [];
 
-      newUser.firstName = userDetails.firstName;
-      newUser.surname = userDetails.surname;
-      newUser.emailAddress = userDetails.emailAddress;
-      newUser.phoneNumber = userDetails.phoneNumber;
-      newUser.isAdministrator = userDetails.isAdministrator;
-      newUser.password = '';
+      if (!coachDetails) {
+        throw new Error ('coachDetails not found in request');
+      }
 
-      newUser.modifiedBy = request.payload.userProfile.ID;
+      sqlStatement.push('INSERT INTO public.coaches (');
 
-      savedUser = await newUser.save();
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'emailAddress')) {
+        fieldNames.push('email_address');
+        fieldValues.push(coachDetails.emailAddress);
+      }
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'firstName')) {
+        fieldNames.push('first_name');
+        fieldValues.push(coachDetails.firstName);
+      }
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'surname')) {
+        fieldNames.push('surname');
+        fieldValues.push(coachDetails.surname);
+      }
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'phoneNumber')) {
+        fieldNames.push('phone_number');
+        fieldValues.push(coachDetails.phoneNumber);
+      }
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'administrator')) {
+        fieldNames.push('administrator');
+        fieldValues.push(coachDetails.administrator);
+      }
 
-      emailTemplate = await readFile('email_templates/create-password-template.html');
-   
-      sendEmail(savedUser.emailAddress, 
+      fieldNames.push('created_by');
+      fieldValues.push(request.payload.userProfile.ID);
+      fieldNames.push('created_date');
+      fieldValues.push(moment.utc().toISOString());
+
+      sqlStatement.push(fieldNames.join(',\n'));
+
+      sqlStatement.push(`)
+        VALUES (`);
+
+      for (fieldIndex = 1; fieldIndex <= fieldNames.length; fieldIndex++) { 
+        fieldPositionParams.push('$' + fieldIndex)  
+      }
+
+      sqlStatement.push(fieldPositionParams.join(',\n'));
+
+      sqlStatement.push(')');
+
+      await app.pool.query(sqlStatement.join('\n'), fieldValues);
+
+      const emailTemplate = await readFile('email_templates/create-password-template.html');
+  
+      sendEmail(coachDetails.emailAddress, 
         'Welcome to Carraig Og Register. Please verify your account...', 
-        emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: savedUser.emailAddress }, config.secret)), 
-        request);
+        emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: coachDetails.emailAddress }, config.secret)), 
+        request);  
 
-      await readCoaches(currentSettings, response, next);
+      await readCoachSummaries(app, response, next);
     }
     catch (error) {
       next(error);
@@ -1321,32 +1451,62 @@ exports = module.exports = function (app, router) {
 
   router.post('/updateCoach', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
-      var userDetails = request.body.coachDetails,
-          customError = null,
-          foundUser = null;
+      var coachDetails = request.body.coachDetails,
+          sqlStatement = [],
+          setIndex = 0,
+          setStatements = [],
+          setValues = [],
+          result = null;
 
-      foundUser = await user.findOne({ '_id': mongoose.Types.ObjectId(userDetails._id), '__v': userDetails.__v });
-
-      if (!foundUser) {
-        customError = new Error('User not found');
-
-        customError.httpCode = 409;
-
-        throw customError;
+      if (!coachDetails) {
+        throw new Error ('coachDetails not found in request');
       }
 
-      foundUser.firstName = Object.prototype.hasOwnProperty.call(userDetails, 'firstName') ? userDetails.firstName : foundUser.firstName;
-      foundUser.surname = Object.prototype.hasOwnProperty.call(userDetails, 'surname') ? userDetails.surname : foundUser.surname;
-      foundUser.emailAddress = Object.prototype.hasOwnProperty.call(userDetails, 'emailAddress') ? userDetails.emailAddress : foundUser.emailAddress;
-      foundUser.phoneNumber = Object.prototype.hasOwnProperty.call(userDetails, 'phoneNumber') ? userDetails.phoneNumber : foundUser.phoneNumber;
-      foundUser.isAdministrator = Object.prototype.hasOwnProperty.call(userDetails, 'isAdministrator') ? userDetails.isAdministrator : foundUser.isAdministrator;
-  
-      foundUser.modifiedBy = request.payload.userProfile.ID;
-      foundUser.increment();
+      sqlStatement.push(`
+        UPDATE 
+          public.coaches
+        SET`);
 
-      await foundUser.save();
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'emailAddress')) {
+        setStatements.push('email_address = ($' + (++setIndex) + ')');
+        setValues.push(coachDetails.emailAddress);
+      }
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'firstName')) {
+        setStatements.push('first_name = ($' + (++setIndex) + ')');
+        setValues.push(coachDetails.firstName);
+      }
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'surname')) {
+        setStatements.push('surname = ($' + (++setIndex) + ')');
+        setValues.push(coachDetails.surname);
+      }
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'phoneNumber')) {
+        setStatements.push('phone_number = ($' + (++setIndex) + ')');
+        setValues.push(coachDetails.phoneNumber);
+      }
+      if (Object.prototype.hasOwnProperty.call(coachDetails, 'administrator')) {
+        setStatements.push('administrator = ($' + (++setIndex) + ')');
+        setValues.push(coachDetails.administrator);
+      }
 
-      await readCoaches(currentSettings, response, next);
+      setStatements.push('updated_by = ($' + (++setIndex) + ')');
+      setValues.push(request.payload.userProfile.ID);
+      setStatements.push('updated_date = ($' + (++setIndex) + ')');
+      setValues.push(moment.utc().toISOString());
+
+      sqlStatement.push(setStatements.join(',\n'));
+
+      sqlStatement.push(`
+        WHERE 
+          id = ` + coachDetails.id + ` AND
+          version = '` + coachDetails.version + `'`);
+
+      result = await app.pool.query(sqlStatement.join('\n'), setValues);
+      
+      if (result.rowCount === 0) {
+        throw new Error('No coach rows updated. Possible concurrency issue.')
+      }
+
+      await readCoachSummaries(app, response, next);
     }
     catch (error) {
       next(error);
@@ -1355,33 +1515,29 @@ exports = module.exports = function (app, router) {
 
   router.post('/deleteCoach', authorizer.authorize({ isAdministrator: true }), async (request, response, next) => {
     try {
-      var userDetails = request.body.coachDetails,
-          customError = null,
-          foundUser = null,
-          emailTemplate = null;
-
-      foundUser = await user.findOne({ '_id': mongoose.Types.ObjectId(userDetails._id), '__v': userDetails.__v })
-
-      if (!foundUser) {
-        customError = new Error('User not found');
-
-        customError.httpCode = 409;
-
-        throw customError;
+      if (!request.body.coachSummary) {
+        throw new Error ('coachSummary not found in request');
       }
 
-      await group.update({ 'year': currentSettings.year, 'footballCoach': foundUser.emailAddress }, { 'footballCoach': '' });
-      await group.update({ 'year': currentSettings.year, 'hurlingCoach': foundUser.emailAddress }, { 'hurlingCoach': '' });
-      
-      await user.deleteOne({ '_id': mongoose.Types.ObjectId(foundUser._id), '__v': foundUser.__v })
- 
+      const result = await app.pool.query(`
+        DELETE FROM 
+          public.coaches
+        WHERE 
+          id = $1 AND
+          version = $2
+      `, [request.body.coachSummary.id, request.body.coachSummary.version]);
+        
+      if (result.rowCount === 0) {
+        throw new Error('No coach deleted. Possible concurrency issue.')
+      }
+
       if (request.body.sendGoodbyeEmail) {
-        emailTemplate = await readFile('email_templates/goodbye-template.html');
+        const emailTemplate = await readFile('email_templates/goodbye-template.html');
     
         sendEmail(foundUser.emailAddress, 'Goodbye from Carraig Og Register', emailTemplate, request);
       }
 
-      await readCoaches(currentSettings, response, next);
+      await readCoachSummaries(app, response, next);
     }
     catch (error) {
       next(error);
@@ -1588,7 +1744,7 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
   response.status(200).json(returnMessage);
 }
 
-var readCoaches = async (app, response, next) => {
+var readCoachSummaries = async (app, response, next) => {
   const result = await app.pool.query(`
     SELECT 
       id,
@@ -1597,10 +1753,6 @@ var readCoaches = async (app, response, next) => {
       email_address,
       phone_number,
       administrator,
-      created_by,
-      created_date,
-      updated_by,
-      updated_date,
       version,
       CASE 
         WHEN EXISTS
@@ -1641,18 +1793,6 @@ var readCoaches = async (app, response, next) => {
 
     Object.defineProperty(row, 'phoneNumber', Object.getOwnPropertyDescriptor(row, 'phone_number'));
     delete row['phone_number'];
-
-    Object.defineProperty(row, 'createdBy', Object.getOwnPropertyDescriptor(row, 'created_by'));
-    delete row['created_by'];
-
-    Object.defineProperty(row, 'createdDate', Object.getOwnPropertyDescriptor(row, 'created_date'));
-    delete row['created_date'];
-
-    Object.defineProperty(row, 'updatedBy', Object.getOwnPropertyDescriptor(row, 'updated_by'));
-    delete row['updated_by'];
-
-    Object.defineProperty(row, 'updatedDate', Object.getOwnPropertyDescriptor(row, 'updated_date'));
-    delete row['updated_date'];
 
     return row;
   });

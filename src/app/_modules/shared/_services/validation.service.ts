@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { ICoach } from '../../../_models';
+import { ICoachSummary } from '../../../_models';
 
 
 @Injectable()
@@ -81,13 +81,13 @@ export class ValidationService {
     }
   }
 
-  newCoachValidator(currentCoaches: ICoach[]) {
+  newCoachValidator(currentCoaches: ICoachSummary[]) {
     return (control: FormControl): {[key: string]: any} => {
       if (!currentCoaches) {
         return null;
       }
       
-      let existingCoach: ICoach = currentCoaches.find(coach => {
+      let existingCoach: ICoachSummary = currentCoaches.find(coach => {
         return coach.emailAddress === control.value;
       });
 

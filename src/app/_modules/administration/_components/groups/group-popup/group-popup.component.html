@@ -8,18 +8,19 @@
       <p id="year-of-birth" class="card-text"><strong>Year of Birth:</strong> {{ groupDetails.yearOfBirth }}</p>
       <p id="football-coach" class="card-text"><strong>Football Coach:</strong> {{ footballCoachFullName }}</p>
       <p id="hurling-coach" class="card-text"><strong>Hurling Coach:</strong> {{ hurlingCoachFullName }}</p>
+      <p id="number-of-players" class="card-text"><strong>Number of Players:</strong> {{ numberOfPlayers }}</p>
       <p id="last-updated-date" class="card-text"><strong>Players Last Updated:</strong> {{ lastUpdatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</p>
     </div>
     <div class="card-footer bg-info-light text-muted">
       <p>
-        <span id="created-date">Created Date: {{ groupDetails.createdDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
-        <br/>
         <span id="created-by">Created By: {{ groupDetails.createdBy }}</span>
+        <br/>
+        <span id="created-date">Created Date: {{ groupDetails.createdDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
       </p>
       <p>
-        <span id="updated-date">Updated Date: {{ groupDetails.updatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
-        <br/>
         <span id="updated-by">Updated By: {{ groupDetails.updatedBy }}</span>
+        <br/>
+        <span id="updated-date">Updated Date: {{ groupDetails.updatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</span>
       </p>
     </div>
   </div>

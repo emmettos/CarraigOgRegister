@@ -14,13 +14,16 @@ export class CoachPopupComponent {
   @Input()
   coachGroups: any[];
 
+  @Input()
+  active: boolean;
+
   constructor() {
   }
 
   coachPopupHeaderCSSClass() {
     var CSSClass = 'bg-success';
 
-    if (!this.coachDetails.active) {
+    if (!this.active) {
       CSSClass = 'bg-warning';
     }
 
@@ -30,7 +33,7 @@ export class CoachPopupComponent {
   coachPopupFooterCSSClass() {
     var CSSClass = 'bg-success-light';
 
-    if (!this.coachDetails.active) {
+    if (!this.active) {
       CSSClass = 'bg-warning-light';
     }
 

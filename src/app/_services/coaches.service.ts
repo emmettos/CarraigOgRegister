@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 
 import { Angular5Csv } from 'angular5-csv/dist/Angular5-csv';
 
-import { ICoach } from '../_models/index';
+import { ICoach, ICoachSummary } from '../_models/index';
 
 
 @Injectable()
@@ -13,16 +13,16 @@ export class CoachesService {
   constructor(private http: HttpClient) {
   }
 
+  readCoachSummaries(): Observable<any> {
+    return this.http.get<any>('/api/coachSummaries');
+  }
+
   readCoaches(): Observable<any> {
     return this.http.get<any>('/api/coaches');
   }
 
-  updateCoach(coach: ICoach): Observable<any> {
-    let postData = {};
-
-    postData['coachDetails'] = coach;
-   
-    return this.http.post("/api/updateCoach", postData);
+  readCoachDetails(coachId: number): Observable<any> {
+    return this.http.get<any>('/api/coachDetails/' + coachId);
   }
 
   createCoach(coach: ICoach): Observable<any> {
@@ -33,17 +33,21 @@ export class CoachesService {
     return this.http.post("/api/createCoach", postData);    
   }
 
-  deleteCoach(coach: ICoach, sendGoodbyeEmail: Boolean): Observable<any> {
+  updateCoach(coach: ICoach): Observable<any> {
     let postData = {};
 
     postData['coachDetails'] = coach;
+   
+    return this.http.post("/api/updateCoach", postData);
+  }
+
+  deleteCoach(coachSummary: ICoachSummary, sendGoodbyeEmail: Boolean): Observable<any> {
+    let postData = {};
+
+    postData['coachSummary'] = coachSummary;
     postData['sendGoodbyeEmail'] = sendGoodbyeEmail;
 
     return this.http.post("/api/deleteCoach", postData);    
-  }
-
-  readCoachGroups(coach: ICoach): Observable<any> {
-    return this.http.get<any>('/api/coachGroups/' + coach.emailAddress);
   }
 
   downloadCSV(csvCoaches: any[]) {

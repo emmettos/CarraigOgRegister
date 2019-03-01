@@ -76,19 +76,17 @@ describe('ValidationService', () => {
 
     let currentCoaches = [
       {
-      '_id': '6293c9a83fd22e7fa8e66d3f',
-      'firstName': 'Erick',
-      'surname': 'Norris',
-      'emailAddress': 'erick_norris@carraigog.com',
-      'phoneNumber': '086 6095372',
-      'isAdministrator': true,
-      'createdBy': 'script',
-      'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'admin@carraigog.com',
-      '__v': 0,
-      'active': true,
-      'currentSessionOwner': false
+        'id': 1,
+        'firstName': 'Erick',
+        'surname': 'Norris',
+        'emailAddress': 'erick_norris@carraigog.com',
+        'phoneNumber': '086 1550344',
+        'isAdministrator': false,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedBy': 'admin@carraigog.com',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'version': '2018-05-09T09:55:59.735Z'
       }
     ];  
 

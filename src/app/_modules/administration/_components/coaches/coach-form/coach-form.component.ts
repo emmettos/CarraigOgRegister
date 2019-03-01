@@ -3,7 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import { ICoach } from '../../../../../_models/index';
+import { ICoach, ICoachSummary } from '../../../../../_models/index';
 import { CoachesService } from '../../../../../_services/index';
 import { ValidationService } from '../../../../shared/_services/index';
 
@@ -17,7 +17,7 @@ export class CoachFormComponent implements OnInit {
   coachDetails: ICoach;
 
   @Input()
-  currentCoaches: ICoach[];
+  currentCoaches: ICoachSummary[];
 
   emailAddressControl: FormControl;
     
@@ -36,26 +36,28 @@ export class CoachFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    let otherCoaches: ICoachSummary[] = this.currentCoaches;
+
     if (this.coachDetails) {
       this.editingCoach = true;
-      this.title = 'Edit Coach - ' + this.coachDetails.emailAddress;
+      this.title = 'Edit Coach';
 
-      this.emailAddressControl = new FormControl(this.coachDetails.emailAddress);
-      this.emailAddressControl.disable();
-    }
-    else {
-      this.emailAddressControl = new FormControl('', { 
-        validators: [Validators.required, this.validationService.emailValidator, this.validationService.newCoachValidator(this.currentCoaches)],
-        updateOn: 'blur'
+      otherCoaches = this.currentCoaches.filter((coach, index, arr) => {
+        return coach.emailAddress !== this.coachDetails.emailAddress;
       });
     }
+
+    this.emailAddressControl = new FormControl(this.coachDetails ? this.coachDetails.emailAddress : '', { 
+      validators: [Validators.required, this.validationService.emailValidator, this.validationService.newCoachValidator(otherCoaches)],
+      updateOn: 'blur'
+    });
 
     this.coachForm = this.formBuilder.group({
       'emailAddress': this.emailAddressControl,
       'firstName': [this.coachDetails ? this.coachDetails.firstName : '', Validators.required],
       'surname': [this.coachDetails ? this.coachDetails.surname : '', Validators.required],
       'phoneNumber': [this.coachDetails ? this.coachDetails.phoneNumber : ''],
-      'isAdministrator': [this.coachDetails ? this.coachDetails.isAdministrator : false],
+      'administrator': [this.coachDetails ? this.coachDetails.administrator : false],
     });
   }
  
@@ -66,7 +68,7 @@ export class CoachFormComponent implements OnInit {
   onSubmit(formValues: any) {
     this.readCoachDetailsFields(formValues);
 
-    if (this.coachDetails._id) {
+    if (this.coachDetails.id) {
       this.coachesService.updateCoach(this.coachDetails)
         .subscribe({
           next: response => {
@@ -78,12 +80,7 @@ export class CoachFormComponent implements OnInit {
             this.activeModal.close(returnObject);
           },
           error: error => {
-            let errorObject: any = {}
-
-            errorObject.coachDetails = this.coachDetails;
-            errorObject.error = error.message
-            
-            this.activeModal.dismiss(errorObject);
+            this.activeModal.dismiss();
           }
         });
     }
@@ -99,12 +96,7 @@ export class CoachFormComponent implements OnInit {
             this.activeModal.close(returnObject);
           },
           error: error => {
-            let errorObject: any = {}
-
-            errorObject.coachDetails = this.coachDetails;
-            errorObject.error = error.message;
-            
-            this.activeModal.dismiss(errorObject);
+            this.activeModal.dismiss();
           }
         });
     }
@@ -117,14 +109,13 @@ export class CoachFormComponent implements OnInit {
   private readCoachDetailsFields(formValues: any): void {
     if (!this.coachDetails) {
       this.coachDetails = (<ICoach>{});
-
-      this.coachDetails.emailAddress = formValues.emailAddress;
     }
 
+    this.coachDetails.emailAddress = formValues.emailAddress;
     this.coachDetails.firstName = formValues.firstName;
     this.coachDetails.surname = formValues.surname;
     this.coachDetails.phoneNumber = formValues.phoneNumber;
-    this.coachDetails.isAdministrator = formValues.isAdministrator;
+    this.coachDetails.administrator = formValues.administrator;
   }
 
   private disableControls(): void {
@@ -132,6 +123,6 @@ export class CoachFormComponent implements OnInit {
     this.coachForm.controls['firstName'].disable();
     this.coachForm.controls['surname'].disable();
     this.coachForm.controls['phoneNumber'].disable();
-    this.coachForm.controls['isAdministrator'].disable();
+    this.coachForm.controls['administrator'].disable();
   }
 }

@@ -6,3 +6,4 @@ export * from './group';
 export * from './group-summary';
 export * from './group-player';
 export * from './coach';
+export * from './coach-summary';

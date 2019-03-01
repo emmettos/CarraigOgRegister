@@ -5,7 +5,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
 import { ToasterService } from 'angular2-toaster';
 
-import { ICoach, IUserProfile } from '../../../../../_models/index';
+import { ICoachSummary, IUserProfile } from '../../../../../_models/index';
 import { CoachesService, AuthorizationService } from '../../../../../_services/index';
 import { CoachFormComponent } from '../coach-form/coach-form.component';
 import { CoachPopupComponent } from '../coach-popup/coach-popup.component';
@@ -25,8 +25,8 @@ export class ManageCoachesComponent implements OnInit {
   sortKey: string = "surname";
   reverse: boolean = false;
 
-  coaches: ICoach[] = null;
-  filteredCoaches: ICoach[] = null;
+  coaches: ICoachSummary[] = null;
+  filteredCoaches: ICoachSummary[] = null;
 
   totalCount: number = 0;
   activeCount: number = 0;
@@ -51,7 +51,7 @@ export class ManageCoachesComponent implements OnInit {
         this.filterCoaches(formValues)
       });
 
-    this.coachesService.readCoaches()
+    this.coachesService.readCoachSummaries()
       .subscribe({
         next: response => {
           this.processReturnedCoaches(response.body.coaches);
@@ -107,75 +107,77 @@ export class ManageCoachesComponent implements OnInit {
 
         this.nameFilterElementRef.nativeElement.focus();
       })
+      // Need this handler otherwise the Angular error handling mechanism will kick in.
       .catch(error => {
-        this.toasterService.pop('error', 'Failed Adding Coach', error.coachDetails.emailAddress);
       });
   }
 
-  onClickRow(coach: ICoach) {
-    let modalRef: NgbModalRef;
+  onClickEditCoach(event: Event, coachSummary: ICoachSummary) {
+    this.coachesService.readCoachDetails(coachSummary.id)
+      .subscribe({
+        next: response => {
+          const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
 
-    if (coach.active) {
-      this.coachesService.readCoachGroups(coach)
-        .subscribe({
-          next: response => {
-            modalRef = this.modalService.open(CoachPopupComponent);
+          modalRef.componentInstance.coachDetails = response.body.coachDetails;
+          modalRef.componentInstance.currentCoaches = this.coaches;
+            
+          modalRef.result
+            .then(returnObject => {
+              if (returnObject) {
+                this.toasterService.pop('success', 'Coach Successfully Updated', returnObject.coachDetails.emailAddress);
 
-            modalRef.componentInstance.coachDetails = coach;  
-            modalRef.componentInstance.coachGroups = response.body.coachGroups;
-          },
-          // Need this handler otherwise the Angular error handling mechanism will kick in.
-          error: error => {
-          }
-        });
-    }
-    else {
-      modalRef = this.modalService.open(CoachPopupComponent);
-
-      modalRef.componentInstance.coachDetails = coach;  
-    }
-  }
-
-  onClickEditCoach(event: Event, coach: ICoach) {
-    const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
-
-    modalRef.componentInstance.coachDetails = coach;
-
-    modalRef.result
-      .then(returnObject => {
-        if (returnObject) {
-          this.toasterService.pop('success', 'Coach Successfully Updated', returnObject.coachDetails.emailAddress);
-
-          this.processReturnedCoaches(returnObject.updatedCoaches);
+                this.processReturnedCoaches(returnObject.updatedCoaches);
+              }
+            })
+            .catch(error => {
+            });
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
         }
-      })
-      .catch(error => {
-        this.toasterService.pop('error', 'Failed Updating Coach', error.coachDetails.emailAddress);
       });
     
     event.stopPropagation();
   }
 
-  onClickDeleteCoach(event: Event, coach: ICoach) {
+  onClickDeleteCoach(event: Event, coachSummary: ICoachSummary) {
     const modalRef: NgbModalRef = this.modalService.open(ConfirmDeleteCoachComponent, { backdrop: 'static' });
 
-    modalRef.componentInstance.coachDetails = coach;
+    modalRef.componentInstance.coachSummary = coachSummary;
 
     modalRef.result
       .then(returnObject => {
         if (returnObject) {
-          this.toasterService.pop('success', 'Coach Successfully Deleted', returnObject.coachDetails.emailAddress);
+          this.toasterService.pop('success', 'Coach Successfully Deleted', coachSummary.emailAddress);
 
           this.processReturnedCoaches(returnObject.updatedCoaches);
         }
 
         this.nameFilterElementRef.nativeElement.focus();
       })
+      // Need this handler otherwise the Angular error handling mechanism will kick in.
       .catch(error => {
-        this.toasterService.pop('error', 'Failed Deleting Coach', error.coachDetails.emailAddress);
       });
 
     event.stopPropagation();
+  }
+
+  onClickRow(coachSummary: ICoachSummary) {
+    let modalRef: NgbModalRef;
+
+    this.coachesService.readCoachDetails(coachSummary.id)
+      .subscribe({
+        next: response => {
+          modalRef = this.modalService.open(CoachPopupComponent);
+
+          modalRef.componentInstance.coachDetails = response.body.coachDetails;  
+          modalRef.componentInstance.coachGroups = response.body.coachRoles;
+          modalRef.componentInstance.active = coachSummary.active;
+        },
+        // Need this handler otherwise the Angular error handling mechanism will kick in.
+        error: error => {
+        }
+      });
   }
 
   onClickDownloadCSV() {
@@ -188,7 +190,7 @@ export class ManageCoachesComponent implements OnInit {
       csvCoach.surname = coach.surname;
       csvCoach.firstName = coach.firstName;
       csvCoach.phoneNumber = coach.phoneNumber;
-      csvCoach.administrator = coach.isAdministrator ? 'YES' : 'NO';
+      csvCoach.administrator = coach.administrator ? 'YES' : 'NO';
 
       csvCoaches.push(csvCoach);
     });
@@ -232,17 +234,17 @@ export class ManageCoachesComponent implements OnInit {
     return CSSClass;
   };
 
-  coachStateCSSClass(coach: ICoach) {
+  coachStateCSSClass(coachSummary: ICoachSummary) {
     var CSSClass = 'badge-success';
 
-    if (!coach.active) {
+    if (!coachSummary.active) {
       CSSClass = 'badge-warning';
     }
 
     return CSSClass;
   }
 
-  private processReturnedCoaches(coaches: ICoach[]) {
+  private processReturnedCoaches(coaches: ICoachSummary[]) {
     let userProfile: IUserProfile = this.authorizationService.getActivePayload.userProfile;
 
     this.coaches = coaches;

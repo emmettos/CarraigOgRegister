@@ -1,11 +1,11 @@
 import { TestBed } from '@angular/core/testing';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 
-import { ICoach } from '../../_models';
+import { ICoach, ICoachSummary } from '../../_models';
 import { CoachesService } from '../index';
 
 
-describe('CoachesService', () => {
+fdescribe('CoachesService', () => {
   let httpMock: HttpTestingController;
 
   let service: CoachesService;
@@ -29,6 +29,17 @@ describe('CoachesService', () => {
     httpMock.verify();
   });
 
+  it('should call url for read coach summaries', () => {
+    service.readCoachSummaries()
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/coachSummaries');
+
+    expect(mockRequest.request.method).toEqual("GET");
+
+    mockRequest.flush(null);
+  });
+
   it('should call url for read coaches', () => {
     service.readCoaches()
       .subscribe();
@@ -40,56 +51,13 @@ describe('CoachesService', () => {
     mockRequest.flush(null);
   });
 
-  it('should call url for update coach', () => {
-    service.updateCoach(null)
+  it('should call url for coach details', () => {
+    service.readCoachDetails(1)
       .subscribe();
 
-    const mockRequest = httpMock.expectOne('/api/updateCoach');
+    const mockRequest = httpMock.expectOne('/api/coachDetails/1');
 
-    expect(mockRequest.request.method).toEqual("POST");
-
-    mockRequest.flush(null);
-  });
-
-  it('should pass request body for update coach', () => {
-    let coach: ICoach = {
-      '_id': 'b093d6d273adfb49ae33e6e1',
-      'firstName': 'Administrator',
-      'surname': '',
-      'emailAddress': 'admin@carraigog.com',
-      'phoneNumber': '086 1550344',
-      'isAdministrator': true,
-      'createdBy': 'script',
-      'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'admin@carraigog.com',
-      '__v': 0,
-      'active': false,
-      'currentSessionOwner': true
-    }
-
-    service.updateCoach(coach)
-      .subscribe();
-
-    const mockRequest = httpMock.expectOne('/api/updateCoach');
-
-    expect(mockRequest.request.body).toEqual({
-      coachDetails: {
-        '_id': 'b093d6d273adfb49ae33e6e1',
-        'firstName': 'Administrator',
-        'surname': '',
-        'emailAddress': 'admin@carraigog.com',
-        'phoneNumber': '086 1550344',
-        'isAdministrator': true,
-        'createdBy': 'script',
-        'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'admin@carraigog.com',
-        '__v': 0,
-        'active': false,
-        'currentSessionOwner': true
-      }
-    });
+    expect(mockRequest.request.method).toEqual("GET");
 
     mockRequest.flush(null);
   });
@@ -114,10 +82,10 @@ describe('CoachesService', () => {
       'isAdministrator': true,
     }
 
-    service.updateCoach(coach)
+    service.createCoach(coach)
       .subscribe();
 
-    const mockRequest = httpMock.expectOne('/api/updateCoach');
+    const mockRequest = httpMock.expectOne('/api/createCoach');
 
     expect(mockRequest.request.body).toEqual({
       coachDetails: {
@@ -127,6 +95,56 @@ describe('CoachesService', () => {
         'phoneNumber': '086 1550344',
         'isAdministrator': true,
         }
+    });
+
+    mockRequest.flush(null);
+  });
+
+  it('should call url for update coach', () => {
+    service.updateCoach(null)
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/updateCoach');
+
+    expect(mockRequest.request.method).toEqual("POST");
+
+    mockRequest.flush(null);
+  });
+
+  it('should pass request body for update coach', () => {
+    let coach: ICoach = {
+      'id': 1,
+      'firstName': 'Administrator',
+      'surname': '',
+      'emailAddress': 'admin@carraigog.com',
+      'phoneNumber': '086 1550344',
+      'administrator': true,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedBy': 'admin@carraigog.com',
+      'updatedDate': '2018-05-09T09:55:59.735Z',
+      'version': '2018-05-09T09:55:59.735Z'
+    }
+
+    service.updateCoach(coach)
+      .subscribe();
+
+    const mockRequest = httpMock.expectOne('/api/updateCoach');
+
+    expect(mockRequest.request.body).toEqual({
+      coachDetails: {
+        'id': 1,
+        'firstName': 'Administrator',
+        'surname': '',
+        'emailAddress': 'admin@carraigog.com',
+        'phoneNumber': '086 1550344',
+        'administrator': true,
+        'createdBy': 'script',
+        'createdDate': '2017-03-15T13:43:51.268Z',
+        'updatedBy': 'admin@carraigog.com',
+        'updatedDate': '2018-05-09T09:55:59.735Z',
+        'version': '2018-05-09T09:55:59.735Z'
+      }
     });
 
     mockRequest.flush(null);
@@ -144,43 +162,33 @@ describe('CoachesService', () => {
   });
 
   it('should pass request body for delete coach', () => {
-    let coach: ICoach = {
-      '_id': 'b093d6d273adfb49ae33e6e1',
+    let coachSummary: ICoachSummary = {
+      'id': 1,
       'firstName': 'Administrator',
       'surname': '',
       'emailAddress': 'admin@carraigog.com',
       'phoneNumber': '086 1550344',
-      'isAdministrator': true,
-      'createdBy': 'script',
-      'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedDate': '2018-05-09T09:55:59.735Z',
-      'updatedBy': 'admin@carraigog.com',
-      '__v': 0,
-      'active': false,
-      'currentSessionOwner': true
-    }
+      'administrator': true,
+      'version': '2018-05-09T09:55:59.735Z',
+      'active': false
+    } as ICoachSummary;
 
-    service.deleteCoach(coach, true)
+    service.deleteCoach(coachSummary, true)
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/deleteCoach');
 
     expect(mockRequest.request.body).toEqual({
       coachDetails: {
-        '_id': 'b093d6d273adfb49ae33e6e1',
+        'id': 1,
         'firstName': 'Administrator',
         'surname': '',
         'emailAddress': 'admin@carraigog.com',
         'phoneNumber': '086 1550344',
-        'isAdministrator': true,
-        'createdBy': 'script',
-        'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedDate': '2018-05-09T09:55:59.735Z',
-        'updatedBy': 'admin@carraigog.com',
-        '__v': 0,
-        'active': false,
-        'currentSessionOwner': true
-        },
+        'administrator': true,
+        'version': '2018-05-09T09:55:59.735Z',
+        'active': true
+      },
       sendGoodbyeEmail: true
     });
 
