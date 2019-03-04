@@ -102,8 +102,8 @@ export class GroupFormComponent implements OnInit {
       this.groupDetails = (<IGroup>{});
     }
 
-    this.groupDetails.yearOfBirth = formValues.yearOfBirth;
     this.groupDetails.name = formValues.name;
+    this.groupDetails.yearOfBirth = formValues.yearOfBirth;
     if (formValues.footballCoach === '0') {
       this.groupDetails.footballCoachId = null;
     }
@@ -119,8 +119,8 @@ export class GroupFormComponent implements OnInit {
   }
 
   private disableControls(): void {
-    this.groupForm.controls['yearOfBirth'].disable();
     this.groupForm.controls['name'].disable();
+    this.groupForm.controls['yearOfBirth'].disable();
     this.groupForm.controls['footballCoach'].disable();
     this.groupForm.controls['hurlingCoach'].disable();
   }

@@ -1,6 +1,7 @@
 import { FormControl } from '@angular/forms';
 
 import { ValidationService } from '../index';
+import { ICoachSummary } from '../../../../_models';
 
 
 describe('ValidationService', () => {
@@ -74,19 +75,17 @@ describe('ValidationService', () => {
   it('should validate invalid new coach', () => {
     formControl.setValue('erick_norris@carraigog.com');
 
-    let currentCoaches = [
+    let currentCoaches: ICoachSummary[] = [
       {
         'id': 1,
         'firstName': 'Erick',
         'surname': 'Norris',
         'emailAddress': 'erick_norris@carraigog.com',
         'phoneNumber': '086 1550344',
-        'isAdministrator': false,
-        'createdBy': 'script',
-        'createdDate': '2017-03-15T13:43:51.268Z',
-        'updatedBy': 'admin@carraigog.com',
-        'updatedDate': '2018-05-09T09:55:59.735Z',
-        'version': '2018-05-09T09:55:59.735Z'
+        'administrator': false,
+        'version': '2018-05-09T09:55:59.735Z',
+        'active': true,
+        'currentSessionOwner': false
       }
     ];  
 

@@ -5,7 +5,7 @@ import { ICoach, ICoachSummary } from '../../_models';
 import { CoachesService } from '../index';
 
 
-fdescribe('CoachesService', () => {
+describe('CoachesService', () => {
   let httpMock: HttpTestingController;
 
   let service: CoachesService;
@@ -179,7 +179,7 @@ fdescribe('CoachesService', () => {
     const mockRequest = httpMock.expectOne('/api/deleteCoach');
 
     expect(mockRequest.request.body).toEqual({
-      coachDetails: {
+      coachSummary: {
         'id': 1,
         'firstName': 'Administrator',
         'surname': '',
@@ -187,7 +187,7 @@ fdescribe('CoachesService', () => {
         'phoneNumber': '086 1550344',
         'administrator': true,
         'version': '2018-05-09T09:55:59.735Z',
-        'active': true
+        'active': false
       },
       sendGoodbyeEmail: true
     });

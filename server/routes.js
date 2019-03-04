@@ -1242,6 +1242,9 @@ exports = module.exports = function (app, router) {
           version
         FROM
           public.coaches AS c
+        ORDER BY
+          c.surname,
+          c.first_name
       `);
     
       var returnMessage = {};

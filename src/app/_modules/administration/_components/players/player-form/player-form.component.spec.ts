@@ -242,7 +242,7 @@ describe('PlayerFormComponent', () => {
     expect(fixture.nativeElement.querySelector('#group-select').options[0].text).toEqual('Not Registered');  
   });
 
-  it('should initialize football coach value option 1', () => {
+  it('should initialize groups value option 1', () => {
     component['dateOfBirth'] = moment.utc('2009-10-13');
 
     fixture.detectChanges();
@@ -1628,7 +1628,7 @@ describe('PlayerFormComponent', () => {
     });
   });
 
-  it('should call activeModal.dismiss after failing to edit a coach', () => {
+  it('should call activeModal.dismiss after failing to edit a player', () => {
     component['playerDetails'] = playerDetails;
     component['groupPlayerDetails'] = groupPlayerDetails;
     component['playerState'] = PlayerState.Existing;
