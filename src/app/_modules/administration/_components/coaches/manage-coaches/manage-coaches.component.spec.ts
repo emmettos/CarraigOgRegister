@@ -23,7 +23,7 @@ import { ConfirmDeleteCoachComponent } from '../confirm-delete-coach/confirm-del
 import { ManageCoachesComponent } from './manage-coaches.component';
 
 
-fdescribe('ManageCoachesComponent', () => {
+describe('ManageCoachesComponent', () => {
   let component: ManageCoachesComponent;
   let fixture: ComponentFixture<ManageCoachesComponent>;
 
@@ -91,18 +91,12 @@ fdescribe('ManageCoachesComponent', () => {
     };
 
     newCoachDetails = {
-      'id': 4,
       'firstName': 'Angel',
       'surname': 'Klein',
       'emailAddress': 'angel_klein@carraigog.com',
       'phoneNumber': '086 2175716',
       'administrator': false,
-      'createdBy': 'script',
-      'createdDate': '2017-03-15T13:43:51.268Z',
-      'updatedBy': 'admin@carraigog.com',
-      'updatedDate': '2018-02-13T10:21:40.545Z',
-      'version': '2018-05-09T09:55:59.735Z'
-    };
+    } as ICoach;
 
     updatedCoachDetails = {
       'id': 2,

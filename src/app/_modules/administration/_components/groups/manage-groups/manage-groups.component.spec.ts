@@ -11,7 +11,7 @@ import { ToasterModule, ToasterService } from 'angular2-toaster';
 
 import { SharedModule } from '../../../../shared/shared.module';
 
-import { IGroupSummary } from '../../../../../_models';
+import { IGroup, IGroupSummary } from '../../../../../_models';
 
 import { GroupsService, CoachesService } from '../../../../../_services';
 import { ValidationService } from '../../../../../_modules/shared/_services';
@@ -31,6 +31,14 @@ describe('ManageGroupsComponent', () => {
       toasterService: ToasterService,
       modalService: NgbModal;
   
+  let groupDetails: IGroup,
+      newGroupDetails: IGroup,
+      updatedGroupDetails: IGroup,
+      groupSummary: IGroupSummary,
+      updatedGroupsAfterAdd: IGroupSummary[],
+      updatedGroupsAfterEdit: IGroupSummary[],
+      updatedGroupsAfterDelete: IGroupSummary[];
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ 
@@ -67,6 +75,151 @@ describe('ManageGroupsComponent', () => {
     toasterService = TestBed.get(ToasterService);
     modalService = TestBed.get(NgbModal);
 
+    groupDetails = {
+      'id': 2,
+      'yearId': 2,
+      'yearOfBirth': 2010,      
+      'name': 'Under 6',
+      'footballCoachId': 1,
+      'hurlingCoachId': 2,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedBy': 'admin@carraigog.com',
+      'updatedDate': '2018-02-13T10:21:40.545Z',
+      'version': '2018-03-04T10:20:00.000Z',
+    };
+
+    newGroupDetails = {
+      'yearOfBirth': 2008,      
+      'name': 'Under 8',
+      'footballCoachId': null,
+      'hurlingCoachId': null,
+    } as IGroup;
+
+    updatedGroupDetails = {
+      'id': 2,
+      'yearId': 2,
+      'yearOfBirth': 2010,      
+      'name': 'Under 6xxx',
+      'footballCoachId': 1,
+      'hurlingCoachId': 2,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedBy': 'admin@carraigog.com',
+      'updatedDate': '2018-02-13T10:21:40.545Z',
+      'version': '2018-03-04T10:20:00.000Z',
+    };
+
+    groupSummary = {
+      'id': 2,
+      'yearOfBirth': 2010,      
+      'name': 'Under 6',
+      'version': '2018-03-04T10:20:00.000Z',
+      'footballCoachFullName': 'John Rees',
+      'hurlingCoachFullName': 'Byrok Moran',
+      'numberOfPlayers': 19,
+      'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
+    } as IGroupSummary;
+
+    updatedGroupsAfterAdd = [
+      {
+        'id': 1,
+        'yearOfBirth': 2009,      
+        'name': 'Under 7',
+        'version': '2017-02-04T15:13:00.000Z',
+        'footballCoachFullName': 'Angel Klein',
+        'hurlingCoachFullName': 'Heddwyn Cunningham',
+        'numberOfPlayers': 12,
+        'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
+      } as IGroupSummary,
+      {
+        'id': 2,
+        'yearOfBirth': 2010,      
+        'name': 'Under 6',
+        'version': '2018-03-04T10:20:00.000Z',
+        'footballCoachFullName': 'John Rees',
+        'hurlingCoachFullName': 'Byrok Moran',
+        'numberOfPlayers': 19,
+        'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
+      } as IGroupSummary,
+      {
+        'id': 3,
+        'yearOfBirth': 2011,      
+        'name': 'Under 5',
+        'version': '2018-06-01T13:20:00.000Z',
+        'footballCoachFullName': 'Siward Hansen',
+        'hurlingCoachFullName': 'Rowan Love',
+        'numberOfPlayers': 21,
+        'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
+      } as IGroupSummary,
+      {
+        'id': 4,
+        'yearOfBirth': 2008,      
+        'name': 'Under 8',
+        'version': '2018-06-01T13:20:00.000Z',
+        'footballCoachFullName': '',
+        'hurlingCoachFullName': '',
+        'numberOfPlayers': 0,
+        'lastUpdatedDate': null
+      } as IGroupSummary
+    ];
+
+    updatedGroupsAfterEdit = [
+      {
+        'id': 1,
+        'yearOfBirth': 2009,      
+        'name': 'Under 7',
+        'version': '2017-02-04T15:13:00.000Z',
+        'footballCoachFullName': 'Angel Klein',
+        'hurlingCoachFullName': 'Heddwyn Cunningham',
+        'numberOfPlayers': 12,
+        'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
+      } as IGroupSummary,
+      {
+        'id': 2,
+        'yearOfBirth': 2010,      
+        'name': 'Under 6xxx',
+        'version': '2018-03-04T10:20:00.000Z',
+        'footballCoachFullName': 'John Rees',
+        'hurlingCoachFullName': 'Byrok Moran',
+        'numberOfPlayers': 19,
+        'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
+      } as IGroupSummary,
+      {
+        'id': 3,
+        'yearOfBirth': 2011,      
+        'name': 'Under 5',
+        'version': '2018-06-01T13:20:00.000Z',
+        'footballCoachFullName': 'Siward Hansen',
+        'hurlingCoachFullName': 'Rowan Love',
+        'numberOfPlayers': 21,
+        'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
+      } as IGroupSummary
+    ];
+
+    updatedGroupsAfterDelete = [
+      {
+        'id': 1,
+        'yearOfBirth': 2009,      
+        'name': 'Under 7',
+        'version': '2017-02-04T15:13:00.000Z',
+        'footballCoachFullName': 'Angel Klein',
+        'hurlingCoachFullName': 'Heddwyn Cunningham',
+        'numberOfPlayers': 12,
+        'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
+      } as IGroupSummary,
+      {
+        'id': 3,
+        'yearOfBirth': 2011,      
+        'name': 'Under 5',
+        'version': '2018-06-01T13:20:00.000Z',
+        'footballCoachFullName': 'Siward Hansen',
+        'hurlingCoachFullName': 'Rowan Love',
+        'numberOfPlayers': 21,
+        'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
+      } as IGroupSummary
+    ];
+
     spyOn(coachesService, 'readCoaches')
       .and.returnValue(of({
         'error': null,
@@ -75,6 +228,7 @@ describe('ManageGroupsComponent', () => {
           ]
         }  
       }));
+
     spyOn(groupsService, 'readGroupSummaries')
       .and.returnValue(of({
         'error': null,
@@ -542,19 +696,7 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue(of({
         'error': null,
         'body': {
-          'groupDetails': {
-            'id': 2,
-            'yearId': 2,
-            'yearOfBirth': 2010,      
-            'name': 'Under 6',
-            'footballCoachId': 1,
-            'hurlingCoachId': 2,
-            'createdBy': 'script',
-            'createdDate': '2017-03-15T13:43:51.268Z',
-            'updatedBy': 'admin@carraigog.com',
-            'updatedDate': '2018-02-13T10:21:40.545Z',
-            'version': '2018-03-04T10:20:00.000Z',
-          }
+          'groupDetails': groupDetails
         }
       }));
 
@@ -563,16 +705,7 @@ describe('ManageGroupsComponent', () => {
         componentInstance: {}
       });
 
-    component.onClickRow({
-      'id': 2,
-      'yearOfBirth': 2010,      
-      'name': 'Under 6',
-      'version': '2018-03-04T10:20:00.000Z',
-      'footballCoachFullName': 'John Rees',
-      'hurlingCoachFullName': 'Byrok Moran',
-      'numberOfPlayers': 19,
-      'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-    } as IGroupSummary);
+    component.onClickRow(groupSummary);
 
     expect(groupsService.readGroupDetails).toHaveBeenCalledWith(2);
   });
@@ -582,19 +715,7 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue(of({
         'error': null,
         'body': {
-          'groupDetails': {
-            'id': 1,
-            'yearId': 2,
-            'yearOfBirth': 2009,      
-            'name': 'Under 7',
-            'footballCoachId': 1,
-            'hurlingCoachId': 2,
-            'createdBy': 'script',
-            'createdDate': '2017-03-15T13:43:51.268Z',
-            'updatedBy': 'admin@carraigog.com',
-            'updatedDate': '2018-02-13T10:21:40.545Z',
-            'version': '2018-03-04T10:20:00.000Z',
-          }
+          'groupDetails': groupDetails
         }
       }));
 
@@ -603,16 +724,7 @@ describe('ManageGroupsComponent', () => {
         componentInstance: {}
       });
 
-    component.onClickRow({
-      'id': 2,
-      'yearOfBirth': 2010,      
-      'name': 'Under 6',
-      'version': '2018-03-04T10:20:00.000Z',
-      'footballCoachFullName': 'John Rees',
-      'hurlingCoachFullName': 'Byrok Moran',
-      'numberOfPlayers': 19,
-      'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-    } as IGroupSummary);
+    component.onClickRow(groupSummary);
 
     expect(modalService.open).toHaveBeenCalledWith(GroupPopupComponent);
   });
@@ -622,58 +734,8 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 4,
-            'yearOfBirth': 2008,      
-            'name': 'Under 8',
-            'version': '2018-06-01T13:20:00.000Z',
-            'footballCoachFullName': '',
-            'hurlingCoachFullName': '',
-            'numberOfPlayers': 0,
-            'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            },
-            {
-              'id': 4,
-              'yearOfBirth': 2008,      
-              'name': 'Under 8',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': '',
-              'hurlingCoachFullName': '',
-              'numberOfPlayers': 0,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: newGroupDetails,
+          updatedGroups: updatedGroupsAfterAdd
         })
       });
 
@@ -687,58 +749,8 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 4,
-            'yearOfBirth': 2008,      
-            'name': 'Under 8',
-            'version': '2018-06-01T13:20:00.000Z',
-            'footballCoachFullName': '',
-            'hurlingCoachFullName': '',
-            'numberOfPlayers': 0,
-            'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            },
-            {
-              'id': 4,
-              'yearOfBirth': 2008,      
-              'name': 'Under 8',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': '',
-              'hurlingCoachFullName': '',
-              'numberOfPlayers': 0,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: newGroupDetails,
+          updatedGroups: updatedGroupsAfterAdd
         })
       });
 
@@ -754,58 +766,8 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 4,
-            'yearOfBirth': 2008,      
-            'name': 'Under 8',
-            'version': '2018-06-01T13:20:00.000Z',
-            'footballCoachFullName': '',
-            'hurlingCoachFullName': '',
-            'numberOfPlayers': 0,
-            'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            },
-            {
-              'id': 4,
-              'yearOfBirth': 2008,      
-              'name': 'Under 8',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': '',
-              'hurlingCoachFullName': '',
-              'numberOfPlayers': 0,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: newGroupDetails,
+          updatedGroups: updatedGroupsAfterAdd
         })
       });
 
@@ -823,19 +785,7 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue(of({
         'error': null,
         'body': {
-          'groupDetails': {
-            'id': 2,
-            'yearId': 2,
-            'yearOfBirth': 2010,      
-            'name': 'Under 6',
-            'footballCoachId': 1,
-            'hurlingCoachId': 2,
-            'createdBy': 'script',
-            'createdDate': '2017-03-15T13:43:51.268Z',
-            'updatedBy': 'admin@carraigog.com',
-            'updatedDate': '2018-02-13T10:21:40.545Z',
-            'version': '2018-03-04T10:20:00.000Z'
-          }
+          'groupDetails': groupDetails
         }
       }));
 
@@ -843,61 +793,12 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 1,
-            'yearOfBirth': 2009,      
-            'name': 'Under 7xxx',
-            'version': '2017-02-04T15:13:00.000Z',
-            'footballCoachFullName': 'Angel Klein',
-            'hurlingCoachFullName': 'Heddwyn Cunningham',
-            'numberOfPlayers': 12,
-            'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7xxx',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: updatedGroupDetails,
+          updatedGroups: updatedGroupsAfterEdit
         })
       });
 
-    component.onClickEditGroup(new MouseEvent('click'), {
-      'id': 2,
-      'yearOfBirth': 2010,      
-      'name': 'Under 6',
-      'version': '2018-03-04T10:20:00.000Z',
-      'footballCoachFullName': 'John Rees',
-      'hurlingCoachFullName': 'Byrok Moran',
-      'numberOfPlayers': 19,
-      'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-    } as IGroupSummary);
+    component.onClickEditGroup(new MouseEvent('click'), groupSummary);
 
     expect(groupsService.readGroupDetails).toHaveBeenCalledWith(2);
   });
@@ -907,19 +808,7 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue(of({
         'error': null,
         'body': {
-          'groupDetails': {
-            'id': 2,
-            'yearId': 2,
-            'yearOfBirth': 2010,      
-            'name': 'Under 6',
-            'footballCoachId': 1,
-            'hurlingCoachId': 2,
-            'createdBy': 'script',
-            'createdDate': '2017-03-15T13:43:51.268Z',
-            'updatedBy': 'admin@carraigog.com',
-            'updatedDate': '2018-02-13T10:21:40.545Z',
-            'version': '2018-03-04T10:20:00.000Z',
-          }
+          'groupDetails': groupDetails
         }
       }));
 
@@ -927,61 +816,12 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 1,
-            'yearOfBirth': 2009,      
-            'name': 'Under 7xxx',
-            'version': '2017-02-04T15:13:00.000Z',
-            'footballCoachFullName': 'Angel Klein',
-            'hurlingCoachFullName': 'Heddwyn Cunningham',
-            'numberOfPlayers': 12,
-            'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7xxx',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: groupDetails,
+          updatedGroups: updatedGroupsAfterEdit
         })
       });
 
-    component.onClickEditGroup(new MouseEvent('click'), {
-      'id': 2,
-      'yearOfBirth': 2010,      
-      'name': 'Under 6',
-      'version': '2018-03-04T10:20:00.000Z',
-      'footballCoachFullName': 'John Rees',
-      'hurlingCoachFullName': 'Byrok Moran',
-      'numberOfPlayers': 19,
-      'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-    } as IGroupSummary);
+    component.onClickEditGroup(new MouseEvent('click'), groupSummary);
 
     expect(modalService.open).toHaveBeenCalledWith(GroupFormComponent, { size: 'lg', backdrop: 'static' });
   });
@@ -991,19 +831,7 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue(of({
         'error': null,
         'body': {
-          'groupDetails': {
-            'id': 2,
-            'yearId': 2,
-            'yearOfBirth': 2010,      
-            'name': 'Under 6',
-            'footballCoachId': 1,
-            'hurlingCoachId': 2,
-            'createdBy': 'script',
-            'createdDate': '2017-03-15T13:43:51.268Z',
-            'updatedBy': 'admin@carraigog.com',
-            'updatedDate': '2018-02-13T10:21:40.545Z',
-            'version': '2018-03-04T10:20:00.000Z',
-          }
+          'groupDetails': groupDetails
         }
       }));
 
@@ -1011,65 +839,16 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 1,
-            'yearOfBirth': 2009,      
-            'name': 'Under 7xxx',
-            'version': '2017-02-04T15:13:00.000Z',
-            'footballCoachFullName': 'Angel Klein',
-            'hurlingCoachFullName': 'Heddwyn Cunningham',
-            'numberOfPlayers': 12,
-            'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7xxx',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: updatedGroupDetails,
+          updatedGroups: updatedGroupsAfterEdit
         })
       });
 
-    component.onClickEditGroup(new MouseEvent('click'), {
-      'id': 1,
-      'yearOfBirth': 2009,      
-      'name': 'Under 7xxx',
-      'version': '2017-02-04T15:13:00.000Z',
-      'footballCoachFullName': 'Angel Klein',
-      'hurlingCoachFullName': 'Heddwyn Cunningham',
-      'numberOfPlayers': 12,
-      'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-    } as IGroupSummary);
+    component.onClickEditGroup(new MouseEvent('click'), groupSummary);
   
     tick();
 
-    expect(toasterService.pop).toHaveBeenCalledWith('success', 'Group Successfully Updated', 'Under 7xxx');
+    expect(toasterService.pop).toHaveBeenCalledWith('success', 'Group Successfully Updated', 'Under 6xxx');
   }));
 
   it('should display groups after updating a group', fakeAsync(() => {
@@ -1077,19 +856,7 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue(of({
         'error': null,
         'body': {
-          'groupDetails': {
-            'id': 2,
-            'yearId': 2,
-            'yearOfBirth': 2010,      
-            'name': 'Under 6',
-            'footballCoachId': 1,
-            'hurlingCoachId': 2,
-            'createdBy': 'script',
-            'createdDate': '2017-03-15T13:43:51.268Z',
-            'updatedBy': 'admin@carraigog.com',
-            'updatedDate': '2018-02-13T10:21:40.545Z',
-            'version': '2018-03-04T10:20:00.000Z',
-          }
+          'groupDetails': groupDetails
         }
       }));
 
@@ -1097,67 +864,18 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 1,
-            'yearOfBirth': 2009,      
-            'name': 'Under 7xxx',
-            'version': '2017-02-04T15:13:00.000Z',
-            'footballCoachFullName': 'Angel Klein',
-            'hurlingCoachFullName': 'Heddwyn Cunningham',
-            'numberOfPlayers': 12,
-            'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7xxx',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: updatedGroupDetails,
+          updatedGroups: updatedGroupsAfterEdit
         })
       });
 
-    component.onClickEditGroup(new MouseEvent('click'), {
-      'id': 1,
-      'yearOfBirth': 2009,      
-      'name': 'Under 7',
-      'version': '2017-02-04T15:13:00.000Z',
-      'footballCoachFullName': 'Angel Klein',
-      'hurlingCoachFullName': 'Heddwyn Cunningham',
-      'numberOfPlayers': 12,
-      'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-    } as IGroupSummary);
+    component.onClickEditGroup(new MouseEvent('click'), groupSummary);
   
     tick();
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 7xxx');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(2) > td:nth-child(1)').innerHTML).toEqual('Under 6xxx');
   }));
 
   it('should call NgbModal.open when delete group is selected', () => {
@@ -1165,41 +883,11 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          updatedGroups: [
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'        
-            }
-          ]
+          updatedGroups: updatedGroupsAfterDelete
         })
       });
 
-    component.onClickDeleteGroup(new MouseEvent('click'), {
-      'id': 1,
-      'yearOfBirth': 2009,      
-      'name': 'Under 7',
-      'version': '2017-02-04T15:13:00.000Z',
-      'footballCoachFullName': 'Angel Klein',
-      'hurlingCoachFullName': 'Heddwyn Cunningham',
-      'numberOfPlayers': 12,
-      'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-    } as IGroupSummary);
+    component.onClickDeleteGroup(new MouseEvent('click'), groupSummary);
 
     expect(modalService.open).toHaveBeenCalledWith(ConfirmDeleteGroupComponent, { backdrop: 'static' });
   });
@@ -1209,45 +897,15 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          updatedGroups: [
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'        
-            }
-          ]
+          updatedGroups: updatedGroupsAfterDelete
         })
       });
 
-    component.onClickDeleteGroup(new MouseEvent('click'), {
-      'id': 1,
-      'yearOfBirth': 2009,      
-      'name': 'Under 7',
-      'version': '2017-02-04T15:13:00.000Z',
-      'footballCoachFullName': 'Angel Klein',
-      'hurlingCoachFullName': 'Heddwyn Cunningham',
-      'numberOfPlayers': 12,
-      'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-    } as IGroupSummary);
+    component.onClickDeleteGroup(new MouseEvent('click'), groupSummary);
   
     tick();
 
-    expect(toasterService.pop).toHaveBeenCalledWith('success', 'Group Successfully Deleted', 'Under 7');
+    expect(toasterService.pop).toHaveBeenCalledWith('success', 'Group Successfully Deleted', 'Under 6');
   }));
 
   it('should display groups after deleting a group', fakeAsync(() => {
@@ -1255,47 +913,17 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          updatedGroups: [
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'        
-            }
-          ]
+          updatedGroups: updatedGroupsAfterDelete
         })
       });
 
-    component.onClickDeleteGroup(new MouseEvent('click'), {
-      'id': 1,
-      'yearOfBirth': 2009,      
-      'name': 'Under 7',
-      'version': '2017-02-04T15:13:00.000Z',
-      'footballCoachFullName': 'Angel Klein',
-      'hurlingCoachFullName': 'Heddwyn Cunningham',
-      'numberOfPlayers': 12,
-      'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-    } as IGroupSummary);
+    component.onClickDeleteGroup(new MouseEvent('click'), groupSummary);
 
     tick();
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 6');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 7');
   }));
 
   it('should download CSV of current filter', () => {
