@@ -11,6 +11,8 @@ import { ToasterModule, ToasterService } from 'angular2-toaster';
 
 import { SharedModule } from '../../../../shared/shared.module';
 
+import { IGroupSummary } from '../../../../../_models';
+
 import { GroupsService, CoachesService } from '../../../../../_services';
 import { ValidationService } from '../../../../../_modules/shared/_services';
 
@@ -18,7 +20,6 @@ import { ManageGroupsComponent } from './manage-groups.component';
 import { GroupPopupComponent } from '../group-popup/group-popup.component';
 import { GroupFormComponent } from '../group-form/group-form.component';
 import { ConfirmDeleteGroupComponent } from '../confirm-delete-group/confirm-delete-group.component';
-import { IGroupSummary } from '../../../../../_models';
 
 
 describe('ManageGroupsComponent', () => {
@@ -616,7 +617,7 @@ describe('ManageGroupsComponent', () => {
     expect(modalService.open).toHaveBeenCalledWith(GroupPopupComponent);
   });
 
-  it('should call NgbModal.open when add player is selected', () => {
+  it('should call NgbModal.open when add group is selected', () => {
     spyOn(modalService, 'open')
       .and.returnValue({
         componentInstance: {},
@@ -901,7 +902,7 @@ describe('ManageGroupsComponent', () => {
     expect(groupsService.readGroupDetails).toHaveBeenCalledWith(2);
   });
 
-  it('should call NgbModal.open when edit player is selected', () => {
+  it('should call NgbModal.open when edit group is selected', () => {
     spyOn(groupsService, 'readGroupDetails')
       .and.returnValue(of({
         'error': null,

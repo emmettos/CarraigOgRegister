@@ -191,6 +191,7 @@ export class ManageCoachesComponent implements OnInit {
       csvCoach.firstName = coach.firstName;
       csvCoach.phoneNumber = coach.phoneNumber;
       csvCoach.administrator = coach.administrator ? 'YES' : 'NO';
+      csvCoach.active = coach.active ? 'YES' : 'NO';
 
       csvCoaches.push(csvCoach);
     });
