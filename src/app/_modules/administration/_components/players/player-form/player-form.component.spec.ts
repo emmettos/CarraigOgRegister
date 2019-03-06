@@ -2047,7 +2047,7 @@ describe('PlayerFormComponent', () => {
     expect(fixture.nativeElement.querySelector('#cancel').disabled).toBeTruthy();  
   });
 
-  it('should disable save player button after submitting a player to be saved', () => {
+  it('should disable save button after submitting a player to be saved', () => {
     component['dateOfBirth'] = moment.utc('2009-10-13');
 
     fixture.detectChanges();

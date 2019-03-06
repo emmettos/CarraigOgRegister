@@ -16,7 +16,7 @@ export class ValidationService {
       'selectYearOfBirth': 'Select a year',
       'invalidNewCoach': 'A coach with this email address already exists',
       'minlength': 'Minimum length [requiredLength]',
-      'ngbDate': 'ZZZInvalid date/Out of range',
+      'ngbDate': 'Invalid date/Out of range',
       'invalidDate': 'Invalid date/Out of range',
       'required': 'This field is required'
     };  

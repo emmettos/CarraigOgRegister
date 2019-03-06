@@ -17,6 +17,9 @@ export class CoachFormComponent implements OnInit {
   coachDetails: ICoach;
 
   @Input()
+  activeCoach: boolean;
+
+  @Input()
   currentCoaches: ICoachSummary[];
 
   emailAddressControl: FormControl;
@@ -124,5 +127,20 @@ export class CoachFormComponent implements OnInit {
     this.coachForm.controls['surname'].disable();
     this.coachForm.controls['phoneNumber'].disable();
     this.coachForm.controls['administrator'].disable();
+  }
+
+  coachFormHeaderCSSClass() {
+    var CSSClass = 'bg-info';
+
+    if (this.coachDetails) {
+      if (!this.activeCoach) {
+        CSSClass = 'bg-warning';
+      }
+      else {
+        CSSClass = 'bg-success';
+      }
+    }
+
+    return CSSClass;
   }
 }

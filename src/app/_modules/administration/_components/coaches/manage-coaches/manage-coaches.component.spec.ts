@@ -4,7 +4,6 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 
 import { of } from 'rxjs';
-import { AsyncScheduler } from 'rxjs/internal/scheduler/AsyncScheduler';
 
 import { NgbModule, NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 

@@ -1,16 +1,14 @@
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ReactiveFormsModule } from '@angular/forms';
-import { async, ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { of, asyncScheduler, throwError } from 'rxjs';
 
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
-import * as moment from 'moment';
-
 import { APP_SETTINGS } from '../../../../../_helpers/index';
-import { IGroup, PlayerState, IGroupPlayer } from '../../../../../_models/index';
+import { IGroup } from '../../../../../_models/index';
 import { GroupsService } from '../../../../../_services';
 import { ValidationService } from '../../../../../_modules/shared/_services';
 
@@ -482,29 +480,24 @@ describe('GroupFormComponent', () => {
           groups: [
             {
               'id': 2,
-              'yearId': 2,
               'yearOfBirth': 2010,      
               'name': 'Under 6',
-              'footballCoachId': 1,
-              'hurlingCoachId': 2,
-              'createdBy': 'script',
-              'createdDate': '2017-03-15T13:43:51.268Z',
-              'updatedBy': 'admin@carraigog.com',
-              'updatedDate': '2018-02-13T10:21:40.545Z',
-              'version': '2018-03-04T10:20:00.000Z'
+              'version': '2018-03-04T10:20:00.000Z',
+              'footballCoachFullName': 'Erick Norris',
+              'hurlingCoachFullName': 'Lachlan Johnson',
+              'numberOfPlayers': 15,
+              'lastUpdatedDate': '2018-02-13T10:21:40.545Z',
             },
             {
               'id': 3,
-              'name': 'Test',
               'yearOfBirth': 2012,
-              'footballCoachId': null,
-              'hurlingCoachId': null,
-              'createdBy': 'script',
-              'createdDate': '2017-03-15T13:43:51.268Z',
-              'updatedBy': 'admin@carraigog.com',
-              'updatedDate': '2018-02-13T10:21:40.545Z',
-              'version': '2018-03-04T10:20:00.000Z'
-            },
+              'name': 'Test',
+              'version': '2018-03-04T10:20:00.000Z',
+              'footballCoachFullName': null,
+              'hurlingCoachFullName': null,
+              'numberOfPlayers': 0,
+              'lastUpdatedDate': null,
+            }
           ]
         }
       }));
@@ -523,29 +516,24 @@ describe('GroupFormComponent', () => {
       updatedGroups: [
         {
           'id': 2,
-          'yearId': 2,
           'yearOfBirth': 2010,      
           'name': 'Under 6',
-          'footballCoachId': 1,
-          'hurlingCoachId': 2,
-          'createdBy': 'script',
-          'createdDate': '2017-03-15T13:43:51.268Z',
-          'updatedBy': 'admin@carraigog.com',
-          'updatedDate': '2018-02-13T10:21:40.545Z',
-          'version': '2018-03-04T10:20:00.000Z'
+          'version': '2018-03-04T10:20:00.000Z',
+          'footballCoachFullName': 'Erick Norris',
+          'hurlingCoachFullName': 'Lachlan Johnson',
+          'numberOfPlayers': 15,
+          'lastUpdatedDate': '2018-02-13T10:21:40.545Z',
         },
         {
           'id': 3,
-          'name': 'Test',
           'yearOfBirth': 2012,
-          'footballCoachId': null,
-          'hurlingCoachId': null,
-          'createdBy': 'script',
-          'createdDate': '2017-03-15T13:43:51.268Z',
-          'updatedBy': 'admin@carraigog.com',
-          'updatedDate': '2018-02-13T10:21:40.545Z',
-          'version': '2018-03-04T10:20:00.000Z'
-        },
+          'name': 'Test',
+          'version': '2018-03-04T10:20:00.000Z',
+          'footballCoachFullName': null,
+          'hurlingCoachFullName': null,
+          'numberOfPlayers': 0,
+          'lastUpdatedDate': null,
+        }
       ]
     });
   });
@@ -575,7 +563,7 @@ describe('GroupFormComponent', () => {
 
     fixture.detectChanges();
 
-    component.groupForm.controls['name'].setValue('XXX');
+    component.groupForm.controls['name'].setValue('Under 6xxx');
 
     fixture.detectChanges();
 
@@ -586,29 +574,14 @@ describe('GroupFormComponent', () => {
           groups: [
             {
               'id': 2,
-              'yearId': 2,
               'yearOfBirth': 2010,      
-              'name': 'XXX',
-              'footballCoachId': 1,
-              'hurlingCoachId': 2,
-              'createdBy': 'script',
-              'createdDate': '2017-03-15T13:43:51.268Z',
-              'updatedBy': 'admin@carraigog.com',
-              'updatedDate': '2018-02-13T10:21:40.545Z',
-              'version': '2018-03-04T10:20:00.000Z'
-            },
-            {
-              'id': 3,
-              'name': 'Under 5',
-              'yearOfBirth': 2012,
-              'footballCoachId': null,
-              'hurlingCoachId': null,
-              'createdBy': 'script',
-              'createdDate': '2017-03-15T13:43:51.268Z',
-              'updatedBy': 'admin@carraigog.com',
-              'updatedDate': '2018-02-13T10:21:40.545Z',
-              'version': '2018-03-04T10:20:00.000Z'
-            },
+              'name': 'Under 6xxx',
+              'version': '2018-03-04T10:20:00.000Z',
+              'footballCoachFullName': 'Erick Norris',
+              'hurlingCoachFullName': 'Lachlan Johnson',
+              'numberOfPlayers': 15,
+              'lastUpdatedDate': '2018-02-13T10:21:40.545Z',
+            }
           ]
         }
       }));
@@ -622,7 +595,7 @@ describe('GroupFormComponent', () => {
         'id': 2,
         'yearId': 2,
         'yearOfBirth': 2010,      
-        'name': 'XXX',
+        'name': 'Under 6xxx',
         'footballCoachId': 1,
         'hurlingCoachId': 2,
         'createdBy': 'script',
@@ -634,29 +607,14 @@ describe('GroupFormComponent', () => {
       updatedGroups: [
         {
           'id': 2,
-          'yearId': 2,
           'yearOfBirth': 2010,      
-          'name': 'XXX',
-          'footballCoachId': 1,
-          'hurlingCoachId': 2,
-          'createdBy': 'script',
-          'createdDate': '2017-03-15T13:43:51.268Z',
-          'updatedBy': 'admin@carraigog.com',
-          'updatedDate': '2018-02-13T10:21:40.545Z',
-          'version': '2018-03-04T10:20:00.000Z'
-        },
-        {
-          'id': 3,
-          'name': 'Under 5',
-          'yearOfBirth': 2012,
-          'footballCoachId': null,
-          'hurlingCoachId': null,
-          'createdBy': 'script',
-          'createdDate': '2017-03-15T13:43:51.268Z',
-          'updatedBy': 'admin@carraigog.com',
-          'updatedDate': '2018-02-13T10:21:40.545Z',
-          'version': '2018-03-04T10:20:00.000Z'
-        },
+          'name': 'Under 6xxx',
+          'version': '2018-03-04T10:20:00.000Z',
+          'footballCoachFullName': 'Erick Norris',
+          'hurlingCoachFullName': 'Lachlan Johnson',
+          'numberOfPlayers': 15,
+          'lastUpdatedDate': '2018-02-13T10:21:40.545Z'
+        }
       ]
     });
   });
@@ -764,5 +722,47 @@ describe('GroupFormComponent', () => {
     component.onSubmit(component.groupForm.value);
 
     expect(fixture.nativeElement.querySelector('#hurling-coach-select').disabled).toBeTruthy();  
+  });
+
+  it('should disable cancel button after submitting a group to be saved', () => {
+    fixture.detectChanges();
+
+    component.groupForm.controls['name'].setValue('Test');
+    component.groupForm.controls['yearOfBirth'].setValue(2012);
+    
+    spyOn(groupsService, 'createGroup')
+      .and.returnValue(of({
+        "error": null,
+        "body": {
+          groups: []
+        }
+      }, asyncScheduler));
+
+    component.onSubmit(component.groupForm.value);
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#cancel').disabled).toBeTruthy();  
+  });
+
+  it('should disable save button after submitting a group to be saved', () => {
+    fixture.detectChanges();
+
+    component.groupForm.controls['name'].setValue('Test');
+    component.groupForm.controls['yearOfBirth'].setValue(2012);
+    
+    spyOn(groupsService, 'createGroup')
+      .and.returnValue(of({
+        "error": null,
+        "body": {
+          groups: []
+        }
+      }, asyncScheduler));
+
+    component.onSubmit(component.groupForm.value);
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('input[type=submit]').disabled).toBeTruthy();  
   });
 });

@@ -119,6 +119,7 @@ export class ManageCoachesComponent implements OnInit {
           const modalRef: NgbModalRef = this.modalService.open(CoachFormComponent, { size: 'lg', backdrop: 'static' });
 
           modalRef.componentInstance.coachDetails = response.body.coachDetails;
+          modalRef.componentInstance.activeCoach = coachSummary.active;
           modalRef.componentInstance.currentCoaches = this.coaches;
             
           modalRef.result
