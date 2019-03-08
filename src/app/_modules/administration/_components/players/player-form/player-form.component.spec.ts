@@ -21,8 +21,6 @@ describe('PlayerFormComponent', () => {
   let component: PlayerFormComponent;
   let fixture: ComponentFixture<PlayerFormComponent>;
 
-  APP_SETTINGS.currentYear = 2019;
-
   let playersService: PlayersService,
       activeModal: NgbActiveModal;
 
@@ -54,6 +52,8 @@ describe('PlayerFormComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(PlayerFormComponent);
     component = fixture.componentInstance;
+
+    APP_SETTINGS.currentYear = 2019;
 
     playersService = TestBed.get(PlayersService);
     activeModal = TestBed.get(NgbActiveModal);
@@ -130,7 +130,7 @@ describe('PlayerFormComponent', () => {
         'updatedBy': 'admin@carraigog.com',
         'updatedDate': '2018-02-27T15:57:21.582Z',
         'version': '2018-02-27T15:57:21.582Z'
-      },
+      }
     ];
   });
 

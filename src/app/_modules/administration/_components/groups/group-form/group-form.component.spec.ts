@@ -132,20 +132,30 @@ describe('GroupFormComponent', () => {
     expect(fixture.nativeElement.querySelector("#title").innerHTML).toEqual('Edit Group');
   });
 
-  it('should set header style for existing group state', () => {
+  it('should set header style for existing group with players', () => {
+    component['groupDetails'] = groupDetails;
+    component['numberOfPlayers'] = 10;
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.modal-header').style.getPropertyValue('bg-success')).toEqual('');
+  });
+
+  it('should set header style for existing group with no players', () => {
+    component['groupDetails'] = groupDetails;
+    component['numberOfPlayers'] = 0;
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('.modal-header').style.getPropertyValue('bg-warning')).toEqual('');
+  });
+
+  it('should set header style for new group', () => {
     component['groupDetails'] = groupDetails;
 
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.modal-header').style.getPropertyValue('bg-info')).toEqual('');
-  });
-
-  it('should set header style for new group state', () => {
-    component['groupDetails'] = groupDetails;
-
-    fixture.detectChanges();
-
-    expect(fixture.nativeElement.querySelector('.modal-header').style.getPropertyValue('bg-success')).toEqual('');
   });
 
   it('should initialize years of birth option 1', () => {

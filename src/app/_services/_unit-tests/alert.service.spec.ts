@@ -13,6 +13,7 @@ import { AlertService } from '../index';
 })
 class MockComponent {}
 
+
 describe('AlertService', () => {
   let service: AlertService;
   let router: Router;
@@ -66,6 +67,8 @@ describe('AlertService', () => {
 
     router.navigate(['/home']);
 
+    tick();
+
     expect(localAlert).toBeUndefined();
   }));
 
@@ -77,14 +80,16 @@ describe('AlertService', () => {
         localAlert = alert;
       });
 
-    service.error('Error Header', 'Error message');
+    service.error('Error Header', 'Error message', true);
 
     router.navigate(['/home']);
 
+    tick();
+
     expect(localAlert).toEqual({
-      type: 'success', 
-      title: 'Success Header', 
-      text: 'Success message'
+      type: 'danger', 
+      title: 'Error Header', 
+      text: 'Error message'
     });
   }));
 
@@ -99,9 +104,11 @@ describe('AlertService', () => {
     service.error('Error Header', 'Error message');
 
     router.navigate(['/home']);
+
     tick();
 
     router.navigate(['/away']);
+    
     tick();
 
     expect(localAlert).toBeUndefined();

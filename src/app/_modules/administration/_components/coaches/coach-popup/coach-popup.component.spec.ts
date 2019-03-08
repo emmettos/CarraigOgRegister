@@ -1,418 +1,167 @@
-// import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-// import { SharedModule } from '../../../../shared/shared.module';
+import { SharedModule } from '../../../../shared/shared.module';
 
-// import { CoachPopupComponent } from './coach-popup.component';
+import { CoachPopupComponent } from './coach-popup.component';
 
 
-// describe('CoachPopupComponent', () => {
-//   let component: CoachPopupComponent;
-//   let fixture: ComponentFixture<CoachPopupComponent>;
+describe('CoachPopupComponent', () => {
+  let component: CoachPopupComponent;
+  let fixture: ComponentFixture<CoachPopupComponent>;
 
-//   beforeEach(async(() => {
-//     TestBed.configureTestingModule({
-//       declarations: [ 
-//         CoachPopupComponent 
-//       ],
-//       imports: [
-//         SharedModule
-//       ]
-//     })
-//     .compileComponents();
-//   }));
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ 
+        CoachPopupComponent 
+      ],
+      imports: [
+        SharedModule
+      ]
+    })
+    .compileComponents();
+  }));
 
-//   beforeEach(() => {
-//     fixture = TestBed.createComponent(CoachPopupComponent);
-//     component = fixture.componentInstance;
-//   });
+  beforeEach(() => {
+    fixture = TestBed.createComponent(CoachPopupComponent);
+    component = fixture.componentInstance;
 
-//   it('should create', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+    component['coachDetails'] = {
+      'id': 2,
+      'firstName': 'Erick',
+      'surname': 'Norris',
+      'emailAddress': 'erick_norris@carraigog.com',
+      'phoneNumber': '086 6095372',
+      'administrator': false,
+      'createdBy': 'script',
+      'createdDate': '2017-03-15T13:43:51.268Z',
+      'updatedBy': 'admin@carraigog.com',
+      'updatedDate': '2018-02-13T10:21:40.545Z',
+      'version': '2018-05-09T09:55:59.735Z'
+    };
 
-//     fixture.detectChanges();
+    component['coachGroups'] = [
+      {
+        'groupName': 'Under 9',
+        'role': 'Hurling Coach'
+      }
+    ];
 
-//     expect(component).toBeTruthy();
-//   });
+    component['active'] = true;
+  });
 
-//   it('should set header style for active coach state', () => {
-//     component.coachDetails = {
-//       '_id': '6293c9a83fd22e7fa8e66d3f',
-//       'firstName': 'Erick',
-//       'surname': 'Norris',
-//       'emailAddress': 'erick_norris@carraigog.com',
-//       'phoneNumber': '086 6095372',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': true,
-//       'currentSessionOwner': false
-//     };
-//     component.coachGroups = [{
-//       'groupName': 'Under 9',
-//       'role': 'Hurling Coach'
-//     }]
+  it('should create', () => {
+    fixture.detectChanges();
 
-//     fixture.detectChanges();
+    expect(component).toBeTruthy();
+  });
 
-//     expect(fixture.nativeElement.querySelector('.card-header').style.getPropertyValue('bg-success')).toEqual('');
-//   });
+  it('should set header style for active coach state', () => {
+    fixture.detectChanges();
 
-//   it('should set header style for dormant coach state', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+    expect(fixture.nativeElement.querySelector('.card-header').style.getPropertyValue('bg-success')).toEqual('');
+  });
 
-//     fixture.detectChanges();
+  it('should set header style for dormant coach state', () => {
+    component['coachGroups'] = null;
 
-//     expect(fixture.nativeElement.querySelector('.card-header').style.getPropertyValue('bg-warning')).toEqual('');
-//   });
+    component['active'] = false;
 
-//   it('should display name', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+    fixture.detectChanges();
 
-//     fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.card-header').style.getPropertyValue('bg-warning')).toEqual('');
+  });
 
-//     expect(fixture.nativeElement.querySelector("#name").innerHTML).toEqual('Lachlan Johnson');
-//   });
+  it('should display name', () => {
+    fixture.detectChanges();
 
-//   it('should display email address', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+    expect(fixture.nativeElement.querySelector("#name").innerHTML).toEqual('Erick Norris');
+  });
 
-//     fixture.detectChanges();
+  it('should display email address', () => {
+    fixture.detectChanges();
 
-//     expect(fixture.nativeElement.querySelector("#email-address").innerHTML).toEqual('lachlan_johnson@carraigog.com');
-//   });
+    expect(fixture.nativeElement.querySelector("#email-address").innerHTML).toEqual('erick_norris@carraigog.com');
+  });
 
-//   it('should display phone number', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+  it('should display phone number', () => {
+    fixture.detectChanges();
 
-//     fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector("#phone-number").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Phone Number:</strong> 086 6095372');
+  });
 
-//     expect(fixture.nativeElement.querySelector("#phone-number").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Phone Number:</strong> 086 4449465');
-//   });
+  it('should display not administrator status', () => {
+    fixture.detectChanges();
 
-//   it('should display not administrator status', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+    expect(fixture.nativeElement.querySelector("#administrator-status").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Administrator:</strong> NO');
+  });
 
-//     fixture.detectChanges();
+  it('should display administrator status', () => {
+    component.coachDetails.administrator = true;
 
-//     expect(fixture.nativeElement.querySelector("#administrator-status").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Administrator:</strong> NO');
-//   });
+    fixture.detectChanges();
 
-//   it('should display administrator status', () => {
-//     component.coachDetails = {
-//       '_id': 'b093d6d273adfb49ae33e6e1',
-//       'firstName': 'Administrator',
-//       'surname': '',
-//       'emailAddress': 'admin@carraigog.com',
-//       'phoneNumber': '086 1550344',
-//       'isAdministrator': true,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': true
-//     };
+    expect(fixture.nativeElement.querySelector("#administrator-status").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Administrator:</strong> YES');
+  });
 
-//     fixture.detectChanges();
+  it('should display No Current Groups', () => {
+    component['coachGroups'] = null;
 
-//     expect(fixture.nativeElement.querySelector("#administrator-status").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">Administrator:</strong> YES');
-//   });
+    component['active'] = false;
 
-//   it('should display No Current Groups', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+    fixture.detectChanges();
 
-//     fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector("#no-current-groups").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">No Current Groups</strong>');
+  });
 
-//     expect(fixture.nativeElement.querySelector("#no-current-groups").innerHTML).toMatch('^<strong _ngcontent-c\\d+="">No Current Groups</strong>');
-//   });
+  it('should display group name', () => {
+    fixture.detectChanges();
 
-//   it('should display group name', () => {
-//     component.coachDetails = {
-//       '_id': '6293c9a83fd22e7fa8e66d3f',
-//       'firstName': 'Erick',
-//       'surname': 'Norris',
-//       'emailAddress': 'erick_norris@carraigog.com',
-//       'phoneNumber': '086 6095372',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': true,
-//       'currentSessionOwner': false
-//     };
-//     component.coachGroups = [{
-//       'groupName': 'Under 9',
-//       'role': 'Hurling Coach'
-//     }]
+    expect(fixture.nativeElement.querySelector('#coach-groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 9');
+  });
 
-//     fixture.detectChanges();
+  it('should display group role', () => {
+    fixture.detectChanges();
 
-//     expect(fixture.nativeElement.querySelector('#coach-groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 9');
-//   });
+    expect(fixture.nativeElement.querySelector('#coach-groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('Hurling Coach');
+  });
 
-//   it('should display group role', () => {
-//     component.coachDetails = {
-//       '_id': '6293c9a83fd22e7fa8e66d3f',
-//       'firstName': 'Erick',
-//       'surname': 'Norris',
-//       'emailAddress': 'erick_norris@carraigog.com',
-//       'phoneNumber': '086 6095372',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': true,
-//       'currentSessionOwner': false
-//     };
-//     component.coachGroups = [{
-//       'groupName': 'Under 9',
-//       'role': 'Hurling Coach'
-//     }]
+  it('should set footer style for active coach state', () => {
+    fixture.detectChanges();
 
-//     fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('.card-footer').style.getPropertyValue('bg-success')).toEqual('');
+  });
 
-//     expect(fixture.nativeElement.querySelector('#coach-groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('Hurling Coach');
-//   });
+  it('should set footer style for dormant coach state', () => {
+    component['coachGroups'] = null;
 
-//   it('should set footer style for active coach state', () => {
-//     component.coachDetails = {
-//       '_id': '6293c9a83fd22e7fa8e66d3f',
-//       'firstName': 'Erick',
-//       'surname': 'Norris',
-//       'emailAddress': 'erick_norris@carraigog.com',
-//       'phoneNumber': '086 6095372',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': true,
-//       'currentSessionOwner': false
-//     };
-//     component.coachGroups = [{
-//       'groupName': 'Under 9',
-//       'role': 'Hurling Coach'
-//     }]
+    component['active'] = false;
 
-//     fixture.detectChanges();
+    fixture.detectChanges();
 
-//     expect(fixture.nativeElement.querySelector('.card-footer').style.getPropertyValue('bg-success')).toEqual('');
-//   });
+    expect(fixture.nativeElement.querySelector('.card-footer').style.getPropertyValue('bg-warning')).toEqual('');
+  });
 
-//   it('should set footer style for dormant coach state', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+  it('should display created date', () => {
+    fixture.detectChanges();
 
-//     fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector("#created-date").innerHTML).toEqual('Created Date: 15/03/2017 1:43 PM');
+  });
 
-//     expect(fixture.nativeElement.querySelector('.card-footer').style.getPropertyValue('bg-warning')).toEqual('');
-//   });
+  it('should display created by', () => {
+    fixture.detectChanges();
 
-//   it('should display created date', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+    expect(fixture.nativeElement.querySelector("#created-by").innerHTML).toEqual('Created By: script');
+  });
 
-//     fixture.detectChanges();
+  it('should display updated date', () => {
+    fixture.detectChanges();
 
-//     expect(fixture.nativeElement.querySelector("#created-date").innerHTML).toEqual('Created Date: 15/03/2017 1:43 PM');
-//   });
+    expect(fixture.nativeElement.querySelector("#updated-date").innerHTML).toEqual('Updated Date: 13/02/2018 10:21 AM');
+  });
 
-//   it('should display created by', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
+  it('should display updated by', () => {
+    fixture.detectChanges();
 
-//     fixture.detectChanges();
-
-//     expect(fixture.nativeElement.querySelector("#created-by").innerHTML).toEqual('Created By: script');
-//   });
-
-//   it('should display updated date', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
-
-//     fixture.detectChanges();
-
-//     expect(fixture.nativeElement.querySelector("#updated-date").innerHTML).toEqual('Updated Date: 09/05/2018 9:55 AM');
-//   });
-
-//   it('should display updated by', () => {
-//     component.coachDetails = {
-//       '_id': '77b61339ebb9c8fc7c51618a',
-//       'firstName': 'Lachlan',
-//       'surname': 'Johnson',
-//       'emailAddress': 'lachlan_johnson@carraigog.com',
-//       'phoneNumber': '086 4449465',
-//       'isAdministrator': false,
-//       'createdBy': 'script',
-//       'createdDate': '2017-03-15T13:43:51.268Z',
-//       'updatedDate': '2018-05-09T09:55:59.735Z',
-//       'updatedBy': 'admin@carraigog.com',
-//       '__v': 0,
-//       'active': false,
-//       'currentSessionOwner': false
-//     };
-
-//     fixture.detectChanges();
-
-//     expect(fixture.nativeElement.querySelector("#updated-by").innerHTML).toEqual('Updated By: admin@carraigog.com');
-//   });
-// });
+    expect(fixture.nativeElement.querySelector("#updated-by").innerHTML).toEqual('Updated By: admin@carraigog.com');
+  });
+});

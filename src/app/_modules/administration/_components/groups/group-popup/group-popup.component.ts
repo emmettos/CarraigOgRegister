@@ -25,4 +25,24 @@ export class GroupPopupComponent {
 
   constructor() {
   }
+
+  groupPopupHeaderCSSClass() {
+    var CSSClass = 'bg-success';
+
+    if (this.numberOfPlayers === 0) {
+      CSSClass = 'bg-warning';
+    }
+
+    return CSSClass;
+  }
+
+  groupPopupFooterCSSClass() {
+    var CSSClass = 'bg-success-light';
+
+    if (this.numberOfPlayers === 0) {
+      CSSClass = 'bg-warning-light';
+    }
+
+    return CSSClass;
+  }
 }

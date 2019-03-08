@@ -18,6 +18,9 @@ export class GroupFormComponent implements OnInit {
   groupDetails: IGroup;
 
   @Input()
+  numberOfPlayers: number;
+
+  @Input()
   coaches: ICoach[];
 
   groupForm: FormGroup;
@@ -128,8 +131,13 @@ export class GroupFormComponent implements OnInit {
   groupFormHeaderCSSClass() {
     var CSSClass = 'bg-info';
 
-    if (!this.groupDetails) {
+    if (this.groupDetails) {
+      if (this.numberOfPlayers > 0) {
         CSSClass = 'bg-success';
+      }
+      else {
+        CSSClass = 'bg-warning';
+      }
     }
 
     return CSSClass;

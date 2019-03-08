@@ -15,8 +15,6 @@ describe('GroupsListComponent', () => {
   let component: GroupsListComponent;
   let fixture: ComponentFixture<GroupsListComponent>;
 
-  APP_SETTINGS.currentYear = 2018;
-
   let groupsService: GroupsService;
 
   beforeEach(async(() => {
@@ -39,6 +37,8 @@ describe('GroupsListComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(GroupsListComponent);
     component = fixture.componentInstance;
+
+    APP_SETTINGS.currentYear = 2018;
 
     groupsService = TestBed.get(GroupsService);
     

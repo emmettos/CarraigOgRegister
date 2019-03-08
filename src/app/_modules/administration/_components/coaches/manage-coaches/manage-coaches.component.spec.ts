@@ -316,7 +316,7 @@ describe('ManageCoachesComponent', () => {
   });
 
   it('should display active coach state', () => {
-    expect(fixture.nativeElement.querySelector('#coaches-table > tbody > tr:nth-child(3) > td:nth-child(1) > span').style.getPropertyValue('badge-info')).toEqual('');
+    expect(fixture.nativeElement.querySelector('#coaches-table > tbody > tr:nth-child(3) > td:nth-child(1) > span').style.getPropertyValue('badge-success')).toEqual('');
   });
 
   it('should display dormant coach state', () => {
@@ -367,15 +367,15 @@ describe('ManageCoachesComponent', () => {
     expect(fixture.nativeElement.querySelector('#coaches-table > tbody > tr:nth-child(3) > td:nth-child(2)').innerHTML).toEqual('Norris');
   });
 
-  it('should sort by coach state (first coach)', () => {
+  it('should sort by status (first coach)', () => {
     component.onClickHeader('coachState');
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#coaches-table > tbody > tr:nth-child(1) > td:nth-child(1) > span').style.getPropertyValue('badge-info')).toEqual('');
+    expect(fixture.nativeElement.querySelector('#coaches-table > tbody > tr:nth-child(1) > td:nth-child(1) > span').style.getPropertyValue('badge-success')).toEqual('');
   });
 
-  it('should sort by coach state (last coach)', () => {
+  it('should sort by status (last coach)', () => {
     component.onClickHeader('coachState');
 
     fixture.detectChanges();

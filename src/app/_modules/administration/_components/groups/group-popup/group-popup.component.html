@@ -1,7 +1,7 @@
 <!-- Most id's are used for unit testing -->
 <div class="modal-body">
   <div class="card">
-    <div class="card-header bg-info">
+    <div class="card-header" [ngClass]="groupPopupHeaderCSSClass()">
       <h5 id="name">{{ groupDetails.name }}</h5>
     </div>
     <div class="card-body">
@@ -11,7 +11,7 @@
       <p id="number-of-players" class="card-text"><strong>Number of Players:</strong> {{ numberOfPlayers }}</p>
       <p id="last-updated-date" class="card-text"><strong>Players Last Updated:</strong> {{ lastUpdatedDate | utcDate | date : "dd/MM/yyyy h:mm a" }}</p>
     </div>
-    <div class="card-footer bg-info-light text-muted">
+    <div class="card-footer text-muted" [ngClass]="groupPopupFooterCSSClass()">
       <p>
         <span id="created-by">Created By: {{ groupDetails.createdBy }}</span>
         <br/>

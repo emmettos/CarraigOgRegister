@@ -9,6 +9,14 @@
     <div class="col-sm-3 col-md-2 col-lg-1">
       <h4><span id="total-count" class="badge badge-primary">Total {{ totalCount }}</span></h4>
     </div>
+    <div class="col-sm-3 col-md-2 col-lg-1">
+      <h4><span id="active-count" class="badge badge-success">Active {{ activeCount }}</span></h4>
+    </div>
+    <div class="col-sm-3 col-md-2 col-lg-1">
+      <h4><span id="dormant-count" class="badge badge-warning">Dormant {{ dormantCount }}</span></h4>
+    </div>
+    <div class="col-sm-3 col-md-3 col-lg-7">
+    </div>
     <div class="col-sm-3 col-md-3 col-lg-2 offset-sm-6 offset-md-6 offset-lg-9">
       <button type="button" (click)="onClickDownloadCSV()" class="btn btn-info">Download CSV</button>
     </div>
@@ -41,6 +49,7 @@
     <table id="groups-table" class="table table-bordered table-striped table-hover select-row">
       <thead>
         <tr>
+          <th (click)="onClickHeader('numberOfPlayers')" class="text-right"><span class="float-left mr-1">Status</span><i [ngClass]="headerSortCSSClass('coachState')"></i></th>
           <th (click)="onClickHeader('name')" class="text-right"><span class="float-left mr-1">Name</span><i [ngClass]="headerSortCSSClass('name')"></i></th>
           <th (click)="onClickHeader('yearOfBirth')" class="text-right"><span class="float-left mr-1">Year of Birth</span><i [ngClass]="headerSortCSSClass('yearOfBirth')"></i></th>
           <th (click)="onClickHeader('footballCoachFullName')" class="text-right"><span class="float-left mr-1">Football Coach</span><i [ngClass]="headerSortCSSClass('footballCoach')"></i></th>
@@ -53,6 +62,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let currentGroup of filteredGroups" [class.missing]="currentGroup.numberOfPlayers === 0" (click)="onClickRow(currentGroup)">
+          <td><span class="badge detail-badge" [ngClass]="groupStateCSSClass(currentGroup)"></span></td>
           <td>{{ currentGroup.name }}</td>
           <td>{{ currentGroup.yearOfBirth }}</td>
           <td>{{ currentGroup.footballCoachFullName }}</td>

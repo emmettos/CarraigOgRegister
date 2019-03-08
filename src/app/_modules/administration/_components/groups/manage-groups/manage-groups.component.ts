@@ -31,6 +31,8 @@ export class ManageGroupsComponent implements OnInit {
   filteredGroups: IGroupSummary[] = null;
 
   totalCount: number = 0;
+  activeCount: number = 0;
+  dormantCount: number = 0;
 
   deletableGroups: boolean = false;
 
@@ -144,6 +146,7 @@ export class ManageGroupsComponent implements OnInit {
           const modalRef: NgbModalRef = this.modalService.open(GroupFormComponent, { size: 'lg', backdrop: 'static' });
 
           modalRef.componentInstance.groupDetails = response.body.groupDetails;
+          modalRef.componentInstance.numberOfPlayers = groupSummary.numberOfPlayers;
           modalRef.componentInstance.coaches = this.coaches;
       
           modalRef.result
@@ -242,24 +245,6 @@ export class ManageGroupsComponent implements OnInit {
     this.onClickHeader(this.sortKey, false);
   }
 
-  private processReturnedGroups(groups: IGroupSummary[]) {
-    this.groups = groups;
-
-    this.totalCount = this.groups.length;
-
-    this.deletableGroups = false;
-
-    this.groups.forEach(group => {
-      if (group.numberOfPlayers === 0) {
-        this.deletableGroups = true;
-      }
-    });
-
-    this.filteredGroups = this.groups.slice(0);
-
-    this.onClickHeader(this.sortKey, false);
-  }
-
   headerSortCSSClass(keyName) {
     var CSSClass = "fa fa-sort";
 
@@ -273,5 +258,42 @@ export class ManageGroupsComponent implements OnInit {
     }
 
     return CSSClass;
-  };
+  }
+
+  groupStateCSSClass(groupSummary: IGroupSummary) {
+    var CSSClass = 'badge-success';
+
+    if (groupSummary.numberOfPlayers === 0) {
+      CSSClass = 'badge-warning';
+    }
+
+    return CSSClass;
+  }
+
+  private processReturnedGroups(groups: IGroupSummary[]) {
+    this.groups = groups;
+
+    this.totalCount = 0;
+    this.activeCount = 0;
+    this.dormantCount = 0;
+
+    this.deletableGroups = false;
+
+    this.groups.forEach(group => {
+      this.totalCount++;
+
+      if (group.numberOfPlayers > 0) {
+        this.activeCount++;
+      }
+      else {
+        this.dormantCount++;
+
+        this.deletableGroups = true;
+      }
+    });
+
+    this.filteredGroups = this.groups.slice(0);
+
+    this.onClickHeader(this.sortKey, false);
+  }
 }

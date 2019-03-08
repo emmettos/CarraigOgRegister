@@ -200,7 +200,7 @@ describe('ManagePlayersComponent', () => {
       
     fixture.detectChanges();
 
-    expect(component.managePlayersForm.controls['dateOfBirth'].disabled).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('#date-of-birth').disabled).toBeTruthy();  
   });
 
   it('should set date of birth picker min date', () => {
@@ -242,7 +242,7 @@ describe('ManagePlayersComponent', () => {
 
     fixture.detectChanges();
 
-    expect(component.dateOfBirthPicker.startDate).toEqual({ year: 2009, month: 6 });
+    expect(component.dateOfBirthPicker.startDate).toEqual({ year: 2009, month: 6, day: 1 });
   });
 
   it('should initialize submit button', () => {

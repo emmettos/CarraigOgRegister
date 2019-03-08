@@ -267,6 +267,7 @@ describe('ManageGroupsComponent', () => {
           ]
         }  
       }));
+
     spyOn(toasterService, 'pop');
 
     fixture.detectChanges();
@@ -288,6 +289,44 @@ describe('ManageGroupsComponent', () => {
     expect(fixture.nativeElement.querySelector('#total-count').innerHTML).toEqual('Total 3');
   });
 
+  it('should display active count', fakeAsync(() => {
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          groupDetails: newGroupDetails,
+          updatedGroups: updatedGroupsAfterAdd
+        })
+      });
+
+    component.onClickAddGroup();
+
+    tick();
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#active-count').innerHTML).toEqual('Active 3');
+  }));
+
+  it('should display dormant count', fakeAsync(() => {
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          groupDetails: newGroupDetails,
+          updatedGroups: updatedGroupsAfterAdd
+        })
+      });
+
+    component.onClickAddGroup();
+
+    tick();
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#dormant-count').innerHTML).toEqual('Dormant 1');
+  }));
+
   it('should display add group button', () => {
     expect(fixture.nativeElement.querySelector('#add-group').hidden).toBeFalsy();  
   });
@@ -300,32 +339,55 @@ describe('ManageGroupsComponent', () => {
     expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3)')).toBeTruthy();
   });
 
+  it('should display active group state', () => {
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1) > span').style.getPropertyValue('badge-info')).toEqual('');
+  });
+
+  it('should display dormant group state', fakeAsync(() => {
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          groupDetails: newGroupDetails,
+          updatedGroups: updatedGroupsAfterAdd
+        })
+      });
+
+    component.onClickAddGroup();
+
+    tick();
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1) > span').style.getPropertyValue('badge-warning')).toEqual('');
+  }));
+
   it('should display name', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 7');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('Under 7');
   });
 
   it('should display year of birth', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(2) > td:nth-child(2)').innerHTML).toEqual('2010');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(2) > td:nth-child(3)').innerHTML).toEqual('2010');
   });
 
   it('should display football coach full name', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(3)').innerHTML).toEqual('Siward Hansen');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(4)').innerHTML).toEqual('Siward Hansen');
   });
 
   it('should display hurling coach full name', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(4)').innerHTML).toEqual('Heddwyn Cunningham');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(5)').innerHTML).toEqual('Heddwyn Cunningham');
   });
 
   it('should display number of players', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(2) > td:nth-child(5)').innerHTML).toEqual('19');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(2) > td:nth-child(6)').innerHTML).toEqual('19');
   });
 
   it('should display last updated date', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(6)').innerHTML).toEqual('02/08/2018 7:10 PM');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(7)').innerHTML).toEqual('02/08/2018 7:10 PM');
   });
 
   it('should not display delete column', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > thead > tr:nth-child(1) > td:nth-child(8)')).toBeNull();
+    expect(fixture.nativeElement.querySelector('#groups-table > thead > tr:nth-child(1) > td:nth-child(9)')).toBeNull();
   });
 
   it('should display delete column', fakeAsync(() => {
@@ -333,58 +395,8 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 4,
-            'yearOfBirth': 2008,      
-            'name': 'Under 8',
-            'version': '2018-06-01T13:20:00.000Z',
-            'footballCoachFullName': '',
-            'hurlingCoachFullName': '',
-            'numberOfPlayers': 0,
-            'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            },
-            {
-              'id': 4,
-              'yearOfBirth': 2008,      
-              'name': 'Under 8',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': '',
-              'hurlingCoachFullName': '',
-              'numberOfPlayers': 0,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: newGroupDetails,
+          updatedGroups: updatedGroupsAfterAdd
         })
       });
 
@@ -394,11 +406,11 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > thead > tr:nth-child(1) > td:nth-child(8)')).toBeDefined();
+    expect(fixture.nativeElement.querySelector('#groups-table > thead > tr:nth-child(1) > td:nth-child(9)')).toBeDefined();
   }));
 
   it('should display edit link', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(7) > a > span').innerHTML).toEqual('Edit');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(8) > a > span').innerHTML).toEqual('Edit');
   });
 
   it('should not display delete link', fakeAsync(() => {
@@ -406,58 +418,8 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 4,
-            'yearOfBirth': 2008,      
-            'name': 'Under 8',
-            'version': '2018-06-01T13:20:00.000Z',
-            'footballCoachFullName': '',
-            'hurlingCoachFullName': '',
-            'numberOfPlayers': 0,
-            'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            },
-            {
-              'id': 4,
-              'yearOfBirth': 2008,      
-              'name': 'Under 8',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': '',
-              'hurlingCoachFullName': '',
-              'numberOfPlayers': 0,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: newGroupDetails,
+          updatedGroups: updatedGroupsAfterAdd
         })
       });
 
@@ -467,7 +429,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(4) > td:nth-child(8) > span').innerHTML).toEqual('');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(4) > td:nth-child(9) > span').innerHTML).toEqual('');
   }));
 
   it('should display delete link', fakeAsync(() => {
@@ -475,58 +437,8 @@ describe('ManageGroupsComponent', () => {
       .and.returnValue({
         componentInstance: {},
         result: Promise.resolve({
-          groupDetails: {
-            'id': 4,
-            'yearOfBirth': 2008,      
-            'name': 'Under 8',
-            'version': '2018-06-01T13:20:00.000Z',
-            'footballCoachFullName': '',
-            'hurlingCoachFullName': '',
-            'numberOfPlayers': 0,
-            'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-          },
-          updatedGroups: [
-            {
-              'id': 1,
-              'yearOfBirth': 2009,      
-              'name': 'Under 7',
-              'version': '2017-02-04T15:13:00.000Z',
-              'footballCoachFullName': 'Angel Klein',
-              'hurlingCoachFullName': 'Heddwyn Cunningham',
-              'numberOfPlayers': 12,
-              'lastUpdatedDate': '2018-02-04T00:00:00.000Z'
-            },
-            {
-              'id': 2,
-              'yearOfBirth': 2010,      
-              'name': 'Under 6',
-              'version': '2018-03-04T10:20:00.000Z',
-              'footballCoachFullName': 'John Rees',
-              'hurlingCoachFullName': 'Byrok Moran',
-              'numberOfPlayers': 19,
-              'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
-            },
-            {
-              'id': 3,
-              'yearOfBirth': 2011,      
-              'name': 'Under 5',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': 'Siward Hansen',
-              'hurlingCoachFullName': 'Rowan Love',
-              'numberOfPlayers': 21,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            },
-            {
-              'id': 4,
-              'yearOfBirth': 2008,      
-              'name': 'Under 8',
-              'version': '2018-06-01T13:20:00.000Z',
-              'footballCoachFullName': '',
-              'hurlingCoachFullName': '',
-              'numberOfPlayers': 0,
-              'lastUpdatedDate': '2018-08-02T19:10:25.000Z'
-            }
-          ]
+          groupDetails: newGroupDetails,
+          updatedGroups: updatedGroupsAfterAdd
         })
       });
 
@@ -536,15 +448,31 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(8) > a > span').innerHTML).toEqual('Delete');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(9) > a > span').innerHTML).toEqual('Delete');
   }));
 
   it('should default sort by year of birth (first group)', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('2009');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(3)').innerHTML).toEqual('2009');
   });
 
   it('should default sort by year of birth (last group)', () => {
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(2)').innerHTML).toEqual('2011');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(3)').innerHTML).toEqual('2011');
+  });
+
+  it('should sort by status (first group)', () => {
+    component.onClickHeader('status');
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1) > span').style.getPropertyValue('badge-success')).toEqual('');
+  });
+
+  it('should sort by status (last group)', () => {
+    component.onClickHeader('status');
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1) > span').style.getPropertyValue('badge-warning')).toEqual('');
   });
 
   it('should sort by name (first group)', () => {
@@ -552,7 +480,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 5');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('Under 5');
   });
 
   it('should sort by name (last group)', () => {
@@ -560,7 +488,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(1)').innerHTML).toEqual('Under 7');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(2)').innerHTML).toEqual('Under 7');
   });
 
   it('should sort by year of birth (first group)', () => {
@@ -568,7 +496,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('2011');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(3)').innerHTML).toEqual('2011');
   });
 
   it('should sort by year of birth (last group)', () => {
@@ -576,7 +504,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(2)').innerHTML).toEqual('2009');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(3)').innerHTML).toEqual('2009');
   });
 
   it('should sort by football coach full name (first group)', () => {
@@ -584,7 +512,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(3)').innerHTML).toEqual('Angel Klein');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(4)').innerHTML).toEqual('Angel Klein');
   });
 
   it('should sort by football coach full name (last group)', () => {
@@ -592,7 +520,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(3)').innerHTML).toEqual('Siward Hansen');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(4)').innerHTML).toEqual('Siward Hansen');
   });
 
   it('should sort by hurling coach full name (first group)', () => {
@@ -600,7 +528,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(4)').innerHTML).toEqual('Byrok Moran');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(5)').innerHTML).toEqual('Byrok Moran');
   });
 
   it('should sort by hurling coach full name (last group)', () => {
@@ -608,7 +536,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(4)').innerHTML).toEqual('Rowan Love');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(5)').innerHTML).toEqual('Rowan Love');
   });
 
   it('should sort by number of players (first group)', () => {
@@ -616,15 +544,15 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(5)').innerHTML).toEqual('12');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(6)').innerHTML).toEqual('12');
   });
 
-  it('should sort by numbr of players (last group)', () => {
+  it('should sort by number of players (last group)', () => {
     component.onClickHeader('numberOfPlayers');
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(5)').innerHTML).toEqual('21');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(6)').innerHTML).toEqual('21');
   });
 
   it('should sort by last updated date (first group)', () => {
@@ -632,7 +560,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(6)').innerHTML).toEqual('04/02/2018 12:00 AM');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(7)').innerHTML).toEqual('04/02/2018 12:00 AM');
   });
 
   it('should sort by last updated date (last group)', () => {
@@ -640,7 +568,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(6)').innerHTML).toEqual('02/08/2018 7:10 PM');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(7)').innerHTML).toEqual('02/08/2018 7:10 PM');
   });
 
   it('should flip existing sort (first group)', () => {
@@ -652,7 +580,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(4)').innerHTML).toEqual('Rowan Love');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(5)').innerHTML).toEqual('Rowan Love');
   });
 
   it('should flip existing sort (last group)', () => {
@@ -664,7 +592,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(5)').innerHTML).toEqual('12');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(3) > td:nth-child(6)').innerHTML).toEqual('12');
   });
 
   it('should filter on group name', () => {
@@ -777,7 +705,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 8');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('Under 8');
   }));
 
   it('should call groupsService.readGroupDetails when edit group is selected', () => {
@@ -875,7 +803,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(2) > td:nth-child(1)').innerHTML).toEqual('Under 6xxx');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(2) > td:nth-child(2)').innerHTML).toEqual('Under 6xxx');
   }));
 
   it('should call NgbModal.open when delete group is selected', () => {
@@ -923,7 +851,7 @@ describe('ManageGroupsComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(1)').innerHTML).toEqual('Under 7');
+    expect(fixture.nativeElement.querySelector('#groups-table > tbody > tr:nth-child(1) > td:nth-child(2)').innerHTML).toEqual('Under 7');
   }));
 
   it('should download CSV of current filter', () => {
