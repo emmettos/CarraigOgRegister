@@ -1,5 +1,5 @@
 <!-- Most id's are used for unit testing -->
-<a id="group-details-link" routerLink="../players/{{ groupSummary.name }}/{{ groupSummary.yearOfBirth }}" [class.disabled]="!groupSummary.canViewPlayers" class="card h-100">
+<a id="group-details-link" routerLink="../players/{{ groupSummary.name }}/{{ groupSummary.id }}" [class.disabled]="!groupSummary.canViewPlayers" class="card h-100">
   <h5 id="group-header" class="card-header" [ngClass]="groupThumbnailCSSClass(groupSummary)"><strong>{{ groupSummary.name }}</strong> (Year of Birth: {{ groupSummary.yearOfBirth }})</h5>
   <div class="card-body">
     <p id="football-coach" class="card-text"><strong>Football Coach:</strong> {{ groupSummary.footballCoachFullName }}</p>

@@ -546,7 +546,7 @@ exports = module.exports = function (app, router) {
     }
   });
 
-  router.get('/playerSummaries/:yearOfBirth', authorizer.authorize({ isGroupManager: true }), async (request, response, next) => {
+  router.get('/playerSummaries/:groupId', authorizer.authorize({ isGroupManager: true }), async (request, response, next) => {
     try {
       const result = await app.pool.query(`
         SELECT DISTINCT
@@ -563,65 +563,20 @@ exports = module.exports = function (app, router) {
           p.contact_home_number,
           p.contact_email_address,
           p.school,
-          (SELECT
-            MAX(gp1.registered_date)
-          FROM
-            public.groups_players AS gp1
-          WHERE
-            gp1.player_id = p.id) AS last_registered_date,
+          p.version,
+          gp.registered_date AS last_registered_date,
           CASE
             WHEN EXISTS
               (SELECT
-                gp1.id
+                gp1.player_id
               FROM
                 public.groups_players AS gp1
-              INNER JOIN public.groups AS g1
-                ON gp1.group_id = g1.id
               WHERE
                 gp1.player_id = p.id AND
-                g1.year_id = 
-                  (SELECT 
-                    y2.id 
-                  FROM 
-                    public.years AS y2 
-                  WHERE 
-                    y2.year = $2) AND
-                EXISTS
-                  (SELECT
-                    gp2.id
-                  FROM
-                    public.groups_players AS gp2
-                  INNER JOIN public.groups AS g2
-                    ON gp2.group_id = g2.id
-                  WHERE
-                    gp2.player_id = p.id AND
-                    g2.year_id = 
-                      (SELECT 
-                        y3.id 
-                      FROM 
-                        public.years AS y3 
-                      WHERE 
-                        y3.year = $3)))
+                gp1.group_id = g.previous_group_id)
             THEN 0
-            WHEN EXISTS
-              (SELECT
-                gp1.id
-              FROM
-                public.groups_players AS gp1
-              INNER JOIN public.groups AS g1
-                ON gp1.group_id = g1.id
-              WHERE
-                gp1.player_id = p.id AND
-                g1.year_id = 
-                  (SELECT 
-                    y2.id 
-                  FROM 
-                    public.years AS y2 
-                  WHERE 
-                    y2.year = $2))
-            THEN 1
-            ELSE 2
-          END AS player_state
+            ELSE 1
+          END AS player_state  
         FROM
           public.players AS p
         INNER JOIN public.groups_players AS gp
@@ -629,22 +584,47 @@ exports = module.exports = function (app, router) {
         INNER JOIN public.groups AS g
           ON gp.group_id = g.id
         WHERE
-          g.year_of_birth = $1 AND
-          (g.year_id = 
-            (SELECT 
-              y1.id 
-            FROM 
-              public.years AS y1 
-            WHERE 
-            y1.year = $2) OR
-          g.year_id = 
-            (SELECT 
-              y1.id 
-            FROM 
-              public.years AS y1 
-            WHERE 
-              y1.year = $3))
-        `, [request.params.yearOfBirth, currentSettings.year, currentSettings.year - 1]);
+          g.id = $1
+        UNION
+        SELECT
+          p.id,
+          p.first_name,
+          p.surname,
+          p.address_line_1,
+          p.address_line_2,
+          p.address_line_3,
+          p.date_of_birth,
+          p.medical_conditions,
+          p.contact_name,
+          p.contact_mobile_number,
+          p.contact_home_number,
+          p.contact_email_address,
+          p.school,
+          p.version,
+          gp.registered_date AS last_registered_date,
+          2 AS player_state
+        FROM
+          public.players AS p
+        INNER JOIN public.groups_players AS gp
+          ON p.id = gp.player_id
+        WHERE
+          gp.group_id =
+            (SELECT
+              g1.previous_group_id
+            FROM
+              public.groups AS g1
+            WHERE
+              g1.id = $1) AND
+          p.id NOT IN
+            (SELECT
+              gp1.player_id
+            FROM
+              public.groups_players AS gp1
+            WHERE
+              gp1.group_id = $1)
+        ORDER BY
+          id
+        `, [request.params.groupId]);
   
       var returnMessage = {};
 
