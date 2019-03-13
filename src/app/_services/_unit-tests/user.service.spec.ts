@@ -106,7 +106,7 @@ describe('UserService', () => {
   });
 
   it('should call url for create password', () => {
-    service.createPassword('test@gmail.com', 'Password01')
+    service.createPassword('Password01')
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/createPassword');
@@ -117,13 +117,12 @@ describe('UserService', () => {
   });
 
   it('should pass request body for create password', () => {
-    service.createPassword('test@gmail.com', 'Password01')
+    service.createPassword('Password01')
       .subscribe();
 
     const mockRequest = httpMock.expectOne('/api/createPassword');
 
     expect(mockRequest.request.body).toEqual({
-      emailAddress: 'test@gmail.com',
       password: 'Password01'
     });
 

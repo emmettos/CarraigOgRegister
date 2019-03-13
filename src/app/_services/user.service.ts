@@ -30,9 +30,8 @@ export class UserService {
     });
   }
 
-  createPassword(emailAddress: string, password: string): Observable<any> {
+  createPassword(password: string): Observable<any> {
     return this.http.post('/api/createPassword', { 
-      'emailAddress': emailAddress, 
       'password': password
     });
   }

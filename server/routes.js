@@ -2,7 +2,6 @@
 
 var fs = require('fs');
 
-var mongoose = require('mongoose');
 var bcrypt = require('bcrypt');
 var moment = require('moment');
 var JSONWebToken = require('jsonwebtoken');
@@ -12,9 +11,6 @@ var config = require('./config/config');
 
 var authenticator = require('./authenticator');
 var authorizer = require('./authorizer');
-
-var group = require('./models/group');
-var user = require('./models/user');
 
 
 exports = module.exports = function (app, router) {
@@ -37,8 +33,13 @@ exports = module.exports = function (app, router) {
   });
 
   router.post('/verifyUserToken', async (request, response, next) => {
+    var foundUser = null,
+        passwordMatch = false,
+        customError = null,
+        returnMessage = {};
+
     var verifyToken = function (userToken) {
-      var promise = new Promise(function (resolve, reject) {
+      return new Promise(function (resolve, reject) {
         JSONWebToken.verify(userToken, config.secret, function (error, payload) {
           try {
             if (error) {
@@ -56,26 +57,34 @@ exports = module.exports = function (app, router) {
           }
         });
       });
-    
-      return promise;
     };
 
     try {
       const payload = await verifyToken(request.body.userToken);
-      const foundUser = await user.findOne({ emailAddress: payload.emailAddress });
 
-      var customError = null;
-
-      if (!foundUser) {
-        customError = new Error('User not found - ' + payload.emailAddress);
+      const result = await app.pool.query(`
+        SELECT 
+          id,
+          password,
+          version
+        FROM
+          public.coaches AS c
+        WHERE
+          c.email_address = $1
+      `, [payload.emailAddress]);
+  
+      if (result.rows.length === 0) {
+        customError = new Error('User not found');
 
         customError.httpCode = 401;
 
         throw customError;
       }
 
+      foundUser = result.rows[0];
+
       if (!payload.currentPassword) {
-        if (foundUser.password !== '') {
+        if (foundUser.password) {
           customError = new Error('Password has already been set for ' + payload.emailAddress);
   
           customError.httpCode = 401;
@@ -84,8 +93,10 @@ exports = module.exports = function (app, router) {
         }
       }
       else {
-        if (!foundUser.comparePassword(payload.currentPassword)) {
-          customError = new Error('Token password for ' + payload.emailAddress + ' does not match existing password');
+        passwordMatch = await bcrypt.compare(payload.password, foundUser.password);
+
+        if (!passwordMatch) {
+            customError = new Error('Token password for ' + payload.emailAddress + ' does not match existing password');
   
           customError.httpCode = 401;
   
@@ -105,6 +116,10 @@ exports = module.exports = function (app, router) {
       userProfile.ID = payload.emailAddress;
       userProfile.createPasswordProfile = true;
 
+      userProfile.coachDetails = {};
+      userProfile.coachDetails.id = foundUser.id;
+      userProfile.coachDetails.version = foundUser.version;
+
       response.set('Authorization', 'Bearer ' + JSONWebToken.sign({
         userProfile: userProfile 
       }, config.secret));
@@ -117,30 +132,48 @@ exports = module.exports = function (app, router) {
   });
 
   router.post('/createPassword', authorizer.authorize({ isCreatingPassword: true }), async (request, response, next) => {
-    var customError = null;
+    var sqlStatement = [],
+        setIndex = 0,
+        setStatements = [],
+        setValues = [],
+        result = null;
 
     try {
-      if (!(request.body.emailAddress && request.body.password)) {
-        customError = new Error('Email address and password are required');
+      if (!request.body.password) {
+        customError = new Error('Password is required');
 
         customError.httpCode = 400;
 
         throw customError;
       }
 
-      const foundUser = await user.findOne({ emailAddress: request.body.emailAddress })
+      sqlStatement.push(`
+        UPDATE 
+          public.coaches
+        SET`);
 
-      if (!foundUser) {
-        customError = new Error('User not found');
+      const passwordHash = await bcrypt.hash(request.body.password, 10)
 
-        customError.httpCode = 400;
+      setStatements.push('password = ($' + (++setIndex) + ')');
+      setValues.push(passwordHash);
 
-        throw customError;
+      setStatements.push('updated_by = ($' + (++setIndex) + ')');
+      setValues.push(request.payload.userProfile.ID);
+      setStatements.push('updated_date = ($' + (++setIndex) + ')');
+      setValues.push(moment.utc().toISOString());
+
+      sqlStatement.push(setStatements.join(',\n'));
+
+      sqlStatement.push(`
+        WHERE 
+          id = ` + request.payload.userProfile.coachDetails.id + ` AND
+          version = '` + request.payload.userProfile.coachDetails.version + `'`);
+
+      result = await app.pool.query(sqlStatement.join('\n'), setValues);
+      
+      if (result.rowCount === 0) {
+        throw new Error('No coach rows updated. Possible concurrency issue.')
       }
-
-      foundUser.password = request.body.password;
-
-      await foundUser.save();
 
       var returnMessage = {};
 
@@ -174,7 +207,7 @@ exports = module.exports = function (app, router) {
           public.coaches AS c
         WHERE
           c.email_address = $1
-      `, [request.body.emailAddress]);
+      `, [request.body.emailAddress.toLowerCase()]);
   
       if (result.rows.length === 0) {
         customError = new Error('User not found');
@@ -220,24 +253,47 @@ exports = module.exports = function (app, router) {
 
   router.post('/changePassword', async (request, response, next) => {
     var foundUser = null,
-        comparedUser = null,
+        result = null,
+        passwordMatch = null,
         customError = null,
+        sqlStatement = [],
+        setIndex = 0,
+        setStatements = [],
+        setValues = [],
         returnMessage = {};
 
     try {
-      foundUser = await user.findOne({ emailAddress: request.body.emailAddress });
-
-      if (!foundUser) {
+      result = await app.pool.query(`
+        SELECT 
+          id,
+          password
+        FROM
+          public.coaches AS c
+        WHERE
+          c.email_address = $1
+      `, [request.body.emailAddress.toLowerCase()]);
+  
+      if (result.rows.length === 0) {
         customError = new Error('User not found');
 
         customError.httpCode = 401;
 
         throw customError;
       }
+       
+      foundUser = result.rows[0];
 
-      comparedUser = await foundUser.comparePassword(request.body.password);
+      if (foundUser.password === '') {
+        customError = new Error('User not validated');
 
-      if (!comparedUser) {
+        customError.httpCode = 401;
+
+        throw customError;
+      }
+
+      passwordMatch = await bcrypt.compare(request.body.password, foundUser.password);
+
+      if (!passwordMatch) {
         customError = new Error('Invalid password');
 
         customError.httpCode = 401;
@@ -245,9 +301,28 @@ exports = module.exports = function (app, router) {
         throw customError;
       }
 
-      comparedUser.password = request.body.newPassword;
+      sqlStatement.push(`
+        UPDATE 
+          public.coaches
+        SET`);
 
-      await comparedUser.save();
+      const passwordHash = await bcrypt.hash(request.body.newPassword, 10)
+
+      setStatements.push('password = ($' + (++setIndex) + ')');
+      setValues.push(passwordHash);
+
+      setStatements.push('updated_by = ($' + (++setIndex) + ')');
+      setValues.push(request.body.emailAddress.toLowerCase());
+      setStatements.push('updated_date = ($' + (++setIndex) + ')');
+      setValues.push(moment.utc().toISOString());
+
+      sqlStatement.push(setStatements.join(',\n'));
+
+      sqlStatement.push(`
+        WHERE 
+          id = ` + foundUser.id);
+
+      result = await app.pool.query(sqlStatement.join('\n'), setValues);
 
       returnMessage.error = null;
       returnMessage.body = {};
@@ -1379,7 +1454,7 @@ exports = module.exports = function (app, router) {
 
       if (Object.prototype.hasOwnProperty.call(coachDetails, 'emailAddress')) {
         fieldNames.push('email_address');
-        fieldValues.push(coachDetails.emailAddress);
+        fieldValues.push(coachDetails.emailAddress.toLowerCase());
       }
       if (Object.prototype.hasOwnProperty.call(coachDetails, 'firstName')) {
         fieldNames.push('first_name');
@@ -1422,7 +1497,7 @@ exports = module.exports = function (app, router) {
   
       sendEmail(coachDetails.emailAddress, 
         'Welcome to Carraig Og Register. Please verify your account...', 
-        emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: coachDetails.emailAddress }, config.secret)), 
+        emailTemplate.replace('[[token]]', JSONWebToken.sign({ emailAddress: coachDetails.emailAddress.toLowerCase() }, config.secret)), 
         request);  
 
       await readCoachSummaries(app, response, next);
@@ -1452,7 +1527,7 @@ exports = module.exports = function (app, router) {
 
       if (Object.prototype.hasOwnProperty.call(coachDetails, 'emailAddress')) {
         setStatements.push('email_address = ($' + (++setIndex) + ')');
-        setValues.push(coachDetails.emailAddress);
+        setValues.push(coachDetails.emailAddress.toLowerCase());
       }
       if (Object.prototype.hasOwnProperty.call(coachDetails, 'firstName')) {
         setStatements.push('first_name = ($' + (++setIndex) + ')');

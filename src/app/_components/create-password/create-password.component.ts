@@ -62,11 +62,7 @@ export class CreatePasswordComponent implements OnInit {
   }
 
   onSubmit(formValues) {
-    if (this.createPasswordForm.invalid) {
-      return;
-    }
-
-    this.userService.createPassword(this.emailAddress, formValues.password)
+    this.userService.createPassword(formValues.password)
       .subscribe({
         next: response => {
           this.passwordCreated = true;
