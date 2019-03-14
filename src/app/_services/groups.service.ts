@@ -54,8 +54,10 @@ export class GroupsService {
       showLabels: true, 
       headers: [
         'Name', 
+        'Year of Birth',
         'Football Coach', 
         'Hurling Coach', 
+        'Number of PLayers',
         'Players Last Updated'
       ]
     };

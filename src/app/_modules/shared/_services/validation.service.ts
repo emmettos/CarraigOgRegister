@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { FormControl } from '@angular/forms';
 
-import { ICoachSummary } from '../../../_models';
+import { ICoachSummary, IGroupSummary } from '../../../_models';
 
 
 @Injectable()
@@ -15,6 +15,7 @@ export class ValidationService {
       'selectGroup': 'Select a group',
       'selectYearOfBirth': 'Select a year',
       'invalidNewCoach': 'A coach with this email address already exists',
+      'invalidNewGroup': 'A group with this name already exists',
       'minlength': 'Minimum length [requiredLength]',
       'ngbDate': 'Invalid date/Out of range',
       'invalidDate': 'Invalid date/Out of range',
@@ -96,6 +97,24 @@ export class ValidationService {
       }
       
       return { 'invalidNewCoach': true };
+    }
+  }
+
+  newGroupValidator(currentGroups: IGroupSummary[]) {
+    return (control: FormControl): {[key: string]: any} => {
+      if (!currentGroups) {
+        return null;
+      }
+      
+      let existingGroup: IGroupSummary = currentGroups.find(group => {
+        return group.name === control.value;
+      });
+
+      if (!existingGroup) {
+        return null;
+      }
+      
+      return { 'invalidNewGroup': true };
     }
   }
 

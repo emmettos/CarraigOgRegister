@@ -32,8 +32,10 @@ describe('GroupThumbnailComponent', () => {
     component = fixture.componentInstance;
 
     component['groupSummary'] = {
-      'name': 'Test Group',
+      'id': 1,
       'yearOfBirth': 2009,
+      'name': 'Test Group',
+      'version': '2018-03-04T10:20:00.000Z',
       'footballCoachFullName': 'Pat Football',
       'hurlingCoachFullName': 'John Hurling',
       'numberOfPlayers': 51,
@@ -124,7 +126,7 @@ describe('GroupThumbnailComponent', () => {
       });
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector("#group-details-link").href).toMatch('http://localhost:\\d+/players/Test%20Group/2009');
+    expect(fixture.nativeElement.querySelector("#group-details-link").href).toMatch('http://localhost:\\d+/players/Test%20Group/1');
   });
 
   it('should enable group link for an administrator', () => {

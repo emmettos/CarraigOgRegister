@@ -146,12 +146,12 @@ describe('GroupsService', () => {
   it('should pass request body for delete group', () => {
     let groupSummary: IGroupSummary = {
       'id': 1,
-      'name': 'Under 10',
       'yearOfBirth': 2008,
+      'name': 'Under 10',
+      'version': '2018-02-04T15:13:00.000Z',
       'footballCoachFullName': 'Angel Klein',
       'hurlingCoachFullName': 'Heddwyn Cunningham',
       'numberOfPlayers': 0,
-      'version': '2018-02-04T15:13:00.000Z',
       'lastUpdatedDate': '2018-02-27T15:57:21.582Z'
     } as IGroupSummary;
 

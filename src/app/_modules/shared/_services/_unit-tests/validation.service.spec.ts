@@ -1,7 +1,7 @@
 import { FormControl } from '@angular/forms';
 
 import { ValidationService } from '../index';
-import { ICoachSummary } from '../../../../_models';
+import { ICoachSummary, IGroupSummary } from '../../../../_models';
 
 
 describe('ValidationService', () => {
@@ -90,6 +90,31 @@ describe('ValidationService', () => {
     ];  
 
     expect(service.newCoachValidator(currentCoaches)(formControl)).toEqual({ 'invalidNewCoach': true });
+  });
+
+  it('should validate valid new group', () => {
+    formControl.setValue('Under 10');
+
+    expect(service.newGroupValidator(null)(formControl)).toBeNull();
+  });
+
+  it('should validate invalid new group', () => {
+    formControl.setValue('Under 6');
+
+    let currentGroups: IGroupSummary[] = [
+      {
+        'id': 2,
+        'yearOfBirth': 2010,      
+        'name': 'Under 6',
+        'version': '2018-03-04T10:20:00.000Z',
+        'footballCoachFullName': 'John Rees',
+        'hurlingCoachFullName': 'Byrok Moran',
+        'numberOfPlayers': 19,
+        'lastUpdatedDate': '2018-07-26T16:29:25.372Z'
+      } as IGroupSummary
+    ];
+
+    expect(service.newGroupValidator(currentGroups)(formControl)).toEqual({ 'invalidNewGroup': true });
   });
 
   it('should return invalid email message', () => {

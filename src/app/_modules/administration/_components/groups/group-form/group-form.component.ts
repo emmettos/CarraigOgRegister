@@ -4,7 +4,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { APP_SETTINGS } from '../../../../../_helpers';
-import { IGroup, ICoach } from '../../../../../_models/index';
+import { IGroup, IGroupSummary, ICoach } from '../../../../../_models/index';
 import { GroupsService } from '../../../../../_services/index';
 import { ValidationService } from '../../../../shared/_services';
 
@@ -22,6 +22,11 @@ export class GroupFormComponent implements OnInit {
 
   @Input()
   coaches: ICoach[];
+
+  @Input()
+  currentGroups: IGroupSummary[];
+
+  nameControl: FormControl;
 
   groupForm: FormGroup;
 
@@ -42,13 +47,24 @@ export class GroupFormComponent implements OnInit {
   ngOnInit() {
     this.yearsOfBirth = APP_SETTINGS.yearsOfBirth;
 
+    let otherGroups: IGroupSummary[] = this.currentGroups;
+
     if (this.groupDetails) {
       this.editingGroup = true;
       this.title = 'Edit Group';
+
+      otherGroups = this.currentGroups.filter((group, index, arr) => {
+        return group.name !== this.groupDetails.name;
+      });
     }
 
+    this.nameControl = new FormControl(this.groupDetails ? this.groupDetails.name : '', { 
+      validators: [Validators.required, this.validationService.newGroupValidator(otherGroups)],
+      updateOn: 'blur'
+    });
+
     this.groupForm = this.formBuilder.group({
-      'name': [this.groupDetails ? this.groupDetails.name : '', Validators.required],
+      'name': this.nameControl,
       'yearOfBirth': [this.groupDetails ? this.groupDetails.yearOfBirth : '0', this.validationService.yearOfBirthValidator],
       'footballCoach': [this.groupDetails ? this.groupDetails.footballCoachId ? this.groupDetails.footballCoachId : '0' : '0'],
       'hurlingCoach': [this.groupDetails ? this.groupDetails.hurlingCoachId ? this.groupDetails.hurlingCoachId : '0' : '0']

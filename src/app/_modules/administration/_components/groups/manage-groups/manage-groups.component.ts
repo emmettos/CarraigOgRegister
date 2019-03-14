@@ -24,7 +24,7 @@ export class ManageGroupsComponent implements OnInit {
   @ViewChild('nameFilter') 
   nameFilterElementRef: ElementRef;
 
-  sortKey: string = "yearOfBirth";
+  sortKey: string = 'yearOfBirth';
   reverse: boolean = false;
 
   groups: IGroupSummary[] = null;
@@ -123,6 +123,7 @@ export class ManageGroupsComponent implements OnInit {
     const modalRef: NgbModalRef = this.modalService.open(GroupFormComponent, { size: 'lg', backdrop: 'static' });
 
     modalRef.componentInstance.coaches = this.coaches;
+    modalRef.componentInstance.currentGroups = this.groups;
 
     modalRef.result
       .then(returnObject => {
@@ -148,6 +149,7 @@ export class ManageGroupsComponent implements OnInit {
           modalRef.componentInstance.groupDetails = response.body.groupDetails;
           modalRef.componentInstance.numberOfPlayers = groupSummary.numberOfPlayers;
           modalRef.componentInstance.coaches = this.coaches;
+          modalRef.componentInstance.currentGroups = this.groups;
       
           modalRef.result
             .then(returnObject => {

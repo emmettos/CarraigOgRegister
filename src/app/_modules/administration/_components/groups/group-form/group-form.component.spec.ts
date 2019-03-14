@@ -8,7 +8,7 @@ import { of, asyncScheduler, throwError } from 'rxjs';
 import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { APP_SETTINGS } from '../../../../../_helpers/index';
-import { IGroup } from '../../../../../_models/index';
+import { IGroup, IGroupSummary } from '../../../../../_models/index';
 import { GroupsService } from '../../../../../_services';
 import { ValidationService } from '../../../../../_modules/shared/_services';
 
@@ -110,6 +110,19 @@ describe('GroupFormComponent', () => {
         'version': '2018-05-09T09:55:59.735Z'
       }
     ];
+
+    component['currentGroups'] = [
+      {
+        'id': 1,
+        'yearOfBirth': 2008,
+        'name': 'Under 10',
+        'version': '2018-02-04T15:13:00.000Z',
+        'footballCoachFullName': 'Angel Klein',
+        'hurlingCoachFullName': 'Heddwyn Cunningham',
+        'numberOfPlayers': 0,
+        'lastUpdatedDate': '2018-02-27T15:57:21.582Z'
+      } as IGroupSummary
+    ]
   });
 
   it('should create', () => {
@@ -304,7 +317,15 @@ describe('GroupFormComponent', () => {
     expect(component.groupForm.controls['name'].invalid).toBeTruthy();
   });
 
-  it('should validate valid first name', () => {
+  it('should validate existing group name', () => {
+    fixture.detectChanges();
+
+    component.groupForm.controls['name'].setValue('Under 10');
+
+    expect(component.groupForm.controls['name'].invalid).toBeTruthy();
+  });
+
+  it('should validate valid name', () => {
     fixture.detectChanges();
 
     component.groupForm.controls['name'].setValue('Test');

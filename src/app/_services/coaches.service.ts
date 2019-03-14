@@ -54,11 +54,12 @@ export class CoachesService {
     let options = { 
       showLabels: true, 
       headers: [
-        "Email Address", 
-        "Surname", 
-        "First Name", 
-        "Phone Number", 
-        "Administrator"
+        'Email Address', 
+        'Surname', 
+        'First Name', 
+        'Phone Number', 
+        'Administrator',
+        'Active'
       ]
     };
 
