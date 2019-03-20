@@ -361,15 +361,10 @@ exports = module.exports = function (app, router) {
         FROM
           public.groups AS g
         WHERE
-          g.year_id = 
-            (SELECT 
-              y.id 
-            FROM 
-              public.years AS y 
-            WHERE y.year = $1)
+          g.year_id = $1
         ORDER BY
           g.year_of_birth DESC      
-      `, [currentSettings.year]);
+      `, [currentSettings.year_id]);
     
       var returnMessage = {};
     
@@ -773,13 +768,8 @@ exports = module.exports = function (app, router) {
             FROM
               public.groups g1
             WHERE
-              g1.year_id = 
-                (SELECT 
-                  y.id 
-                FROM 
-                  public.years AS y 
-                WHERE y.year = $2))
-      `, [request.params.playerId, currentSettings.year]);
+              g1.year_id = $2)
+      `, [request.params.playerId, currentSettings.year_id]);
   
       var returnMessage = {};
 
@@ -1646,25 +1636,32 @@ var readGroupSummaries = async (app, currentSettings, response, next) => {
       WHERE
         gp1.group_id = g.id) AS number_of_players,
       (SELECT
-        MAX(p1.updated_date)
+        MAX(dates.most_recent_date)
       FROM
-        public.players AS p1
-      INNER JOIN public.groups_players gp1
-        ON p1.id = gp1.player_id
-      WHERE
-        gp1.group_id = g.id) AS last_updated_date
+        (SELECT 
+          p1.updated_date AS most_recent_date
+        FROM 
+          public.players AS p1
+        INNER JOIN public.groups_players gp1
+          ON p1.id = gp1.player_id
+        WHERE
+          gp1.group_id = g.id
+        UNION ALL
+        SELECT 
+          p1.created_date AS most_recent_date
+        FROM 
+          public.players AS p1
+        INNER JOIN public.groups_players gp1
+          ON p1.id = gp1.player_id
+        WHERE
+          gp1.group_id = g.id) dates) AS last_updated_date
     FROM
       public.groups AS g
     WHERE
-      g.year_id = 
-        (SELECT 
-          y.id 
-        FROM 
-          public.years AS y 
-        WHERE y.year = $1)
+      g.year_id = $1
     ORDER BY
       g.year_of_birth ASC
-  `, [currentSettings.year]);
+  `, [currentSettings.year_id]);
 
   var returnMessage = {};
 
@@ -1759,13 +1756,7 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
             ON gp1.group_id = g1.id
           WHERE
             gp1.player_id = p.id AND
-            g1.year_id = 
-              (SELECT 
-                y2.id 
-              FROM 
-                public.years AS y2 
-              WHERE 
-                y2.year = $2))
+            g1.year_id = $2)
         THEN 1
         WHEN EXISTS
           (SELECT
@@ -1790,7 +1781,7 @@ var searchPlayers = async (connection, dateOfBirth, currentSettings, response, n
       public.players AS p
     WHERE
       p.date_of_birth = $1
-  `, [dateOfBirth, currentSettings.year, currentSettings.year - 1]);
+  `, [dateOfBirth, currentSettings.year_id, currentSettings.year - 1]);
 
   var returnMessage = {};
 
