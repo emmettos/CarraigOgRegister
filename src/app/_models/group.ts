@@ -1,6 +1,7 @@
 export interface IGroup {
   id: number;
 
+  previousGroupId: number;
   yearId: number;
   yearOfBirth: number;
   name: string;

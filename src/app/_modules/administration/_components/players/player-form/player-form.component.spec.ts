@@ -10,7 +10,7 @@ import { NgbModule, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import * as moment from 'moment';
 
 import { APP_SETTINGS } from '../../../../../_helpers/index';
-import { IPlayer, PlayerState, IGroupPlayer } from '../../../../../_models/index';
+import { IPlayer, PlayerState, IGroupPlayer, IGroup } from '../../../../../_models/index';
 import { PlayersService } from '../../../../../_services';
 import { ValidationService } from '../../../../../_modules/shared/_services';
 
@@ -94,6 +94,7 @@ describe('PlayerFormComponent', () => {
     component['groups'] = [
       {
         'id': 3,
+        'previousGroupId': 2,
         'yearId': 1,
         'name': 'Under 8',
         'yearOfBirth': 2010,
@@ -107,6 +108,7 @@ describe('PlayerFormComponent', () => {
       },
       {
         'id': 2,
+        'previousGroupId': 1,
         'yearId': 1,
         'name': 'Under 9',
         'yearOfBirth': 2009,
@@ -130,7 +132,7 @@ describe('PlayerFormComponent', () => {
         'updatedBy': 'admin@carraigog.com',
         'updatedDate': '2018-02-27T15:57:21.582Z',
         'version': '2018-02-27T15:57:21.582Z'
-      }
+      } as IGroup
     ];
   });
 

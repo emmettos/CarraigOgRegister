@@ -68,6 +68,7 @@ describe('ManagePlayersComponent', () => {
     groups = [
       {
         'id': 3,
+        'previousGroupId': 2,
         'yearId': 1,
         'name': 'Under 8',
         'yearOfBirth': 2010,
@@ -81,6 +82,7 @@ describe('ManagePlayersComponent', () => {
       },
       {
         'id': 2,
+        'previousGroupId': 1,
         'yearId': 1,
         'name': 'Under 9',
         'yearOfBirth': 2009,
@@ -104,7 +106,7 @@ describe('ManagePlayersComponent', () => {
         'updatedDate': '2018-02-27T15:57:21.582Z',
         'updatedBy': 'admin@carraigog.com',
         'version': '2018-02-27T15:57:21.582Z'
-      }
+      } as IGroup
     ];
 
     players = [

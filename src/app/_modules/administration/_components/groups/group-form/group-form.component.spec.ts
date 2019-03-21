@@ -57,6 +57,7 @@ describe('GroupFormComponent', () => {
 
     groupDetails = {
       'id': 2,
+      'previousGroupId': 1,
       'yearId': 2,
       'yearOfBirth': 2010,      
       'name': 'Under 6',
@@ -624,6 +625,7 @@ describe('GroupFormComponent', () => {
     expect(activeModal.close).toHaveBeenCalledWith({
       groupDetails: { 
         'id': 2,
+        'previousGroupId': 1,
         'yearId': 2,
         'yearOfBirth': 2010,      
         'name': 'Under 6xxx',

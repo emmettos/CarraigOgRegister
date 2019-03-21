@@ -77,6 +77,7 @@ describe('ManageGroupsComponent', () => {
 
     groupDetails = {
       'id': 2,
+      'previousGroupId': 1,
       'yearId': 2,
       'yearOfBirth': 2010,      
       'name': 'Under 6',
@@ -98,6 +99,7 @@ describe('ManageGroupsComponent', () => {
 
     updatedGroupDetails = {
       'id': 2,
+      'previousGroupId': 1,
       'yearId': 2,
       'yearOfBirth': 2010,      
       'name': 'Under 6xxx',

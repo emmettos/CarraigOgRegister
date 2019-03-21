@@ -107,7 +107,8 @@ describe('GroupsService', () => {
 
   it('should pass request body for update group', () => {
     let group: IGroup = {
-      'id': 1,
+      'id': 2,
+      'previousGroupId': 1,
       'yearId': 1,
       'name': 'Under 10',
       'yearOfBirth': 2008,

@@ -348,6 +348,7 @@ exports = module.exports = function (app, router) {
       const result = await app.pool.query(`
         SELECT 
           id,
+          previous_group_id,
           year_id,
           year_of_birth,
           name,
@@ -374,6 +375,9 @@ exports = module.exports = function (app, router) {
       returnMessage.body.groups = result.rows.map(row => {
         Object.defineProperty(row, 'yearId', Object.getOwnPropertyDescriptor(row, 'year_id'));
         delete row['year_id'];
+    
+        Object.defineProperty(row, 'previousGroupId', Object.getOwnPropertyDescriptor(row, 'previous_group_id'));
+        delete row['previous_group_id'];
     
         Object.defineProperty(row, 'yearOfBirth', Object.getOwnPropertyDescriptor(row, 'year_of_birth'));
         delete row['year_of_birth'];
@@ -411,6 +415,7 @@ exports = module.exports = function (app, router) {
       const result = await app.pool.query(`
         SELECT 
           id,
+          previous_group_id,
           year_id,
           year_of_birth,
           name,
@@ -436,6 +441,9 @@ exports = module.exports = function (app, router) {
         Object.defineProperty(row, 'yearId', Object.getOwnPropertyDescriptor(row, 'year_id'));
         delete row['year_id'];
     
+        Object.defineProperty(row, 'previousGroupId', Object.getOwnPropertyDescriptor(row, 'previous_group_id'));
+        delete row['previous_group_id'];
+
         Object.defineProperty(row, 'yearOfBirth', Object.getOwnPropertyDescriptor(row, 'year_of_birth'));
         delete row['year_of_birth'];
     
@@ -482,9 +490,12 @@ exports = module.exports = function (app, router) {
 
       sqlStatement.push('INSERT INTO public.groups (');
 
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'previousGroupId')) {
+        fieldNames.push('previous_group_id');
+        fieldValues.push(groupDetails.previousGroupId);
+      }
       fieldNames.push('year_id');
       fieldValues.push(currentSettings.year_id);
-
       if (Object.prototype.hasOwnProperty.call(groupDetails, 'yearOfBirth')) {
         fieldNames.push('year_of_birth');
         fieldValues.push(groupDetails.yearOfBirth);
@@ -547,6 +558,10 @@ exports = module.exports = function (app, router) {
           public.groups
         SET`);
 
+      if (Object.prototype.hasOwnProperty.call(groupDetails, 'previousGroupId')) {
+        setStatements.push('previous_group_id = ($' + (++setIndex) + ')');
+        setValues.push(groupDetails.previousGroupId);
+      }
       if (Object.prototype.hasOwnProperty.call(groupDetails, 'yearOfBirth')) {
         setStatements.push('year_of_birth = ($' + (++setIndex) + ')');
         setValues.push(groupDetails.yearOfBirth);
@@ -619,7 +634,7 @@ exports = module.exports = function (app, router) {
   router.get('/playerSummaries/:groupId', authorizer.authorize({ isGroupManager: true }), async (request, response, next) => {
     try {
       const result = await app.pool.query(`
-        SELECT DISTINCT
+        SELECT
           p.id,
           p.first_name,
           p.surname,
