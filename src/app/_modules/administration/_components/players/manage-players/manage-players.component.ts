@@ -71,6 +71,7 @@ export class ManagePlayersComponent implements OnInit {
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.
         error: error => {
+          this.dateOfBirthPicker.setDisabledState(true);
         }
       });
   }

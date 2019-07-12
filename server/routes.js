@@ -1395,7 +1395,7 @@ exports = module.exports = function (app, router) {
         return row;
       })[0];
 
-      const football_coach_roles = await app.pool.query(`
+      const footballCoachRoles = await app.pool.query(`
         SELECT 
           g.name AS group_name,
           'Football Coach' AS role
@@ -1405,7 +1405,7 @@ exports = module.exports = function (app, router) {
           g.football_coach_id = $1
       `, [request.params.coachId]);
 
-      const hurling_coach_roles = await app.pool.query(`
+      const hurlingCoachRoles = await app.pool.query(`
         SELECT 
           g.name AS group_name,
           'Hurling Coach' AS role
@@ -1415,7 +1415,7 @@ exports = module.exports = function (app, router) {
           g.hurling_coach_id = $1
       `, [request.params.coachId]);
 
-      returnMessage.body.coachRoles = football_coach_roles.rows.concat(hurling_coach_roles.rows);
+      returnMessage.body.coachRoles = footballCoachRoles.rows.concat(hurlingCoachRoles.rows);
 
       returnMessage.body.coachRoles.sort((a, b) => {
         if (a.group_name > b.group_name) {
@@ -1825,23 +1825,14 @@ var readCoachSummaries = async (app, response, next) => {
           FROM
             public.groups AS g1
           WHERE
-            g1.year_id = 
-              (SELECT 
-                y2.id 
-              FROM 
-                public.years AS y2 
-              WHERE y2.year = 
-                (SELECT 
-                  MAX(y3.year) 
-                FROM 
-                  public.years AS y3)) AND
+            g1.year_id = $1 AND
             ((g1.football_coach_id = c.id) OR (g1.hurling_coach_id = c.id))) 
 		    THEN true
 		    ELSE false
 	    END AS active
     FROM
       public.coaches AS c
-  `);
+  `, [currentSettings.year_id]);
   
   var returnMessage = {};
 
