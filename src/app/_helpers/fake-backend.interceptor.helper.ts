@@ -2059,7 +2059,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'version': '2018-02-18T13:43:51.268Z'
       },
       {
-        'id': 81,
+        'id': 82,
         'groupId': 18,
         'playerId': 2,
         'registeredDate': '2019-02-18',
@@ -2070,7 +2070,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
         'version': '2018-02-18T13:43:51.268Z'
       },
       {
-        'id': 81,
+        'id': 83,
         'groupId': 18,
         'playerId': 3,
         'registeredDate': '2019-02-18',
@@ -2284,7 +2284,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
           if (request.url.endsWith('/groupSummaries')) {
             let body = {
-              groups: this.readGroupSummaries()
+              groups: JSON.parse(JSON.stringify(this.readGroupSummaries()))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -2292,7 +2292,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
           if (request.url.endsWith('/groups')) {
             let body = {
-              groups: this.groups.filter(group => { return group.yearId === this.currentYear.id })
+              groups: JSON.parse(JSON.stringify(this.groups.filter(group => { return group.yearId === this.currentYear.id })))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));          
@@ -2302,7 +2302,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             let groupId: number = +request.url.substring(request.url.lastIndexOf('/') + 1);
 
             let body = {
-              groupDetails: this.groupsGroupIdMap.get(groupId)
+              groupDetails: JSON.parse(JSON.stringify(this.groupsGroupIdMap.get(groupId)))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -2311,6 +2311,10 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           if (request.url.endsWith('/createGroup') || request.url.endsWith('/updateGroup')) {
             let group: IGroup = null;
             
+            if (!request.body.groupDetails) {
+              throw new Error ('groupDetails not found in request');
+            }
+
             let currentDate = (new Date(Date.now())).toISOString();
 
             if (request.url.endsWith('/updateGroup')) {
@@ -2385,13 +2389,17 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             }
 
             let body = {
-              groups: this.readGroupSummaries()
+              groups: JSON.parse(JSON.stringify(this.readGroupSummaries()))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));          
           }
 
           if (request.url.endsWith('/deleteGroup')) {
+            if (!request.body.groupSummary) {
+              throw new Error ('groupSummary not found in request');
+            }
+      
             let group: IGroup = this.groupsGroupIdMap.get(request.body.groupSummary.id);
 
             remove(this.groups, groupToRemove => { return groupToRemove.id === request.body.groupSummary.id });
@@ -2420,7 +2428,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             }
 
             let body = {
-              groups: this.readGroupSummaries()
+              groups: JSON.parse(JSON.stringify(this.readGroupSummaries()))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));          
@@ -2496,7 +2504,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             }
 
             let body = {
-              players: players
+              players: JSON.parse(JSON.stringify(players))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -2504,7 +2512,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
           if (/.*\/api\/searchPlayers\/\d{4}-\d{2}-\d{2}$/.test(request.url)) {
             let body = {
-              players: this.searchPlayers(request.url.substring(request.url.lastIndexOf('/') + 1))
+              players: JSON.parse(JSON.stringify(this.searchPlayers(request.url.substring(request.url.lastIndexOf('/') + 1))))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -2514,30 +2522,25 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             let playerId: number = +request.url.substring(request.url.lastIndexOf('/') + 1),
                 playerDetails: IPlayer = this.playersPlayerIdMap.get(playerId),
                 groupsPlayersForPlayer: IGroupPlayer[] = this.groupsPlayersPlayerIdMap.get(playerId),
-                mostRecentYear: number = 0,
-                mostRecentGroupsPlayers: IGroupPlayer = null;
+                currentGroupsPlayers: IGroupPlayer = null;
 
-            groupsPlayersForPlayer.forEach(groupsPlayers => {
-              let playerGroup: IGroup = this.groupsGroupIdMap.get(groupsPlayers.groupId);
+            if (groupsPlayersForPlayer) {
+              groupsPlayersForPlayer.forEach(groupsPlayers => {
+                let playerGroup: IGroup = this.groupsGroupIdMap.get(groupsPlayers.groupId);
 
-              if (!mostRecentGroupsPlayers) {
-                mostRecentYear = this.years.find(year => { return playerGroup.yearId === year.id }).year;
-                mostRecentGroupsPlayers = groupsPlayers;
-              }
-              else {
-                let groupYear: any = this.years.find(year => { return playerGroup.yearId === year.id }).year;
-
-                if (groupYear > mostRecentYear) {
-                  mostRecentYear = groupYear;
-                  mostRecentGroupsPlayers = groupsPlayers;
+                if (playerGroup.yearId === this.currentYear.id) {
+                  currentGroupsPlayers = groupsPlayers;
                 }
-              }
-            });
+              });
+            }
 
-            let body = {
-              playerDetails: playerDetails,
-              groupPlayerDetails: mostRecentGroupsPlayers
+            let body: any = {
+              playerDetails: JSON.parse(JSON.stringify(playerDetails)),
             };
+
+            if (currentGroupsPlayers) {
+              body.groupPlayerDetails = JSON.parse(JSON.stringify(currentGroupsPlayers))
+            }
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
@@ -2545,7 +2548,11 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           if (request.url.endsWith('/createPlayer')) {
             let player: IPlayer = null,
                 groupPlayer: IGroupPlayer = null;
- 
+
+            if (!(request.body.playerDetails && request.body.groupPlayerDetails)) {
+              throw new Error ('playerDetails and groupPlayerDetails not found in request');
+            }
+          
             let currentDate = (new Date(Date.now())).toISOString();
 
             let existingPlayerDetails: IPlayer = this.players.find(player => {
@@ -2633,71 +2640,158 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             this.groupsPlayersPlayerIdMap.set(groupPlayer.playerId, groupPlayerMapValue);
       
             let body = {
-              players: this.searchPlayers(player.dateOfBirth)
+              players: JSON.parse(JSON.stringify(this.searchPlayers(player.dateOfBirth)))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
           if (request.url.endsWith('/updatePlayer')) {
-            let player: IPlayer = null;
+            if (!(request.body.playerDetails || request.body.groupPlayerDetails)) {
+              throw new Error ('playerDetails or groupPlayerDetails not found in request');
+            }
 
-            let oldDateOfBirth: string = null;
- 
             let currentDate = (new Date(Date.now())).toISOString();
 
-            player = this.playersPlayerIdMap.get(request.body.playerDetails.id);
+            if (request.body.playerDetails) {
+              let player: IPlayer = this.playersPlayerIdMap.get(request.body.playerDetails.id);
 
-            player.firstName = request.body.playerDetails.firstName;
-            player.surname = request.body.playerDetails.surname;
-            
-            if (player.dateOfBirth !== request.body.playerDetails.dateOfBirth) {
-              oldDateOfBirth = player.dateOfBirth;
-            }
-            player.dateOfBirth = request.body.playerDetails.dateOfBirth;
-
-            player.addressLine1 = request.body.playerDetails.addressLine1;
-            player.addressLine2 = request.body.playerDetails.addressLine2;
-            player.addressLine3 = request.body.playerDetails.addressLine3;
-            player.medicalConditions = request.body.playerDetails.medicalConditions;
-            player.contactName = request.body.playerDetails.contactName;
-            player.contactHomeNumber = request.body.playerDetails.contactHomeNumber;
-            player.contactMobileNumber = request.body.playerDetails.contactMobileNumber;
-            player.contactEmailAddress = request.body.playerDetails.contactEmailAddress;
-            player.school = request.body.playerDetails.school;
-    
-            player.updatedDate = currentDate;
-            player.updatedBy = this.authorizationService.payload.userProfile.ID;
-
-            player.version = currentDate;
-
-            localStorage.setItem(PLAYERS_KEY, JSON.stringify(this.players));
-
-            this.playersPlayerIdMap.set(player.id, player);
-
-            if (oldDateOfBirth) {
-              let playerMapValue: IPlayer[] = this.playersDateOfBirthMap.get(oldDateOfBirth);
-
-              remove(playerMapValue, playerToRemove => { return playerToRemove.id === player.id });
-
-              if (playerMapValue.length === 0) {
-                this.playersDateOfBirthMap.delete(oldDateOfBirth);
+              let oldDateOfBirth: string = null;
+ 
+              player.firstName = request.body.playerDetails.firstName;
+              player.surname = request.body.playerDetails.surname;
+              
+              if (player.dateOfBirth !== request.body.playerDetails.dateOfBirth) {
+                oldDateOfBirth = player.dateOfBirth;
               }
+              player.dateOfBirth = request.body.playerDetails.dateOfBirth;
 
-              playerMapValue = this.playersDateOfBirthMap.get(player.dateOfBirth);
+              player.addressLine1 = request.body.playerDetails.addressLine1;
+              player.addressLine2 = request.body.playerDetails.addressLine2;
+              player.addressLine3 = request.body.playerDetails.addressLine3;
+              player.medicalConditions = request.body.playerDetails.medicalConditions;
+              player.contactName = request.body.playerDetails.contactName;
+              player.contactHomeNumber = request.body.playerDetails.contactHomeNumber;
+              player.contactMobileNumber = request.body.playerDetails.contactMobileNumber;
+              player.contactEmailAddress = request.body.playerDetails.contactEmailAddress;
+              player.school = request.body.playerDetails.school;
+      
+              player.updatedDate = currentDate;
+              player.updatedBy = this.authorizationService.payload.userProfile.ID;
 
-              if (playerMapValue) {
-                playerMapValue.push(player);
+              player.version = currentDate;
+
+              localStorage.setItem(PLAYERS_KEY, JSON.stringify(this.players));
+
+              if (oldDateOfBirth) {
+                let playerMapValue: IPlayer[] = this.playersDateOfBirthMap.get(oldDateOfBirth);
+
+                remove(playerMapValue, playerToRemove => { return playerToRemove.id === player.id });
+
+                if (playerMapValue.length === 0) {
+                  this.playersDateOfBirthMap.delete(oldDateOfBirth);
+                }
+
+                playerMapValue = this.playersDateOfBirthMap.get(player.dateOfBirth);
+
+                if (playerMapValue) {
+                  playerMapValue.push(player);
+                }
+                else {
+                  playerMapValue = new Array(player);
+                }
+          
+                this.playersDateOfBirthMap.set(player.dateOfBirth, playerMapValue);  
+              }
+            }
+
+            if (request.body.groupPlayerDetails) {
+              let groupPlayer: IGroupPlayer = null;
+
+              if (!request.body.groupPlayerDetails.id) {
+                groupPlayer = <IGroupPlayer>{};
+
+                groupPlayer.id = ++this.maxGroupsPlayersId;
+    
+                groupPlayer.groupId = request.body.groupPlayerDetails.groupId;
+                groupPlayer.playerId = request.body.groupPlayerDetails.playerId;
+                
+                groupPlayer.registeredDate = request.body.groupPlayerDetails.registeredDate;
+        
+                groupPlayer.createdDate = currentDate;
+                groupPlayer.createdBy = this.authorizationService.payload.userProfile.ID;
+    
+                groupPlayer.version = currentDate;
+    
+                this.groupsPlayers.push(groupPlayer);
+                
+                localStorage.setItem(GROUPS_PLAYERS_KEY, JSON.stringify(this.groupsPlayers));
+    
+                let groupPlayerMapValue: IGroupPlayer[] = this.groupsPlayersPlayerIdMap.get(groupPlayer.playerId);
+    
+                if (groupPlayerMapValue) {
+                  groupPlayerMapValue.push(groupPlayer);
+                }
+                else {
+                  groupPlayerMapValue = new Array(groupPlayer);
+                }
+          
+                this.groupsPlayersPlayerIdMap.set(groupPlayer.playerId, groupPlayerMapValue);
               }
               else {
-                playerMapValue = new Array(player);
+                if (request.body.groupPlayerDetails.groupId !== -1) {
+                  let groupPlayerMapValue: IGroupPlayer[] = this.groupsPlayersPlayerIdMap.get(request.body.groupPlayerDetails.playerId),
+                      groupPlayer: IGroupPlayer = null;
+
+                  for (let groupsPlayers of groupPlayerMapValue) {
+                    let playerGroup: IGroup = this.groupsGroupIdMap.get(groupsPlayers.groupId);
+      
+                    if (playerGroup.yearId === this.currentYear.id) {
+                      groupPlayer = groupsPlayers;
+
+                      break;
+                    }
+                  }
+
+                  groupPlayer.groupId = request.body.groupPlayerDetails.groupId;
+                  
+                  groupPlayer.registeredDate = request.body.groupPlayerDetails.registeredDate;
+          
+                  groupPlayer.updatedDate = currentDate;
+                  groupPlayer.updatedBy = this.authorizationService.payload.userProfile.ID;
+      
+                  groupPlayer.version = currentDate;  
+
+                  localStorage.setItem(GROUPS_PLAYERS_KEY, JSON.stringify(this.groupsPlayers));    
+                }
+                else {
+                  remove(this.groupsPlayers, groupsPlayersToRemove => { return groupsPlayersToRemove.id === request.body.groupPlayerDetails.id });
+      
+                  localStorage.setItem(GROUPS_PLAYERS_KEY, JSON.stringify(this.groupsPlayers));
+                  
+                  let groupsPlayersMapValue: IGroupPlayer[] = this.groupsPlayersPlayerIdMap.get(request.body.groupPlayerDetails.playerId);
+
+                  let groupsPlayersToRemoveId: number = 0;
+
+                  groupsPlayersMapValue.forEach(groupsPlayers => {
+                    let playerGroup: IGroup = this.groupsGroupIdMap.get(groupsPlayers.groupId);
+      
+                    if (playerGroup.yearId === this.currentYear.id) {
+                      groupsPlayersToRemoveId = groupsPlayers.id;
+                    }
+                  });
+
+                  remove(groupsPlayersMapValue, groupsPlayersToRemove => { return groupsPlayersToRemove.id === groupsPlayersToRemoveId });
+
+                  if (groupsPlayersMapValue.length === 0) {
+                    this.groupsPlayersPlayerIdMap.delete(request.body.groupPlayerDetails.playerId);
+                  }
+                }
               }
-        
-              this.playersDateOfBirthMap.set(player.dateOfBirth, playerMapValue);  
             }
 
             let body = {
-              players: this.searchPlayers(player.dateOfBirth)
+              players: JSON.parse(JSON.stringify(this.searchPlayers(request.body.playerDetails.dateOfBirth)))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -2721,7 +2815,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             });
 
             let body = {
-              coaches: coaches
+              coaches: JSON.parse(JSON.stringify(coaches))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -2729,7 +2823,7 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
           if (request.url.endsWith('/coaches')) {
             let body = {
-              coaches: this.coaches
+              coaches: JSON.parse(JSON.stringify(this.coaches))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -2783,8 +2877,8 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             }
 
             let body = {
-              coachDetails: coachDetails,
-              coachRoles: coachRoles
+              coachDetails: JSON.parse(JSON.stringify(coachDetails)),
+              coachRoles: JSON.parse(JSON.stringify(coachRoles))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));

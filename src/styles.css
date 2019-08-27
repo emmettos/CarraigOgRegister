@@ -71,6 +71,10 @@ table tbody tr.missing {
   background-color: #ffe8a2;
 }
 
+.bg-danger-light {
+  background-color: #eda1a6;
+}
+
 .modal-header {
   background:#0480be;
 }

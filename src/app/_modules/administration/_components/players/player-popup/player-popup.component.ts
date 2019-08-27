@@ -37,7 +37,7 @@ export class PlayerPopupComponent {
         CSSClass = 'bg-warning';
     }
     else if (this.playerState === PlayerState.Gone) {
-      CSSClass = 'bg-error';
+      CSSClass = 'bg-danger';
     }
 
     return CSSClass;
@@ -53,7 +53,7 @@ export class PlayerPopupComponent {
         CSSClass = 'bg-warning-light';
     }
     else if (this.playerState === PlayerState.Gone) {
-      CSSClass = 'bg-error-light';
+      CSSClass = 'bg-danger-light';
     }
 
     return CSSClass;

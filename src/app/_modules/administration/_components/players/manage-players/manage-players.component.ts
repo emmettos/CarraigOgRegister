@@ -97,8 +97,6 @@ export class ManagePlayersComponent implements OnInit {
     this.playersService.searchPlayers(this.dateOfBirth.format("YYYY-MM-DD"))
       .subscribe({
         next: response => {
-          //this.matchedPlayers = response.body.players;
-
           this.processMatchedPlayers(response.body.players);
         },
         // Need this handler otherwise the Angular error handling mechanism will kick in.
