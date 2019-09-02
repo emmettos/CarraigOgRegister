@@ -2797,6 +2797,36 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
+          if (request.url.endsWith('/deletePlayer')) {
+            if (!request.body.playerSummary) {
+              throw new Error ('playerSummary not found in request');
+            }
+      
+            remove(this.players, playerToRemove => { return playerToRemove.id === request.body.playerSummary.id });
+
+            localStorage.setItem(PLAYERS_KEY, JSON.stringify(this.players));
+
+            this.playersPlayerIdMap.delete(request.body.playerSummary.id);
+            
+            let playersDateOfBirthMapValue: IPlayer[] = this.playersDateOfBirthMap.get(request.body.playerSummary.dateOfBirth);
+
+            remove(playersDateOfBirthMapValue, playerToRemove => { return playerToRemove.id === request.body.playerSummary.id });
+
+            if (playersDateOfBirthMapValue.length === 0) {
+              this.playersDateOfBirthMap.delete(request.body.playerSummary.dateOfBirth);
+            }
+
+            remove(this.groupsPlayers, groupPlayerToRemove => { return groupPlayerToRemove.playerId === request.body.playerSummary.id });
+
+            this.groupsPlayersPlayerIdMap.delete(request.body.playerSummary.id);
+
+            let body = {
+              players: JSON.parse(JSON.stringify(this.searchPlayers(request.body.playerSummary.dateOfBirth)))
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));          
+          }
+
           if (request.url.endsWith('/coachSummaries')) {
             let coaches: any[] = cloneDeep(this.coaches);
 
