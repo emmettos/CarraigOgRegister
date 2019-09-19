@@ -2352,8 +2352,14 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             group.footballCoachId = request.body.groupDetails.footballCoachId;
             group.hurlingCoachId = request.body.groupDetails.hurlingCoachId;
             
-            group.updatedDate = currentDate;
-            group.updatedBy = this.authorizationService.payload.userProfile.ID;
+            if (request.url.endsWith('/updateGroup')) {
+              group.updatedDate = currentDate;
+              group.updatedBy = this.authorizationService.payload.userProfile.ID;
+            }
+            else {
+              group.updatedDate = null;
+              group.updatedBy = null;
+            }
 
             group.version = currentDate;
 
@@ -2591,6 +2597,9 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             player.createdDate = currentDate;
             player.createdBy = this.authorizationService.payload.userProfile.ID;
 
+            player.updatedDate = null;
+            player.updatedBy = null;
+
             player.version = currentDate;
 
             this.players.push(player);
@@ -2621,6 +2630,9 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
     
             groupPlayer.createdDate = currentDate;
             groupPlayer.createdBy = this.authorizationService.payload.userProfile.ID;
+
+            groupPlayer.updatedDate = null;
+            groupPlayer.updatedBy = null;
 
             groupPlayer.version = currentDate;
 
@@ -2828,24 +2840,8 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
           }
 
           if (request.url.endsWith('/coachSummaries')) {
-            let coaches: any[] = cloneDeep(this.coaches);
-
-            coaches.forEach(coach => {
-              if (this.currentGroupsFootballCoachIdMap.get(coach.id)) {
-                coach.active = true;
-              }
-              else {
-                if (this.currentGroupsHurlingCoachIdMap.get(coach.id)) {
-                  coach.active = true;
-                }
-                else {
-                  coach.active = false;
-                }
-              }
-            });
-
             let body = {
-              coaches: JSON.parse(JSON.stringify(coaches))
+              coaches: JSON.parse(JSON.stringify(this.readCoachSummaries()))
             };
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
@@ -3203,5 +3199,25 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
     }
 
     return players;
+  }
+
+  private readCoachSummaries(): ICoach[] { 
+    let coaches: any[] = cloneDeep(this.coaches);
+
+    coaches.forEach(coach => {
+      if (this.currentGroupsFootballCoachIdMap.get(coach.id)) {
+        coach.active = true;
+      }
+      else {
+        if (this.currentGroupsHurlingCoachIdMap.get(coach.id)) {
+          coach.active = true;
+        }
+        else {
+          coach.active = false;
+        }
+      }
+    });
+
+    return coaches;
   }
 }
