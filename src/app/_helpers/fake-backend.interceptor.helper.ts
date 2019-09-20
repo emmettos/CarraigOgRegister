@@ -2859,6 +2859,10 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             let coachId: number = +request.url.substring(request.url.lastIndexOf('/') + 1),
                 coachDetails: ICoach = this.coachesCoachIdMap.get(coachId);
 
+            let body = {
+              coachDetails: JSON.parse(JSON.stringify(coachDetails)),
+            };
+
             let footballCoachRoles: any[] = this.currentGroupsFootballCoachIdMap.get(coachId);
             if (footballCoachRoles) {
               footballCoachRoles.forEach(coachRole => {
@@ -2900,71 +2904,76 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
                 
                 return 0;
               });
-            }
 
-            let body = {
-              coachDetails: JSON.parse(JSON.stringify(coachDetails)),
-              coachRoles: JSON.parse(JSON.stringify(coachRoles))
-            };
+              body['coachRoles'] = JSON.parse(JSON.stringify(coachRoles))
+            }
 
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
           }
 
-//           if (request.url.endsWith('/updateCoach') || request.url.endsWith('/createCoach')) {
-//             let coachDetails: ICoach = null;
+          if (request.url.endsWith('/updateCoach') || request.url.endsWith('/createCoach')) {
+            let coach: ICoach = null;
             
-//             if (request.url.endsWith('/updateCoach')) {
-//               coachDetails = this.coaches.find(coach => {
-//                 return coach._id === request.body.coachDetails._id;
-//               });
+            if (!request.body.coachDetails) {
+              throw new Error ('coachDetails not found in request');
+            }
 
-//               coachDetails.__v++;
-//             }
-//             else {
-//               let existingCoachDetails: ICoach = this.coaches.find(coach => {
-//                 return coach.emailAddress === request.body.coachDetails.emailAddress;
-//               });
+            let currentDate = (new Date(Date.now())).toISOString();
 
-//               if (existingCoachDetails) {
-//                 let alertService: AlertService = this.injector.get(AlertService);
+            if (request.url.endsWith('/updateCoach')) {
+              coach = this.coachesCoachIdMap.get(request.body.coachDetails.id);
+            }
+            else {
+              let existingCoachDetails: ICoach = this.coaches.find(coach => {
+                return coach.emailAddress === request.body.coachDetails.emailAddress;
+              });
 
-//                 alertService.error('Fake HTTP 500 Response', 'Fake duplicate key error collection: CarraigOgRegister.coach index: emailAddress');
+              if (existingCoachDetails) {
+                let alertService: AlertService = this.injector.get(AlertService);
 
-//                 return;
-//               }
+                alertService.error('Fake HTTP 500 Response', 'Fake duplicate key error collection: CarraigOgRegister.coaches index: coaches_email_address_idx');
 
-//               coachDetails = <ICoach>{};
+                return;
+              }
 
-//               coachDetails._id = this.generateId();
+              coach = <ICoach>{};
 
-//               coachDetails.emailAddress = request.body.coachDetails.emailAddress;
+              coach.id = ++this.maxCoachesId;
 
-//               coachDetails.createdDate = (new Date(Date.now())).toISOString();
-//               coachDetails.createdBy = this.authorizationService.payload.userProfile.ID;
+              coach.emailAddress = request.body.coachDetails.emailAddress;
+
+              coach.createdDate = (new Date(Date.now())).toISOString();
+              coach.createdBy = this.authorizationService.payload.userProfile.ID;
   
-//               coachDetails.__v = 0;
-
-//               this.coaches.push(coachDetails);
-//             }
+              this.coaches.push(coach);
+            }
             
-//             coachDetails.firstName = request.body.coachDetails.firstName;
-//             coachDetails.surname = request.body.coachDetails.surname;
-//             coachDetails.phoneNumber = request.body.coachDetails.phoneNumber;
-//             coachDetails.isAdministrator = request.body.coachDetails.isAdministrator;
-  
-//             coachDetails.updatedDate = (new Date(Date.now())).toISOString();
-//             coachDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
+            coach.firstName = request.body.coachDetails.firstName;
+            coach.surname = request.body.coachDetails.surname;
+            coach.phoneNumber = request.body.coachDetails.phoneNumber;
+            coach.administrator = request.body.coachDetails.administrator;
+            
+            if (request.url.endsWith('/updateCoach')) {
+              coach.updatedDate = currentDate;
+              coach.updatedBy = this.authorizationService.payload.userProfile.ID;
+            }
+            else {
+              coach.updatedDate = null;
+              coach.updatedBy = null;
+            }
 
-//             localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
+            coach.version = currentDate;
 
-//             let coaches: ICoach[] = this.readCoaches();
+            localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
 
-//             let body = {
-//               coaches: coaches
-//             };
+            this.coachesCoachIdMap.set(coach.id, coach);
 
-//             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
-//           }
+            let body = {
+              coaches: JSON.parse(JSON.stringify(this.readCoachSummaries()))
+            };
+
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));          
+          }
 
 //           if (request.url.endsWith('/deleteCoach')) {
 //             let coachDetails: ICoach = request.body.coachDetails;
@@ -3002,60 +3011,6 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
 
 //             let body = {
 //               coaches: coaches
-//             };
-
-//             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
-//           }
-
-//           if (/.*\/api\/coachGroups\/[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(request.url)) {
-//             let coachEmailAddress: string = request.url.substring(request.url.lastIndexOf('/') + 1),
-//                 coachGroups = [];
-
-//             this.groups.filter(group => { return group.year === this.currentSettings.year}).forEach(group => {
-//               if (group.footballCoach === coachEmailAddress) {
-//                 let coachGroup: any = {
-//                   groupName: group.name,
-//                   role: 'Football Coach'
-//                 };
-
-//                 coachGroups.push(coachGroup);
-//               }
-//               if (group.hurlingCoach === coachEmailAddress) {
-//                 let coachGroup: any = {
-//                   groupName: group.name,
-//                   role: 'Hurling Coach'
-//                 };
-
-//                 coachGroups.push(coachGroup);
-//               }
-//             });
-
-//             let body = {
-//               coachGroups: coachGroups
-//             };
-
-//             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
-//           }
-
-//           if (request.url.endsWith('/updateGroup')) {
-//             let groupDetails: IGroup = null;
-            
-//             groupDetails = this.groups.find(group => {
-//               return group._id === request.body.groupDetails._id;
-//             });
-
-//             groupDetails.__v++;
-            
-//             groupDetails.footballCoach = request.body.groupDetails.footballCoach;
-//             groupDetails.hurlingCoach = request.body.groupDetails.hurlingCoach;
-
-//             groupDetails.updatedDate = (new Date(Date.now())).toISOString();
-//             groupDetails.updatedBy = this.authorizationService.payload.userProfile.ID;
-
-//             localStorage.setItem(GROUPS_KEY, JSON.stringify(this.groups));
-
-//             let body = {
-//               groups: this.groups
 //             };
 
 //             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
