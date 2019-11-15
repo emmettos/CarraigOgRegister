@@ -2406,6 +2406,14 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
               throw new Error ('groupSummary not found in request');
             }
       
+            if (this.groupsPlayers.find(groupsPlayersToFind => { return groupsPlayersToFind.groupId === request.body.groupSummary.Id })) {
+              let alertService: AlertService = this.injector.get(AlertService);
+
+              alertService.error('Fake HTTP 500 Response', 'Fake foreign key constraint violation: CarraigOgRegister.groups_players constraint: group_id_groups_id');
+
+              return;
+            }
+            
             let group: IGroup = this.groupsGroupIdMap.get(request.body.groupSummary.id);
 
             remove(this.groups, groupToRemove => { return groupToRemove.id === request.body.groupSummary.id });
@@ -2975,46 +2983,26 @@ export class FakeBackendInterceptorHelper implements HttpInterceptor {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));          
           }
 
-//           if (request.url.endsWith('/deleteCoach')) {
-//             let coachDetails: ICoach = request.body.coachDetails;
+          if (request.url.endsWith('/deleteCoach')) {
+            if (!request.body.coachSummary) {
+              throw new Error ('coachSummary not found in request');
+            }
 
-//             let coachIndex: number = this.coaches.findIndex(coach => {
-//               return coach._id === coachDetails._id;
-//             });
+            remove(this.coaches, coachToRemove => { return coachToRemove.id === request.body.coachSummary.id });
 
-//             if (coachIndex === -1) {
-//               let alertService: AlertService = this.injector.get(AlertService);
+            localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
 
-//               alertService.error('Fake HTTP 500 Response', 'Fake key not found: CarraigOgRegister.coach _id');
+            this.coachesCoachIdMap.delete(request.body.coachSummary.id);
 
-//               return;
-//             }
+            this.currentGroupsFootballCoachIdMap.delete(request.body.coachSummary.id);
+            this.currentGroupsHurlingCoachIdMap.delete(request.body.coachSummary.id);
 
-//             if (coachDetails.active) {
-//               this.groups.forEach(group => {
-//                 if (group.footballCoach === coachDetails.emailAddress) {
-//                   group.footballCoach = '';
-//                 }
-//                 if (group.hurlingCoach === coachDetails.emailAddress) {
-//                   group.hurlingCoach = '';
-//                 }
-//               })
+            let body = {
+              coaches: JSON.parse(JSON.stringify(this.readCoachSummaries()))
+            };
 
-//               localStorage.setItem(GROUPS_KEY, JSON.stringify(this.groups));
-//             }
-
-//             this.coaches.splice(coachIndex, 1);
-  
-//             localStorage.setItem(COACHES_KEY, JSON.stringify(this.coaches));
-
-//             let coaches: ICoach[] = this.readCoaches();
-
-//             let body = {
-//               coaches: coaches
-//             };
-
-//             return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));
-//           }
+            return of<HttpEvent<any>>(new HttpResponse({ status: 200, body: { body: body }}));          
+          }
 
           if (request.url.endsWith('/writeLog')) {
             return of<HttpEvent<any>>(new HttpResponse({ status: 200 }));
