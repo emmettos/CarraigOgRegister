@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -12,6 +12,8 @@ import { ValidationService } from '../../_modules/shared/_services/index';
 })
 export class LoginComponent implements OnInit {
   loginForm: FormGroup;
+
+  @ViewChild('emailAddress') emailAddress: ElementRef;
 
   changePasswordModeControl: FormControl;
   emailAddressControl: FormControl;
@@ -55,6 +57,10 @@ export class LoginComponent implements OnInit {
     this.authenticationFailed = false;
     this.passwordChanged = passwordChanged;
 
+    if (this.loginForm.controls['emailAddress'].value === '') {
+      this.loginForm.controls['emailAddress'].markAsUntouched();
+    }
+
     this.loginForm.controls['passwordGroup'].setValue({
       password: '',
       newPassword: '',
@@ -70,6 +76,8 @@ export class LoginComponent implements OnInit {
       this.newPasswordControl.disable();
       this.confirmPasswordControl.disable();
     }
+
+    this.emailAddress.nativeElement.focus();
   }
 
   onSubmit(formValues) {
