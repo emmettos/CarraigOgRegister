@@ -111,6 +111,8 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
         month: +this.dateOfBirth.format('M'),
         year: +this.dateOfBirth.format('YYYY')
       }); 
+
+      this.playerForm.controls['dateOfBirth'].disable();
     }
 
     if (this.groupPlayerDetails) {
@@ -257,10 +259,15 @@ export class PlayerFormComponent implements OnInit, AfterViewInit {
     this.playerDetails.addressLine2 = formValues.addressLine2;
     this.playerDetails.addressLine3 = formValues.addressLine3;
     
-    let dobPicker = formValues.dateOfBirth,
-        localeDateOfBirth = new Date(dobPicker.year, dobPicker.month - 1, dobPicker.day),
-        dateOfBirth = moment.utc(localeDateOfBirth).add(0 - localeDateOfBirth.getTimezoneOffset(), "m");
-    this.playerDetails.dateOfBirth = dateOfBirth.format("YYYY-MM-DD")
+    if (this.editingPlayer) {
+      let dobPicker = formValues.dateOfBirth,
+          localeDateOfBirth = new Date(dobPicker.year, dobPicker.month - 1, dobPicker.day),
+          dateOfBirth = moment.utc(localeDateOfBirth).add(0 - localeDateOfBirth.getTimezoneOffset(), "m");
+      this.playerDetails.dateOfBirth = dateOfBirth.format("YYYY-MM-DD");
+    }
+    else {
+      this.playerDetails.dateOfBirth = this.dateOfBirth.format("YYYY-MM-DD");
+    }
 
     this.playerDetails.school = formValues.school;
     this.playerDetails.medicalConditions = formValues.medicalConditions;

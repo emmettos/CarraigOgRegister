@@ -140,6 +140,14 @@ export class ManagePlayersComponent implements OnInit {
               if (returnObject) {
                 this.toasterService.pop('success', 'Player Successfully Updated', returnObject.playerDetails.firstName + ' ' + returnObject.playerDetails.surname);
               
+                this.dateOfBirth = moment.utc(returnObject.playerDetails.dateOfBirth)
+
+                this.managePlayersForm.controls['dateOfBirth'].setValue({
+                  day: +this.dateOfBirth.format('D'),
+                  month: +this.dateOfBirth.format('M'),
+                  year: +this.dateOfBirth.format('YYYY')
+                }); 
+          
                 this.processMatchedPlayers(returnObject.matchedPlayers);
               }
             })
