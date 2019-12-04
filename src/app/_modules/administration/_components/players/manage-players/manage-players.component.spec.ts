@@ -312,14 +312,13 @@ describe('ManagePlayersComponent', () => {
         }
       }));
 
-    fixture.detectChanges();
+      fixture.detectChanges();
 
-    component.managePlayersForm.controls['dateOfBirth'].setValue({ year: 2010, month: 7, day: 3});
+      component.managePlayersForm.controls['dateOfBirth'].setValue({ year: 2010, month: 7, day: 3});
 
-    fixture.detectChanges();
+      fixture.detectChanges();
 
-    expect(component.managePlayersForm.value).toEqual({'dateOfBirth': Object({ year: 2010, month: 7, day: 3 })
-    });
+      expect(component.managePlayersForm.value).toEqual({'dateOfBirth': Object({ year: 2010, month: 7, day: 3 })});
   });
 
   it('should validate empty date of birth', () => {
@@ -1797,7 +1796,7 @@ describe('ManagePlayersComponent', () => {
 
     fixture.detectChanges();
 
-    component.managePlayersForm.controls['dateOfBirth'].setValue({ year: 2010, month: 7, day: 3});
+    component.managePlayersForm.controls['dateOfBirth'].setValue({ year: 2010, month: 3, day: 3});
 
     fixture.detectChanges();
     
@@ -1834,7 +1833,7 @@ describe('ManagePlayersComponent', () => {
         result: Promise.resolve({
           playerDetails: {
             'id': 2,
-            'firstName': 'Matthew',
+            'firstName': 'Mark',
             'surname': 'Moss',
             'addressLine1': '179 Payne Street',
             'addressLine2': 'Clear Mount',
@@ -1873,7 +1872,7 @@ describe('ManagePlayersComponent', () => {
             },
             {
               'id': 2,
-              'firstName': 'Matthew',
+              'firstName': 'Mark',
               'surname': 'Moss',
               'addressLine1': '179 Payne Street',
               'addressLine2': 'Clear Mount',
@@ -1916,7 +1915,122 @@ describe('ManagePlayersComponent', () => {
 
     fixture.detectChanges();
 
-    expect(fixture.nativeElement.querySelector('#players-table > tbody > tr:nth-child(1) > td:nth-child(3)').innerHTML).toEqual('Matthew');
+    expect(fixture.nativeElement.querySelector('#players-table > tbody > tr:nth-child(1) > td:nth-child(3)').innerHTML).toEqual('Mark');
+  }));
+
+  it('should display date of birth after updating a player', fakeAsync(() => {
+    spyOn(groupsService, 'readGroups')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'groups': groups
+        }
+      }));
+
+    fixture.detectChanges();
+
+    component.managePlayersForm.controls['dateOfBirth'].setValue({ year: 2010, month: 3, day: 3});
+
+    fixture.detectChanges();
+    
+    spyOn(playersService, 'readPlayerDetails')
+      .and.returnValue(of({
+        'error': null,
+        'body': {
+          'playerDetails': {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'dateOfBirth': '2010-03-03',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          }
+        }
+      }));
+
+    spyOn(modalService, 'open')
+      .and.returnValue({
+        componentInstance: {},
+        result: Promise.resolve({
+          playerDetails: {
+            'id': 2,
+            'firstName': 'Matthew',
+            'surname': 'Moss',
+            'addressLine1': '179 Payne Street',
+            'addressLine2': 'Clear Mount',
+            'addressLine3': 'Carrigaline',
+            'dateOfBirth': '2010-07-03',
+            'medicalConditions': '',
+            'contactName': 'Wilder Moss',
+            'contactMobileNumber': '087 6186779',
+            'contactHomeNumber': '',
+            'contactEmailAddress': 'wilder_moss@gmail.com',
+            'school': '',
+            'createdBy': 'script',
+            'createdDate': '2017-03-15T13:43:51.268Z',
+            'updatedDate': '2018-02-13T10:21:40.545Z',
+            'updatedBy': 'admin@carraigog.com',
+            'version': '2018-02-13T10:21:40.545Z'
+          },
+          matchedPlayers: [
+            {
+              'id': 2,
+              'firstName': 'Matthew',
+              'surname': 'Moss',
+              'addressLine1': '179 Payne Street',
+              'addressLine2': 'Clear Mount',
+              'addressLine3': 'Carrigaline',
+              'dateOfBirth': '2010-07-03',
+              'medicalConditions': '',
+              'contactName': 'Wilder Moss',
+              'contactMobileNumber': '087 6186779',
+              'contactHomeNumber': '',
+              'contactEmailAddress': 'wilder_moss@gmail.com',
+              'school': '',
+              'version': '2018-02-04T15:13:00.000Z',
+              'lastRegisteredDate': '2018-02-04',
+              'playerState': 0
+            }      
+          ]
+        })
+      });
+
+    component.onClickEditPlayer(new MouseEvent('click'), {
+      'id': 2,
+      'firstName': 'Matthew',
+      'surname': 'Moss',
+      'addressLine1': '179 Payne Street',
+      'addressLine2': 'Clear Mount',
+      'addressLine3': 'Carrigaline',
+      'dateOfBirth': '2010-03-03',
+      'medicalConditions': '',
+      'contactName': 'Wilder Moss',
+      'contactMobileNumber': '087 6186779',
+      'contactHomeNumber': '',
+      'contactEmailAddress': 'wilder_moss@gmail.com',
+      'school': '',
+      'version': '2018-02-04T15:13:00.000Z',
+      'lastRegisteredDate': '2018-02-04',
+      'playerState': 0
+    });
+  
+    tick();
+
+    fixture.detectChanges();
+
+    expect(component.managePlayersForm.value).toEqual({'dateOfBirth': Object({ year: 2010, month: 7, day: 3 })});
   }));
 
   it('should disable search players button after successfully editing a player', fakeAsync(() => {
