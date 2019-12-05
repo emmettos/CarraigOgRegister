@@ -196,6 +196,14 @@ describe('PlayerFormComponent', () => {
     expect(fixture.nativeElement.querySelector('.modal-header').style.getPropertyValue('bg-danger')).toEqual('');
   });
 
+  it('should disable new player date of birth picker', () => {
+    component['dateOfBirth'] = moment.utc('2009-10-13');
+
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('#date-of-birth').disabled).toBeTruthy();  
+  });
+
   it('should set date of birth picker min date', () => {
     component['dateOfBirth'] = moment.utc('2009-10-13');
 
@@ -1788,7 +1796,9 @@ describe('PlayerFormComponent', () => {
   });
 
   it('should disable date of birth field after submitting a player to be saved', () => {
-    component['dateOfBirth'] = moment.utc('2009-10-13');
+    component['playerDetails'] = playerDetails;
+    component['groupPlayerDetails'] = groupPlayerDetails;
+    component['playerState'] = PlayerState.Existing;
 
     fixture.detectChanges();
 
