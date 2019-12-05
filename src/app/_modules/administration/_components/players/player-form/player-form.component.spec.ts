@@ -531,7 +531,6 @@ describe('PlayerFormComponent', () => {
     component.playerForm.controls['addressLine2'].setValue('Address Line 2');
     component.playerForm.controls['addressLine3'].setValue('Address Line 3');
     component.playerForm.controls['medicalConditions'].setValue('Asthma');
-    component.playerForm.controls['dateOfBirth'].setValue({ year: 2009, month: 10, day: 13 });
     component.playerForm.controls['registeredDate'].setValue({ year: 2019, month: 2, day: 13 });
     component.playerForm.controls['playerGroup'].setValue(2);
     component.playerForm.controls['school'].setValue('Scoil Mhuire Lourdes');
@@ -547,7 +546,6 @@ describe('PlayerFormComponent', () => {
       addressLine2: 'Address Line 2',
       addressLine3: 'Address Line 3',
       medicalConditions: 'Asthma',
-      dateOfBirth: { year: 2009, month: 10, day: 13 },
       registeredDate: { year: 2019, month: 2, day: 13 },
       playerGroup: 2,
       school: 'Scoil Mhuire Lourdes',
@@ -638,8 +636,10 @@ describe('PlayerFormComponent', () => {
     expect(component.playerForm.controls['surname'].invalid).toBeFalsy();
   });
 
-  it('should validate empty date of birth', () => {
-    component['dateOfBirth'] = moment.utc('2009-10-13');
+  it('should validate existing player empty date of birth', () => {
+    component['playerDetails'] = playerDetails;
+    component['groupPlayerDetails'] = groupPlayerDetails;
+    component['playerState'] = PlayerState.Existing;
 
     fixture.detectChanges();
 
@@ -648,8 +648,10 @@ describe('PlayerFormComponent', () => {
     expect(component.playerForm.controls['dateOfBirth'].invalid).toBeTruthy();
   });
 
-  it('should validate invalid date of birth', () => {
-    component['dateOfBirth'] = moment.utc('2009-10-13');
+  it('should validate existing player invalid date of birth', () => {
+    component['playerDetails'] = playerDetails;
+    component['groupPlayerDetails'] = groupPlayerDetails;
+    component['playerState'] = PlayerState.Existing;
 
     fixture.detectChanges();
 
@@ -658,8 +660,10 @@ describe('PlayerFormComponent', () => {
     expect(component.playerForm.controls['dateOfBirth'].invalid).toBeTruthy();
   });
 
-  it('should validate valid date of birth', () => {
-    component['dateOfBirth'] = moment.utc('2009-10-13');
+  it('should validate existing player valid date of birth', () => {
+    component['playerDetails'] = playerDetails;
+    component['groupPlayerDetails'] = groupPlayerDetails;
+    component['playerState'] = PlayerState.Existing;
 
     fixture.detectChanges();
 
