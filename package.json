@@ -28,7 +28,7 @@
     "@angular/router": "6.1.0",
     "@ng-bootstrap/ng-bootstrap": "2.2.0",
     "@types/stacktrace-js": "0.0.32",
-    "ajv": "6.5.2",
+    "ajv": "6.12.3",
     "angular2-toaster": "6.1.0",
     "angular5-csv": "0.2.10",
     "bcrypt": "3.0.0",
